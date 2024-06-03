@@ -1,8 +1,9 @@
 import { exec } from 'child_process';
 import * as path from "path";
+import fs from "fs";
 
 function playMusic(filename) {
-    // const stream = fs.createReadStream('./Twilight.mp3');
+    if(!fs.existsSync(`./mp3/${filename}/`)) return console.log('Brak pliku!!');
     const buffer = path.resolve(`./mp3/${filename}.mp3`);
 
     exec(`cvlc --one-instance --play-and-exit ${buffer}`);
@@ -13,6 +14,7 @@ function playMusic(filename) {
 }
 
 function playOnDemand(filename) {
+    if(!fs.existsSync(`./mp3/onDemand/${filename}/`)) return console.log('Brak pliku!!');
     const buffer = path.resolve(`./mp3/onDemand/${filename}.mp3`);
 
     exec(`cvlc --one-instance --loop ${buffer}`);
@@ -23,7 +25,8 @@ function playOnDemand(filename) {
 }
 
 function playPlaylist(playlistID) {
-    const buffer = path.resolve(`./mp3/${playlistID}/`);
+    if(!fs.existsSync(`./mp3/${playlistID}/`)) return console.log('Brak pliku!!');
+    const buffer = path.resolve(`./mp3/${playlistID}/`)
     console.log(buffer);
 
     exec(`cvlc --one-instance -Z --play-and-exit ${buffer}`);

@@ -69,15 +69,15 @@ async function massSchedule() {
                 await downloader(time[mappedDays[l]][i].OnDemand);
                 const trackInfo = await getTrackInfo(time[mappedDays[l]][i].OnDemand);
                 // console.log(trackInfo)
-                schedule.scheduleJob(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, function () {
+                schedule.scheduleJob(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, function () {
                     playOnDemand(trackInfo.name);
                     console.log('On Demand:', trackInfo.name, 'by', trackInfo.artists.join(' '));
                 });
-                scheduleKillTask(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`);
+                scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`);
                 continue;
             }
-            scheduleMusicTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, {id});
-            scheduleKillTask(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`);
+            scheduleMusicTask(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, {id});
+            scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`);
         }
     }
     // console.log(time, day);
