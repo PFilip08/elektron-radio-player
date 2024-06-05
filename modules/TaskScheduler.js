@@ -1,20 +1,22 @@
 import schedule from "node-schedule";
-import {killPlayer, playMusic, playOnDemand, playPlaylist} from "./MusicPlayer.js";
+import {killPlayer, playOnDemand, playPlaylist} from "./MusicPlayer.js";
 import {getApiData} from "./ApiConnector.js";
 import {autoRemoveFiles, downloader, getTrackInfo} from "./MusicDownloader.js";
+import {logger} from "./Logger.js";
 
 function taskNumber() {
     let n = 0
     for (let i in schedule.scheduledJobs) {
         n = n+1
     }
-    return console.log('[Funkcja taskNumber] Liczba zadań:', n);
+    // return console.log('[Funkcja taskNumber] Liczba zadań:', n);
+    return logger('task', `Liczba zadań: ${n}`, 'taskNumber');
 }
 
 function scheduleMusicTask(time, id) {
     schedule.scheduleJob(time, function () {
-        playPlaylist(id);
-        console.log(id)
+        playPlaylist(id.id);
+        logger('info', 'Playing: '+id.id,'scheduleMusicTask')
     });
 }
 
@@ -28,7 +30,7 @@ async function massSchedule() {
     const data = await getApiData();
     if (!data.isOn) {
         taskNumber();
-        return console.error('[Funkcja massSchedule] Brakuje danych!!!')
+        return logger('error','Brakuje danych!!!', 'massSchedule')
     }
     const time = data.timeRules.rules;
     const day = data.timeRules.applyRule;
@@ -65,13 +67,13 @@ async function massSchedule() {
                 id = time[mappedDays[l]][i].playlist;
             }
             if (time[mappedDays[l]][i].OnDemand !== undefined) {
-                console.log('ONDEMAND OMAJGAH!!!1!111!!1!1!!!');
+                logger('log', 'ONDEMAND OMAJGAH!!!1!111!!1!1!!!', 'massSchedule');
                 await downloader(time[mappedDays[l]][i].OnDemand);
                 const trackInfo = await getTrackInfo(time[mappedDays[l]][i].OnDemand);
                 // console.log(trackInfo)
                 schedule.scheduleJob(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, function () {
-                    playOnDemand(trackInfo.name);
-                    console.log('On Demand:', trackInfo.name, 'by', trackInfo.artists.join(' '));
+                    playOnDemand(trackInfo.name.split(' ').join('_').replace(/[^a-zA-Z_]/g, ""));
+                    logger('log', `On Demand: ${trackInfo.name+ ' by '+ trackInfo.artists.join(' ')}`,'massSchedule');
                 });
                 scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`);
                 continue;

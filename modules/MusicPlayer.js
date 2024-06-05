@@ -1,45 +1,46 @@
 import { exec } from 'child_process';
 import * as path from "path";
 import fs from "fs";
+import {logger} from "./Logger.js";
 
 function playMusic(filename) {
-    if(!fs.existsSync(`./mp3/${filename}/`)) return console.log('Brak pliku!!');
+    if(!fs.existsSync(`./mp3/${filename}.mp3`)) return logger('error','Brak pliku!!', 'playMusic');
     const buffer = path.resolve(`./mp3/${filename}.mp3`);
 
     exec(`cvlc --one-instance --play-and-exit ${buffer}`);
-    console.log('--------Play Music--------');
-    console.log('Muzyka gra...');
-    console.log('Gra aktualnie: ', buffer);
-    console.log('--------Play Music--------');
+    logger('TASK','--------Play Music--------', 'playMusic');
+    logger('TASK','Muzyka gra...', 'playMusic');
+    logger('TASK',`Gra aktualnie: ${buffer}`, 'playMusic');
+    logger('TASK','--------Play Music--------', 'playMusic');
 }
 
 function playOnDemand(filename) {
-    if(!fs.existsSync(`./mp3/onDemand/${filename}/`)) return console.log('Brak pliku!!');
+    if(!fs.existsSync(`./mp3/onDemand/${filename}.mp3`)) return logger('error','Brak pliku!!', 'playOnDemand');
     const buffer = path.resolve(`./mp3/onDemand/${filename}.mp3`);
 
     exec(`cvlc --one-instance --loop ${buffer}`);
-    console.log('--------Play Music (On Demand Mode)--------');
-    console.log('Muzyka gra...');
-    console.log('Gra aktualnie: ', buffer);
-    console.log('--------Play Music (On Demand Mode)--------');
+    logger('task','--------Play Music (On Demand Mode)--------', 'playOnDemand');
+    logger('task','Muzyka gra...', 'playOnDemand');
+    logger('task',`Gra aktualnie: ${buffer}`, 'playOnDemand');
+    logger('task','--------Play Music (On Demand Mode)--------', 'playOnDemand');
 }
 
 function playPlaylist(playlistID) {
-    if(!fs.existsSync(`./mp3/${playlistID}/`)) return console.log('Brak pliku!!');
+    if(!fs.existsSync(`./mp3/${playlistID}/`)) return logger('error','Brak pliku!!', 'playPlaylist');
     const buffer = path.resolve(`./mp3/${playlistID}/`)
     console.log(buffer);
 
     exec(`cvlc --one-instance -Z --play-and-exit ${buffer}`);
-    console.log('--------Play Playlist - random--------');
-    console.log('Muzyka gra...');
-    console.log('Gra aktualnie: ', buffer);
-    console.log('--------Play Playlist - random--------');
+    logger('task','--------Play Playlist - random--------', 'playPlaylist');
+    logger('task','Muzyka gra...', 'playPlaylist');
+    logger('task',`Gra aktualnie: ${buffer}`, 'playPlaylist');
+    logger('task','--------Play Playlist - random--------', 'playPlaylist');
 }
 
 function killPlayer() {
     exec(`cvlc --one-instance vlc://quit`);
-    console.log('--------Play Music--------')
-    console.log('Plejer ubity');
-    console.log('--------Play Music--------')
+    logger('task','--------Kill Player--------', 'killPlayer');
+    logger('task','Plejer ubity', 'killPlayer');
+    logger('task','--------Kill Player--------', 'killPlayer');
 }
 export { playMusic, killPlayer, playPlaylist, playOnDemand };
