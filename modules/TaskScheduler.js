@@ -66,6 +66,10 @@ async function massSchedule() {
             if (time[mappedDays[l]][i].playlist !== undefined) {
                 id = time[mappedDays[l]][i].playlist;
             }
+            if (time[mappedDays[l]][i].playlist === 0) {
+                // console.log('dupa')
+                continue;
+            }
             if (time[mappedDays[l]][i].OnDemand !== undefined) {
                 logger('log', 'ONDEMAND OMAJGAH!!!1!111!!1!1!!!', 'massSchedule');
                 await downloader(time[mappedDays[l]][i].OnDemand);

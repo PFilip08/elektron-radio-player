@@ -20,7 +20,7 @@ async function POST() {
         checkUpdate().catch(error => {
             console.log(error);
         });
-    }, 5000);
+    }, 10000);
 }
 
 export {POST};
