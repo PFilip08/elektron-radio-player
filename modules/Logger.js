@@ -18,7 +18,7 @@ function logger(type, content, name) {
         case "task": return console.log(`${timestamp} ${bgCyanBright(whiteBright(type.toUpperCase()))+` ${functionName}`} ${content}`);
         case "POST": return console.log(`${timestamp} ${cyan(type.toUpperCase())} ${content}`);
         case "ready": return console.log(`${timestamp} ${bgGreenBright(whiteBright(type.toUpperCase()))} ${content}`);
-        default: throw new TypeError("Logger type must be either warn, debug, log, ready, cmd or error.");
+        default: throw new TypeError("Logger type must be either warn, debug, log, ready, POST, task or error.");
     }
 }
 
