@@ -38,14 +38,14 @@ function playOnDemand(filename) {
 }
 
 function playPlaylist(playlistID) {
-    if(!fs.existsSync(`./mp3/${playlistID}/`)) return logger('error','Brak pliku!!', 'playPlaylist');
+    if(!fs.existsSync(`./mp3/${playlistID}/`)) return logger('error','Brak playlisty o podanym numerze!!', 'playPlaylist');
     const buffer = path.resolve(`./mp3/${playlistID}/`)
-    console.log(buffer);
+    // console.log(buffer);
 
     exec(`cvlc --one-instance -Z --play-and-exit ${buffer}`);
     logger('task','--------Play Playlist - random--------', 'playPlaylist');
-    logger('task','Muzyka gra...', 'playPlaylist');
-    logger('task',`Gra aktualnie: ${getPlaylistName(buffer)}`, 'playPlaylist');
+    logger('task','Playlista gra...', 'playPlaylist');
+    logger('task',`Gra aktualnie playlista: ${getPlaylistName(playlistID)}`, 'playPlaylist');
     logger('task','--------Play Playlist - random--------', 'playPlaylist');
 }
 
