@@ -7,22 +7,20 @@ async function POST() {
     logger('POST', '    elektron-radio-player')
     logger('POST', '        By PFilip :>')
     logger('POST', '------------------------------')
-    /*
     if (process.platform === "win32") {
         logger('error', 'okna niedozwolone');
         return process.exit(2);
     }
-    */
-    logger('task', 'Planowanie zadań…', 'POST');
+    logger('task', 'Scheduling tasks…', 'POST');
     await massSchedule();
-    logger('task', 'Aktywowanie automatycznych aktualizacji z API', 'POST');
+    logger('task', 'Activating auto update data from API', 'POST');
+    logger('ready', 'Git');
     checkUpdate();
     setInterval(() => {
         checkUpdate().catch(error => {
             console.log(error);
         });
     }, 10000);
-    logger('ready', 'Git');
 }
 
-export { POST };
+export {POST};

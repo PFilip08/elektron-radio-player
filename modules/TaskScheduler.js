@@ -15,8 +15,8 @@ function taskNumber() {
 
 function scheduleMusicTask(time, id) {
     schedule.scheduleJob(time, function () {
-        logger('log', 'Granie playlisty nr: '+id.id,'scheduleMusicTask')
         playPlaylist(id.id);
+        logger('log', 'Playing: '+id.id,'scheduleMusicTask')
     });
 }
 

@@ -10,12 +10,12 @@ async function downloader(url) {
 
     const data = await spotify.getTrack(url);
     const file = data.name.split(' ').join('_').replace(/[^a-zA-Z_]/g, "");
-    logger('log',`Pobieram: ${data.name+' by: '+data.artists.join(', ')}`,'downloader');
+    logger('log',`Downloading: ${data.name+' by: '+data.artists.join(', ')}`,'downloader');
     // console.log(fs.existsSync(`./mp3/onDemand/${file}.mp3`));
-    if (fs.existsSync(`./mp3/onDemand/${file}.mp3`)) return logger('warn',`Aktualnie pobrano!`,'downloader');
+    if (fs.existsSync(`./mp3/onDemand/${file}.mp3`)) return logger('warn',`Already downloaded!`,'downloader');
     const song = await spotify.downloadTrack(url);
     fs.writeFileSync(`./mp3/onDemand/${file}.mp3`, song);
-    return logger('log','Pobrano :>','downloader');
+    return logger('log','Downloaded :>','downloader');
 }
 
 async function downloadPlaylist(url) {
@@ -27,7 +27,7 @@ async function downloadPlaylist(url) {
     const data = await spotify.getPlaylist(url);
     for (let i in data.tracks) {
         let song = await getTrackInfo(data.tracks[i])
-        logger('log',`Pobieram: ${song.name+' by: '+song.artists.join(', ')}`,'downloadPlaylist');
+        logger('log',`Downloading: ${song.name+' by: '+song.artists.join(', ')}`,'downloadPlaylist');
     }
     const playlist = await spotify.downloadPlaylist(url)
     for (let i in playlist) {
@@ -38,7 +38,7 @@ async function downloadPlaylist(url) {
         }
         const file = song.name.split(' ').join('_').replace(/[^a-zA-Z_]/g, "");
         if (fs.existsSync(`./mp3/onDemand/${dir}/${file}.mp3`)) {
-            logger('warn',`${file}.mp3 - Aktualnie pobrane!`,'downloadPlaylist');
+            logger('warn',`${file}.mp3 - Already downloaded!`,'downloadPlaylist');
             continue;
         }
         fs.writeFileSync(`./mp3/onDemand/${dir}/${file}.mp3`, playlist[i]);
@@ -61,14 +61,14 @@ async function downloadAlbum(url) {
     }
     for (let i in data.tracks) {
         let song = await getTrackInfo(data.tracks[i])
-        logger('log',`Pobieram: ${song.name+' by: '+song.artists.join(', ')}`,'downloadAlbum');
+        logger('log',`Downloading: ${song.name+' by: '+song.artists.join(', ')}`,'downloadAlbum');
     }
     const album = await spotify.downloadAlbum(url);
     for (let i in album) {
         let song = await getTrackInfo(data.tracks[i]);
         const file = song.name.split(' ').join('_').replace(/[^a-zA-Z_-\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/g, "");
         if (fs.existsSync(`./mp3/onDemand/${dir}/${file}.mp3`)) {
-            logger('warn',`${file}.mp3 - Aktualnie pobrane!`,'downloadAlbum');
+            logger('warn',`${file}.mp3 - Already downloaded!`,'downloadAlbum');
             continue;
         }
         fs.writeFileSync(`./mp3/onDemand/${dir}/${file}.mp3`, album[i]);
