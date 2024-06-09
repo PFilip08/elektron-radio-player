@@ -109,7 +109,7 @@ async function massSchedule() {
 
             if (!checkedSchedules.has(scheduleKey)) {
                 checkedSchedules.add(scheduleKey);
-                const isValidTime = await checkscheduleTime(time[mappedDays[l]][i].end, time[mappedDays[l]][i].start, l, i);
+                const isValidTime = await checkscheduleTime(time[mappedDays[l]][i].end, time[mappedDays[l]][i].start, mappedDays[l], i);
                 if (!isValidTime) {
                     logger('error', 'Odrzucono nieprawidłowy zapis czasu!!!', 'massSchedule');
                     continue;
