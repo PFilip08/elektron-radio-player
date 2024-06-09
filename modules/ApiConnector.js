@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {Agent} from "node:https";
 import {massSchedule} from "./TaskScheduler.js";
-import {logger} from "./Logger.js";
+import {logger, findChanges, logChanges } from "./Logger.js";
 let url = 'https://radio-elektron.vercel.app/api/timeTables';
 let previousData = null;
 let messageCounter = false;
@@ -74,6 +74,8 @@ async function checkUpdate() {
             logger('log', '--------Check Update--------','checkUpdate');
             logger('log', 'Pobrano dane z API','checkUpdate');
             logger('log', '--------Check Update--------','checkUpdate');
+            const changes = findChanges(previousData, currentData);
+            logChanges(changes);
         }
 
         previousData = currentData;
