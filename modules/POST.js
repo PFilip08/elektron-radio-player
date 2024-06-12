@@ -14,7 +14,7 @@ async function POST() {
     logger('task', 'Planowanie zadań…', 'POST');
     await massSchedule();
     logger('task', 'Aktywowanie automatycznych aktualizacji z API', 'POST');
-    checkUpdate();
+    await checkUpdate();
     setInterval(() => {
         checkUpdate().catch(error => {
             console.log(error);

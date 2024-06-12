@@ -1,6 +1,7 @@
 import {Spotify} from "spotifydl-core";
 import * as fs from "fs";
 import {logger} from "./Logger.js";
+import * as path from "path";
 
 async function downloader(url) {
     const spotify = new Spotify({
@@ -11,68 +12,10 @@ async function downloader(url) {
     const data = await spotify.getTrack(url);
     const file = data.name.split(' ').join('_').replace(/[^a-zA-Z_]/g, "");
     logger('log',`Pobieram: ${data.name+' by: '+data.artists.join(', ')}`,'downloader');
-    // console.log(fs.existsSync(`./mp3/onDemand/${file}.mp3`));
     if (fs.existsSync(`./mp3/onDemand/${file}.mp3`)) return logger('warn',`Aktualnie pobrano!`,'downloader');
     const song = await spotify.downloadTrack(url);
     fs.writeFileSync(`./mp3/onDemand/${file}.mp3`, song);
     return logger('log','Pobrano :>','downloader');
-}
-
-async function downloadPlaylist(url) {
-    const spotify = new Spotify({
-        clientId: process.env.SPOTIFY_CLIENT_ID,
-        clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-    });
-
-    const data = await spotify.getPlaylist(url);
-    for (let i in data.tracks) {
-        let song = await getTrackInfo(data.tracks[i])
-        logger('log',`Pobieram: ${song.name+' by: '+song.artists.join(', ')}`,'downloadPlaylist');
-    }
-    const playlist = await spotify.downloadPlaylist(url)
-    for (let i in playlist) {
-        let song = await getTrackInfo(data.tracks[i])
-        const dir = data.name.split(' ').join('_').replace(/[^a-zA-Z_-\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/g, "");
-        if (!fs.existsSync(`./mp3/onDemand/${dir}`)){
-            fs.mkdirSync(`./mp3/onDemand/${dir}`);
-        }
-        const file = song.name.split(' ').join('_').replace(/[^a-zA-Z_]/g, "");
-        if (fs.existsSync(`./mp3/onDemand/${dir}/${file}.mp3`)) {
-            logger('warn',`${file}.mp3 - Aktualnie pobrane!`,'downloadPlaylist');
-            continue;
-        }
-        fs.writeFileSync(`./mp3/onDemand/${dir}/${file}.mp3`, playlist[i]);
-
-    }
-    // fs.writeFileSync(`./mp3/onDemand/h.mp3`, playlist);
-    // return logger('log','Downloaded :>','downloader');
-}
-
-async function downloadAlbum(url) {
-    const spotify = new Spotify({
-        clientId: process.env.SPOTIFY_CLIENT_ID,
-        clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-    });
-
-    const data = await spotify.getAlbum(url);
-    const dir = data.name.split(' ').join('_').replace(/[^a-zA-Z_-\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/g, "");
-    if (!fs.existsSync(`./mp3/onDemand/${dir}`)){
-        fs.mkdirSync(`./mp3/onDemand/${dir}`);
-    }
-    for (let i in data.tracks) {
-        let song = await getTrackInfo(data.tracks[i])
-        logger('log',`Pobieram: ${song.name+' by: '+song.artists.join(', ')}`,'downloadAlbum');
-    }
-    const album = await spotify.downloadAlbum(url);
-    for (let i in album) {
-        let song = await getTrackInfo(data.tracks[i]);
-        const file = song.name.split(' ').join('_').replace(/[^a-zA-Z_-\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/g, "");
-        if (fs.existsSync(`./mp3/onDemand/${dir}/${file}.mp3`)) {
-            logger('warn',`${file}.mp3 - Aktualnie pobrane!`,'downloadAlbum');
-            continue;
-        }
-        fs.writeFileSync(`./mp3/onDemand/${dir}/${file}.mp3`, album[i]);
-    }
 }
 
 async function downloadPlaylist(url) {
@@ -101,8 +44,6 @@ async function downloadPlaylist(url) {
         fs.writeFileSync(`./mp3/onDemand/${dir}/${file}.mp3`, playlist[i]);
 
     }
-    // fs.writeFileSync(`./mp3/onDemand/h.mp3`, playlist);
-    // return logger('log','Downloaded :>','downloader');
 }
 
 async function downloadAlbum(url) {
@@ -142,9 +83,11 @@ async function getTrackInfo(url) {
 
 async function autoRemoveFiles() {
     fs.readdir('./mp3/onDemand', (err, files) => {
-        if (err) return logger('error '+err,'autoRemoveFiles'); else logger('task','Brak plików do usunięcia.','autoRemoveFiles');
+        if (err) return logger('error '+err,'autoRemoveFiles');
+        if (files.length === 0) return logger('task','Brak plików do usunięcia.','autoRemoveFiles');
         for (let i in files) {
             if (fs.lstatSync('./mp3/onDemand/'+files[i]).isDirectory()) {
+                logger('task', `Usunięto folder "${files[i]}" wraz z zawartością`, 'autoRemoveFiles');
                 fs.rmdirSync('./mp3/onDemand/'+files[i], { force: true, recursive: true });
                 continue;
             }

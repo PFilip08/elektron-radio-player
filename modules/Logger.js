@@ -97,7 +97,7 @@ function logChanges(changes) {
       else if (key.includes('currentPlaylistId')) {
         if (oldValue === undefined || newValue === undefined) {
             message += ``;
-        } else if (oldValue != newValue || newValue != oldValue) {
+        } else if (oldValue !== newValue || newValue !== oldValue) {
             message += `Playlista główna została zmieniona z ${oldValue} na ${newValue}`;
         }
       }
@@ -105,7 +105,7 @@ function logChanges(changes) {
         message += `Wartość została zmieniona z ${oldValue} na ${newValue}`;
       }
       if (!key.includes('id') && !key.includes('created_at') === true) {
-        if (oldValue != undefined || newValue != undefined === true) {
+        if (oldValue !== undefined || newValue !== undefined) {
             logger('debug', colors.yellow(message), 'logChanges');
         }
       }

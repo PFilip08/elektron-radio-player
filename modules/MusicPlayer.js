@@ -40,7 +40,6 @@ function playOnDemand(filename) {
 function playPlaylist(playlistID) {
     if(!fs.existsSync(`./mp3/${playlistID}/`)) return logger('error','Brak playlisty o podanym numerze!!', 'playPlaylist');
     const buffer = path.resolve(`./mp3/${playlistID}/`)
-    // console.log(buffer);
 
     exec(`cvlc --one-instance -Z --play-and-exit ${buffer}`);
     logger('task','--------Play Playlist - random--------', 'playPlaylist');
