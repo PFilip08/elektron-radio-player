@@ -15,13 +15,37 @@ function taskNumber() {
 
 function scheduleMusicTask(time, id) {
     schedule.scheduleJob(time, function () {
+        logger('log', 'Granie playlisty nr: '+id.id,'scheduleMusicTask')
         playPlaylist(id.id);
-        logger('log', 'Playing: '+id.id,'scheduleMusicTask')
     });
 }
 
 function scheduleKillTask(time) {
     schedule.scheduleJob(time, killPlayer);
+}
+
+async function checkscheduleTime(timeEnd, timeStart, rule, breakNumber) {
+    let timeEndArray = timeEnd.split(':');
+    let timeStartArray = timeStart.split(':');
+    let breakNumberInt = parseInt(breakNumber, 10) + 1;
+    //console.log(timeEndArray)
+    //console.log(timeStartArray)
+    breakNumber = (breakNumber + 1);
+    if (timeEndArray[0] < timeStartArray[0]) {
+        //console.log(timeEndArray[0] - timeStartArray[0])
+        //console.log('End time is smaller than start time!')
+        logger('error', `Dla zasady ${rule} i przerwy ${breakNumberInt}, czas zakończenia (${timeEnd})("end" w jsonie) jest wcześniejszy niż czas rozpoczęcia (${timeStart}), różnica wynosi ${(timeStartArray[0] - timeEndArray[0])} godziny.`, 'checkscheduleTime')
+        return false;
+    }
+    if (timeEndArray[0] === timeStartArray[0]) {
+        if (timeEndArray[1] < timeStartArray[1]) {
+            //console.log(timeEndArray[1] - timeStartArray[1])
+            logger('error', `Dla zasady ${rule} i przerwy ${breakNumberInt}, czas zakończenia (${timeEnd})("end" w jsonie) jest wcześniejszy niż czas rozpoczęcia (${timeStart})("start" w jsonie), różnica wynosi ${(timeStartArray[1] - timeEndArray[1])} minut.`, 'checkscheduleTime')
+            return false;
+        }
+    }
+    //console.log('true')
+    return true;
 }
 
 async function massSchedule() {
@@ -47,14 +71,13 @@ async function massSchedule() {
     };
 
     const mappedDays = {};
-
     for (const i in day) {
         if (day.hasOwnProperty(i)) {
             const mappedDay = dayMapping[i];
             mappedDays[mappedDay] = day[i];
         }
     }
-
+    const checkedSchedules = new Set();
     for (let l in mappedDays) {
         if (mappedDays[l] === 0) continue;
         for (let i in time[mappedDays[l]]) {
@@ -82,6 +105,17 @@ async function massSchedule() {
                 scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`);
                 continue;
             }
+            const scheduleKey = `${time[mappedDays[l]][i].start}-${time[mappedDays[l]][i].end}`;
+
+            if (!checkedSchedules.has(scheduleKey)) {
+                checkedSchedules.add(scheduleKey);
+                const isValidTime = await checkscheduleTime(time[mappedDays[l]][i].end, time[mappedDays[l]][i].start, mappedDays[l], i);
+                if (!isValidTime) {
+                    logger('error', 'Odrzucono nieprawidłowy zapis czasu!!!', 'massSchedule');
+                    continue;
+                }
+            }
+            //checkscheduleTime(time[mappedDays[l]][i].end,time[mappedDays[l]][i].start)
             scheduleMusicTask(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, {id});
             scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`);
         }
