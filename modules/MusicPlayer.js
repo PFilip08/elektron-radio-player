@@ -3,15 +3,27 @@ import * as path from "path";
 import fs from "fs";
 import {logger} from "./Logger.js";
 
+function getPlaylistName(id) {
+    switch (id) {
+        case 0: return 'nicość';
+        case 1: return 'Klasyczna';
+        case 2: return 'POP';
+        case 3: return 'RAP';
+        case 4: return 'ROCK';
+        case 5: return 'Soundtracki';
+        default: return id;
+    }
+}
+
 function playMusic(filename) {
     if(!fs.existsSync(`./mp3/${filename}.mp3`)) return logger('error','Brak pliku!!', 'playMusic');
     const buffer = path.resolve(`./mp3/${filename}.mp3`);
 
     exec(`cvlc --one-instance --play-and-exit ${buffer}`);
-    logger('TASK','--------Play Music--------', 'playMusic');
-    logger('TASK','Muzyka gra...', 'playMusic');
-    logger('TASK',`Gra aktualnie: ${buffer}`, 'playMusic');
-    logger('TASK','--------Play Music--------', 'playMusic');
+    logger('task','--------Play Music--------', 'playMusic');
+    logger('task','Muzyka gra...', 'playMusic');
+    logger('task',`Gra aktualnie: ${buffer}`, 'playMusic');
+    logger('task','--------Play Music--------', 'playMusic');
 }
 
 function playOnDemand(filename) {
@@ -26,14 +38,14 @@ function playOnDemand(filename) {
 }
 
 function playPlaylist(playlistID) {
-    if(!fs.existsSync(`./mp3/${playlistID}/`)) return logger('error','Brak pliku!!', 'playPlaylist');
+    if(!fs.existsSync(`./mp3/${playlistID}/`)) return logger('error','Brak playlisty o podanym numerze!!', 'playPlaylist');
     const buffer = path.resolve(`./mp3/${playlistID}/`)
-    console.log(buffer);
+    // console.log(buffer);
 
     exec(`cvlc --one-instance -Z --play-and-exit ${buffer}`);
     logger('task','--------Play Playlist - random--------', 'playPlaylist');
-    logger('task','Muzyka gra...', 'playPlaylist');
-    logger('task',`Gra aktualnie: ${buffer}`, 'playPlaylist');
+    logger('task','Playlista gra...', 'playPlaylist');
+    logger('task',`Gra aktualnie playlista: ${getPlaylistName(playlistID)}`, 'playPlaylist');
     logger('task','--------Play Playlist - random--------', 'playPlaylist');
 }
 

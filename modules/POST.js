@@ -11,16 +11,16 @@ async function POST() {
         logger('error', 'okna niedozwolone');
         return process.exit(2);
     }
-    logger('task', 'Scheduling tasks…', 'POST');
+    logger('task', 'Planowanie zadań…', 'POST');
     await massSchedule();
-    logger('task', 'Activating auto update data from API', 'POST');
-    logger('ready', 'Git');
+    logger('task', 'Aktywowanie automatycznych aktualizacji z API', 'POST');
     checkUpdate();
     setInterval(() => {
         checkUpdate().catch(error => {
             console.log(error);
         });
-    }, 5000);
+    }, 10000);
+    logger('ready', 'Git');
 }
 
-export {POST};
+export { POST };
