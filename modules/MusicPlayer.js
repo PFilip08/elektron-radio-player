@@ -27,8 +27,11 @@ function playMusic(filename) {
 }
 
 function playOnDemand(filename) {
-    if(!fs.existsSync(`./mp3/onDemand/${filename}.mp3`)) return logger('error','Brak pliku!!', 'playOnDemand');
-    const buffer = path.resolve(`./mp3/onDemand/${filename}.mp3`);
+    if(!fs.existsSync(`./mp3/onDemand/${filename}`)) return logger('error','Brak pliku!!', 'playOnDemand');
+    let buffer = path.resolve(`./mp3/onDemand/${filename}.mp3`);
+    if (fs.lstatSync(`./mp3/onDemand/${filename}`).isDirectory()) {
+        buffer = path.resolve(`./mp3/onDemand/${filename}`);
+    }
 
     exec(`cvlc --one-instance --loop ${buffer}`);
     logger('task','--------Play Music (On Demand Mode)--------', 'playOnDemand');

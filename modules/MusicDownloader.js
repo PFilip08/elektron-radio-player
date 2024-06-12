@@ -91,7 +91,14 @@ async function getTrackInfo(url) {
         clientId: process.env.SPOTIFY_CLIENT_ID,
         clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
     });
-    return await spotify.getTrack(url);
+    const urlParts = url.split("/");
+    if (urlParts[3] === 'album') {
+        return await spotify.getAlbum(url);
+    } else if (urlParts[3] === 'playlist') {
+        return await spotify.getPlaylist(url);
+    } else {
+        return await spotify.getTrack(url);
+    }
 }
 
 async function autoRemoveFiles() {

@@ -1,6 +1,7 @@
 import {logger} from "./Logger.js";
 import {massSchedule} from "./TaskScheduler.js";
 import {checkUpdate} from "./ApiConnector.js";
+import {default as www} from "../api/app.js";
 
 async function POST() {
     logger('POST', '------------------------------')
@@ -10,6 +11,10 @@ async function POST() {
     if (process.platform === "win32") {
         logger('error', 'okna niedozwolone');
         return process.exit(2);
+    }
+    if (process.env.WWW) {
+        logger('task', 'Aktywowanie lokalnego API', 'POST');
+        www();
     }
     logger('task', 'Planowanie zadań…', 'POST');
     await massSchedule();
