@@ -24,7 +24,7 @@ async function downloadSong(url) {
     });
 
     const data = await spotify.getTrack(url);
-    const file = data.name.split(' ').join('_').replace(/[^a-zA-Z_]/g, "");
+    const file = data.name.split(' ').join('_').replace(/[^a-zA-Z_-\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/g, "");
     logger('log',`Pobieram: ${data.name+' by: '+data.artists.join(', ')}`,'downloader');
     if (fs.existsSync(`./mp3/onDemand/${file}.mp3`)) return logger('warn',`Plik istnieje!`,'downloader');
     const song = await spotify.downloadTrack(url);

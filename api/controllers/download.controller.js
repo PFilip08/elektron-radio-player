@@ -23,12 +23,13 @@ export async function downloadAndPlay(req, res) {
         const time = req.query.time;
         logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - downloadAndPlay');
         await downloader(uri);
-        const trackInfo = await getTrackInfo(uri)
-        schedule.scheduleJob(``, function () {
+        const startTime = new Date(Date.now() + 3000)
+        const trackInfo = await getTrackInfo(uri);
+        schedule.scheduleJob(startTime, function () {
             playOnDemand(trackInfo.name.split(' ').join('_').replace(/[^a-zA-Z_-\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/g, ""));
             logger('log', `On Demand: ${trackInfo.name}`,'massSchedule');
         });
-        return res.status(201).send('gut');
+        return res.status(201).send('gut, 3s opóźnienia');
     } catch (e) {
         throw e;
     }
