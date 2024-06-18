@@ -3,6 +3,7 @@ import {logger} from "../../modules/Logger.js";
 import schedule from "node-schedule";
 import {playOnDemand} from "../../modules/MusicPlayer.js";
 import {sterylizator} from "../../modules/Other.js";
+import {scheduleKillTask} from "../../modules/TaskScheduler.js";
 
 // download song through api
 export async function downloadSong(req, res) {
@@ -21,11 +22,13 @@ export async function downloadSong(req, res) {
 export async function downloadAndPlay(req, res) {
     try {
         const uri = req.query.uri;
-        const time = req.query.time;
+        // const time = req.query.time;
         logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - downloadAndPlay');
         await downloader(uri);
-        const startTime = new Date(Date.now() + 3000)
+        const startTime = new Date(Date.now() + 3000);
+        const killTime = new Date(Date.now() + 2000);
         const trackInfo = await getTrackInfo(uri);
+        scheduleKillTask(killTime);
         schedule.scheduleJob(startTime, function () {
             playOnDemand(sterylizator(trackInfo.name));
             logger('log', `On Demand: ${trackInfo.name}`,'massSchedule');
