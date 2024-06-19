@@ -37,6 +37,7 @@ Gdy zmieni się wartość godziny która jest określona przez klucze `start` lu
 ### Dla klucza `playlist`
 Gdy klucz playlist zostanie usunięty z dowolnego klucza w JSONie to funkcja wyświetli log w konsoli:
 !["Jak wygląda log z funkcji logChanges gdy usunięty zostanie klucz playlist"](https://i.imgur.com/8YxXf4R.png)
+
 Gdy klucz playlist zostanie dodany do dowolnego klucza w JSONie to funkcja wyświetli log w konsoli:
 !["Jak wygląda log z funkcji logChanges gdy dodany zostanie klucz playlist"](https://i.imgur.com/vCBV2gg.png)
 Gdy klucz playlist wartość klucza zostanie zmieniona w dowolnym kluczu w JSONie to funkcja wyświetli log w konsoli:
