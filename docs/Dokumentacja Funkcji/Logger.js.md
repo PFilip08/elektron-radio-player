@@ -45,6 +45,7 @@ Gdy klucz playlist wartość klucza zostanie zmieniona w dowolnym kluczu w JSONi
 ### Dla klucza `OnDemand`
 Gdy klucz OnDemand zostanie usunięty z dowolnego klucza w JSONie to funkcja wyświetli log w konsoli:
 !["Jak wygląda log z funkcji logChanges gdy usunięty zostanie klucz OnDemand"](https://i.imgur.com/0lHEohZ.png)
+
 Gdy klucz OnDemand zostanie dodany do dowolnego klucza w JSONie to funkcja wyświetli log w konsoli:
 !["Jak wygląda log z funkcji logChanges gdy dodany zostanie klucz OnDemand"](https://i.imgur.com/sug4Wfv.png)
 Gdy klucz OnDemand wartość klucza zostanie zmieniona w dowolnym kluczu w JSONie to funkcja wyświetli log w konsoli:
