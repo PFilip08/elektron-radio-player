@@ -1,0 +1,1 @@
+Plik index.js nie posiada żadnych funkcji które są używane w kodzie.
