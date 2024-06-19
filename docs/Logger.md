@@ -1,4 +1,5 @@
 Logger w elektron radio playerze służy do logowania. 
+
 Funkcja odpowiedzialna za logi wygląda następująco:
 ```javascript
 logger(type, content, name)
