@@ -2,6 +2,7 @@ import {Spotify} from "spotifydl-core";
 import * as fs from "fs";
 import {logger} from "./Logger.js";
 import * as path from "path";
+import {sterylizator} from "./Other.js";
 
 async function downloader(url) {
     const urlParts = url.split("/");
@@ -24,7 +25,7 @@ async function downloadSong(url) {
     });
 
     const data = await spotify.getTrack(url);
-    const file = data.name.split(' ').join('_').replace(/[^a-zA-Z_]/g, "");
+    const file = sterylizator(data.name);
     logger('log',`Pobieram: ${data.name+' by: '+data.artists.join(', ')}`,'downloader');
     if (fs.existsSync(`./mp3/onDemand/${file}.mp3`)) return logger('warn',`Plik istnieje!`,'downloader');
     const song = await spotify.downloadTrack(url);
@@ -46,11 +47,11 @@ async function downloadPlaylist(url) {
     const playlist = await spotify.downloadPlaylist(url)
     for (let i in playlist) {
         let song = await getTrackInfo(data.tracks[i])
-        const dir = data.name.split(' ').join('_').replace(/[^a-zA-Z_-\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/g, "");
+        const dir = sterylizator(data.name);
         if (!fs.existsSync(`./mp3/onDemand/${dir}`)){
             fs.mkdirSync(`./mp3/onDemand/${dir}`);
         }
-        const file = song.name.split(' ').join('_').replace(/[^a-zA-Z_]/g, "");
+        const file = sterylizator(song.name);
         if (fs.existsSync(`./mp3/onDemand/${dir}/${file}.mp3`)) {
             logger('warn',`${file}.mp3 - Plik istnieje!`,'downloadPlaylist');
             continue;
@@ -66,7 +67,7 @@ async function downloadAlbum(url) {
     });
 
     const data = await spotify.getAlbum(url);
-    const dir = data.name.split(' ').join('_').replace(/[^a-zA-Z_-\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/g, "");
+    const dir = sterylizator(data.name);
     if (!fs.existsSync(`./mp3/onDemand/${dir}`)){
         fs.mkdirSync(`./mp3/onDemand/${dir}`);
     }
@@ -77,7 +78,7 @@ async function downloadAlbum(url) {
     const album = await spotify.downloadAlbum(url);
     for (let i in album) {
         let song = await getTrackInfo(data.tracks[i]);
-        const file = song.name.split(' ').join('_').replace(/[^a-zA-Z_-\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/g, "");
+        const file = sterylizator(song.name);
         if (fs.existsSync(`./mp3/onDemand/${dir}/${file}.mp3`)) {
             logger('warn',`${file}.mp3 - Plik istnieje!`,'downloadAlbum');
             continue;

@@ -3,6 +3,7 @@ import {killPlayer, playOnDemand, playPlaylist} from "./MusicPlayer.js";
 import {getApiData} from "./ApiConnector.js";
 import {autoRemoveFiles, downloader, getTrackInfo} from "./MusicDownloader.js";
 import {logger} from "./Logger.js";
+import {sterylizator} from "./Other.js";
 
 function taskNumber() {
     let n = 0
@@ -87,7 +88,7 @@ async function massSchedule() {
                 await downloader(time[mappedDays[l]][i].OnDemand);
                 const trackInfo = await getTrackInfo(time[mappedDays[l]][i].OnDemand);
                 schedule.scheduleJob(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, function () {
-                    playOnDemand(trackInfo.name.split(' ').join('_').replace(/[^a-zA-Z_-\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/g, ""));
+                    playOnDemand(sterylizator(trackInfo.name));
                     logger('log', `On Demand: ${trackInfo.name+ ' by '+ trackInfo.artists.join(' ')}`,'massSchedule');
                 });
                 scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`);
