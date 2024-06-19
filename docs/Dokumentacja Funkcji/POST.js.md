@@ -1,10 +1,12 @@
 # POST()
 Funkcja POST() służy do uruchomienia całego Automatu skrypt wykonuje instrukcje w następującej kolejności:
 - Wyświetla log powitalny z informacją o twórcy skryptu i jak projekt się nazywa.
-![Jak wygląda log powitalny?](https://i.imgur.com/n98C6uS.png)
+
+    ![Jak wygląda log powitalny?](https://i.imgur.com/n98C6uS.png)
 - Sprawdza na jakim systemie uruchamiany jest skrypt. 
     - Jeżeli skrypt uruchomiony zostanie na komputerze z systemem Windows, to skrypt zakończy swoje działanie z kodem błędu 2 i pokażę komunikat o błędzie:
-    ![Komunikat o błędzie dla systemu okno](https://i.imgur.com/yP5dJze.png)
+
+        ![Komunikat o błędzie dla systemu okno](https://i.imgur.com/yP5dJze.png)
 - Sprawdza czy istnieje zmienna środowiskowa o nazwie `WWW`
     - Jeżeli zmienna istnieje to skrypt aktywuje lokalne api (funkcja `www()`) i wyświetli komunikat:
 

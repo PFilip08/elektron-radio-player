@@ -10,6 +10,7 @@ Funkcja kiedy za pierwszym razem dostanie odpowiedź z serwera gdzie json będzi
 
 Zmienna messageCounter w funkcji odpowiada za informowanie funkcji o stanie czy połączenie z serwerem zostało przywrócone czy nie. Jeżeli połączenie z serwerem zostanie przywrócone to funkcja wyśle do konsoli loga który wygląda tak:
 !["Jak wygląda log z funkcji getApiData w temacie loga na temat braku połączenia z internetem"](https://i.imgur.com/f26O7pA.png)
+
 i ustawia messageCounter na `false`.
 
 W przypadku gdy skrypt w trakcie swojego działania wykryje że serwer zwrócił wartość `isOn` równą `false` to funkcja zwróci jsona w takim formacie
@@ -36,6 +37,7 @@ W przypadku gdy funkcja nie będzie mogła połączyć się z serwerem to urucho
 
 W zależności jeżeli zmienna `previousData` nie będzie pusta to w konsoli pojawi się następujący log:
 !["Jak wygląda log odpowiedzialny za tryb recovery z danymi z poprzedniej sesji"](https://i.imgur.com/qvHpCNm.png)
+
 i funkcja wtedy zwróci poprzednie dane które były już zapisane w zmiennej `previousData`.
 
 Tryb Recovery może uruchomić się też przy starcie gdy skrypt nie będzie mógł połączyć się pierwszy raz z serwerem wtedy funkcja weźmie dane zapisane w skrypcie w zmiennej `res` i je zwróci informując o tym w konsoli takim logiem:
@@ -53,6 +55,7 @@ W stanie zasadniczym funkcja gdy dane poprzednie będą różniły się od danyc
 - `logChanges()`
 
 A po uruchomieniu funkcji `massSchedule` w konsoli pojawi się log: 
+
 !["Jak wyglądają logi po wykonaniu funkcji checkUpdate?"](https://i.imgur.com/zbaKQkv.png)
 
 Potem uruchamiana jest funkcja `findChanges` której opis jest tu:

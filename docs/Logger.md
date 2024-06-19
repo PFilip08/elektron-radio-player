@@ -13,6 +13,7 @@ Logi w konsoli prezentują się w następujący sposób:
 !["Z czego składa się log?"](https://i.imgur.com/mfQadDt.png)
 # Typ Logów
 Logger posiada w sobie 7 typów logów pokazanych poniżej:
+
 !["Jak wyglądają te typy logów?"](https://i.imgur.com/TfLhC0I.png)
 - LOG - oznacza się nim logi które zawierają informacje z funkcji np. że pobrano dane z api przyjmuje on też parametr 'name'
 - WARN - oznacza się nim logi które zawierają ostrzeżenie na temat działania playera np że nie mógł się połączyć z api i używa trybu recovery przyjmuje on też parametr 'name'
