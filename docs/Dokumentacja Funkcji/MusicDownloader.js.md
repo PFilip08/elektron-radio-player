@@ -20,7 +20,7 @@ Po pobraniu pliku w konsoli wyświetli się poniższy komunikat:
 
 !["Jak wygląda komunikat końcowy o pobraniu pliku z funkcji downloadSong"](https://i.imgur.com/3PYBkvD.png)
 # downloadPlaylist()
-Funkcja ta pobiera playlistę muzyczną. I działa na takiej samej zasadzie co funkcja [`downloadSong()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicDownloader.js.md#downloadsong).
+Funkcja ta pobiera playlistę muzyczną. Działa na takiej samej zasadzie co funkcja [`downloadSong()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicDownloader.js.md#downloadsong).
 # getTrackInfo()
 Funkcja ta rozpoznaje, jaki rodzaj linku został podany i wywołuje odpowiednią funkcję która sprawdza informacje o podanym tracku, playliście lub albumie.
 # autoRemoveFiles()
