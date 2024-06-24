@@ -4,7 +4,7 @@
 Ten endpoint zatrzymuje odtwarzacz muzyki.
 
 ### Request
-- **Metoda:**: GET
+- **Metoda:** GET
 - **Endpoint:** `/action/kill`
 ### Response
 - **Kod statusu:** 201
@@ -12,7 +12,7 @@ Ten endpoint zatrzymuje odtwarzacz muzyki.
 
 ### Przykład
 ```bash
-curl -X POST http://localhost:8080/action/kill
+curl -X GET http://localhost:8080/action/kill
 ```
 # Endpoint playMusic
 ### Opis
