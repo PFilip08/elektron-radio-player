@@ -4,7 +4,7 @@
 Ten endpoint zatrzymuje odtwarzacz muzyki.
 
 ### Request
-- **Metoda:**: POST
+- **Metoda:**: GET
 - **Endpoint:** `/action/kill`
 ### Response
 - **Kod statusu:** 201
