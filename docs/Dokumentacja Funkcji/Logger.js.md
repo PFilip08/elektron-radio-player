@@ -1,6 +1,5 @@
 # logger()
-Funkcja została opisana tutaj: 
-
+Funkcja została opisana tutaj: [TUTAJ](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Logger.md)
 # findChanges()
 findChanges jest funkcją, która porównuje dwa obiekty (obj1 i obj2) i zwraca listę zmian między nimi. Funkcja jest wywoływana rekursywnie, aby porównać zagnieżdżone struktury obiektów.
 
