@@ -1,0 +1,2 @@
+# sterylizator()
+Funkcja `sterylizator()` jest używana do przekształcania wejściowego ciągu znaków, zamieniając spacje na podkreślenia oraz usuwając wszystkie znaki niealfabetyczne z wyjątkiem podkreśleń, myślników i niektórych znaków z języka japońskiego oraz chińskiego.
