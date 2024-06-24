@@ -50,16 +50,16 @@ Funkcja checkUpdate nie przyjmuje żadnych argumentów.
 W przypadku gdy tryb recovery uruchomi się w trybie w którym pobiera dane ze skryptu to funkcja nic nie zaloguje i po prostu zwróci tego samego jsona co funkcja getApiData.
 
 W stanie zasadniczym funkcja gdy dane poprzednie będą różniły się od danych pobranych z api to funkcja uruchomi następujące funkcje:
-- [`massSchedule()`]()
-- [`logChanges()`]()
-- [`logChanges()`]()
+- [`massSchedule()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#massschedule)
+- [`findChanges()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Logger.js.md#findchanges)
+- [`logChanges()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Logger.js.md#logchanges)
 
-A po uruchomieniu funkcji [`massSchedule()`]() w konsoli pojawi się log: 
+A po uruchomieniu funkcji [`massSchedule()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#massschedule) w konsoli pojawi się log: 
 
 !["Jak wyglądają logi po wykonaniu funkcji checkUpdate?"](https://i.imgur.com/zbaKQkv.png)
 
-Potem uruchamiana jest funkcja [`findChanges()`]() której opis jest tu:
+Potem uruchamiana jest funkcja [`findChanges()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Logger.js.md#findchanges) której opis jest tu:
 
-Która zwraca dane do zmiennej `changes` i następnie dla tej zmiennej jest wykonywana funkcja `logChanges` której opis znajduję się tu:
+Która zwraca dane do zmiennej `changes` i następnie dla tej zmiennej jest wykonywana funkcja `logChanges()` której opis znajduję się tu: [TUTAJ](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Logger.js.md#logchanges)
 
 ~~W przypadku gdy odpowiedz będzie błędna to w konsoli pojawi się log z błędem:~~ Nie działa na dzień 19.06.2024

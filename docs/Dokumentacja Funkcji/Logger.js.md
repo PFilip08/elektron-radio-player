@@ -26,7 +26,7 @@ Funkcja findChanges przyjmuje trzy argumenty:
  - `oldValue` (Any): Wartość klucza w `obj1`.
  - `newValue` (Any): Wartość klucza w `obj2`.
 # logChanges()
-logChanges jest funkcją, która ogarnia wyświetlanie zmian które wykryła funkcja [`findChanges()`]() w czytelnej formie. Wykonuje się ona w pętli for i wykona się tyle razy ile [`findChanges()`]() wykrył zmian.
+logChanges jest funkcją, która ogarnia wyświetlanie zmian które wykryła funkcja [`findChanges()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Logger.js.md#findchanges) w czytelnej formie. Wykonuje się ona w pętli for i wykona się tyle razy ile [`findChanges()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Logger.js.md#findchanges) wykrył zmian.
 
 Log w domyślnej formie wyświetla się tak:
 !["Jak wygląda log domyślny z funkcji logChanges"](https://i.imgur.com/9y6FaPV.png)
