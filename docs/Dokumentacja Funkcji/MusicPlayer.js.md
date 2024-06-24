@@ -1,11 +1,11 @@
 # getPlaylistName()
 Funkcja zwraca nazwę aktualnej playlisty. Jeżeli nie ma aktualnej playlisty, zwraca podane `id` zamiast nazwy.
 # playMusic()
-Funkcja przyjmuje jeden argument, którym jest `filename` jak sama nazwa wskazuje jest to nazwa pliku który ma być odtworzony. Funkcja na początku sprawdza czy plik istnieje, jeżeli nie to zwraca błąd który wygląda tak:
+Funkcja przyjmuje jeden argument, którym jest `filename` jak sama nazwa wskazuje jest to nazwa pliku który, ma być odtworzony. Funkcja na początku sprawdza, czy plik istnieje, jeżeli nie, to zwraca błąd który wygląda tak:
 
 !["Jak wygląda błąd z funkcji playMusic w przypadku braku pliku"](https://i.imgur.com/ziy24gy.png)
 
-Jeżeli plik istnieje to funkcja wywołuje `cvlc` z odpowiednimi argumentami i odtwarza plik. Funkcja zwraca log o wykonaniu tego zadania który wygląda tak:
+Jeżeli plik istnieje, to funkcja wywołuje `cvlc` z odpowiednimi argumentami i odtwarza plik. Funkcja zwraca log o wykonaniu tego zadania który wygląda tak:
 
 !["Jak wygląda log z funkcji playMusic"](https://i.imgur.com/KQI9WqM.png)
 # playOnDemand()
