@@ -1,4 +1,6 @@
 # DOKUMENTACJA TECHNICZNA I API ELEKTRON RADIO PLAYERA - SPIS TREŚCI
+- [Opis działania](https://github.com/PFilip08/elektron-radio-player/tree/master/docs/)
+    - [`Jak działa Logger`](https://github.com/PFilip08/elektron-radio-player/tree/master/docs/Logger.md)
 - [Dokumentacja Funkcji](https://github.com/PFilip08/elektron-radio-player/tree/master/docs/Dokumentacja%20Funkcji)
     - [ApiConnector.js](https://github.com/PFilip08/elektron-radio-player/tree/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md)
     - [index.js](https://github.com/PFilip08/elektron-radio-player/tree/master/docs/Dokumentacja%20Funkcji/index.js.md)
