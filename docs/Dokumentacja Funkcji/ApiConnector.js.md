@@ -50,15 +50,15 @@ Funkcja checkUpdate nie przyjmuje żadnych argumentów.
 W przypadku gdy tryb recovery uruchomi się w trybie w którym pobiera dane ze skryptu to funkcja nic nie zaloguje i po prostu zwróci tego samego jsona co funkcja getApiData.
 
 W stanie zasadniczym funkcja gdy dane poprzednie będą różniły się od danych pobranych z api to funkcja uruchomi następujące funkcje:
-- `massSchedule()`
-- `logChanges()`
-- `logChanges()`
+- [`massSchedule()`]()
+- [`logChanges()`]()
+- [`logChanges()`]()
 
-A po uruchomieniu funkcji `massSchedule` w konsoli pojawi się log: 
+A po uruchomieniu funkcji [`massSchedule()`]() w konsoli pojawi się log: 
 
 !["Jak wyglądają logi po wykonaniu funkcji checkUpdate?"](https://i.imgur.com/zbaKQkv.png)
 
-Potem uruchamiana jest funkcja `findChanges` której opis jest tu:
+Potem uruchamiana jest funkcja [`findChanges()`]() której opis jest tu:
 
 Która zwraca dane do zmiennej `changes` i następnie dla tej zmiennej jest wykonywana funkcja `logChanges` której opis znajduję się tu:
 
