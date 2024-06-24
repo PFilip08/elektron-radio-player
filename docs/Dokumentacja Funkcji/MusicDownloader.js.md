@@ -6,6 +6,7 @@ Funkcje wyświetlić może 3 rodzaje komunikatów:
 - Jeżeli podany link jest playlistą to wyświetli się komunikat i przekieruje do funkcji [`downloadPlaylist()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicDownloader.js.md#downloadplaylist):
 !["Jak wygląda komunikat o playliście z funkcji downloader"](https://i.imgur.com/Hhnni2t.png)
 - Jeżeli podany link jest albumem to wyświetli się komunikat i przekieruje do funkcji [`downloadAlbum()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicDownloader.js.md#downloadalbum):
+
 !["Jak wygląda komunikat o albumie z funkcji downloader"](https://i.imgur.com/8MvZ6c4.png)
 # downloadSong()
 Funkcja ta pobiera pojedynczy utwór muzyczny.
