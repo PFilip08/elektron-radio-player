@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pl">
+    <head>
+        <meta charset="UTF-8">
+        <title>Admin Panel - localapi</title>
+        <link rel="stylesheet" href="../style.css">
+    </head>
+    <body>
+        <div class="center">
+            <h1>Witaj na panelu zarządzania elektron-radio-playerem!</h1>
+            <h2>aka <span class="skew">localapi</span></h2>
+            <img src="../images/construction.gif" alt="konstrukcja"/>
+        </div>
+        <div class="center main">
+            <table>
+                <tr>
+                    <th>Akcje</th>
+                    <th></th>
+                </tr>
+                <tr>
+                    <th>Ubicie playera</th>
+                    <td>
+                        <form method="get" action="/action/kill">
+                            <input type="submit" formtarget="res" value="OK"/>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Odtwarzanie pliku</th>
+                    <td>
+                        <form method="get" action="/action/playMusic">
+                            <input type="search" name="file" placeholder="song.mp3" required/>
+                            <input type="submit" formtarget="res" value="OK"/>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Odtwarzanie playlisty</th>
+                    <td>
+                        <form method="get" action="/action/playPlaylist">
+                            <input type="search" name="id" placeholder="1" required/>
+                            <input type="submit" formtarget="res" value="OK"/>
+                        </form>
+                    </td>
+                </tr>
+                <tr></tr>
+                <tr>
+                    <th>Pobieranie muzyki</th>
+                    <td>
+                        <form method="get" action="/download/override">
+                            <input type="search" name="uri" placeholder="https://open.spotify.com/track/4PTG3Z6ehGkBFwjybzWkR8" required/>
+                            <input type="submit" formtarget="res" value="OK"/>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Pobieranie muzyki - override</th>
+                    <td>
+                        <form method="get" action="/download/override">
+                            <input type="search" name="uri" placeholder="https://open.spotify.com/track/4PTG3Z6ehGkBFwjybzWkR8" required/>
+                            <input type="submit" formtarget="res" value="OK"/>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+            <iframe name="res" class="res"></iframe>
+            <br/>
+            <br/>
+            <br/>
+            <img src="../images/ie_exploder.gif" alt="norton"/>
+            <img src="../images/norton.gif" alt="norton"/>
+            <img src="../images/linux_powered.gif" alt="norton"/>
+        </div>
+    </body>
+</html>
