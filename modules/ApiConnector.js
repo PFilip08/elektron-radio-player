@@ -6,6 +6,7 @@ let url = 'https://radio-elektron.vercel.app/api/timeTables';
 let previousData = null;
 let messageCounter = false;
 let messageStartupBlocker = false;
+let updateInterval, oldInterval;
 
 const api = axios.create({
     httpsAgent: new Agent({
@@ -86,4 +87,35 @@ async function checkUpdate() {
     }
 }
 
-export { getApiData, checkUpdate };
+function startInterval(interval) {
+    updateInterval = setInterval(() => {
+        checkUpdate().catch(error => {
+            console.log(error);
+        });
+        // console.log('dupa', interval);
+    }, interval);
+}
+
+function scheduleUpdate() {
+    let interval;
+    const intervalOnAir = 3000;
+    const intervalOffAir = 10000;
+    const intervalWeekend = 30000;
+    const date = new Date();
+    const day = date.toLocaleDateString('pl',{weekday:'long'});
+    const time = date.getHours();
+    if (time>=7 && time<=15) interval=intervalOnAir; else interval=intervalOffAir;
+    if (oldInterval === updateInterval) {
+        if (oldInterval===undefined) startInterval(interval);
+    } else {
+        if (day === 'sobota' || day === 'niedziela') interval=intervalWeekend;
+        if (interval===intervalOnAir) logger('log', 'Praca radiowęzła, krótki update', 'scheduleUpdate');
+        else logger('log', 'Po pracy radiowęzła, zwykły update', 'scheduleUpdate');
+        logger('log', 'Usuwanie starego intervala i startowanie nowego intervalu', 'scheduleUpdate');
+        clearInterval(updateInterval);
+        startInterval(interval);
+        oldInterval = updateInterval;
+    }
+}
+
+export { getApiData, checkUpdate, scheduleUpdate };

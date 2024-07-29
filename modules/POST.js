@@ -1,6 +1,6 @@
 import {logger} from "./Logger.js";
 import {massSchedule} from "./TaskScheduler.js";
-import {checkUpdate} from "./ApiConnector.js";
+import {checkUpdate, scheduleUpdate} from "./ApiConnector.js";
 import {default as www} from "../api/app.js";
 
 async function POST() {
@@ -21,10 +21,8 @@ async function POST() {
     logger('task', 'Aktywowanie automatycznych aktualizacji z API', 'POST');
     await checkUpdate();
     setInterval(() => {
-        checkUpdate().catch(error => {
-            console.log(error);
-        });
-    }, 10000);
+        scheduleUpdate();
+    }, 1000);
     logger('ready', 'Git');
 }
 
