@@ -63,6 +63,23 @@ table {
     background: white;
 }
 
+.stats {
+    width: 304px;
+    min-height: 154px;
+    background-color: white;
+    margin: auto;
+    color: greenyellow;
+    text-align: left;
+    background-image: url('https://cdn.discordapp.com/attachments/1158052418634924183/1265939694496252028/To_przykad.png?ex=66a7f2f7&is=66a6a177&hm=143325bae0c608dcfe38264144cf995380ea915b46fb6e2acd8570b03d481d4d&');
+    background-position: center;
+    background-size: cover;
+}
+
+.stats p {
+    z-index: 3;
+    position: relative;
+}
+
 /*.button {*/
 /*    width: 88px;*/
 /*    height: 31px;*/
