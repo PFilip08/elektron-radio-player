@@ -5,7 +5,7 @@ import * as path from "path";
 import {sterylizator} from "./Other.js";
 
 async function downloader(url) {
-    const urlParts = url.split("/");
+    const urlParts = url.split('?')[0].split("/");
     if (urlParts[3] === 'track') {
         logger('log', 'Wykryto piosenkę', 'downloader');
         return downloadSong(url);
