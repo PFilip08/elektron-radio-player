@@ -6,9 +6,9 @@ import {logger} from "./Logger.js";
 import {sterylizator} from "./Other.js";
 
 function taskNumber() {
-    let n = 0
+    let n = 0;
     for (let i in schedule.scheduledJobs) {
-        n = n+1
+        n = n+1;
     }
     return logger('task', `Liczba zadań: ${n}`, 'taskNumber');
 }
