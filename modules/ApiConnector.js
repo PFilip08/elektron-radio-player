@@ -105,7 +105,7 @@ function scheduleUpdate() {
     const day = date.toLocaleDateString('pl',{weekday:'long'});
     const time = date.getHours();
     if (time>=7 && time<=15) interval=intervalOnAir; else interval=intervalOffAir;
-    if (oldInterval === updateInterval) {
+    if (oldInterval === interval) {
         if (oldInterval===undefined) startInterval(interval);
     } else {
         if (day === 'sobota' || day === 'niedziela') interval=intervalWeekend;
@@ -114,7 +114,7 @@ function scheduleUpdate() {
         logger('log', 'Usuwanie starego intervala i startowanie nowego intervalu', 'scheduleUpdate');
         clearInterval(updateInterval);
         startInterval(interval);
-        oldInterval = updateInterval;
+        oldInterval = interval;
     }
 }
 
