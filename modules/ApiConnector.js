@@ -101,15 +101,19 @@ function scheduleUpdate() {
     const intervalOnAir = 3000;
     const intervalOffAir = 10000;
     const intervalWeekend = 30000;
+    const intervalVacation = 60000;
     const date = new Date();
     const day = date.toLocaleDateString('pl',{weekday:'long'});
+    const month = date.toLocaleDateString('pl',{month:'long'});
     const time = date.getHours();
     if (time>=7 && time<=15) interval=intervalOnAir; else interval=intervalOffAir;
+    if (month === 'lipiec' || month === 'sierpień') interval=intervalVacation;
     if (oldInterval === interval) {
         if (oldInterval===undefined) startInterval(interval);
     } else {
         if (day === 'sobota' || day === 'niedziela') interval=intervalWeekend;
         if (interval===intervalOnAir) logger('log', 'Praca radiowęzła, krótki update', 'scheduleUpdate');
+        else if (interval===intervalVacation) logger('log', 'Wakacje, długi update', 'scheduleUpdate');
         else logger('log', 'Po pracy radiowęzła, zwykły update', 'scheduleUpdate');
         logger('log', 'Usuwanie starego intervala i startowanie nowego intervalu', 'scheduleUpdate');
         clearInterval(updateInterval);
