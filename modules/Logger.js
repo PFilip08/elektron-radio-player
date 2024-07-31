@@ -11,7 +11,7 @@ function logger(type, content, name) {
         second: 'numeric'
     });
     let functionName = bgBlackBright(blueBright(name));
-    if (type==='verbose' && process.env.VERBOSE === 'false') return;
+    if (type==='verbose' && !Boolean(process.env.VERBOSE)) return;
     switch (type) {
         case "log": return console.log(`${timestamp} ${bgWhiteBright(bold(gray(type.toUpperCase())))+` ${functionName}`} ${content} `);
         case "warn": return console.log(`${timestamp} ${bgYellowBright(black(type.toUpperCase()))+` ${functionName}`} ${content} `);

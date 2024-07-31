@@ -1,10 +1,8 @@
 async function getData() {
     const uri = "/stats/api";
     const response = await fetch(uri);
-    const responseJson = await response.json();
-    // console.log(responseJson);
 
-    return responseJson;
+    return await response.json();
 }
 
 async function parseData() {

@@ -71,7 +71,7 @@ async function checkUpdate() {
         }
 
         if (previousData && JSON.stringify(currentData) !== JSON.stringify(previousData)) {
-            massSchedule();
+            await massSchedule();
             logger('log', '--------Check Update--------','checkUpdate');
             logger('log', 'Pobrano dane z API','checkUpdate');
             logger('log', '--------Check Update--------','checkUpdate');
@@ -92,7 +92,6 @@ function startInterval(interval) {
         checkUpdate().catch(error => {
             console.log(error);
         });
-        // console.log('dupa', interval);
     }, interval);
 }
 
@@ -103,15 +102,15 @@ function scheduleUpdate() {
     const intervalWeekend = 30000;
     const intervalVacation = 60000;
     const date = new Date();
-    const day = date.toLocaleDateString('pl',{weekday:'long'});
-    const month = date.toLocaleDateString('pl',{month:'long'});
+    const day = date.getDay();
+    const month = date.getMonth() + 1;
     const time = date.getHours();
     if (time>=7 && time<=15) interval=intervalOnAir; else interval=intervalOffAir;
-    if (month === 'lipiec' || month === 'sierpień') interval=intervalVacation;
+    if (month === 7 || month === 8) interval=intervalVacation;
     if (oldInterval === interval) {
         if (oldInterval===undefined) startInterval(interval);
     } else {
-        if (day === 'sobota' || day === 'niedziela') interval=intervalWeekend;
+        if (day === 6 || day === 7) interval=intervalWeekend;
         if (interval===intervalOnAir) logger('log', 'Praca radiowęzła, krótki update', 'scheduleUpdate');
         else if (interval===intervalVacation) logger('log', 'Wakacje, długi update', 'scheduleUpdate');
         else logger('log', 'Po pracy radiowęzła, zwykły update', 'scheduleUpdate');
