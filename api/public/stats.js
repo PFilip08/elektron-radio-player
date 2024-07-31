@@ -42,7 +42,7 @@ async function replaceText() {
     const uptime = document.getElementById("uptime");
 
     cpu.innerText = data[0].length + ' Cores';
-    mem.innerText = data[1].toFixed(1)+' GiB / '+data[2].toFixed(2)+' GiB';
+    mem.innerText = data[2].toFixed(1)+' GiB / '+data[1].toFixed(2)+' GiB';
     uptime.innerText = data[3];
 }
 
