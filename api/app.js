@@ -31,7 +31,8 @@ app.get('/stats/api', function(req, res){
   const totalmem = os.totalmem();
   const freemem = os.freemem();
   const uptime = os.uptime();
-  const data = [cpu, totalmem, freemem, uptime];
+  const loadavg = os.loadavg();
+  const data = [cpu, totalmem, freemem, uptime, loadavg];
   res.status(200).send(data);
 });
 
