@@ -11,15 +11,17 @@ function logger(type, content, name) {
         second: 'numeric'
     });
     let functionName = bgBlackBright(blueBright(name));
+    if (type==='verbose' && process.env.VERBOSE === 'false') return;
     switch (type) {
         case "log": return console.log(`${timestamp} ${bgWhiteBright(bold(gray(type.toUpperCase())))+` ${functionName}`} ${content} `);
         case "warn": return console.log(`${timestamp} ${bgYellowBright(black(type.toUpperCase()))+` ${functionName}`} ${content} `);
         case "error": return console.log(`${timestamp} ${bgRedBright(whiteBright(type.toUpperCase()))+` ${functionName}`} ${content} `);
         case "debug": return console.log(`${timestamp} ${magenta(type.toUpperCase())+` ${functionName}`} ${content} `);
+        case "verbose": return console.log(`${timestamp} ${magenta(type.toUpperCase())+` ${functionName}`} ${content} `);
         case "task": return console.log(`${timestamp} ${bgCyanBright(whiteBright(type.toUpperCase()))+` ${functionName}`} ${content}`);
         case "POST": return console.log(`${timestamp} ${cyan(type.toUpperCase())} ${content}`);
         case "ready": return console.log(`${timestamp} ${bgGreenBright(whiteBright(type.toUpperCase()))} ${content}`);
-        default: throw new TypeError("Logger type must be either warn, debug, log, ready, POST, task or error.");
+        default: throw new TypeError("Logger type must be either warn, debug, verbose, log, ready, POST, task or error.");
     }
 }
 
