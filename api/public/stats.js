@@ -1,5 +1,3 @@
-console.log('dupa');
-
 async function getData() {
     const uri = "/stats/api";
     const response = await fetch(uri);
