@@ -2,16 +2,42 @@ import {logger} from "./Logger.js";
 import {massSchedule} from "./TaskScheduler.js";
 import {checkUpdate, scheduleUpdate} from "./ApiConnector.js";
 import {default as www} from "../api/app.js";
+import colors from 'colors';
+import fs from "fs";
 
 async function POST() {
     logger('POST', '------------------------------')
     logger('POST', '    elektron-radio-player')
     logger('POST', '        By PFilip :>')
     logger('POST', '------------------------------')
-    if (process.platform === "win32") {
-        logger('error', 'okna niedozwolone');
-        return process.exit(2);
+    if (process.env.VERBOSE === "true") {
+        logger('verbose', 'WŁĄCZONO TRYB DEBUGOWANIA!!!', 'POST');
+        fs.mkdirSync('./debug', { recursive: true }, (e) => {
+            logger('verbose', colors.red('Nie można utworzyć folderu debug'), 'POST');
+            console.log(e);
+            logger('verbose', colors.red('Wywalanie procesu z kodem 2'), 'POST');
+            process.exit(2);
+        });
     }
+    logger('verbose', 'Następujące ustawienia są załadowane:', 'POST');
+    logger('verbose', `  - VERBOSE: ${process.env.VERBOSE}`, 'POST');
+    logger('verbose', `  - WWW: ${process.env.WWW}`, 'POST');
+    logger('verbose', `Następujące klucze zostały załadowane:`, 'POST');
+    if (process.env.SPOTIFY_CLIENT_ID === undefined) {
+        logger('verbose', colors.red('Nie znaleziono zmiennej środowiskowej o nazwie SPOTIFY_CLIENT_ID'), 'POST');
+    }
+    logger('verbose', `  - SPOTIFY_CLIENT_ID: ${process.env.SPOTIFY_CLIENT_ID}`, 'POST');
+    if (process.env.SPOTIFY_CLIENT_SECRET === undefined) {
+        logger('verbose', colors.red('Nie znaleziono zmiennej środowiskowej o nazwie SPOTIFY_CLIENT_SECRET'), 'POST');
+    }
+    logger('verbose', `  - SPOTIFY_CLIENT_SECRET: ${process.env.SPOTIFY_CLIENT_SECRET}`, 'POST');
+    logger('verbose', `Wykryto system: ${process.platform}`, 'POST');
+    /*if (process.platform === "win32") {
+        logger('verbose', 'System Windows nie jest obsługiwany', 'POST');
+        logger('error', 'okna niedozwolone');
+        logger('verbose', 'Wywalanie procesu z kodem 2', 'POST');
+        return process.exit(2);
+    }*/
     if (process.env.WWW) {
         logger('task', 'Aktywowanie lokalnego API', 'POST');
         www();

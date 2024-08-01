@@ -6,6 +6,8 @@ import {sterylizator} from "./Other.js";
 
 async function downloader(url) {
     const urlParts = url.split('?')[0].split("/");
+    logger('verbose', `Wynik splita: ${urlParts}`, 'downloader');
+    logger('verbose', `Wykryto: ${urlParts[3]}`, 'downloader');
     if (urlParts[3] === 'track') {
         logger('log', 'Wykryto piosenkę', 'downloader');
         return downloadSong(url);

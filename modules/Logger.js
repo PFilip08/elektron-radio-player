@@ -26,25 +26,34 @@ function logger(type, content, name) {
 }
 
 function findChanges(obj1, obj2, path = '') {
+    logger('verbose', `Porównywanie obiektów ${path}`, 'findChanges');
     const changes = [];
     const keys = new Set([...Object.keys(obj1), ...Object.keys(obj2)]);
-  
+    logger('verbose', `Znaleziono klucze: ${Array.from(keys).join(', ')}`, 'findChanges');
     keys.forEach(key => {
       const fullPath = path ? `${path}.${key}` : key;
+      logger('verbose', `Sprawdzanie klucza: ${fullPath}`, 'findChanges');
       if (JSON.stringify(obj1[key]) !== JSON.stringify(obj2[key])) {
+        logger('verbose', `Znaleziono różnicę w kluczu: ${fullPath}`, 'findChanges');
         if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object' && obj1[key] && obj2[key]) {
+          logger('verbose', `W ${fullPath} wykryto jakąś zmianę. Dokonywanie dokładnego sprawdzenia...`, 'findChanges');
           changes.push(...findChanges(obj1[key], obj2[key], fullPath));
         } else {
+          logger('verbose', `W ${fullPath} wykryto zmianę. Zapisywanie...`, 'findChanges');
           changes.push({ key: fullPath, oldValue: obj1[key], newValue: obj2[key] });
         }
       }
     });
-  
+    //logger('verbose', `Zakończono porównywanie obiektów ${JSON.stringify(changes)}`, 'findChanges');
+    //logger('verbose', `Obiekty które są różne zostały zrzucone do debug/`, 'findChanges');
     return changes;
   }
   
 function logChanges(changes) {
+    let counter = 0;
+    logger('verbose', `Rozpoczęto logowanie zmian`, 'logChanges');
     changes.forEach(change => {
+      counter++;
       const { key, oldValue, newValue } = change;
       let message = `Zmiana w ${key}: `;
       
@@ -112,6 +121,8 @@ function logChanges(changes) {
         }
       }
     });
+    logger('verbose', `Liczba zmian wynosi: ${counter}`, 'logChanges');
+    logger('verbose', `Zakończono logowanie zmian`, 'logChanges');
   }
   
 
