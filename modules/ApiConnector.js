@@ -3,6 +3,7 @@ import {Agent} from "node:https";
 import {massSchedule} from "./TaskScheduler.js";
 import {logger, findChanges, logChanges } from "./Logger.js";
 import colors from 'colors';
+import fs from "fs";
 let url = 'http://127.0.0.1:8000/api/timeTables';
 let previousData = null;
 let messageCounter = false;
@@ -49,29 +50,67 @@ async function getApiData() {
                 logger('verbose','Zwrócono {isOn: false}','getApiData');
                 return {isOn: false};
             }
-            // TODO: Dodać zapisywanie responsa do np. foldera debug/
-            //logger('verbose',`Zwrócono dane: ${JSON.stringify(res.data.timeTable[0])}`,'getApiData');
+            if (global.debugmode === true) {
+                fs.mkdirSync("./debug/ApiConnector/getApiData/", { recursive: true }, (e) => {
+                    logger('verbose', colors.red('Nie można utworzyć folderu /debug/ApiConnector/getApiData/'), 'getApiData');
+                    console.log(e);
+                });
+                fs.writeFileSync("debug/ApiConnector/getApiData/response.json", JSON.stringify(res.data.timeTable[0], null, 4), 'utf8', (e) => {
+                    logger('verbose', colors.red('Nie można zapisać pliku response.json'), 'getApiData');
+                    console.log(e);
+                });
+                logger('verbose',`Response z serwera został zrzucony!`,'getApiData');
+            }
             return res.data.timeTable[0];
         })
         .catch((error)=>{
             // console.log(err);
             logger('verbose','Wchodzenie w tryb recovery...','getApiData');
             logger('verbose',`Złapano błąd: ${error}`,'getApiData');
-            // TODO: Zrzucać błędy z stąd do debug/<nazwa funkcji>
-            //logger('verbose','Pełen stackrace zrzucono do folderu debug','getApiData');
+            if (global.debugmode === true) {
+                fs.mkdirSync("./debug/ApiConnector/getApiData/", { recursive: true }, (e) => {
+                    logger('verbose', colors.red('Nie można utworzyć folderu /debug/ApiConnector/getApiData/'), 'getApiData');
+                    console.log(e);
+                });
+                fs.writeFileSync("debug/ApiConnector/getApiData/recovery_reason.json", JSON.stringify(error, null, 4), 'utf8', (e) => {
+                    logger('verbose', colors.red('Nie można zapisać pliku recovery_reason.json'), 'getApiData');
+                    console.log(e);
+                });
+                logger('verbose',`Pełen stackrace zrzucono do pliku recovery_reason.json!`,'getApiData');
+            }
             if (!messageCounter) logger('warn','Tryb RECOVERY AKTYWNY!!!','getApiData');
             // let res =
             let res = {"static":true,"isOn":true,"currentPlaylistId":1,"timeRules":{"rules":{"1":[{"end":"07:10","start":"07:07"},{"end":"08:00","start":"07:55"},{"end":"08:50","start":"08:45"},{"end":"09:45","start":"09:35"},{"end":"10:35","start":"10:30"},{"end":"11:40","start":"11:20"},{"end":"12:30","start":"12:25"},{"end":"13:20","start":"13:15"},{"end":"14:10","start":"14:05"},{"end":"15:00","start":"14:55"},{"end":"15:50","start":"15:45"}]},"applyRule":{"Fri":1,"Mon":1,"Sat":0,"Sun":0,"Thu":1,"Tue":1,"Wed":1}}};
             if (previousData !== null) {
                 res = previousData;
                 logger('verbose','Używanie danych pobranych poprzednio z API ze zmiennej previousData!!!','getApiData');
-                //logger('verbose',`Dane z previousData zostały zrzucone`,'getApiData');
+                if (global.debugmode === true) {
+                    fs.mkdirSync("./debug/ApiConnector/getApiData/", { recursive: true }, (e) => {
+                        logger('verbose', colors.red('Nie można utworzyć folderu /debug/ApiConnector/getApiData/'), 'getApiData');
+                        console.log(e);
+                    });
+                    fs.writeFileSync("debug/ApiConnector/getApiData/previousData.json", JSON.stringify(error, null, 4), 'utf8', (e) => {
+                        logger('verbose', colors.red('Nie można zapisać pliku previousData.json'), 'getApiData');
+                        console.log(e);
+                    });
+                    logger('verbose',`Dane z previousData zostały zrzucone`,'getApiData');
+                }
                 if (!messageCounter) logger('warn','Używanie danych pobranych poprzednio z API!','getApiData');
             }
             if (res.static) {
                 messageStartupBlocker = true;
                 logger('verbose','Używanie danych które są zapisane lokalnie w skrypcie!!!','getApiData');
-                //logger('verbose','Dane zapisane lokalnie zostały zrzucone','getApiData');
+                if (global.debugmode === true) {
+                    fs.mkdirSync("./debug/ApiConnector/getApiData/", { recursive: true }, (e) => {
+                        logger('verbose', colors.red('Nie można utworzyć folderu /debug/ApiConnector/getApiData/'), 'getApiData');
+                        console.log(e);
+                    });
+                    fs.writeFileSync("debug/ApiConnector/getApiData/static_data.json", JSON.stringify(res, null, 4), 'utf8', (e) => {
+                        logger('verbose', colors.red('Nie można zapisać pliku static_data.json'), 'getApiData');
+                        console.log(e);
+                    });
+                    logger('verbose','Dane zapisane lokalnie zostały zrzucone','getApiData');
+                }
                 if (!messageCounter) logger('warn','Używanie danych statycznych!.','getApiData');
             }
             if (!messageCounter) messageCounter = true;
@@ -108,7 +147,18 @@ async function checkUpdate() {
     } catch (error) {
         logger('error', '--------Check Update--------','checkUpdate');
         logger('error', `Błąd podczas odpytywania API: ${error}`,'checkUpdate');
-        //logger('verbose', 'Stacktrace zrzucono do folderu debug','checkUpdate');
+        if (global.debugmode === true) {
+            let taboret = error
+            fs.mkdirSync("./debug/ApiConnector/checkUpdate/", { recursive: true }, (e) => {
+                logger('verbose', colors.red('Nie można utworzyć folderu /debug/ApiConnector/checkUpdate/'), 'checkUpdate');
+                console.log(e);
+            });
+            fs.writeFileSync("debug/ApiConnector/checkUpdate/catched_error.txt", error.stack, 'utf8', (e) => {
+                logger('verbose', colors.red('Nie można zapisać pliku catched_error.txt'), 'checkUpdate');
+                console.log(e);
+            });
+            logger('verbose',`Stacktrace zrzucono do pliku catched_error.txt`,'checkUpdate');
+        }
         logger('error', '--------Check Update--------','checkUpdate');
     }
 }
@@ -116,6 +166,19 @@ async function checkUpdate() {
 function startInterval(interval) {
     updateInterval = setInterval(() => {
         checkUpdate().catch(error => {
+            logger('verbose','Wystąpił błąd podczas wykonywania funkcji checkUpdate','startInterval');
+            logger('verbose',`Błąd: ${error}`,'startInterval');
+            if (global.debugmode === true) {
+                fs.mkdirSync("./debug/ApiConnector/startInterval/", { recursive: true }, (e) => {
+                    logger('verbose', colors.red('Nie można utworzyć folderu /debug/ApiConnector/checkUpdate/'), 'checkUpdate');
+                    console.log(e);
+                });
+                fs.writeFileSync("debug/ApiConnector/startInterval/catched_error.txt", error.stack, 'utf8', (e) => {
+                    logger('verbose', colors.red('Nie można zapisać pliku catched_error.txt'), 'checkUpdate');
+                    console.log(e);
+                });
+            }
+            logger('verbose','Zrzucono stackrace do pliku catched_error.txt','startInterval');
             console.log(error);
         });
     }, interval);
