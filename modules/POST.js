@@ -12,12 +12,18 @@ async function POST() {
     logger('POST', '------------------------------')
     if (process.env.VERBOSE === "true") {
         logger('verbose', 'WŁĄCZONO TRYB DEBUGOWANIA!!!', 'POST');
+        global.debugmode = true;
         fs.mkdirSync('./debug', { recursive: true }, (e) => {
             logger('verbose', colors.red('Nie można utworzyć folderu debug'), 'POST');
             console.log(e);
             logger('verbose', colors.red('Wywalanie procesu z kodem 2'), 'POST');
             process.exit(2);
         });
+    } else {
+        if (fs.existsSync('./debug')) {
+            logger('log', 'Usunięto folder debug', 'POST');
+            fs.rmSync('./debug', { recursive: true }, (e) => {});
+        }
     }
     logger('verbose', 'Następujące ustawienia są załadowane:', 'POST');
     logger('verbose', `  - VERBOSE: ${process.env.VERBOSE}`, 'POST');
@@ -26,11 +32,9 @@ async function POST() {
     if (process.env.SPOTIFY_CLIENT_ID === undefined) {
         logger('verbose', colors.red('Nie znaleziono zmiennej środowiskowej o nazwie SPOTIFY_CLIENT_ID'), 'POST');
     }
-    logger('verbose', `  - SPOTIFY_CLIENT_ID: ${process.env.SPOTIFY_CLIENT_ID}`, 'POST');
     if (process.env.SPOTIFY_CLIENT_SECRET === undefined) {
         logger('verbose', colors.red('Nie znaleziono zmiennej środowiskowej o nazwie SPOTIFY_CLIENT_SECRET'), 'POST');
     }
-    logger('verbose', `  - SPOTIFY_CLIENT_SECRET: ${process.env.SPOTIFY_CLIENT_SECRET}`, 'POST');
     logger('verbose', `Wykryto system: ${process.platform}`, 'POST');
     /*if (process.platform === "win32") {
         logger('verbose', 'System Windows nie jest obsługiwany', 'POST');
