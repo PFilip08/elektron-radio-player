@@ -1,8 +1,6 @@
 import {logger} from "./Logger.js";
 import colors from 'colors';
 import fs from "fs";
-import { isObject } from "util";
-import { isAnyArrayBuffer, isArgumentsObject, isGeneratorObject, isKeyObject, isStringObject, isSymbolObject } from "util/types";
 
 async function DebugStarter() {
     if (process.env.VERBOSE === "true") {
@@ -41,8 +39,7 @@ async function DebugSaveToFile(moduleName, functionName, fileName, data) {
     if (data.stack) {
         dataType = 'STACK';
         logger('verbose', colors.red(`Zapisywane dane to stack error z funckji ${functionName}`), 'DebugSaveToFile');
-    }
-    if (dataType != 'STACK') {
+    } else {
         try {
             if (JSON.parse(JSON.stringify(data))) {
                 dataType = 'JSON';
