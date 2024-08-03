@@ -61,7 +61,7 @@ async function massSchedule() {
     const data = await getApiData();
     logger('verbose', 'Sprawdzanie czy isOn jest ustawione na false', 'massSchedule');
     if (!data.isOn) {
-        logger('verbose', 'Zwrócono {isOn: false}', 'massSchedule');
+        logger('verbose', `Zwrócono ${JSON.stringify(data)}}`, 'massSchedule');
         taskNumber();
         return logger('error','Brakuje danych!!!', 'massSchedule')
     }
