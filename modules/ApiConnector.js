@@ -5,7 +5,7 @@ import {logger, findChanges, logChanges } from "./Logger.js";
 import colors from 'colors';
 import fs from "fs";
 import { DebugSaveToFile } from "./DebugMode.js";
-let url = 'http://127.0.0.1:8000/api/timeTables';
+let url = 'https://radio-elektron.vercel.app/api/timeTables';
 let previousData = null;
 let messageCounter = false;
 let messageStartupBlocker = false;
