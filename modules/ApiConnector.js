@@ -4,6 +4,7 @@ import {massSchedule} from "./TaskScheduler.js";
 import {logger, findChanges, logChanges } from "./Logger.js";
 import colors from 'colors';
 import fs from "fs";
+import { DebugSaveToFile } from "./DebugMode.js";
 let url = 'http://127.0.0.1:8000/api/timeTables';
 let previousData = null;
 let messageCounter = false;
@@ -51,14 +52,7 @@ async function getApiData() {
                 return {isOn: false};
             }
             if (global.debugmode === true) {
-                fs.mkdirSync("./debug/ApiConnector/getApiData/", { recursive: true }, (e) => {
-                    logger('verbose', colors.red('Nie można utworzyć folderu /debug/ApiConnector/getApiData/'), 'getApiData');
-                    console.log(e);
-                });
-                fs.writeFileSync("debug/ApiConnector/getApiData/response.json", JSON.stringify(res.data.timeTable[0], null, 4), 'utf8', (e) => {
-                    logger('verbose', colors.red('Nie można zapisać pliku response.json'), 'getApiData');
-                    console.log(e);
-                });
+                DebugSaveToFile('ApiConnector','getApiData','response',res.data.timeTable[0]);
                 logger('verbose',`Response z serwera został zrzucony!`,'getApiData');
             }
             return res.data.timeTable[0];
@@ -68,14 +62,7 @@ async function getApiData() {
             logger('verbose','Wchodzenie w tryb recovery...','getApiData');
             logger('verbose',`Złapano błąd: ${error}`,'getApiData');
             if (global.debugmode === true) {
-                fs.mkdirSync("./debug/ApiConnector/getApiData/", { recursive: true }, (e) => {
-                    logger('verbose', colors.red('Nie można utworzyć folderu /debug/ApiConnector/getApiData/'), 'getApiData');
-                    console.log(e);
-                });
-                fs.writeFileSync("debug/ApiConnector/getApiData/recovery_reason.json", JSON.stringify(error, null, 4), 'utf8', (e) => {
-                    logger('verbose', colors.red('Nie można zapisać pliku recovery_reason.json'), 'getApiData');
-                    console.log(e);
-                });
+                DebugSaveToFile('ApiConnector','getApiData','recovery_reason',error);
                 logger('verbose',`Pełen stackrace zrzucono do pliku recovery_reason.json!`,'getApiData');
             }
             if (!messageCounter) logger('warn','Tryb RECOVERY AKTYWNY!!!','getApiData');
@@ -85,14 +72,7 @@ async function getApiData() {
                 res = previousData;
                 logger('verbose','Używanie danych pobranych poprzednio z API ze zmiennej previousData!!!','getApiData');
                 if (global.debugmode === true) {
-                    fs.mkdirSync("./debug/ApiConnector/getApiData/", { recursive: true }, (e) => {
-                        logger('verbose', colors.red('Nie można utworzyć folderu /debug/ApiConnector/getApiData/'), 'getApiData');
-                        console.log(e);
-                    });
-                    fs.writeFileSync("debug/ApiConnector/getApiData/previousData.json", JSON.stringify(error, null, 4), 'utf8', (e) => {
-                        logger('verbose', colors.red('Nie można zapisać pliku previousData.json'), 'getApiData');
-                        console.log(e);
-                    });
+                    DebugSaveToFile('ApiConnector','getApiData','previousData',error);
                     logger('verbose',`Dane z previousData zostały zrzucone`,'getApiData');
                 }
                 if (!messageCounter) logger('warn','Używanie danych pobranych poprzednio z API!','getApiData');
@@ -101,14 +81,7 @@ async function getApiData() {
                 messageStartupBlocker = true;
                 logger('verbose','Używanie danych które są zapisane lokalnie w skrypcie!!!','getApiData');
                 if (global.debugmode === true) {
-                    fs.mkdirSync("./debug/ApiConnector/getApiData/", { recursive: true }, (e) => {
-                        logger('verbose', colors.red('Nie można utworzyć folderu /debug/ApiConnector/getApiData/'), 'getApiData');
-                        console.log(e);
-                    });
-                    fs.writeFileSync("debug/ApiConnector/getApiData/static_data.json", JSON.stringify(res, null, 4), 'utf8', (e) => {
-                        logger('verbose', colors.red('Nie można zapisać pliku static_data.json'), 'getApiData');
-                        console.log(e);
-                    });
+                    DebugSaveToFile('ApiConnector','getApiData','static_data',res);
                     logger('verbose','Dane zapisane lokalnie zostały zrzucone','getApiData');
                 }
                 if (!messageCounter) logger('warn','Używanie danych statycznych!.','getApiData');
@@ -148,15 +121,7 @@ async function checkUpdate() {
         logger('error', '--------Check Update--------','checkUpdate');
         logger('error', `Błąd podczas odpytywania API: ${error}`,'checkUpdate');
         if (global.debugmode === true) {
-            let taboret = error
-            fs.mkdirSync("./debug/ApiConnector/checkUpdate/", { recursive: true }, (e) => {
-                logger('verbose', colors.red('Nie można utworzyć folderu /debug/ApiConnector/checkUpdate/'), 'checkUpdate');
-                console.log(e);
-            });
-            fs.writeFileSync("debug/ApiConnector/checkUpdate/catched_error.txt", error.stack, 'utf8', (e) => {
-                logger('verbose', colors.red('Nie można zapisać pliku catched_error.txt'), 'checkUpdate');
-                console.log(e);
-            });
+            DebugSaveToFile('ApiConnector','checkUpdate','catched_error',error);
             logger('verbose',`Stacktrace zrzucono do pliku catched_error.txt`,'checkUpdate');
         }
         logger('error', '--------Check Update--------','checkUpdate');
@@ -169,14 +134,7 @@ function startInterval(interval) {
             logger('verbose','Wystąpił błąd podczas wykonywania funkcji checkUpdate','startInterval');
             logger('verbose',`Błąd: ${error}`,'startInterval');
             if (global.debugmode === true) {
-                fs.mkdirSync("./debug/ApiConnector/startInterval/", { recursive: true }, (e) => {
-                    logger('verbose', colors.red('Nie można utworzyć folderu /debug/ApiConnector/checkUpdate/'), 'checkUpdate');
-                    console.log(e);
-                });
-                fs.writeFileSync("debug/ApiConnector/startInterval/catched_error.txt", error.stack, 'utf8', (e) => {
-                    logger('verbose', colors.red('Nie można zapisać pliku catched_error.txt'), 'checkUpdate');
-                    console.log(e);
-                });
+                DebugSaveToFile('ApiConnector','startInterval','catched_error',error);
             }
             logger('verbose','Zrzucono stackrace do pliku catched_error.txt','startInterval');
             console.log(error);

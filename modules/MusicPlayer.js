@@ -2,6 +2,7 @@ import { exec } from 'child_process';
 import * as path from "path";
 import fs from "fs";
 import {logger} from "./Logger.js";
+import { DebugSaveToFile } from './DebugMode.js';
 
 function getPlaylistName(id) {
     logger('verbose', `Pobieranie nazwy playlisty o ID: ${id}`, 'getPlaylistName');
@@ -42,14 +43,7 @@ function playOnDemand(filename) {
     } catch (e) {
         logger('verbose', `Plik nie jest folderem`, 'playOnDemand');
         if (global.debugmode === true) {
-            fs.mkdirSync("./debug/MusicPlayer/playOnDemand/", { recursive: true }, (e) => {
-                logger('verbose', colors.red('Nie można utworzyć folderu /debug/MusicPlayer/playOnDemand/'), 'playOnDemand');
-                console.log(e);
-            });
-            fs.writeFileSync("debug/MusicPlayer/playOnDemand/catched_error.txt", error.stack, 'utf8', (e) => {
-                logger('verbose', colors.red('Nie można zapisać pliku catched_error.txt'), 'playOnDemand');
-                console.log(e);
-            });
+            DebugSaveToFile('MusicPlayer', 'playOnDemand', 'catched_error', e);
             logger('verbose',`Stacktrace został zrzucony do /debug`,'playOnDemand');
         }
     }

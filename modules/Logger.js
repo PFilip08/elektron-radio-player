@@ -1,6 +1,7 @@
 import {bold, gray, magenta, cyan, bgWhiteBright, black, bgYellowBright, bgRedBright, whiteBright, bgCyanBright, bgGreenBright, bgBlackBright, blueBright} from 'colorette';
 import colors from 'colors';
 import fs from "fs";
+import { DebugSaveToFile } from './DebugMode.js';
 
 function logger(type, content, name) {
     let timestamp= new Date(Date.now()).toLocaleString('pl', {
@@ -123,14 +124,7 @@ function logChanges(changes) {
       }
     });
     if (global.debugmode === true) {
-      fs.mkdirSync("./debug/Logger/findChanges/", { recursive: true }, (e) => {
-        logger('verbose', colors.red('Nie można utworzyć folderu /debug/POST/findChanges/'), 'findChanges');
-        console.log(e);
-      });
-      fs.appendFileSync("./debug/Logger/findChanges/changes.json", JSON.stringify(changes, null, 4) + '\n', 'utf8', (e) => {
-        logger('verbose', colors.red('Nie można zapisać pliku changes.json'), 'findChanges');
-        console.log(e);
-      });
+      DebugSaveToFile('Logger', 'logChanges', 'changes', changes);
     }
     logger('verbose', `Liczba zmian wynosi: ${counter}`, 'logChanges');
     logger('verbose', `Zakończono logowanie zmian`, 'logChanges');
