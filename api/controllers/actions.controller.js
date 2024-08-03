@@ -1,3 +1,4 @@
+import { DebugSaveToFile } from "../../modules/DebugMode.js";
 import {logger} from "../../modules/Logger.js";
 import {killPlayer, playMusic, playPlaylist} from "../../modules/MusicPlayer.js";
 
@@ -8,6 +9,7 @@ export async function kill(req, res) {
         await killPlayer();
         return res.status(201).send('gut');
     } catch (e) {
+        DebugSaveToFile('LocalAPI', 'kill', 'catched_error', e);
         throw e;
     }
 }
@@ -21,6 +23,7 @@ export async function pMusic(req, res) {
         await playMusic(file);
         return res.status(201).send('gut');
     } catch (e) {
+        DebugSaveToFile('LocalAPI', 'play', 'catched_error', e);
         throw e;
     }
 }
@@ -34,6 +37,7 @@ export async function pPlaylist(req, res) {
         await playPlaylist(id);
         return res.status(201).send('gut');
     } catch (e) {
+        DebugSaveToFile('LocalAPI', 'playPlaylist', 'catched_error', e);
         throw e;
     }
 }

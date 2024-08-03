@@ -4,6 +4,7 @@ import schedule from "node-schedule";
 import {playOnDemand} from "../../modules/MusicPlayer.js";
 import {sterylizator} from "../../modules/Other.js";
 import {scheduleKillTask} from "../../modules/TaskScheduler.js";
+import { DebugSaveToFile } from "../../modules/DebugMode.js";
 
 // download song through api
 export async function downloadSong(req, res) {
@@ -14,6 +15,7 @@ export async function downloadSong(req, res) {
 
         return res.status(201).send('gut');
     } catch (e) {
+        DebugSaveToFile('LocalAPI', 'download', 'catched_error', e);
         throw e;
     }
 }
@@ -35,6 +37,7 @@ export async function downloadAndPlay(req, res) {
         });
         return res.status(201).send('gut, 3s opóźnienia');
     } catch (e) {
+        DebugSaveToFile('LocalAPI', 'download/override', 'catched_error', e);
         throw e;
     }
 }
