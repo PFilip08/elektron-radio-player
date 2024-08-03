@@ -5,6 +5,7 @@ import actionsRouter from "./routes/actions.router.js";
 import * as path from "node:path";
 import { fileURLToPath } from 'url';
 import * as os from "node:os";
+import { DebugSaveToFile } from '../modules/DebugMode.js';
 const app = express();
 const port = process.env.PORT || 8080;
 
@@ -33,6 +34,7 @@ app.get('/stats/api', function(req, res){
   const uptime = os.uptime();
   const loadavg = os.loadavg();
   const data = [cpu, totalmem, freemem, uptime, loadavg];
+  DebugSaveToFile('LocalAPI', 'stats/api', 'response', data);
   res.status(200).send(data);
 });
 

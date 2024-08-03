@@ -6,6 +6,8 @@ import {sterylizator} from "./Other.js";
 
 async function downloader(url) {
     const urlParts = url.split('?')[0].split("/");
+    logger('verbose', `Wynik splita: ${urlParts}`, 'downloader');
+    logger('verbose', `Wykryto: ${urlParts[3]}`, 'downloader');
     if (urlParts[3] === 'track') {
         logger('log', 'Wykryto piosenkę', 'downloader');
         return downloadSong(url);
@@ -26,11 +28,11 @@ async function downloadSong(url) {
 
     const data = await spotify.getTrack(url);
     const file = sterylizator(data.name);
-    logger('log',`Pobieram: ${data.name+' by: '+data.artists.join(', ')}`,'downloader');
-    if (fs.existsSync(`./mp3/onDemand/${file}.mp3`)) return logger('warn',`Plik istnieje!`,'downloader');
+    logger('log',`Pobieram: ${data.name+' by: '+data.artists.join(', ')}`,'downloadSong');
+    if (fs.existsSync(`./mp3/onDemand/${file}.mp3`)) return logger('warn',`Plik istnieje!`,'downloadSong');
     const song = await spotify.downloadTrack(url);
     fs.writeFileSync(`./mp3/onDemand/${file}.mp3`, song);
-    return logger('log','Pobrano :>','downloader');
+    return logger('log','Pobrano :>','downloadSong');
 }
 
 async function downloadPlaylist(url) {
