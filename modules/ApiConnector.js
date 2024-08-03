@@ -72,7 +72,7 @@ async function getApiData() {
                 res = previousData;
                 logger('verbose','Używanie danych pobranych poprzednio z API ze zmiennej previousData!!!','getApiData');
                 if (global.debugmode === true) {
-                    DebugSaveToFile('ApiConnector','getApiData','previousData',error);
+                    DebugSaveToFile('ApiConnector','getApiData','previousData',res);
                     logger('verbose',`Dane z previousData zostały zrzucone`,'getApiData');
                 }
                 if (!messageCounter) logger('warn','Używanie danych pobranych poprzednio z API!','getApiData');

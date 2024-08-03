@@ -13,6 +13,7 @@ async function DebugStarter() {
             process.exit(2);
         });
     } else {
+        global.debugmode = false;
         if (fs.existsSync('./debug')) {
             logger('log', 'Usunięto folder debug', 'DebugStarter');
             fs.rmSync('./debug', { recursive: true }, (e) => {});
@@ -32,6 +33,10 @@ async function DebugStarter() {
 
 async function DebugSaveToFile(moduleName, functionName, fileName, data) {
     let dataType = '';
+    if (global.debugmode === false) {
+        logger('error', colors.red('DebugSaveToFile zostało wywołane, ale debugmode jest wyłączony'), 'DebugSaveToFile');
+        throw new Error('DebugSaveToFile was called, but debugmode is off');
+    }
     if (data === undefined) {
         logger('verbose', colors.red('Brak danych do zapisania'), 'DebugSaveToFile');
         return;

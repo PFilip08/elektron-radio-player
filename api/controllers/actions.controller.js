@@ -9,6 +9,7 @@ export async function kill(req, res) {
         await killPlayer();
         return res.status(201).send('gut');
     } catch (e) {
+        logger('verbose', 'Wystąpił błąd podczas próby zatrzymania odtwarzacza', 'LocalAPI - killPlayer');
         DebugSaveToFile('LocalAPI', 'kill', 'catched_error', e);
         throw e;
     }
@@ -23,6 +24,7 @@ export async function pMusic(req, res) {
         await playMusic(file);
         return res.status(201).send('gut');
     } catch (e) {
+        logger('verbose', 'Wystąpił błąd podczas próby odtworzenia pliku', 'LocalAPI - playMusic');
         DebugSaveToFile('LocalAPI', 'play', 'catched_error', e);
         throw e;
     }
@@ -37,6 +39,7 @@ export async function pPlaylist(req, res) {
         await playPlaylist(id);
         return res.status(201).send('gut');
     } catch (e) {
+        logger('verbose', 'Wystąpił błąd podczas próby odtworzenia playlisty', 'LocalAPI - playPlaylist');
         DebugSaveToFile('LocalAPI', 'playPlaylist', 'catched_error', e);
         throw e;
     }
