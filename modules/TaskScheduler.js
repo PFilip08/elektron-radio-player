@@ -25,7 +25,7 @@ function scheduleMusicTask(time, id) {
 }
 
 function scheduleKillTask(time) {
-    logger('verbose', `Zadanie ubicia Pjeyera zaplanowane na ${time}`, 'scheduleKillTask');
+    logger('verbose', `Zadanie ubicia Pleyera zaplanowane na ${time}`, 'scheduleKillTask');
     schedule.scheduleJob(time, killPlayer);
 }
 
