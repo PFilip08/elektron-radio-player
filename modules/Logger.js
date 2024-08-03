@@ -1,6 +1,5 @@
 import {bold, gray, magenta, cyan, bgWhiteBright, black, bgYellowBright, bgRedBright, whiteBright, bgCyanBright, bgGreenBright, bgBlackBright, blueBright} from 'colorette';
 import colors from 'colors';
-import fs from "fs";
 import { DebugSaveToFile } from './DebugMode.js';
 
 function logger(type, content, name) {
