@@ -3,7 +3,6 @@ import {Agent} from "node:https";
 import {massSchedule} from "./TaskScheduler.js";
 import {logger, findChanges, logChanges } from "./Logger.js";
 import colors from 'colors';
-import fs from "fs";
 import { DebugSaveToFile } from "./DebugMode.js";
 let url = 'https://radio-elektron.vercel.app/api/timeTables';
 let previousData = null;
@@ -147,7 +146,7 @@ function scheduleUpdate() {
     const intervalOnAir = 3000;
     const intervalOffAir = 10000;
     const intervalWeekend = 30000;
-    const intervalVacation = 10000;
+    const intervalVacation = 60000;
     if (debugIntervalBlock) {
         logger('verbose', 'Sprawdzanie ustawień interwału...', 'scheduleUpdate');
         logger('verbose',` - Praca radiowęzła: ${intervalOnAir / 1000} sekund`,'scheduleUpdate');
