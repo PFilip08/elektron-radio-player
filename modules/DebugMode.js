@@ -16,13 +16,12 @@ async function DebugStarter() {
         global.debugmode = false;
         if (fs.existsSync('./debug')) {
             logger('log', 'Usunięto folder debug', 'DebugStarter');
-            fs.rmSync('./debug', { recursive: true }, (e) => {});
+            fs.rmSync('./debug', { recursive: true });
         }
     }
     logger('verbose', 'Następujące ustawienia są załadowane:', 'DebugStarter');
     logger('verbose', `  - VERBOSE: ${process.env.VERBOSE}`, 'DebugStarter');
     logger('verbose', `  - WWW: ${process.env.WWW}`, 'DebugStarter');
-    logger('verbose', `Następujące klucze zostały załadowane:`, 'DebugStarter');
     if (process.env.SPOTIFY_CLIENT_ID === undefined) {
         logger('verbose', colors.red('Nie znaleziono zmiennej środowiskowej o nazwie SPOTIFY_CLIENT_ID'), 'POST');
     }
@@ -31,7 +30,7 @@ async function DebugStarter() {
     }
 }
 
-async function DebugSaveToFile(moduleName, functionName, fileName, data) {
+function DebugSaveToFile(moduleName, functionName, fileName, data) {
     let dataType = '';
     if (global.debugmode === false) {
         logger('error', colors.red('DebugSaveToFile zostało wywołane, ale debugmode jest wyłączony'), 'DebugSaveToFile');
@@ -80,7 +79,6 @@ async function DebugSaveToFile(moduleName, functionName, fileName, data) {
             logger('verbose', colors.red(`Nie można zapisać pliku ${fileName}.txt`), 'DebugSaveToFile');
             console.log(e);
         });
-        return;
     }
     else {
         logger('verbose', colors.red('Nie można rozpoznać typu danych do zapisania'), 'DebugSaveToFile');
