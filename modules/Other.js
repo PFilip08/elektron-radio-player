@@ -4,12 +4,22 @@ import path from 'path';
 import colors from 'colors';
 
 function sterylizator(input) {
+    let sterilised = '';
     logger('verbose', `Sterylizacja tekstu: ${input}`, 'sterylizator');
     if (global.debugmode === true) {
         DebugSaveToFile('Other', 'sterylizator', 'source', input);
         logger('verbose', 'Tekst źródłowy zapisany do debug/', 'sterylizator');
     }
-    let sterilised = input.split(' ').join('_').replace(/[^a-zA-Z_0-9-\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/g, "");
+    try {
+        sterilised = input.split(' ').join('_').replace(/[^a-zA-Z_0-9-\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/g, "");
+    } catch (e) {
+        logger('error', `Wystąpił błąd podczas sterylizacji tekstu: ${e}`, 'sterylizator');
+        if (global.debugmode === true) {
+            DebugSaveToFile('Other', 'sterylizator', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'sterylizator');
+        }
+        sterilised = '';
+    }
     if (global.debugmode === true) {
         DebugSaveToFile('Other', 'sterylizator', 'result', sterilised);
         logger('verbose', `Zwrócono wynik sterylizacji do debug/`);
