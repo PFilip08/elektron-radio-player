@@ -136,7 +136,6 @@ function startInterval(interval) {
                 DebugSaveToFile('ApiConnector','startInterval','catched_error',error);
             }
             logger('verbose','Zrzucono stackrace do pliku catched_error.txt','startInterval');
-            console.log(error);
         });
     }, interval);
 }

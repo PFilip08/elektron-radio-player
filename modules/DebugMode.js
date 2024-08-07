@@ -74,7 +74,6 @@ function DebugSaveToFile(moduleName, functionName, fileName, data) {
         }
     }
     if (dataType === 'STACK') {
-        //console.log(data.stack);
         fs.writeFileSync(`debug/${moduleName}/${functionName}/${fileName}.txt`, String(data.stack), 'utf8', (e) => {
             logger('verbose', colors.red(`Nie można zapisać pliku ${fileName}.txt`), 'DebugSaveToFile');
             console.log(e);
