@@ -3,10 +3,13 @@ import * as path from "path";
 import fs from "fs";
 import {logger} from "./Logger.js";
 import { DebugSaveToFile } from './DebugMode.js';
+import { parseFile } from 'music-metadata';
+import VLC from 'vlc-client';
+
 
 function getPlaylistName(id) {
-    logger('verbose', `Pobieranie nazwy playlisty o ID: ${id}`, 'getPlaylistName');
-    switch (id) {
+    logger('verbose', `Pobieranie nazwy playlisty o ID: ${parseInt(id)}`, 'getPlaylistName');
+    switch (parseInt(id)) {
         case 0: return 'nicość';
         case 1: return 'Klasyczna';
         case 2: return 'POP';
@@ -14,6 +17,73 @@ function getPlaylistName(id) {
         case 4: return 'ROCK';
         case 5: return 'Soundtracki';
         default: return id;
+    }
+}
+async function getPlayingSong() {
+    try {
+        const vlc = new VLC.Client({
+            ip: 'localhost',
+            port: 4212,
+            password: 'test'
+        });
+        const czyGra = await vlc.isPlaying();
+        if (czyGra) {
+            const metadata = await vlc.getFileName();
+            return metadata;
+        } else {
+            return 'nic nie gra';
+        }
+    } catch (e) {
+        logger('error', `Wystąpił błąd podczas próby pobrania aktualnie granej piosenki!`, 'getPlayingSong');
+        if (global.debugmode === true) {
+            DebugSaveToFile('MusicPlayer', 'getPlayingSong', 'catched_error', e);
+            logger('verbose',`Stacktrace został zrzucony do /debug`,'getPlayingSong');
+        }
+        return 'nic nie gra';
+    }
+}
+async function playlistSongQuery(playlistID) {
+    const getMetadata = async (filePath) => {
+        try {
+            const metadata = await parseFile(filePath);
+            const title = metadata.common.title || path.basename(filePath, path.extname(filePath));
+            const artist = metadata.common.artist || 'Nieznany artysta';
+            return { title, artist };
+        } catch (error) {
+            logger('error', `Wystąpił błąd podczas próby odczytania metadanych z pliku ${filePath}`, 'queryPlaylistSongQuery');
+            if (global.debugmode === true) {
+                DebugSaveToFile('MusicPlayer', 'queryPlaylistSongQuery', 'catched_error', error);
+                logger('verbose',`Stacktrace został zrzucony do /debug`,'queryPlaylistSongQuery');    
+            }
+            return { title: path.basename(filePath, path.extname(filePath)), artist: 'Nieznany Artysta' };
+        }
+    };
+
+    const files = fs.readdirSync(`./mp3/${playlistID}`);
+    const mp3Files = files.filter(file => path.extname(file).toLowerCase() === '.mp3');
+
+    const metadataPromises = mp3Files.map(file => {
+        const filePath = path.join(`./mp3/${playlistID}`, file);
+        return getMetadata(filePath);
+    });
+
+    const metadataArray = Promise.all(metadataPromises);
+    return metadataArray;
+}
+
+async function playlistListQuery() {
+    try {
+        const files = fs.readdirSync('./mp3');
+        const folders = files.filter(file => fs.lstatSync(path.join('./mp3', file)).isDirectory() && file !== 'onDemand');
+        logger('verbose', `Zwracanie listy folderów...`, 'playlistListQuery');
+        return folders;
+    } catch (err) {
+        logger('error', `Wystąpił błąd podczas próby odczytania folderu mp3`, 'playlistListQuery');
+        console.error('Wystąpił błąd podczas próby odczytania folderu mp3', err);
+        if (global.debugmode === true) {
+            DebugSaveToFile('MusicPlayer', 'playlistListQuery', 'catched_error', err);
+            logger('verbose',`Stacktrace został zrzucony do /debug`,'playlistListQuery');
+        }
     }
 }
 
@@ -75,4 +145,4 @@ function killPlayer() {
     logger('task','Plejer ubity', 'killPlayer');
     logger('task','--------Kill Player--------', 'killPlayer');
 }
-export { playMusic, killPlayer, playPlaylist, playOnDemand };
+export { playMusic, killPlayer, playPlaylist, playOnDemand, playlistSongQuery, playlistListQuery, getPlaylistName, getPlayingSong};
