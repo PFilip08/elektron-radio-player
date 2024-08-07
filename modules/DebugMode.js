@@ -37,17 +37,17 @@ function DebugSaveToFile(moduleName, functionName, fileName, data) {
         throw new Error('DebugSaveToFile was called, but debugmode is off');
     }
     if (data === undefined) {
-        logger('verbose', colors.red('Brak danych do zapisania'), 'DebugSaveToFile');
+        logger('verbose', colors.red(`Brak danych do zapisania. Wywołanie z funkcji ${functionName}`), 'DebugSaveToFile');
         return;
     }
     if (data.stack) {
         dataType = 'STACK';
-        logger('verbose', colors.red(`Zapisywane dane to stack error z funckji ${functionName}`), 'DebugSaveToFile');
+        logger('verbose', colors.red(`Zapisywane dane to stack error z funkcji ${functionName}`), 'DebugSaveToFile');
     } else {
         try {
             if (JSON.parse(JSON.stringify(data))) {
                 dataType = 'JSON';
-                logger('verbose', colors.red(`Zapisywane dane to JSON z funckji ${functionName}`), 'DebugSaveToFile');
+                logger('verbose', colors.red(`Zapisywane dane to JSON z funkcji ${functionName}`), 'DebugSaveToFile');
             }
         } catch (e) {
             console.log(e);
@@ -80,7 +80,7 @@ function DebugSaveToFile(moduleName, functionName, fileName, data) {
         });
     }
     else {
-        logger('verbose', colors.red('Nie można rozpoznać typu danych do zapisania'), 'DebugSaveToFile');
+        logger('verbose', colors.red(`Nie można rozpoznać typu danych do zapisania! Dane pochodzą z funkcji ${functionName}`), 'DebugSaveToFile');
         console.log(data);
         process.exit(1);
     }
