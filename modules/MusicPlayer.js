@@ -6,7 +6,6 @@ import { DebugSaveToFile } from './DebugMode.js';
 import { parseFile } from 'music-metadata';
 import VLC from 'vlc-client';
 
-
 function getPlaylistName(id) {
     logger('verbose', `Pobieranie nazwy playlisty o ID: ${parseInt(id)}`, 'getPlaylistName');
     switch (parseInt(id)) {
@@ -26,12 +25,16 @@ async function getPlayingSong() {
             port: 4212,
             password: 'test'
         });
-        const czyGra = await vlc.isPlaying();
-        if (czyGra) {
+        let vlcPlaying = await vlc.isPlaying();
+        if (vlcPlaying) {
+            const isPlaying = await vlc.isPlaying();
             const metadata = await vlc.getFileName();
-            return metadata;
+            const toPlayed = await vlc.getLength();
+            const played = await vlc.getTime();
+            const title = metadata.replace(/\.(mp3)$/, '');
+            return [ isPlaying, title, played, toPlayed ];
         } else {
-            return 'nic nie gra';
+            return [false, 'Nic aktualnie nie gra', null, null];
         }
     } catch (e) {
         logger('error', `Wystąpił błąd podczas próby pobrania aktualnie granej piosenki!`, 'getPlayingSong');
@@ -39,7 +42,7 @@ async function getPlayingSong() {
             DebugSaveToFile('MusicPlayer', 'getPlayingSong', 'catched_error', e);
             logger('verbose',`Stacktrace został zrzucony do /debug`,'getPlayingSong');
         }
-        return 'nic nie gra';
+        return [false, 'Nic aktualnie nie gra'];
     }
 }
 async function playlistSongQuery(playlistID) {
@@ -94,7 +97,7 @@ function playMusic(filename) {
     logger('verbose', `Plik istnieje! Granie pliku muzycznego...`, 'playMusic');
     const buffer = path.resolve(`./mp3/${filename}.mp3`);
 
-    exec(`cvlc --one-instance --play-and-exit ${buffer}`);
+    exec(`cvlc -I http --http-host 127.0.0.1 --http-port 4212 --http-password test --one-instance --play-and-exit ${buffer}`);
     logger('task','--------Play Music--------', 'playMusic');
     logger('task','Muzyka gra...', 'playMusic');
     logger('task',`Gra aktualnie: ${buffer}`, 'playMusic');
@@ -117,7 +120,7 @@ function playOnDemand(filename) {
             logger('verbose',`Stacktrace został zrzucony do /debug`,'playOnDemand');
         }
     }
-    exec(`cvlc --one-instance --loop ${buffer}`);
+    exec(`cvlc -I http --http-host 127.0.0.1 --http-port 4212 --http-password test --one-instance --loop ${buffer}`);
     logger('task','--------Play Music (On Demand Mode)--------', 'playOnDemand');
     logger('task','Muzyka gra...', 'playOnDemand');
     logger('task',`Gra aktualnie: ${buffer}`, 'playOnDemand');
@@ -129,9 +132,9 @@ function playPlaylist(playlistID) {
     logger('verbose', `Sprawdzanie czy folder o podanym ID istnieje...`, 'playPlaylist');
     if(!fs.existsSync(`./mp3/${playlistID}/`)) return logger('error','Brak playlisty o podanym numerze!!', 'playPlaylist');
     logger('verbose', `Folder istnieje! Granie playlisty...`, 'playPlaylist');
-    const buffer = path.resolve(`./mp3/${playlistID}/`)
-
-    exec(`cvlc --one-instance -Z --play-and-exit ${buffer}`);
+    let buffer = path.resolve(`./mp3/${playlistID}/`)
+    buffer = path.normalize(`./mp3/${playlistID}/`)
+    exec(`cvlc -I http --http-host 127.0.0.1 --http-port 4212 --http-password test --one-instance -Z --play-and-exit ${buffer}`);
     logger('task','--------Play Playlist - random--------', 'playPlaylist');
     logger('task','Playlista gra...', 'playPlaylist');
     logger('task',`Gra aktualnie playlista: ${getPlaylistName(playlistID)}`, 'playPlaylist');
