@@ -111,7 +111,7 @@ async function autoRemoveFiles() {
         for (let i in files) {
             if (fs.lstatSync('./mp3/onDemand/'+files[i]).isDirectory()) {
                 logger('task', `Usunięto folder "${files[i]}" wraz z zawartością`, 'autoRemoveFiles');
-                fs.rmdirSync('./mp3/onDemand/'+files[i], { force: true, recursive: true });
+                fs.rmSync('./mp3/onDemand/'+files[i], { recursive: true, force: true })
                 continue;
             }
             fs.unlinkSync(path.join('./mp3/onDemand', files[i]));
