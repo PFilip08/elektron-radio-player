@@ -26,7 +26,6 @@ export async function queryPlaylist(req, res) {
 
 export async function queryPlayingMusic(req, res) {
     try {
-        const id = req.query.id;
         logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlayingMusic');
         let [ isPlaying, songName, playedTime, toPlayTime ] = await getPlayingSong();
         return res.status(201).json(
