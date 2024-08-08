@@ -23,7 +23,7 @@ async function getPlayingSong() {
         const vlc = new VLC.Client({
             ip: 'localhost',
             port: 4212,
-            password: `${process.env.VLC_PASSWORD}`
+            password: process.env.VLC_PASSWORD
         });
         let vlcPlaying = await vlc.isPlaying();
         if (vlcPlaying) {
