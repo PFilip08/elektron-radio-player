@@ -47,7 +47,7 @@ function pathSecurityChecker(filepath) {
         return 'ROOT_EXIT_ATTEMPT';
     }
     logger('verbose', 'Sprawdzanie czy ścieżka nie zawiera dwukropków', 'pathSecurityChecker');
-    if (!/^[a-z0-9]+$/.test(filepath)) {
+    if (!/^[a-zA-Z0-9/._-]+$/.test(filepath)) {
         logger('warn', colors.yellow(`Próba wyjścia poza katalog główny przy użyciu dwukropków!!!`), 'pathSecurityChecker');
         return 'ESCAPE_PATH_ATTEMPT';
     }
