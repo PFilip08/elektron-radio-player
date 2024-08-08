@@ -23,7 +23,7 @@ async function getPlayingSong() {
         const vlc = new VLC.Client({
             ip: 'localhost',
             port: 4212,
-            password: 'test'
+            password: `${process.env.VLC_PASSWORD}`
         });
         let vlcPlaying = await vlc.isPlaying();
         if (vlcPlaying) {
@@ -97,7 +97,7 @@ function playMusic(filename) {
     logger('verbose', `Plik istnieje! Granie pliku muzycznego...`, 'playMusic');
     const buffer = path.resolve(`./mp3/${filename}.mp3`);
 
-    exec(`cvlc -I http --http-host 127.0.0.1 --http-port 4212 --http-password test --one-instance --play-and-exit ${buffer}`);
+    exec(`cvlc -I http --http-host 127.0.0.1 --http-port 4212 --http-password ${process.env.VLC_PASSWORD} --one-instance --play-and-exit ${buffer}`);
     logger('task','--------Play Music--------', 'playMusic');
     logger('task','Muzyka gra...', 'playMusic');
     logger('task',`Gra aktualnie: ${buffer}`, 'playMusic');
@@ -120,7 +120,7 @@ function playOnDemand(filename) {
             logger('verbose',`Stacktrace został zrzucony do /debug`,'playOnDemand');
         }
     }
-    exec(`cvlc -I http --http-host 127.0.0.1 --http-port 4212 --http-password test --one-instance --loop ${buffer}`);
+    exec(`cvlc -I http --http-host 127.0.0.1 --http-port 4212 --http-password ${process.env.VLC_PASSWORD} --one-instance --loop ${buffer}`);
     logger('task','--------Play Music (On Demand Mode)--------', 'playOnDemand');
     logger('task','Muzyka gra...', 'playOnDemand');
     logger('task',`Gra aktualnie: ${buffer}`, 'playOnDemand');
@@ -134,7 +134,7 @@ function playPlaylist(playlistID) {
     logger('verbose', `Folder istnieje! Granie playlisty...`, 'playPlaylist');
     let buffer = path.resolve(`./mp3/${playlistID}/`)
     buffer = path.normalize(`./mp3/${playlistID}/`)
-    exec(`cvlc -I http --http-host 127.0.0.1 --http-port 4212 --http-password test --one-instance -Z --play-and-exit ${buffer}`);
+    exec(`cvlc -I http --http-host 127.0.0.1 --http-port 4212 --http-password ${process.env.VLC_PASSWORD} --one-instance -Z --play-and-exit ${buffer}`);
     logger('task','--------Play Playlist - random--------', 'playPlaylist');
     logger('task','Playlista gra...', 'playPlaylist');
     logger('task',`Gra aktualnie playlista: ${getPlaylistName(playlistID)}`, 'playPlaylist');
