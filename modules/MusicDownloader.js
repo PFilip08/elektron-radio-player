@@ -102,7 +102,7 @@ async function getTrackInfo(url) {
         clientId: process.env.SPOTIFY_CLIENT_ID,
         clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
     });
-    const urlParts = url.split('?')[0].split("/");
+    const urlParts = url.split("/");
     logger('verbose', `Wynik splita: ${urlParts}`, 'getTrackInfo');
     logger('verbose', `Wykryto: ${urlParts[3]}`, 'getTrackInfo');
     if (urlParts[3] === 'album') {
@@ -111,12 +111,9 @@ async function getTrackInfo(url) {
     } else if (urlParts[3] === 'playlist') {
         logger('log', 'Wykryto playlistę', 'getTrackInfo');
         return await spotify.getPlaylist(url);
-    } else if (urlParts[3] === 'track') {
+    } else {
         logger('log', 'Wykryto piosenkę', 'getTrackInfo');
         return await spotify.getTrack(url);
-    } else {
-        logger('warn', 'Nie wykryto typu linku!', 'getTrackInfo');
-        return 'Nie wykryto typu';
     }
 }
 
