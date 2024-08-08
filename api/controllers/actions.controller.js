@@ -20,12 +20,15 @@ export async function kill(req, res) {
 export async function pMusic(req, res) {
     try {
         const file = req.query.file;
+        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - pMusic');
+        if (!file) {
+            return res.status(400).send('Nie podano nazwy pliku!');
+        }
         let secuCheck = pathSecurityChecker(file);
         if (secuCheck.includes('_ATTEMPT')) {
             logger('warn', `Próba odtworzenia pliku z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${req.hostname}`, 'LocalAPI - pMusic');
             return res.status(403).send('Niebezpieczna ścieżka!');
         }
-        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - pMusic');
         playMusic(file);
         return res.status(201).send('gut');
     } catch (e) {
@@ -40,6 +43,9 @@ export async function pPlaylist(req, res) {
     try {
         const id = req.query.id;
         logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - pPlaylist');
+        if (!id) {
+            return res.status(400).send('Nie podano numeru playlisty!');
+        }
         let secuCheck = pathSecurityChecker(id);
         if (secuCheck.includes('_ATTEMPT')) {
             logger('warn', `Próba odtworzenia playlisty z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${req.hostname}`, 'LocalAPI - pPlaylist');

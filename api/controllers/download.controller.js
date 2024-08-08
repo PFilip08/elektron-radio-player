@@ -11,6 +11,7 @@ export async function downloadSong(req, res) {
     try {
         const uri = req.query.uri;
         logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - downloadSong');
+        if (!uri) return res.status(400).send('Nie podano linku!');
         await downloader(uri);
         if (await downloader(uri) === 'Nie wykryto typu') return res.status(500).send('Nie można wykryć typu linku Spotify!');
         return res.status(201).send('gut');
@@ -27,11 +28,12 @@ export async function downloadAndPlay(req, res) {
         const uri = req.query.uri;
         // const time = req.query.time;
         logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - downloadAndPlay');
+        if (!uri) return res.status(400).send('Nie podano linku!');
+        if (await downloader(uri) === 'Nie wykryto typu') return res.status(500).send('Nie można wykryć typu linku Spotify!');
         await downloader(uri);
         const startTime = new Date(Date.now() + 3000);
         const killTime = new Date(Date.now() + 2000);
         const trackInfo = await getTrackInfo(uri);
-        if (await downloader(uri) === 'Nie wykryto typu') return res.status(500).send('Nie można wykryć typu linku Spotify!');
         scheduleKillTask(killTime);
         schedule.scheduleJob(startTime, function () {
             playOnDemand(sterylizator(trackInfo.name));
