@@ -1,9 +1,9 @@
-import { exec } from 'child_process';
+import {exec} from 'child_process';
 import * as path from "path";
 import fs from "fs";
 import {logger} from "./Logger.js";
-import { DebugSaveToFile } from './DebugMode.js';
-import { parseFile } from 'music-metadata';
+import {DebugSaveToFile} from './DebugMode.js';
+import {parseFile} from 'music-metadata';
 import VLC from 'vlc-client';
 
 function getPlaylistName(id) {

@@ -3,7 +3,7 @@ import * as fs from "fs";
 import {logger} from "./Logger.js";
 import * as path from "path";
 import {sterylizator} from "./Other.js";
-import { DebugSaveToFile } from "./DebugMode.js";
+import {DebugSaveToFile} from "./DebugMode.js";
 
 async function downloader(url) {
     const urlParts = url.split('?')[0].split("/");

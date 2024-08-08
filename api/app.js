@@ -4,9 +4,9 @@ import downloadRouter from "./routes/download.router.js";
 import actionsRouter from "./routes/actions.router.js";
 import statusRouter from "./routes/status.router.js";
 import * as path from "node:path";
-import { fileURLToPath } from 'url';
+import {fileURLToPath} from 'url';
 import * as os from "node:os";
-import { DebugSaveToFile } from '../modules/DebugMode.js';
+import {DebugSaveToFile} from '../modules/DebugMode.js';
 const app = express();
 const port = process.env.PORT || 8080;
 

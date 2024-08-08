@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import { queryPlayingMusic, queryPlaylistList, queryPlaylist } from '../controllers/status.controller.js';
+import {queryPlayingMusic, queryPlaylistList, queryPlaylist} from '../controllers/status.controller.js';
 
 const statusRouter = Router();  
 statusRouter.get('/query/playing', queryPlayingMusic);

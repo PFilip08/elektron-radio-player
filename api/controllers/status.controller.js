@@ -1,6 +1,6 @@
-import { DebugSaveToFile } from "../../modules/DebugMode.js";
+import {DebugSaveToFile} from "../../modules/DebugMode.js";
 import {logger} from "../../modules/Logger.js";
-import { getPlaylistName, playlistSongQuery, playlistListQuery, getPlayingSong } from "../../modules/MusicPlayer.js";
+import {getPlaylistName, playlistSongQuery, playlistListQuery, getPlayingSong} from "../../modules/MusicPlayer.js";
 
 export async function queryPlaylist(req, res) {
     try {

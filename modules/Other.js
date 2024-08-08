@@ -1,5 +1,5 @@
-import { DebugSaveToFile } from "./DebugMode.js";
-import { logger } from "./Logger.js";
+import {DebugSaveToFile} from "./DebugMode.js";
+import {logger} from "./Logger.js";
 import path from 'path';
 import colors from 'colors';
 

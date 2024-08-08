@@ -2,7 +2,7 @@ import {logger} from "./Logger.js";
 import {massSchedule} from "./TaskScheduler.js";
 import {checkUpdate, scheduleUpdate} from "./ApiConnector.js";
 import {default as www} from "../api/app.js";
-import { DebugStarter } from "./DebugMode.js";
+import {DebugStarter} from "./DebugMode.js";
 
 async function POST() {
     logger('POST', '------------------------------')

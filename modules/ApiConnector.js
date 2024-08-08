@@ -3,7 +3,7 @@ import {Agent} from "node:https";
 import {massSchedule} from "./TaskScheduler.js";
 import {logger, findChanges, logChanges } from "./Logger.js";
 import colors from 'colors';
-import { DebugSaveToFile } from "./DebugMode.js";
+import {DebugSaveToFile} from "./DebugMode.js";
 let url = 'https://radio-elektron.vercel.app/api/timeTables';
 let previousData = null;
 let messageCounter = false;

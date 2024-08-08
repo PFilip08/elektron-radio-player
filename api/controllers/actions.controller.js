@@ -1,4 +1,4 @@
-import { DebugSaveToFile } from "../../modules/DebugMode.js";
+import {DebugSaveToFile} from "../../modules/DebugMode.js";
 import {logger} from "../../modules/Logger.js";
 import {killPlayer, playMusic, playPlaylist} from "../../modules/MusicPlayer.js";
 import {pathSecurityChecker} from "../../modules/Other.js";
