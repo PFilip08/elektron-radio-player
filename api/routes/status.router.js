@@ -4,6 +4,6 @@ import {queryPlayingMusic, queryPlaylistList, queryPlaylist} from '../controller
 const statusRouter = Router();  
 statusRouter.get('/query/playing', queryPlayingMusic);
 statusRouter.get('/query/playlist/list', queryPlaylistList);
-statusRouter.get('/query/playlist/song', queryPlaylist);
+statusRouter.get('/query/playlist/songs', queryPlaylist);
 
 export default statusRouter;
