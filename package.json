@@ -20,6 +20,12 @@
     "node-schedule": "^2.1.1",
     "nodemon": "^3.1.4",
     "spotifydl-core": "git+https://github.com/Zaptyp/spotifydl-core",
+    "strtok3": "8.0.1",
     "vlc-client": "^1.1.1"
+  },
+  "overrides": {
+    "music-metadata": {
+      "strtok3": "8.0.1"
+    }
   }
 }
