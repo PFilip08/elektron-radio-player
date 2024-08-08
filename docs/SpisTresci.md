@@ -13,3 +13,4 @@
 - [Dokumentacja API Lokalnego](https://github.com/PFilip08/elektron-radio-player/tree/master/docs/Dokumentacja%20API%20Lokalnego)
     - [`Endpointy /download`](https://github.com/PFilip08/elektron-radio-player/tree/master/docs/Dokumentacja%20API%20Lokalnego/download.md)
     - [`Endpointy /action`](https://github.com/PFilip08/elektron-radio-player/tree/master/docs/Dokumentacja%20API%20Lokalnego/action.md)
+    - [`Endpointy /status`](https://github.com/PFilip08/elektron-radio-player/tree/master/docs/Dokumentacja%20API%20Lokalnego/status.md)
