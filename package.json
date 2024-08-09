@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --ignore debug/* index.js"
+    "start": "nodemon --ignore debug/ index.js"
   },
   "author": "PFilip",
   "license": "ISC",
@@ -16,8 +16,10 @@
     "colors": "^1.4.0",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "music-metadata": "^10.0.1",
     "node-schedule": "^2.1.1",
     "nodemon": "^3.1.4",
-    "spotifydl-core": "git+https://github.com/Zaptyp/spotifydl-core"
+    "spotifydl-core": "git+https://github.com/Zaptyp/spotifydl-core",
+    "vlc-client": "^1.1.1"
   }
 }

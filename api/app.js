@@ -2,10 +2,11 @@ import express from 'express';
 import {logger} from "../modules/Logger.js";
 import downloadRouter from "./routes/download.router.js";
 import actionsRouter from "./routes/actions.router.js";
+import statusRouter from "./routes/status.router.js";
 import * as path from "node:path";
-import { fileURLToPath } from 'url';
+import {fileURLToPath} from 'url';
 import * as os from "node:os";
-import { DebugSaveToFile } from '../modules/DebugMode.js';
+import {DebugSaveToFile} from '../modules/DebugMode.js';
 const app = express();
 const port = process.env.PORT || 8080;
 
@@ -34,12 +35,16 @@ app.get('/stats/api', function(req, res){
   const uptime = os.uptime();
   const loadavg = os.loadavg();
   const data = [cpu, totalmem, freemem, uptime, loadavg];
-  DebugSaveToFile('LocalAPI', 'stats/api', 'response', data);
+  if (global.debugmode === true) {
+    DebugSaveToFile('LocalAPI', 'stats/api', 'response', data);
+    logger('verbose', 'Dane response dla /stats/api zostały zapisane!', 'LocalAPI - stats/api');
+  }
   res.status(200).send(data);
 });
 
 app.use('/download', downloadRouter);
 app.use('/action', actionsRouter);
+app.use('/status', statusRouter)
 
 export default function () {
   app.listen(port, () => {

@@ -1,12 +1,14 @@
-import { exec } from 'child_process';
+import {exec} from 'child_process';
 import * as path from "path";
 import fs from "fs";
 import {logger} from "./Logger.js";
-import { DebugSaveToFile } from './DebugMode.js';
+import {DebugSaveToFile} from './DebugMode.js';
+import {parseFile} from 'music-metadata';
+import VLC from 'vlc-client';
 
 function getPlaylistName(id) {
-    logger('verbose', `Pobieranie nazwy playlisty o ID: ${id}`, 'getPlaylistName');
-    switch (id) {
+    logger('verbose', `Pobieranie nazwy playlisty o ID: ${parseInt(id)}`, 'getPlaylistName');
+    switch (parseInt(id)) {
         case 0: return 'nicość';
         case 1: return 'Klasyczna';
         case 2: return 'POP';
@@ -14,6 +16,77 @@ function getPlaylistName(id) {
         case 4: return 'ROCK';
         case 5: return 'Soundtracki';
         default: return id;
+    }
+}
+async function getPlayingSong() {
+    try {
+        const vlc = new VLC.Client({
+            ip: 'localhost',
+            port: 4212,
+            password: process.env.VLC_PASSWORD
+        });
+        let vlcPlaying = await vlc.isPlaying();
+        if (vlcPlaying) {
+            const isPlaying = await vlc.isPlaying();
+            const metadata = await vlc.getFileName();
+            const toPlayed = await vlc.getLength();
+            const played = await vlc.getTime();
+            const title = metadata.replace(/\.(mp3)$/, '');
+            return [ isPlaying, title, played, toPlayed ];
+        } else {
+            return [false, 'Nic aktualnie nie gra', null, null];
+        }
+    } catch (e) {
+        logger('error', `Wystąpił błąd podczas próby pobrania aktualnie granej piosenki!`, 'getPlayingSong');
+        if (global.debugmode === true) {
+            DebugSaveToFile('MusicPlayer', 'getPlayingSong', 'catched_error', e);
+            logger('verbose',`Stacktrace został zrzucony do /debug`,'getPlayingSong');
+        }
+        return [false, 'Nic aktualnie nie gra'];
+    }
+}
+async function playlistSongQuery(playlistID) {
+    const getMetadata = async (filePath) => {
+        try {
+            const metadata = await parseFile(filePath);
+            const title = metadata.common.title || path.basename(filePath, path.extname(filePath));
+            const artist = metadata.common.artist || 'Nieznany artysta';
+            return { title, artist };
+        } catch (error) {
+            logger('error', `Wystąpił błąd podczas próby odczytania metadanych z pliku ${filePath}`, 'queryPlaylistSongQuery');
+            if (global.debugmode === true) {
+                DebugSaveToFile('MusicPlayer', 'queryPlaylistSongQuery', 'catched_error', error);
+                logger('verbose',`Stacktrace został zrzucony do /debug`,'queryPlaylistSongQuery');    
+            }
+            return { title: path.basename(filePath, path.extname(filePath)), artist: 'Nieznany Artysta' };
+        }
+    };
+
+    const files = fs.readdirSync(`./mp3/${playlistID}`);
+    const mp3Files = files.filter(file => path.extname(file).toLowerCase() === '.mp3');
+
+    const metadataPromises = mp3Files.map(file => {
+        const filePath = path.join(`./mp3/${playlistID}`, file);
+        return getMetadata(filePath);
+    });
+
+    const metadataArray = Promise.all(metadataPromises);
+    return metadataArray;
+}
+
+async function playlistListQuery() {
+    try {
+        const files = fs.readdirSync('./mp3');
+        const folders = files.filter(file => fs.lstatSync(path.join('./mp3', file)).isDirectory() && file !== 'onDemand');
+        logger('verbose', `Zwracanie listy folderów...`, 'playlistListQuery');
+        return folders;
+    } catch (err) {
+        logger('error', `Wystąpił błąd podczas próby odczytania folderu mp3`, 'playlistListQuery');
+        console.error('Wystąpił błąd podczas próby odczytania folderu mp3', err);
+        if (global.debugmode === true) {
+            DebugSaveToFile('MusicPlayer', 'playlistListQuery', 'catched_error', err);
+            logger('verbose',`Stacktrace został zrzucony do /debug`,'playlistListQuery');
+        }
     }
 }
 
@@ -24,7 +97,7 @@ function playMusic(filename) {
     logger('verbose', `Plik istnieje! Granie pliku muzycznego...`, 'playMusic');
     const buffer = path.resolve(`./mp3/${filename}.mp3`);
 
-    exec(`cvlc --one-instance --play-and-exit ${buffer}`);
+    exec(`cvlc -I http --http-host 127.0.0.1 --http-port 4212 --http-password ${process.env.VLC_PASSWORD} --one-instance --play-and-exit ${buffer}`);
     logger('task','--------Play Music--------', 'playMusic');
     logger('task','Muzyka gra...', 'playMusic');
     logger('task',`Gra aktualnie: ${buffer}`, 'playMusic');
@@ -47,7 +120,7 @@ function playOnDemand(filename) {
             logger('verbose',`Stacktrace został zrzucony do /debug`,'playOnDemand');
         }
     }
-    exec(`cvlc --one-instance --loop ${buffer}`);
+    exec(`cvlc -I http --http-host 127.0.0.1 --http-port 4212 --http-password ${process.env.VLC_PASSWORD} --one-instance --loop ${buffer}`);
     logger('task','--------Play Music (On Demand Mode)--------', 'playOnDemand');
     logger('task','Muzyka gra...', 'playOnDemand');
     logger('task',`Gra aktualnie: ${buffer}`, 'playOnDemand');
@@ -59,9 +132,9 @@ function playPlaylist(playlistID) {
     logger('verbose', `Sprawdzanie czy folder o podanym ID istnieje...`, 'playPlaylist');
     if(!fs.existsSync(`./mp3/${playlistID}/`)) return logger('error','Brak playlisty o podanym numerze!!', 'playPlaylist');
     logger('verbose', `Folder istnieje! Granie playlisty...`, 'playPlaylist');
-    const buffer = path.resolve(`./mp3/${playlistID}/`)
-
-    exec(`cvlc --one-instance -Z --play-and-exit ${buffer}`);
+    let buffer = path.resolve(`./mp3/${playlistID}/`)
+    buffer = path.normalize(`./mp3/${playlistID}/`)
+    exec(`cvlc -I http --http-host 127.0.0.1 --http-port 4212 --http-password ${process.env.VLC_PASSWORD} --one-instance -Z --play-and-exit ${buffer}`);
     logger('task','--------Play Playlist - random--------', 'playPlaylist');
     logger('task','Playlista gra...', 'playPlaylist');
     logger('task',`Gra aktualnie playlista: ${getPlaylistName(playlistID)}`, 'playPlaylist');
@@ -75,4 +148,4 @@ function killPlayer() {
     logger('task','Plejer ubity', 'killPlayer');
     logger('task','--------Kill Player--------', 'killPlayer');
 }
-export { playMusic, killPlayer, playPlaylist, playOnDemand };
+export { playMusic, killPlayer, playPlaylist, playOnDemand, playlistSongQuery, playlistListQuery, getPlaylistName, getPlayingSong};

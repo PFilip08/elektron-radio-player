@@ -3,6 +3,7 @@ import * as fs from "fs";
 import {logger} from "./Logger.js";
 import * as path from "path";
 import {sterylizator} from "./Other.js";
+import {DebugSaveToFile} from "./DebugMode.js";
 
 async function downloader(url) {
     const urlParts = url.split('?')[0].split("/");
@@ -17,6 +18,13 @@ async function downloader(url) {
     } else if (urlParts[3] === 'playlist') {
         logger('log', 'Wykryto playlistę', 'downloader');
         return downloadPlaylist(url);
+    } else {
+        logger('warn', 'Nie wykryto typu linku!', 'downloader');
+        if (global.debugmode === true) {
+            DebugSaveToFile('MusicDownloader', 'downloader', 'catched_link', url);
+            logger('verbose', `Zapisano link do debug/`, 'downloader');
+        }
+        return 'Nie wykryto typu';
     }
 }
 
@@ -95,11 +103,16 @@ async function getTrackInfo(url) {
         clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
     });
     const urlParts = url.split("/");
+    logger('verbose', `Wynik splita: ${urlParts}`, 'getTrackInfo');
+    logger('verbose', `Wykryto: ${urlParts[3]}`, 'getTrackInfo');
     if (urlParts[3] === 'album') {
+        logger('log', 'Wykryto album', 'getTrackInfo');
         return await spotify.getAlbum(url);
     } else if (urlParts[3] === 'playlist') {
+        logger('log', 'Wykryto playlistę', 'getTrackInfo');
         return await spotify.getPlaylist(url);
     } else {
+        logger('log', 'Wykryto piosenkę', 'getTrackInfo');
         return await spotify.getTrack(url);
     }
 }

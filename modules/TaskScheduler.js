@@ -99,7 +99,6 @@ async function massSchedule() {
             }
             if (time[mappedDays[l]][i].playlist === 0) {
                 logger('verbose', 'Znaleziono playlistę 0 wpis wyłączony. Kontynuowanie wykonywania pętli...', 'massSchedule');
-                // console.log('dupa')
                 continue;
             }
             if (time[mappedDays[l]][i].OnDemand !== undefined) {
