@@ -3,7 +3,6 @@ function kastracja(input) {
 }
 
 async function getData() {
-    let playlista = 3;
     const urlPlaying = '/status/query/playing';
     const urlPlaylists = '/status/query/playlist/list';
 
