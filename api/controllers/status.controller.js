@@ -6,7 +6,7 @@ export async function queryPlaylist(req, res) {
     try {
         const id = req.query.id;
         const playlistName = getPlaylistName(id);
-        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlaylist');
+        // logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlaylist');
         if (playlistName != id && playlistName != 'nicość') {
             const playlistSongsName = await playlistSongQuery(id);
             return res.status(201).json(
@@ -29,7 +29,7 @@ export async function queryPlaylist(req, res) {
 
 export async function queryPlayingMusic(req, res) {
     try {
-        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlayingMusic');
+        // logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlayingMusic');
         let [ isPlaying, songName, playedTime, toPlayTime ] = await getPlayingSong();
         return res.status(201).json(
             {
@@ -53,7 +53,7 @@ export async function queryPlayingMusic(req, res) {
 
 export async function queryPlaylistList(req, res) {
     try {
-        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlaylistList');
+        // logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlaylistList');
         let playlistListFromFiles = await playlistListQuery()
         let playlistListNames = {};
         playlistListFromFiles.forEach((playlistID, index) => {
