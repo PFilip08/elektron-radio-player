@@ -7,7 +7,7 @@ export async function queryPlaylist(req, res) {
         const id = req.query.id;
         const playlistName = getPlaylistName(id);
         // logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlaylist');
-        if (playlistName != id && playlistName != 'nicość') {
+        if (playlistName !== id && playlistName !== 'nicość') {
             const playlistSongsName = await playlistSongQuery(id);
             return res.status(201).json(
                 {
@@ -58,7 +58,7 @@ export async function queryPlaylistList(req, res) {
         let playlistListNames = {};
         playlistListFromFiles.forEach((playlistID, index) => {
             let playlistName = getPlaylistName(playlistID)
-            if (playlistName != playlistID) {
+            if (playlistName !== playlistID) {
                 playlistListNames[index + 1] = getPlaylistName(playlistID);
             } else if (!Number.isInteger(parseInt(playlistName))) {
                 playlistListNames[index + 1] = 'Playlista NIEPRAWIDŁOWA!!!';
