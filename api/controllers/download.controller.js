@@ -17,7 +17,10 @@ export async function downloadSong(req, res) {
         return res.status(201).send('gut');
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby pobrania pliku', 'LocalAPI - downloadSong');
-        DebugSaveToFile('LocalAPI', 'download', 'catched_error', e);
+        if (global.debugmode === true) {
+            DebugSaveToFile('LocalAPI', 'download', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - downloadSong');
+        }
         throw e;
     }
 }
@@ -42,7 +45,10 @@ export async function downloadAndPlay(req, res) {
         return res.status(201).send('gut, 3s opóźnienia');
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby odtworzenia pliku', 'LocalAPI - downloadAndPlay');
-        DebugSaveToFile('LocalAPI', 'download/override', 'catched_error', e);
+        if (global.debugmode === true) {
+            DebugSaveToFile('LocalAPI', 'download/override', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - downloadAndPlay');
+        }
         throw e;
     }
 }

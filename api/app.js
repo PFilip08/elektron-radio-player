@@ -35,7 +35,10 @@ app.get('/stats/api', function(req, res){
   const uptime = os.uptime();
   const loadavg = os.loadavg();
   const data = [cpu, totalmem, freemem, uptime, loadavg];
-  DebugSaveToFile('LocalAPI', 'stats/api', 'response', data);
+  if (global.debugmode === true) {
+    DebugSaveToFile('LocalAPI', 'stats/api', 'response', data);
+    logger('verbose', 'Dane response dla /stats/api zostały zapisane!', 'LocalAPI - stats/api');
+  }
   res.status(200).send(data);
 });
 

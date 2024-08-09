@@ -11,7 +11,10 @@ export async function kill(req, res) {
         return res.status(201).send('gut');
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby zatrzymania odtwarzacza', 'LocalAPI - killPlayer');
-        DebugSaveToFile('LocalAPI', 'kill', 'catched_error', e);
+        if (global.debugmode === true) {
+            DebugSaveToFile('LocalAPI', 'kill', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - killPlayer');
+        }
         throw e;
     }
 }
@@ -33,7 +36,10 @@ export async function pMusic(req, res) {
         return res.status(201).send('gut');
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby odtworzenia pliku', 'LocalAPI - pMusic');
-        DebugSaveToFile('LocalAPI', 'play', 'catched_error', e);
+        if (global.debugmode === true) {
+            DebugSaveToFile('LocalAPI', 'play', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - pMusic');
+        }
         throw e;
     }
 }
@@ -55,7 +61,10 @@ export async function pPlaylist(req, res) {
         return res.status(201).send('gut');
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby odtworzenia playlisty', 'LocalAPI - pPlaylist');
-        DebugSaveToFile('LocalAPI', 'playPlaylist', 'catched_error', e);
+        if (global.debugmode === true) {
+            DebugSaveToFile('LocalAPI', 'playPlaylist', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - pPlaylist');
+        }
         throw e;
     }
 }

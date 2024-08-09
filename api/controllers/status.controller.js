@@ -19,7 +19,10 @@ export async function queryPlaylist(req, res) {
         return res.status(500).send('Nie znaleziono playlisty o podanym ID!');
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby wylistowania piosenek znajdujących się na playliscie!', 'LocalAPI - queryPlaylist');
-        DebugSaveToFile('LocalAPI', 'query/playlist/song', 'catched_error', e);
+        if (global.debugmode === true) {
+            DebugSaveToFile('LocalAPI', 'query/playlist/songs', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - queryPlaylist');
+        }
         throw e;
     }
 }
@@ -40,7 +43,10 @@ export async function queryPlayingMusic(req, res) {
         )
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby sprawdzenia jaka muzyka gra aktualnie!', 'LocalAPI - queryPlayingMusic');
-        DebugSaveToFile('LocalAPI', 'query/playing', 'catched_error', e);
+        if (global.debugmode === true) {
+            DebugSaveToFile('LocalAPI', 'query/playing', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - queryPlayingMusic');
+        }
         throw e;
     }
 }
@@ -68,7 +74,10 @@ export async function queryPlaylistList(req, res) {
         )
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby wylistowania playlist', 'LocalAPI - queryPlaylistList');
-        DebugSaveToFile('LocalAPI', 'query/playlist/list', 'catched_error', e);
+        if (global.debugmode === true) {
+            DebugSaveToFile('LocalAPI', 'query/playlist/list', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - queryPlaylistList');
+        }
         throw e;
     }
 }
