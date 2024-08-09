@@ -1,0 +1,134 @@
+.music {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    margin-top: 40px;
+}
+
+.current {
+    background-color: white;
+    width: 650px;
+    height: 150px;
+    display: flex;
+    flex-direction: row;
+    color: black;
+}
+
+.current .cover {
+    background-color: black;
+    width: 100px;
+    height: 100px;
+    margin: 10px 15px;
+    position: relative;
+}
+
+.current .cover img {
+    width: 100px;
+}
+
+.current .details {
+    width: 90%;
+    margin: 10px 0 0 15px;
+    text-align: left;
+}
+
+.current .details span#songName {
+    display: block;
+    font-size: 35px;
+    text-wrap: nowrap;
+    text-overflow: clip;
+    width: 85%;
+    overflow: hidden;
+    /*text-indent: 965px;*/
+    /*animation: move 15s ease-in-out infinite;*/
+}
+
+.current .details span#songName:hover {
+    animation-play-state: paused;
+}
+
+.current .details span.artist {
+    font-size: 20px;
+    font-style: italic;
+}
+
+.current .details span#songArtist {
+    display: inline-block;
+}
+
+.current .details span#durationText {
+    font-weight: bold;
+    font-size: 15px;
+    display: inline-block;
+}
+
+.current .details progress {
+    width: 90%;
+    height: 25px;
+}
+
+.panic {
+    /*background-color: orange;*/
+    background: url("https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Felectro24.pl%2Fuserdata%2Fpublic%2Fgfx%2F56506%2Fedcbc8d04e0ab5da77698987a9d3.jpg");
+    background-size: contain;
+    width: 200px;
+    height: 100px;
+    margin: 30px 40px 0 40px;
+    align-content: center;
+    align-items: center;
+}
+
+.panic input {
+    scale: 2;
+}
+
+.songlist {
+    background-color: blue;
+    width: 400px;
+    height: 300px;
+}
+
+.playlists {
+    background-color: red;
+    width: 400px;
+    height: 300px;
+}
+
+.songlist, .playlists {
+    overflow-y: auto;
+}
+
+progress, progress:not([value]) {
+    box-shadow: inset 0 0 1px 0 #686868;
+}
+
+progress {
+    box-sizing: border-box;
+    height: 14px;
+    border: 1px solid #686868;
+    border-radius: 4px;
+    padding: 1px 2px 1px 0;
+    overflow: hidden;
+    background-color: #fff;
+}
+
+progress[value]::-moz-progress-bar {
+    border-radius: 2px;
+    background: repeating-linear-gradient(90deg,#fff 0,#fff 2px,transparent 0,transparent 10px),linear-gradient(180deg,#acedad 0,#7be47d 14%,#4cda50 28%,#2ed330 42%,#42d845 57%,#76e275 71%,#8fe791 85%,#fff);
+}
+
+table, th, td {
+    border: 1px outset black;
+    margin: 0 !important;
+}
+
+@keyframes move {
+    0%   { text-indent: 100%; }
+    50% { text-indent: -100%; }
+    100% { text-indent: 100%; }
+}

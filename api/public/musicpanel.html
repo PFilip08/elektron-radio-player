@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Music Panel - localapi</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../music.css">
+</head>
+<body>
+<div class="center">
+    <h1>Mjuzik panel</h1>
+    <h2><span class="skew">localapi</span></h2>
+    <img src="../images/construction.gif" alt="konstrukcja"/>
+</div>
+<div class="center main">
+    <div class="center main music">
+        <div class="current">
+            <div class="cover">
+                <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.pngall.com%2Fwp-content%2Fuploads%2F6%2FTaboret-Stool-PNG-Download-Image.png&f=1&nofb=1&ipt=1c50a2ed576085cd998e5fc843f5ad254b0a87d9280bbda158ffa60fd598aba1&ipo=images">
+            </div>
+            <div class="details">
+                <span id="songName">Taboret</span>
+                <span class="artist">By <span id="songArtist">Zespół Taboretów</span></span>
+                <label style="display: block; margin-top: 8px;" for="duration">Długość: <span id="durationText"></span></label>
+                <progress id="duration" value="32" max="100"></progress>
+            </div>
+        </div>
+        <div class="row">
+            <div class="songlist">
+                <p>Aktualnie gra playlista nr: <span id="currentPlaylist">22</span></p>
+                <table id="songlist">
+                    <tr>
+                        <th>Utwór</th>
+                        <th>Autor</th>
+                    </tr>
+                    <tr>
+                        <td>Taboret</td>
+                        <td>Zespół Taboretów</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="panic">
+                <form method="get" action="/action/kill">
+                    <input type="submit" formtarget="res" value="Awaryjny stop">
+                </form>
+            </div>
+            <div class="playlists">
+                <table id="playlists">
+                    <tr>
+                        <th>ID Playlisty</th>
+                        <th>Nazwa playlisty</th>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Ruskie techno</td>
+                    </tr>
+                    <tr>
+                        <td>22</td>
+                        <td>Taborety i kotlety</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <iframe name="res" class="res"></iframe>
+    <br/>
+    <br/>
+    <br/>
+    <img src="../images/ie_exploder.gif" alt="norton"/>
+    <img src="../images/norton.gif" alt="norton"/>
+    <img src="../images/linux_powered.gif" alt="norton"/>
+</div>
+<script src="../music.js"></script>
+</body>
+</html>

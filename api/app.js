@@ -28,6 +28,10 @@ app.get('/stats', function(req, res){
   res.sendFile(__dirname+'/public/cpureportpage.html');
 });
 
+app.get('/dash', function(req, res){
+  res.sendFile(__dirname+'/public/musicpanel.html');
+});
+
 app.get('/stats/api', function(req, res){
   const cpu = os.cpus();
   const totalmem = os.totalmem();
