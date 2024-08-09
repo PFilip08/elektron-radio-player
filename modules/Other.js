@@ -41,7 +41,7 @@ function pathSecurityChecker(filepath) {
     }
     logger('verbose', 'Sprawdzanie czy ścieżka nie wiedzie do ucieczki z głównego folderu', 'pathSecurityChecker');
     let rootDirectory = path.resolve(process.cwd(), 'mp3');
-    var filename = path.join(rootDirectory, filepath);
+    let filename = path.join(rootDirectory, filepath);
     if (filename.indexOf(rootDirectory) !== 0) {
         logger('warn', colors.yellow(`Próba wyjścia poza katalog główny mp3!!!`), 'pathSecurityChecker');
         return 'ROOT_EXIT_ATTEMPT';
