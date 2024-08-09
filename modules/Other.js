@@ -22,7 +22,7 @@ function sterylizator(input) {
     }
     if (global.debugmode === true) {
         DebugSaveToFile('Other', 'sterylizator', 'result', sterilised);
-        logger('verbose', `Zwrócono wynik sterylizacji do debug/`);
+        logger('verbose', `Zwrócono wynik sterylizacji do debug/`, 'sterylizator');
     }
     return sterilised;
 }
@@ -40,8 +40,8 @@ function pathSecurityChecker(filepath) {
         return 'NULL_BYTE_ATTEMPT';
     }
     logger('verbose', 'Sprawdzanie czy ścieżka nie wiedzie do ucieczki z głównego folderu', 'pathSecurityChecker');
-    let rootDirectory = path.resolve(process.cwd(), 'mp3');
-    let filename = path.join(rootDirectory, filepath);
+    const rootDirectory = path.resolve(process.cwd(), 'mp3');
+    const filename = path.join(rootDirectory, filepath);
     if (filename.indexOf(rootDirectory) !== 0) {
         logger('warn', colors.yellow(`Próba wyjścia poza katalog główny mp3!!!`), 'pathSecurityChecker');
         return 'ROOT_EXIT_ATTEMPT';
