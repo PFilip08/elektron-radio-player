@@ -11,16 +11,16 @@
 }
 
 .current {
-    background-color: white;
+    background-color: #17191a;
     width: 650px;
     height: 150px;
     display: flex;
     flex-direction: row;
-    color: black;
+    color: white;
+    position: relative;
 }
 
 .current .cover {
-    background-color: black;
     width: 100px;
     height: 100px;
     margin: 10px 15px;
@@ -35,6 +35,7 @@
     width: 90%;
     margin: 10px 0 0 15px;
     text-align: left;
+    position: relative;
 }
 
 .current .details span#songName {
@@ -42,7 +43,7 @@
     font-size: 35px;
     text-wrap: nowrap;
     text-overflow: clip;
-    width: 85%;
+    max-width: 85%;
     overflow: hidden;
     /*text-indent: 965px;*/
     /*animation: move 15s ease-in-out infinite;*/
@@ -69,6 +70,7 @@
 
 .current .details progress {
     width: 90%;
+    max-width: 90%;
     height: 25px;
 }
 
@@ -114,7 +116,7 @@ progress {
     border-radius: 4px;
     padding: 1px 2px 1px 0;
     overflow: hidden;
-    background-color: #fff;
+    background-color: #17191a;
 }
 
 progress[value]::-moz-progress-bar {

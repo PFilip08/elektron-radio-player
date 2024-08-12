@@ -5,6 +5,7 @@ import {logger} from "./Logger.js";
 import {DebugSaveToFile} from './DebugMode.js';
 import {parseFile} from 'music-metadata';
 import VLC from 'vlc-client';
+import {uint8ArrayToBase64} from 'uint8array-extras';
 
 function getPlaylistName(id) {
     logger('verbose', `Pobieranie nazwy playlisty o ID: ${parseInt(id)}`, 'getPlaylistName');
@@ -22,7 +23,7 @@ async function getPlayingSong() {
     try {
         const vlc = new VLC.Client({
             ip: 'localhost',
-            port: 4212,
+            port: 8080,
             password: process.env.VLC_PASSWORD
         });
         let vlcPlaying = await vlc.isPlaying();
@@ -51,7 +52,11 @@ async function playlistSongQuery(playlistID) {
             const metadata = await parseFile(filePath);
             const title = metadata.common.title || path.basename(filePath, path.extname(filePath));
             const artist = metadata.common.artist || 'Nieznany artysta';
-            return { title, artist };
+            const cover = metadata.common.picture || 'taboret';
+            let coverData;
+            if (cover === "taboret") coverData = cover;
+            else cover[0].data=(uint8ArrayToBase64(cover[0].data)); coverData = cover[0];
+            return { title, artist, coverData };
         } catch (error) {
             logger('error', `Wystąpił błąd podczas próby odczytania metadanych z pliku ${filePath}`, 'queryPlaylistSongQuery');
             if (global.debugmode === true) {
@@ -70,8 +75,7 @@ async function playlistSongQuery(playlistID) {
         return getMetadata(filePath);
     });
 
-    const metadataArray = Promise.all(metadataPromises);
-    return metadataArray;
+    return Promise.all(metadataPromises);
 }
 
 async function playlistListQuery() {

@@ -51,7 +51,7 @@ function formatTime(seconds) {
 }
 
 let previousPlaylists, previousSongs, currentSongData, previousSong, progressInterval = null;
-let playlista, id, oldRowId;
+let playlista, id, oldRowId, intervalReset, noDataCounter, cover;
 
 async function replaceData() {
     const data = await getData();
@@ -60,43 +60,82 @@ async function replaceData() {
     0 - playing
     1 - playlists
      */
+    const songName = document.getElementById('songName');
+    const songArtist = document.getElementById('songArtist');
+    const duration = document.getElementById('duration');
+    const durationText = document.getElementById('durationText');
+    const currentPlaylist = document.getElementById('currentPlaylist');
+    const playlistsTable = document.getElementById('playlists');
+    const songsTable = document.getElementById('songlist');
+    const coverCover = document.getElementById('cover');
 
     await replacePlaylists(data);
 
+    if (!data[0].isPlaying) {
+        songName.innerText = '--------------';
+        songArtist.innerText = '----------';
+        currentPlaylist.innerText = '---';
+        durationText.innerText = '';
+        clearInterval(progressInterval);
+        clearTable(songsTable);
+        const row = songsTable.insertRow(-1);
+        row.insertCell(0).innerText = 'brak danych';
+        row.insertCell(1).innerText = 'brak danych';
+        currentSongData=null;
+        return;
+    }
+
     if (previousSong !== data[0].playingSongName) {
+        krzeslo:
         for (let i in data[1].playlistNames) {
             if (!(!isNaN(Number(data[1].playlistList[i-1])) && data[1].playlistList[i-1].trim() !== '')) continue;
             // console.log(i)
             // console.log(data[1].playlistList[i-1])
-            const playlist = await getSongs(i);
+            let playlist;
+            try {
+                playlist = await getSongs(i);
+            } catch (e) {
+                id=null;
+                break;
+            }
             for (let j in playlist.playlistSongsName) {
                 // console.log(kastracja(playlist.playlistSongsName[j].title))
                 // console.log(kastracja(data[0].playingSongName))
                 if (kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title))) {
                     // console.log(data[1].playlistNames[i]);
                     // console.log(i)
-                    id=i
-                    break;
+                    id=i;
+                    cover = `data:${playlist.playlistSongsName[j].coverData.format};base64,${playlist.playlistSongsName[j].coverData.data}`
+                    break krzeslo;
+                } else {
+                    id=null;
+                    cover="../images/taboret.png";
                 }
             }
         }
         previousSong = data[0].playingSongName;
     }
-    if (id) playlista = await getSongs(id);
+    if (id) playlista = await getSongs(id); noDataCounter = true;
 
-    const currentPlaylist = document.getElementById('currentPlaylist');
+    coverCover.src = cover;
 
-    if (JSON.stringify(playlista) !== JSON.stringify(previousSongs)) {
-        const songsTable = document.getElementById('songlist');
-        clearTable(songsTable);
-        if (!playlista) {
+    if (!playlista) {
+        if (!noDataCounter) {
+            clearTable(songsTable);
             const row = songsTable.insertRow(-1);
             row.insertCell(0).innerText = 'brak danych';
             row.insertCell(1).innerText = 'brak danych';
-            currentPlaylist.innerText = '---';
-            return;
+            noDataCounter=true;
         }
-        const playlistsTable = document.getElementById('playlists');
+        currentPlaylist.innerText = '---';
+        if (oldRowId) {
+            playlistsTable.rows[oldRowId].style.removeProperty('color');
+            playlistsTable.rows[oldRowId].style.removeProperty('background-color');
+        }
+    }
+
+    if (JSON.stringify(playlista) !== JSON.stringify(previousSongs)) {
+        clearTable(songsTable);
         if (oldRowId) {
             playlistsTable.rows[oldRowId].style.removeProperty('color');
             playlistsTable.rows[oldRowId].style.removeProperty('background-color');
@@ -112,16 +151,31 @@ async function replaceData() {
         previousSongs = playlista;
     }
 
-    const songName = document.getElementById('songName');
-    const songArtist = document.getElementById('songArtist');
-    const duration = document.getElementById('duration');
-    const durationText = document.getElementById('durationText');
+    if (intervalReset) {
+        startProgressBar(duration);
+    }
 
     duration.value = data[0].time.played;
     duration.max = data[0].time.toPlay;
 
     if (!currentSongData || currentSongData.playingSongName !== data[0].playingSongName) {
         // songName.innerText = data[0].playingSongName;
+        if (data[0].playingSongName && !id) {
+            songName.innerText = data[0].playingSongName;
+            songArtist.innerText = 'nieznane';
+            currentPlaylist.innerText = 'nieznane';
+            if (oldRowId) {
+                playlistsTable.rows[oldRowId].style.removeProperty('color');
+                playlistsTable.rows[oldRowId].style.removeProperty('background-color');
+            }
+            clearTable(songsTable);
+            const row = songsTable.insertRow(-1);
+            row.insertCell(0).innerText = 'brak danych';
+            row.insertCell(1).innerText = 'brak danych';
+            noDataCounter=true;
+            startProgressBar(duration)
+            return;
+        }
         if (!playlista) {
             songName.innerText = '--------------';
             songArtist.innerText = '----------';
@@ -138,8 +192,6 @@ async function replaceData() {
                 songArtist.innerText = 'brak danych';
             }
         }
-        duration.value = data[0].time.played;
-        duration.max = data[0].time.toPlay;
 
         const playedFormatted = formatTime(data[0].time.played);
         const toPlayFormatted = formatTime(data[0].time.toPlay);
@@ -160,8 +212,12 @@ function startProgressBar(duration) {
         if (duration.value < duration.max) {
             duration.value = parseFloat(duration.value) + 1;
             durationText.innerText = `${formatTime(duration.value)} / ${formatTime(duration.max)}`;
+            intervalReset=false;
         } else {
-            clearInterval(progressInterval); // Zatrzymaj, gdy utwór się skończy
+            clearInterval(progressInterval); // Zatrzymaj, gdy utwór się skończ
+            duration.value = 0; // Zresetuj progress bar do zera
+            // durationText.innerText = `${formatTime(duration.value)} / ${formatTime(duration.max)}`;
+            intervalReset=true;
         }
     }, 1000);
 }
