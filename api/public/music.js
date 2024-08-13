@@ -88,12 +88,13 @@ async function replaceData() {
     if (previousSong !== data[0].playingSongName) {
         krzeslo:
         for (let i in data[1].playlistNames) {
-            if (!(!isNaN(Number(data[1].playlistList[i-1])) && data[1].playlistList[i-1].trim() !== '')) continue;
+            // console.log(data[1].playlistList);
+            // if (!(!isNaN(Number(data[1].playlistList[i-1])) && data[1].playlistList[i-1].trim() !== '')) continue;
             // console.log(i)
             // console.log(data[1].playlistList[i-1])
             let playlist;
             try {
-                playlist = await getSongs(i);
+                playlist = await getSongs(data[1].playlistList[i-1]);
             } catch (e) {
                 id=null;
                 break;
@@ -113,9 +114,25 @@ async function replaceData() {
                 }
             }
         }
+        if (id === null) {
+            let playlist;
+            playlist = await getSongs('onDemand');
+            for (let j in playlist.playlistSongsName) {
+                if (kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title))) {
+                    id='onDemand';
+                    cover = `data:${playlist.playlistSongsName[j].coverData.format};base64,${playlist.playlistSongsName[j].coverData.data}`
+                    break;
+                } else {
+                    id=null;
+                    cover="../images/taboret.png";
+                }
+            }
+        }
         previousSong = data[0].playingSongName;
     }
-    if (id) playlista = await getSongs(id); noDataCounter = true;
+    if (id === 'onDemand') {
+        playlista = await getSongs(id); noDataCounter = true;
+    } else if (id) playlista = await getSongs(data[1].playlistList[id-1]); noDataCounter = true;
 
     coverCover.src = cover;
 
@@ -140,14 +157,16 @@ async function replaceData() {
             playlistsTable.rows[oldRowId].style.removeProperty('color');
             playlistsTable.rows[oldRowId].style.removeProperty('background-color');
         }
-        playlistsTable.rows[id].style.color = 'cyan';
-        playlistsTable.rows[id].style.backgroundColor = 'yellowgreen';
+        if (id !== 'onDemand') {
+            playlistsTable.rows[id].style.color = 'cyan';
+            playlistsTable.rows[id].style.backgroundColor = 'yellowgreen';
+            oldRowId = id;
+        }
         for (let i = 0; i < playlista.playlistSongsName.length; i++) {
             const row = songsTable.insertRow(-1);
             row.insertCell(0).innerText = playlista.playlistSongsName[i].title;
             row.insertCell(1).innerText = playlista.playlistSongsName[i].artist;
         }
-        oldRowId = id;
         previousSongs = playlista;
     }
 
@@ -183,6 +202,7 @@ async function replaceData() {
             return;
         }
         currentPlaylist.innerText = id+` (${data[1].playlistNames[id]})`;
+        if (id === 'onDemand') currentPlaylist.innerText = id;
         for (let i in playlista.playlistSongsName) {
             if (kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].title))) {
                 songName.innerText = playlista.playlistSongsName[i].title;
