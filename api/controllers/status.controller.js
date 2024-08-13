@@ -95,15 +95,3 @@ export async function queryPlaylistList(req, res) {
         throw e;
     }
 }
-
-export async function queryCover(req, res) {
-    try {
-    } catch (e) {
-        logger('verbose', 'Wystąpił błąd podczas próby wzięcia covera', 'LocalAPI - queryCover');
-        if (global.debugmode === true) {
-            DebugSaveToFile('LocalAPI', 'query/cover', 'catched_error', e);
-            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - queryCover');
-        }
-        throw e;
-    }
-}
