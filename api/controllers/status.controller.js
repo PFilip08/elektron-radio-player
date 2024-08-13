@@ -1,13 +1,19 @@
 import {DebugSaveToFile} from "../../modules/DebugMode.js";
 import {logger} from "../../modules/Logger.js";
 import {getPlaylistName, playlistSongQuery, playlistListQuery, getPlayingSong} from "../../modules/MusicPlayer.js";
+import { pathSecurityChecker } from "../../modules/Other.js";
 
 export async function queryPlaylist(req, res) {
     try {
         const id = req.query.id;
+        let secuCheck = pathSecurityChecker(id);
         const playlistName = getPlaylistName(id);
         // logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlaylist');
-        if (playlistName !== id && playlistName !== 'nicość') {
+        if (secuCheck.includes('_ATTEMPT')) {
+            logger('warn', `Próba odtworzenia pliku z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${req.hostname}`, 'LocalAPI - queryPlaylist');
+            return res.status(403).send('Niebezpieczna ścieżka!');
+        }
+        if (playlistName !== id && playlistName !== 'nicość' || playlistName.includes('onDemand')) {
             const playlistSongsName = await playlistSongQuery(id);
             return res.status(201).json(
                 {
