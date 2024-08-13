@@ -6,12 +6,18 @@ import { pathSecurityChecker } from "../../modules/Other.js";
 export async function queryPlaylist(req, res) {
     try {
         const id = req.query.id;
-        let secuCheck = pathSecurityChecker(id);
-        const playlistName = getPlaylistName(id);
+        let playlistName = getPlaylistName(id);
         // logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlaylist');
+        if (!id) {
+            return res.status(400).send('Nie podano nazwy lub ID playlisty!');
+        }
+        let secuCheck = pathSecurityChecker(id);
         if (secuCheck.includes('_ATTEMPT')) {
             logger('warn', `Próba odtworzenia pliku z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${req.hostname}`, 'LocalAPI - queryPlaylist');
             return res.status(403).send('Niebezpieczna ścieżka!');
+        }
+        if (playlistName.includes('onDemand')) {
+            playlistName = 'Playlista na żądanie - ' + playlistName.replace('onDemand/', '').replace(/_/g, ' ');
         }
         if (playlistName !== id && playlistName !== 'nicość' || playlistName.includes('onDemand')) {
             const playlistSongsName = await playlistSongQuery(id);
@@ -66,6 +72,8 @@ export async function queryPlaylistList(req, res) {
             let playlistName = getPlaylistName(playlistID)
             if (playlistName !== playlistID) {
                 playlistListNames[index + 1] = getPlaylistName(playlistID);
+            } else if (playlistName.includes('onDemand/')) {
+                playlistListNames[index + 1] = 'Playlista na żądanie - ' + playlistName.replace('onDemand/', '').replace(/_/g, ' ');
             } else if (!Number.isInteger(parseInt(playlistName))) {
                 playlistListNames[index + 1] = 'Playlista NIEPRAWIDŁOWA!!!';
             } else {

@@ -80,7 +80,7 @@ async function playlistSongQuery(playlistID) {
 
 async function playlistListQuery() {
     try {
-        const files = fs.readdirSync('./mp3');
+        const files = fs.readdirSync('./mp3', { recursive: true });
         const folders = files.filter(file => fs.lstatSync(path.join('./mp3', file)).isDirectory() && file !== 'onDemand');
         logger('verbose', `Zwracanie listy folderów...`, 'playlistListQuery');
         return folders;
