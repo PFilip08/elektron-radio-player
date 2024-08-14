@@ -86,6 +86,10 @@ async function replaceData() {
         const row = songsTable.insertRow(-1);
         row.insertCell(0).innerText = 'brak danych';
         row.insertCell(1).innerText = 'brak danych';
+        if (oldRowId) {
+            playlistsTable.rows[oldRowId].style.removeProperty('color');
+            playlistsTable.rows[oldRowId].style.removeProperty('background-color');
+        }
         currentSongData=null;
         return;
     }
