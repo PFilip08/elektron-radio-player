@@ -80,6 +80,7 @@ async function replaceData() {
         songArtist.innerText = '----------';
         currentPlaylist.innerText = '---';
         durationText.innerText = '';
+        coverCover.src = "../images/taboret.png";
         clearInterval(progressInterval);
         clearTable(songsTable);
         const row = songsTable.insertRow(-1);
