@@ -44,12 +44,12 @@
     padding: 10px;
 }
 
-.current .details .marqueeContainer {
+/*.current .details .marqueeContainer {
     overflow: hidden;
     position: relative;
     white-space: nowrap;
     display: block;
-}
+}*/
 
 .current .details span#songName {
     display: inline-block;
@@ -180,3 +180,30 @@ table, th, td {
 /*    50% { opacity: 1; }*/
 /*    100% { opacity: 0.1; }*/
 /*}*/
+
+.current .details .marqueeContainer {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    max-width: 505px;
+    text-transform: uppercase;
+    height: 40px; 
+}
+
+.current .details .marqueeContent {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.current .details .marqueeContent.scroll {
+    animation: marquee 7s linear infinite;
+}
+
+@keyframes marquee {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}

@@ -72,7 +72,8 @@ async function replaceData() {
     await replacePlaylists(data);
 
     if (!data[0].isPlaying) {
-        songName.innerText = '--------------';
+        //songName.innerText = '--------------';
+        updateSongName('--------------');
         songArtist.innerText = '----------';
         currentPlaylist.innerText = '---';
         durationText.innerText = '';
@@ -180,7 +181,8 @@ async function replaceData() {
     if (!currentSongData || currentSongData.playingSongName !== data[0].playingSongName) {
         // songName.innerText = data[0].playingSongName;
         if (data[0].playingSongName && !id) {
-            songName.innerText = data[0].playingSongName;
+            //songName.innerText = data[0].playingSongName;
+            updateSongName(data[0].playingSongName);
             songArtist.innerText = 'nieznane';
             currentPlaylist.innerText = 'nieznane';
             if (oldRowId) {
@@ -196,7 +198,8 @@ async function replaceData() {
             return;
         }
         if (!playlista) {
-            songName.innerText = '--------------';
+            //songName.innerText = '--------------';
+            updateSongName('--------------');
             songArtist.innerText = '----------';
             currentPlaylist.innerText = '---';
             return;
@@ -205,7 +208,8 @@ async function replaceData() {
         if (id === 'onDemand') currentPlaylist.innerText = id;
         for (let i in playlista.playlistSongsName) {
             if (kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].title))) {
-                songName.innerText = playlista.playlistSongsName[i].title;
+                //songName.innerText = playlista.playlistSongsName[i].title;
+                updateSongName(playlista.playlistSongsName[i].title);
                 songArtist.innerText = playlista.playlistSongsName[i].artist;
                 break;
             } else {
@@ -240,6 +244,28 @@ function startProgressBar(duration) {
             intervalReset=true;
         }
     }, 1000);
+}
+
+function updateSongName(text) {
+    //console.log(text);
+    const songNameElement = document.getElementById('songName');
+    //console.log(document.getElementById('songName'));
+    const marqueeContent = songNameElement.parentElement;
+
+    songName.innerText = text;
+    //console.log(songNameElement.innerText);
+
+    const songNameWidth = songNameElement.scrollWidth;
+    const marqueeContainerWidth = marqueeContent.parentElement.offsetWidth;
+    //console.log(songNameWidth, marqueeContainerWidth);
+    //console.log(marqueeContent.parentElement.offsetWidth);
+    if (songNameWidth > marqueeContainerWidth) {
+        //console.log('scrolluj');
+        marqueeContent.classList.add('scroll');
+    } else {
+        //console.log('nie scrolluj');
+        marqueeContent.classList.remove('scroll');
+    }
 }
 
 replaceData().then(r => r);
