@@ -93,8 +93,12 @@
     height: 25px;
 }
 
+.col {
+    display: flex;
+    flex-direction: column;
+}
+
 .panic {
-    /*background-color: orange;*/
     background: url("https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Felectro24.pl%2Fuserdata%2Fpublic%2Fgfx%2F56506%2Fedcbc8d04e0ab5da77698987a9d3.jpg");
     background-size: contain;
     width: 200px;
@@ -106,6 +110,14 @@
 
 .panic input {
     scale: 2;
+}
+
+.kreciolek {
+    width: 200px;
+    height: 100px;
+    display: block;
+    margin: 30px 40px 0 40px;
+    animation: animate 4s linear infinite;
 }
 
 .songlist {
@@ -148,39 +160,6 @@ table, th, td {
     margin: 0 !important;
 }
 
-/*@keyframes move {*/
-/*    0%   { text-indent: 100%; }*/
-/*    50% { text-indent: -100%; }*/
-/*    100% { text-indent: 100%; }*/
-/*}*/
-
-/*@keyframes typing {*/
-/*    from { width: 0; }*/
-/*    to { width: 100%; }*/
-/*}*/
-
-/*@keyframes blink-caret {*/
-/*    from, to { border-color: transparent; }*/
-/*    50% { border-color: white; }*/
-/*}*/
-
-/*@keyframes scrolling-text {*/
-/*    from { transform: translateX(100%); }*/
-/*    to { transform: translateX(-100%); }*/
-/*}*/
-
-
-/*@keyframes marquee {*/
-/*    from { transform: translateX(0); }*/
-/*    to { transform: translateX(-100%); }*/
-/*}*/
-
-/*@keyframes flicker {*/
-/*    0% { opacity: 0.1; }*/
-/*    50% { opacity: 1; }*/
-/*    100% { opacity: 0.1; }*/
-/*}*/
-
 .current .details .marqueeContainer {
     overflow: hidden;
     position: relative;
@@ -205,5 +184,14 @@ table, th, td {
     }
     to {
         transform: translateX(-100%);
+    }
+}
+
+@keyframes animate {
+    0% {
+        transform: perspective(150px) rotate3d(0, -1, 0, 0deg);
+    }
+    100% {
+        transform: perspective(150px) rotate3d(0, -1, 0, 360deg);
     }
 }
