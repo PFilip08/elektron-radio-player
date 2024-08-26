@@ -21,25 +21,34 @@ function getPlaylistName(id) {
 }
 async function getPlayingSong() {
     try {
-        const vlc = new VLC.Client({
-            ip: '127.0.0.1',
-            port: Number(process.env.VLC_PORT) || 4212,
-            password: process.env.VLC_PASSWORD
-        });
-        let vlcPlaying = await vlc.isPlaying();
-        if (vlcPlaying) {
-            const isPlaying = await vlc.isPlaying();
-            const metadata = await vlc.getFileName();
-            const toPlayed = await vlc.getLength();
-            const played = await vlc.getTime();
-            const title = metadata.replace(/\.(mp3)$/, '');
-            return [ isPlaying, title, played, toPlayed ];
-        } else {
-            return [false, 'Nic aktualnie nie gra', null, null];
-        }
+        const timeout = new Promise((_, reject) => 
+            setTimeout(() => reject(
+                logger('verbose', 'Czas wykonania funkcji przekroczony!', 'getPlayingSong'),
+                new Error('Czas wykonania funkcji przekroczony'
+                )), 4000)
+        );
+        const vlcOperation = (async () => {
+            const vlc = new VLC.Client({
+                ip: '127.0.0.1',
+                port: Number(process.env.VLC_PORT) || 4212,
+                password: process.env.VLC_PASSWORD
+            });
+            let vlcPlaying = await vlc.isPlaying();
+            if (vlcPlaying) {
+                const isPlaying = await vlc.isPlaying();
+                const metadata = await vlc.getFileName();
+                const toPlayed = await vlc.getLength();
+                const played = await vlc.getTime();
+                const title = metadata.replace(/\.(mp3)$/, '');
+                return [ isPlaying, title, played, toPlayed ];
+            } else {
+                return [false, 'Nic aktualnie nie gra', null, null];
+            }
+        })();
+        return await Promise.race([vlcOperation, timeout]);
     } catch (e) {
-        logger('error', `Wystąpił błąd podczas próby pobrania aktualnie granej piosenki!`, 'getPlayingSong');
         if (global.debugmode === true) {
+            logger('error', `Wystąpił błąd podczas próby pobrania aktualnie granej piosenki!`, 'getPlayingSong');
             DebugSaveToFile('MusicPlayer', 'getPlayingSong', 'catched_error', e);
             logger('verbose',`Stacktrace został zrzucony do /debug`,'getPlayingSong');
         }
