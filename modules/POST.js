@@ -17,7 +17,7 @@ async function POST() {
         logger('verbose', 'Wywalanie procesu z kodem 2', 'POST');
         return process.exit(2);
     }
-    if (process.env.WWW) {
+    if (process.env.WWW || false) {
         logger('task', 'Aktywowanie lokalnego API', 'POST');
         www();
     }
