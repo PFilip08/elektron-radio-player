@@ -110,8 +110,9 @@ async function replaceData() {
             }
             for (let j in playlist.playlistSongsName) {
                 // console.log(kastracja(playlist.playlistSongsName[j].title))
+                // console.log(playlist.playlistSongsName[j])
                 // console.log(kastracja(data[0].playingSongName))
-                if (kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title))) {
+                if (kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title) && kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].artist)))) {
                     // console.log(data[1].playlistNames[i]);
                     // console.log(i)
                     id=i;
@@ -127,7 +128,7 @@ async function replaceData() {
             let playlist;
             playlist = await getSongs('onDemand');
             for (let j in playlist.playlistSongsName) {
-                if (kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title))) {
+                if (kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title)) && kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].artist))) {
                     id='onDemand';
                     cover = `data:${playlist.playlistSongsName[j].coverData.format};base64,${playlist.playlistSongsName[j].coverData.data}`
                     break;
@@ -215,7 +216,7 @@ async function replaceData() {
         currentPlaylist.innerText = id+` (${data[1].playlistNames[id]})`;
         if (id === 'onDemand') currentPlaylist.innerText = id;
         for (let i in playlista.playlistSongsName) {
-            if (kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].title))) {
+            if (kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].title)) && kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].artist))) {
                 //songName.innerText = playlista.playlistSongsName[i].title;
                 updateSongName(playlista.playlistSongsName[i].title);
                 songArtist.innerText = playlista.playlistSongsName[i].artist;
