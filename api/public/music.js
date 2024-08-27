@@ -1,8 +1,8 @@
 function kastracja(input) {
     return input
-        .toLowerCase()  // Konwertuje cały tekst na małe litery
-        .split(' ').join('_')  // Zmienia spacje na podkreślenia
-        .replace(/[^a-z0-9_\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/g, "");  // Usuwa niepożądane znaki
+        .toLowerCase()
+        .split(' ').join('_')
+        .replace(/[^a-z0-9_\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/g, "");
 }
 
 async function getData() {
@@ -116,7 +116,7 @@ async function replaceData() {
                     // console.log(data[1].playlistNames[i]);
                     // console.log(i)
                     id=i;
-                    cover = `data:${playlist.playlistSongsName[j].coverData.format};base64,${playlist.playlistSongsName[j].coverData.data}`
+                    cover = `data:${playlist.playlistSongsName[j].coverData.format};base64,${playlist.playlistSongsName[j].coverData.data}`;
                     break krzeslo;
                 } else {
                     id=null;
@@ -130,7 +130,7 @@ async function replaceData() {
             for (let j in playlist.playlistSongsName) {
                 if (kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title)) && kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].artist))) {
                     id='onDemand';
-                    cover = `data:${playlist.playlistSongsName[j].coverData.format};base64,${playlist.playlistSongsName[j].coverData.data}`
+                    cover = `data:${playlist.playlistSongsName[j].coverData.format};base64,${playlist.playlistSongsName[j].coverData.data}`;
                     break;
                 } else {
                     id=null;
@@ -188,9 +188,7 @@ async function replaceData() {
     duration.max = data[0].time.toPlay;
 
     if (!currentSongData || currentSongData.playingSongName !== data[0].playingSongName) {
-        // songName.innerText = data[0].playingSongName;
         if (data[0].playingSongName && !id) {
-            //songName.innerText = data[0].playingSongName;
             updateSongName(data[0].playingSongName);
             songArtist.innerText = 'nieznane';
             currentPlaylist.innerText = 'nieznane';
@@ -203,7 +201,7 @@ async function replaceData() {
             row.insertCell(0).innerText = 'brak danych';
             row.insertCell(1).innerText = 'brak danych';
             noDataCounter=true;
-            startProgressBar(duration)
+            startProgressBar(duration);
             return;
         }
         if (!playlista) {
@@ -231,8 +229,8 @@ async function replaceData() {
         durationText.innerText = `${playedFormatted} / ${toPlayFormatted}`;
 
 
-        currentSongData = data[0]; // Przechowuj dane o obecnej piosence
-        startProgressBar(duration); // Uruchom aktualizację progress baru
+        currentSongData = data[0];
+        startProgressBar(duration);
     }
 }
 
@@ -247,27 +245,21 @@ function startProgressBar(duration) {
             durationText.innerText = `${formatTime(duration.value)} / ${formatTime(duration.max)}`;
             intervalReset=false;
         } else {
-            clearInterval(progressInterval); // Zatrzymaj, gdy utwór się skończ
-            duration.value = 0; // Zresetuj progress bar do zera
-            // durationText.innerText = `${formatTime(duration.value)} / ${formatTime(duration.max)}`;
+            clearInterval(progressInterval);
+            duration.value = 0;
             intervalReset=true;
         }
     }, 1000);
 }
 
 function updateSongName(text) {
-    //console.log(text);
     const songNameElement = document.getElementById('songName');
-    //console.log(document.getElementById('songName'));
     const marqueeContent = songNameElement.parentElement;
 
     songName.innerText = text;
-    //console.log(songNameElement.innerText);
 
     const songNameWidth = songNameElement.scrollWidth;
     const marqueeContainerWidth = marqueeContent.parentElement.offsetWidth;
-    //console.log(songNameWidth, marqueeContainerWidth);
-    //console.log(marqueeContent.parentElement.offsetWidth);
     if (songNameWidth > marqueeContainerWidth) {
         //console.log('scrolluj');
         marqueeContent.classList.add('scroll');

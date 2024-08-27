@@ -44,29 +44,11 @@
     padding: 10px;
 }
 
-/*.current .details .marqueeContainer {
-    overflow: hidden;
-    position: relative;
-    white-space: nowrap;
-    display: block;
-}*/
-
 .current .details span#songName {
     display: inline-block;
     font-size: 35px;
-    /*text-wrap: nowrap;*/
-    /*text-overflow: clip;*/
-    /*max-width: 85%;*/
-    /*overflow: hidden;*/
-    /*text-indent: 965px;*/
-    /*animation: move 15s ease-in-out infinite;*/
     font-family: "segment 14", sans-serif;
-    /*animation: typing 5s steps(30, end), blink-caret 0.75s step-end infinite;*/
-    /*animation: typing 4s steps(30, end), blink-caret 0.75s step-end infinite;*/
-    /*animation-fill-mode: forwards;*/
     position: relative;
-    /*overflow: hidden; !* Hide overflow for animation effect *!*/
-    /*animation: marquee 10s linear infinite;*/
 }
 
 .current .details span#songName:hover {
