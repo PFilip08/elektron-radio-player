@@ -35,7 +35,7 @@ async function downloadSong(url) {
     });
 
     const data = await spotify.getTrack(url);
-    const file = sterylizator(data.name);
+    const file = sterylizator(data.artists.join('-')+'_'+data.name);
     logger('log',`Pobieram: ${data.name+' by: '+data.artists.join(', ')}`,'downloadSong');
     if (fs.existsSync(`./mp3/onDemand/${file}.mp3`)) return logger('warn',`Plik istnieje!`,'downloadSong');
     const song = await spotify.downloadTrack(url);
@@ -61,7 +61,7 @@ async function downloadPlaylist(url) {
         if (!fs.existsSync(`./mp3/onDemand/${dir}`)){
             fs.mkdirSync(`./mp3/onDemand/${dir}`);
         }
-        const file = sterylizator(song.name);
+        const file = sterylizator(song.artists.join('-')+'_'+song.name);
         if (fs.existsSync(`./mp3/onDemand/${dir}/${file}.mp3`)) {
             logger('warn',`${file}.mp3 - Plik istnieje!`,'downloadPlaylist');
             continue;
@@ -88,7 +88,7 @@ async function downloadAlbum(url) {
     const album = await spotify.downloadAlbum(url);
     for (let i in album) {
         let song = await getTrackInfo(data.tracks[i]);
-        const file = sterylizator(song.name);
+        const file = sterylizator(song.artists.join('-')+'_'+song.name);
         if (fs.existsSync(`./mp3/onDemand/${dir}/${file}.mp3`)) {
             logger('warn',`${file}.mp3 - Plik istnieje!`,'downloadAlbum');
             continue;

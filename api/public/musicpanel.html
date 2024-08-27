@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Music Panel - localapi</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../music.css">
+</head>
+<body>
+<div class="center">
+    <h1>Mjuzik panel</h1>
+    <h2><span class="skew">localapi</span></h2>
+    <img src="../images/construction.gif" alt="konstrukcja"/>
+</div>
+<div class="center main">
+    <div class="center main music">
+        <div class="current">
+            <div class="cover">
+                <img id="cover" src="../images/taboret.png">
+            </div>
+            <div class="details">
+                <div class="marqueeContainer">
+                    <div class="marqueeContent">
+                        <span id="songName">Taboret</span>
+                    </div>
+                </div>
+                <span class="artist">By <span id="songArtist">Zespół Taboretów</span></span>
+                <label style="display: block; margin-top: 8px;" for="duration">Długość: <span id="durationText"></span></label>
+                <progress id="duration" value="32" max="100"></progress>
+            </div>
+        </div>
+        <div class="row">
+            <div class="songlist">
+                <p>Aktualnie gra playlista nr: <span id="currentPlaylist">22</span></p>
+                <table id="songlist">
+                    <tr>
+                        <th>Utwór</th>
+                        <th>Autor</th>
+                    </tr>
+                    <tr>
+                        <td>Taboret</td>
+                        <td>Zespół Taboretów</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col">
+            <div class="panic">
+                <form method="get" action="/action/kill">
+                    <input type="submit" formtarget="res" value="Awaryjny stop">
+                </form>
+            </div>
+            <img src="/images/logo_zseis.gif" alt="kręciołek ckziu" class="kreciolek"/>
+            </div>
+            <div class="playlists">
+                <table id="playlists">
+                    <tr>
+                        <th>ID Playlisty</th>
+                        <th>Nazwa playlisty</th>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Ruskie techno</td>
+                    </tr>
+                    <tr>
+                        <td>22</td>
+                        <td>Taborety i kotlety</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>Playlista do krojenia kotleta</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <iframe name="res" class="res"></iframe>
+    <br/>
+    <br/>
+    <a href="/admin"><img src="/images/admin.gif" alt="admin"/></a>
+    <a href="/stats"><img src="/images/stats.gif" alt="stats"/></a>
+    <br/>
+    <br/>
+    <img src="../images/ie_exploder.gif" alt="norton"/>
+    <img src="../images/norton.gif" alt="norton"/>
+    <img src="../images/linux_powered.gif" alt="norton"/>
+</div>
+<script src="../music.js"></script>
+</body>
+</html>

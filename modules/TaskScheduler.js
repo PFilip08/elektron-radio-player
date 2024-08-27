@@ -107,7 +107,7 @@ async function massSchedule() {
                 await downloader(time[mappedDays[l]][i].OnDemand);
                 const trackInfo = await getTrackInfo(time[mappedDays[l]][i].OnDemand);
                 schedule.scheduleJob(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, function () {
-                    playOnDemand(sterylizator(trackInfo.name));
+                    playOnDemand(sterylizator(trackInfo.artists.join('-')+'_'+trackInfo.name));
                     logger('log', `On Demand: ${trackInfo.name+ ' by '+ trackInfo.artists.join(' ')}`,'massSchedule');
                 });
                 scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`);

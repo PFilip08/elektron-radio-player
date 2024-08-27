@@ -1,13 +1,25 @@
 import {DebugSaveToFile} from "../../modules/DebugMode.js";
 import {logger} from "../../modules/Logger.js";
 import {getPlaylistName, playlistSongQuery, playlistListQuery, getPlayingSong} from "../../modules/MusicPlayer.js";
+import { pathSecurityChecker } from "../../modules/Other.js";
 
 export async function queryPlaylist(req, res) {
     try {
         const id = req.query.id;
-        const playlistName = getPlaylistName(id);
-        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlaylist');
-        if (playlistName != id && playlistName != 'nicość') {
+        let playlistName = getPlaylistName(id);
+        // logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlaylist');
+        if (!id) {
+            return res.status(400).send('Nie podano nazwy lub ID playlisty!');
+        }
+        let secuCheck = pathSecurityChecker(id);
+        if (secuCheck.includes('_ATTEMPT')) {
+            logger('warn', `Próba odtworzenia pliku z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${req.hostname}`, 'LocalAPI - queryPlaylist');
+            return res.status(403).send('Niebezpieczna ścieżka!');
+        }
+        if (playlistName.includes('onDemand')) {
+            playlistName = 'Playlista na żądanie - ' + playlistName.replace('onDemand/', '').replace(/_/g, ' ');
+        }
+        if (playlistName !== id && playlistName !== 'nicość' || playlistName.includes('onDemand')) {
             const playlistSongsName = await playlistSongQuery(id);
             return res.status(201).json(
                 {
@@ -29,7 +41,7 @@ export async function queryPlaylist(req, res) {
 
 export async function queryPlayingMusic(req, res) {
     try {
-        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlayingMusic');
+        logger('verbose', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlayingMusic');
         let [ isPlaying, songName, playedTime, toPlayTime ] = await getPlayingSong();
         return res.status(201).json(
             {
@@ -53,13 +65,15 @@ export async function queryPlayingMusic(req, res) {
 
 export async function queryPlaylistList(req, res) {
     try {
-        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlaylistList');
+        logger('verbose', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlaylistList');
         let playlistListFromFiles = await playlistListQuery()
         let playlistListNames = {};
         playlistListFromFiles.forEach((playlistID, index) => {
             let playlistName = getPlaylistName(playlistID)
-            if (playlistName != playlistID) {
+            if (playlistName !== playlistID) {
                 playlistListNames[index + 1] = getPlaylistName(playlistID);
+            } else if (playlistName.includes('onDemand/')) {
+                playlistListNames[index + 1] = 'Playlista na żądanie - ' + playlistName.replace('onDemand/', '').replace(/_/g, ' ');
             } else if (!Number.isInteger(parseInt(playlistName))) {
                 playlistListNames[index + 1] = 'Playlista NIEPRAWIDŁOWA!!!';
             } else {

@@ -1,0 +1,179 @@
+@font-face {
+    font-family: 'segment 14';
+    src: url('/segment 14 .ttf') format('truetype')
+}
+
+.music {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    margin-top: 40px;
+}
+
+.current {
+    background-color: #17191a;
+    width: 650px;
+    height: 150px;
+    display: flex;
+    flex-direction: row;
+    color: white;
+    position: relative;
+}
+
+.current .cover {
+    width: 100px;
+    height: 100px;
+    margin: 10px 15px;
+    position: relative;
+}
+
+.current .cover img {
+    width: 100px;
+}
+
+.current .details {
+    width: 90%;
+    max-width: 505px;
+    text-align: left;
+    position: relative;
+    padding: 10px;
+}
+
+.current .details span#songName {
+    display: inline-block;
+    font-size: 35px;
+    font-family: "segment 14", sans-serif;
+    position: relative;
+}
+
+.current .details span#songName:hover {
+    animation-play-state: paused;
+}
+
+.current .details span.artist {
+    font-size: 20px;
+    font-style: italic;
+}
+
+.current .details span#songArtist {
+    display: inline-block;
+}
+
+.current .details span#durationText {
+    font-weight: bold;
+    font-size: 15px;
+    display: inline-block;
+}
+
+.current .details progress {
+    width: 100%;
+    height: 25px;
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+}
+
+.panic {
+    background: url("https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Felectro24.pl%2Fuserdata%2Fpublic%2Fgfx%2F56506%2Fedcbc8d04e0ab5da77698987a9d3.jpg");
+    background-size: contain;
+    width: 200px;
+    height: 100px;
+    margin: 30px 40px 0 40px;
+    align-content: center;
+    align-items: center;
+}
+
+.panic input {
+    scale: 2;
+}
+
+.kreciolek {
+    width: 200px;
+    height: 100px;
+    display: block;
+    margin: 30px 40px 0 40px;
+    animation: animate 4s linear infinite;
+}
+
+.songlist {
+    background-color: blue;
+    width: 400px;
+    height: 300px;
+}
+
+.playlists {
+    background-color: red;
+    width: 400px;
+    height: 300px;
+}
+
+.songlist, .playlists {
+    overflow-y: auto;
+}
+
+progress, progress:not([value]) {
+    box-shadow: inset 0 0 1px 0 #686868;
+}
+
+progress {
+    box-sizing: border-box;
+    height: 14px;
+    border: 1px solid #686868;
+    border-radius: 4px;
+    padding: 1px 2px 1px 0;
+    overflow: hidden;
+    background-color: #17191a;
+}
+
+progress[value]::-moz-progress-bar {
+    border-radius: 2px;
+    background: repeating-linear-gradient(90deg,#fff 0,#fff 2px,transparent 0,transparent 10px),linear-gradient(180deg,#acedad 0,#7be47d 14%,#4cda50 28%,#2ed330 42%,#42d845 57%,#76e275 71%,#8fe791 85%,#fff);
+}
+
+table, th, td {
+    border: 1px outset black;
+    margin: 0 !important;
+}
+
+.current .details .marqueeContainer {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    max-width: 505px;
+    text-transform: uppercase;
+    height: 40px; 
+}
+
+.current .details .marqueeContent {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.current .details .marqueeContent.scroll {
+    animation: marquee 7s linear infinite;
+}
+
+@keyframes marquee {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes animate {
+    0% {
+        transform: perspective(150px) rotate3d(0, -1, 0, 0deg);
+    }
+    100% {
+        transform: perspective(150px) rotate3d(0, -1, 0, 360deg);
+    }
+}
