@@ -95,6 +95,7 @@ async function replaceData() {
     }
 
     if (previousSong !== data[0].playingSongName) {
+        // console.log("Zmiana piosenki")
         krzeslo:
         for (let i in data[1].playlistNames) {
             // console.log(data[1].playlistList);
@@ -112,7 +113,16 @@ async function replaceData() {
                 // console.log(kastracja(playlist.playlistSongsName[j].title))
                 // console.log(playlist.playlistSongsName[j])
                 // console.log(kastracja(data[0].playingSongName))
-                if (kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title) && kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].artist)))) {
+                // console.log("--------------------------------")
+                // console.log("Playlista nr %s",i)
+                // console.log("Nazwa muzyki: %s", kastracja(data[0].playingSongName))
+                // console.log("Nazwa piosenki z playlisty: %s",kastracja(playlist.playlistSongsName[j].title))
+                // console.log("Nazwa artysty z playlisty: %s",kastracja(playlist.playlistSongsName[j].artist))
+                // console.log("Warunki:")
+                // console.log("Warunek nr 1: %s",kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title)))
+                // console.log("Warunek nr 2: %s",kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].artist)))
+                // console.log("--------------------------------")
+                if ((kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title)) && kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].artist)))) {
                     // console.log(data[1].playlistNames[i]);
                     // console.log(i)
                     id=i;
@@ -128,7 +138,15 @@ async function replaceData() {
             let playlist;
             playlist = await getSongs('onDemand');
             for (let j in playlist.playlistSongsName) {
-                if (kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title)) && kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].artist))) {
+                // console.log("--------------------------------")
+                // console.log("onDemand")
+                // console.log("Nazwa muzyki: %s", kastracja(data[0].playingSongName))
+                // console.log("Nazwa artysty z playlisty: %s",kastracja(playlist.playlistSongsName[j].artist))
+                // console.log("Warunki:")
+                // console.log("Warunek nr 1: %s",kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title)))
+                // console.log("Warunek nr 2: %s",kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].artist)))
+                // console.log("--------------------------------")
+                if ((kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title))) && kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].artist))) {
                     id='onDemand';
                     cover = `data:${playlist.playlistSongsName[j].coverData.format};base64,${playlist.playlistSongsName[j].coverData.data}`;
                     break;
@@ -214,7 +232,15 @@ async function replaceData() {
         currentPlaylist.innerText = id+` (${data[1].playlistNames[id]})`;
         if (id === 'onDemand') currentPlaylist.innerText = id;
         for (let i in playlista.playlistSongsName) {
-            if (kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].title)) && kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].artist))) {
+            // console.log("--------------------------------")
+            // console.log(i)
+            // console.log("Nazwa muzyki: %s", kastracja(data[0].playingSongName))
+            // console.log("Nazwa artysty z playlisty: %s",kastracja(playlista.playlistSongsName[i].artist))
+            // console.log("Warunki:")
+            // console.log("Warunek nr 1: %s",kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].title)))
+            // console.log("Warunek nr 2: %s",kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].artist)))
+            // console.log("--------------------------------")
+            if ((kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].title))) && kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].artist))) {
                 //songName.innerText = playlista.playlistSongsName[i].title;
                 updateSongName(playlista.playlistSongsName[i].title);
                 songArtist.innerText = playlista.playlistSongsName[i].artist;
