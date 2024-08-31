@@ -140,27 +140,29 @@ Funkcja w sobie posiada zapisane cztery ustawienia czasu w różnych zmiennych:
 - `intervalOffAir` - czas który jest ustawiony po tym gdy radiowęzł już nie pracuje (Domyślnie 10 sekundy)
 - `intervalWeekend` - czas który jest ustawiony w weekend (Domyślnie 30 sekund)
 - `intervalVacation` - czas który jest ustawiony w czasie wakacji (Domyślnie 60 sekund)
+
 Funkcja dokonuje sprawdzenia w następujący sposób:
 - Jeżeli czas jest równy lub większy godzinie 7 i jest mniejszy lub równy godzinie 15 to funkcja ustawi zmienną `interval` na czas `intervalOnAir`
 - W innym przypadku funkcja ustawi zmienną `interval` na czas `intervalOffAir`
 - Jeżeli dzień tygodnia jest równy 6 (Sobota) lub 7 (Niedziela) to funkcja ustawi zmienną `interval` na czas `intervalWeekend`
 - Jeżeli miesiąc jest równy 7 (Lipiec) lub 8 (Sierpień) to funkcja ustawi zmienną `interval` na czas `intervalVacation`
+
 Jeżeli funkcja nigdy nie ustawiała czasu to przy pierwszym uruchomieni funkcję [`startInterval()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#startinterval) wysyłając do niej zmienną `interval` po uruchomieniu tej funkcji przechodzi dalej i zaczyna wyświetlać następujące logi w konsoli:
 - Jeżeli zmienna `interval` jest równa `intervalOnAir` to w konsoli pojawi się log:
 
-!["Jak wygląda log z funkcji scheduleUpdate w przypadku gdy interval jest równy intervalOnAir"](https://i.imgur.com/tO9kocE.png)
+  !["Jak wygląda log z funkcji scheduleUpdate w przypadku gdy interval jest równy intervalOnAir"](https://i.imgur.com/tO9kocE.png)
 
 - Jeżeli zmienna `interval` jest równa `intervalVacation` to w konsoli pojawi się log:
 
-!["Jak wygląda log z funkcji scheduleUpdate w przypadku gdy interval jest równy intervalVacation"](https://i.imgur.com/qE4ZHJF.png)
+  !["Jak wygląda log z funkcji scheduleUpdate w przypadku gdy interval jest równy intervalVacation"](https://i.imgur.com/qE4ZHJF.png)
 
 - Jeżeli zmienna `interval` jest równa `intervalOffAir` to w konsoli pojawi się log:
 
-!["Jak wygląda log z funkcji scheduleUpdate w przypadku gdy interval jest równy intervalOffAir"](https://i.imgur.com/o1jm9oX.png)
+  !["Jak wygląda log z funkcji scheduleUpdate w przypadku gdy interval jest równy intervalOffAir"](https://i.imgur.com/o1jm9oX.png)
 
-Po tym wszystkim funkcja zwróci loga:
+ - Po tym wszystkim funkcja zwróci loga:
 
-!["Jak wygląda log z funkcji scheduleUpdate przed czyszczeniem i startowaniem nowego interwału"](https://i.imgur.com/VOJZrpH.png)
+    !["Jak wygląda log z funkcji scheduleUpdate przed czyszczeniem i startowaniem nowego interwału"](https://i.imgur.com/VOJZrpH.png)
 
 I wyczyści interwał i uruchomi nowy interwał przy użyciu funkcji [`startInterval()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#startinterval).
 
