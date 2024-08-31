@@ -27,6 +27,7 @@ Funkcja findChanges przyjmuje trzy argumenty:
 ## Tryb Debugowania
 W trybie debugowania logi pokazują flow którym myśli funkcja i co zwraca w wyniku porównania dwóch obiektów. Przykładowy logi wygląda tak:
 !["Jak wygląda log z funkcji findChanges w trybie debugowania"](https://i.imgur.com/ZzZi3RL.png)
+
 Tych logów jest za dużo aby opisywać każdy z osobna przypadek.
 # logChanges()
 logChanges jest funkcją, która ogarnia wyświetlanie zmian które wykryła funkcja [`findChanges()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Logger.js.md#findchanges) w czytelnej formie. Wykonuje się ona w pętli for i wykona się tyle razy ile [`findChanges()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Logger.js.md#findchanges) wykrył zmian.
@@ -74,6 +75,7 @@ Funkcja będzie wyświetlała tylko to że klucz został zmieniony ale nie wyśw
 ## Tryb Debugowania
 Przed rozpoczęciem działania funkcji informuje tym logiem o rozpoczęciu logowania zmian:
 !["Jak wygląda log z funkcji logChanges w trybie debugowania"](https://i.imgur.com/Aofi3J9.png)
+
 Zmiany które zostały wykryte są zapisywane przez funkcje [`DebugSaveToFile()`]() w lokalizacji `debug/Logger/logChanges/changes.txt`.
 
 Po zakończeniu działania funkcji informuje tym logiem o zakończeniu logowania zmian i ilości zmian które wykryła:
