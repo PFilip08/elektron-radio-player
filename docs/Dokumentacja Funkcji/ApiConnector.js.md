@@ -45,28 +45,40 @@ Tryb Recovery może uruchomić się też przy starcie gdy skrypt nie będzie mó
 ## Tryb Debugowania
 Przed pierwszym uruchomieniem funkcji i sprawdzania czy zmienna `isOn` jest równa `false` zwracany jest log:
 !["Jak wygląda log z funkcji getApiData przed uruchomieniem pierwszego sprawdzenia w trybie debugowania"](https://i.imgur.com/JNgJhok.png)
+
 Przed uruchomieniem sprawdzane jest czy zmienna w jsonie `isOn` jest równa `false` zwracany jest log:
 !["Jak wygląda log z funckji getApiData przed sprawdzeniem w trybie debugowania"](https://i.imgur.com/VyRoHks.png)
+
 Jeżeli sprawdzenie zakończy się sukcesem to zwracany jest log:
 !["Jak wygląda log z funkcji getApiData po sprawdzeniu w trybie debugowania"](https://i.imgur.com/o5geNaw.png)
+
 Jeżeli funkcja wyszła z trybu recovery to zwracany jest log:
 !["Jak wygląda log z funkcji getApiData po wyjściu z trybu recovery w trybie debugowania"](https://i.imgur.com/0xSm4SE.png)
+
 Jeżeli zmienna `isOn` jest równa `false` to zwracany jest log:
 !["Jak wygląda log z funkcji getApiData po sprawdzeniu czy zmienna isOn jest równa false w trybie debugowania"](https://i.imgur.com/GCM9cxu.png)
+
 Response z serwera jest zapisywany przez funkcję [`DebugSaveToFile()`]() w lokalizacji `debug/ApiConnector/getApiData/response.json` i potwierdzone to zostaje następującym logiem:
 !["Jak wygląda log z funkcji getApiData mówiący o zapisaniu response do pliku w trybie debugowania"](https://i.imgur.com/8JXp7mR.png)
+
 Kiedy funkcja wchodzi w tryb recovery to zwracany jest log z informacją o tym i wyświetlany jest złapany błąd:
 !["Jak wygląda log z funkcji getApiData mówiący o wejściu w tryb recovery i pokazujący błąd w trybie debugowania"](https://i.imgur.com/zNb7EWk.png)
+
 Błąd przez który funkcja weszła w tryb recovery jest zapisywany przez funkcję [`DebugSaveToFile()`]() w lokalizacji `debug/ApiConnector/getApiData/catched_error.txt` i potwierdzone to zostaje następującym logiem:
 !["Jak wygląda log z funkcji getApiData mówiący o zapisaniu błędu do pliku w trybie debugowania"](https://i.imgur.com/RhQ3Xfb.png)
+
 Jeżeli funkcja wejdzie w tryb recovery w trakcie działania to zwracany jest log z informacją że będzie on używał danych zapisanych poprzednio w skrypcie:
 !["Jak wygląda log z funkcji getApiData mówiący o użyciu danych zapisanych w skrypcie w trybie debugowania"](https://i.imgur.com/yt132PU.png)
+
 Dane ze zmiennej `previousData` są zapisywane przez funkcję [`DebugSaveToFile()`]() w lokalizacji `debug/ApiConnector/getApiData/previousData.json` i potwierdzone to zostaje następującym logiem:
 !["Jak wygląda log z funkcji getApiData mówiący o zapisaniu previousData do pliku w trybie debugowania"](https://i.imgur.com/p9fZzjN.png)
+
 Jeżeli funkcja wejdzie w tryb recovery przy starcie to zwracany jest log z informacją o tym że będzie używał danych zapisanych w skrypcie:
 !["Jak wygląda log z funkcji getApiData mówiący o użyciu danych zapisanych w skrypcie w trybie debugowania"](https://i.imgur.com/7utr2W2.png)
+
 Dane zapisane w skrypcie są zapisywane przez funkcję [`DebugSaveToFile()`]() w lokalizacji `debug/ApiConnector/getApiData/static_data.json` i potwierdzone to zostaje następującym logiem:
 !["Jak wygląda log z funkcji getApiData mówiący o zapisaniu static_data do pliku w trybie debugowania"](https://i.imgur.com/qcToM0V.png)
+
 # checkUpdate()
 checkUpdate jest funkcją która sprawdza czy jest dostępny json z informacji o godzinach puszczania muzyki.
 
@@ -91,18 +103,25 @@ Która zwraca dane do zmiennej `changes` i następnie dla tej zmiennej jest wyko
 ## Tryb Debugowania
 Przed sprawdzeniem czy podane dane są statyczne wyświetlany jest log:
 !["Jak wygląda log z funkcji checkUpdate przed sprawdzeniem czy dane są statyczne w trybie debugowania"](https://i.imgur.com/BNXWanM.png)
+
 Jeżeli dane są statyczne to zwracany jest log:
 !["Jak wygląda log z funkcji checkUpdate po sprawdzeniu czy dane są statyczne w trybie debugowania"](https://i.imgur.com/5GMS4rX.png)
+
 Przed sprawdzeniem czy dane są różne wyświetlany jest log:
 !["Jak wygląda log z funkcji checkUpdate przed sprawdzeniem czy dane są różne w trybie debugowania"](https://i.imgur.com/VmEg8K5.png)
+
 Jeżeli dane są różne to zwracany jest log:
 !["Jak wygląda log z funkcji checkUpdate po sprawdzeniu czy dane są różne w trybie debugowania"](https://imgur.com/0KV8z2A.png)
+
 Przed przekazaniem danych do funkcji `findChanges()` wyświetlany jest log:
 !["Jak wygląda log z funkcji checkUpdate przed przekazaniem danych do findChanges w trybie debugowania"](https://i.imgur.com/E3yVIVX.png)
+
 Przed przekazaniem danych do funkcji `logChanges()` wyświetlany jest log:
 !["Jak wygląda log z funkcji checkUpdate przed przekazaniem danych do logChanges w trybie debugowania"](https://imgur.com/9DctMT5.png)
+
 Przed zapisaniem danych do zmiennej `previousData` wyświetlany jest log:
 !["Jak wygląda log z funkcji checkUpdate przed zapisaniem danych do previousData w trybie debugowania"](https://i.imgur.com/udiyF1s.png)
+
 # startInterval()
 Jest funkcją która uruchamia funkcję [`checkUpdate()`]() w podany przez funkcję [`scheduleUpdate()`]() czasie.
 
@@ -120,12 +139,16 @@ Funkcja dokonuje sprawdzenia w następujący sposób:
 Jeżeli funkcja nigdy nie ustawiała czasu to przy pierwszym uruchomieni funkcję [`startInterval()`]() wysyłając do niej zmienną `interval` po uruchomieniu tej funkcji przechodzi dalej i zaczyna wyświetlać następujące logi w konsoli:
 - Jeżeli zmienna `interval` jest równa `intervalOnAir` to w konsoli pojawi się log:
 !["Jak wygląda log z funkcji scheduleUpdate w przypadku gdy interval jest równy intervalOnAir"](https://i.imgur.com/tO9kocE.png)
+
 - Jeżeli zmienna `interval` jest równa `intervalVacation` to w konsoli pojawi się log:
 !["Jak wygląda log z funkcji scheduleUpdate w przypadku gdy interval jest równy intervalVacation"](https://i.imgur.com/qE4ZHJF.png)
+
 - Jeżeli zmienna `interval` jest równa `intervalOffAir` to w konsoli pojawi się log:
 !["Jak wygląda log z funkcji scheduleUpdate w przypadku gdy interval jest równy intervalOffAir"](https://i.imgur.com/o1jm9oX.png)
+
 Po tym wszystkim funkcja zwróci loga:
 !["Jak wygląda log z funkcji scheduleUpdate przed czyszczeniem i startowaniem nowego interwału"](https://i.imgur.com/VOJZrpH.png)
+
 I wyczyści interwał i uruchomi nowy interwał przy użyciu funkcji [`startInterval()`]().
 
 ## Tryb Debugowania
