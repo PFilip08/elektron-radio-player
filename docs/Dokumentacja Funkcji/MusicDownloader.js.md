@@ -8,6 +8,14 @@ Funkcje wyświetlić może 3 rodzaje komunikatów:
 - Jeżeli podany link jest albumem to wyświetli się komunikat i przekieruje do funkcji [`downloadAlbum()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicDownloader.js.md#downloadalbum):
 
 !["Jak wygląda komunikat o albumie z funkcji downloader"](https://i.imgur.com/8MvZ6c4.png)
+- Jeżeli podany link jest nieprawidłowy i nie można go rozpoznać to wyświetli się komunikat:
+!["Jak wygląda komunikat o nieprawidłowym linku z funkcji downloader"](https://i.imgur.com/5tE6vA5.png)
+A funkcja zwróci stringa: ``Nie wykryto typu``.
+## Tryb Debugowania
+Przed rozpoznaniem linku funkcja zwraca log z informacją o wyniku splita i co z tego wynika:
+!["Jak wygląda log z funkcji downloader który mówi o wyniku splita i co wykrył w trybie debugowania"](https://i.imgur.com/rLVq1Fr.png)
+W przypadku gdy nie wykryje linku to link jest zapisywany przez funkcje [`DebugSaveToFile()`]() w lokalizacji `debug/MusicDownloader/downloader/catched_link.txt` i zwraca log z informacją o tym:
+!["Jak wygląda log z funkcji downloader mówiący o zapisaniu linku do pliku w trybie debugowania"](https://i.imgur.com/YTqajCQ.png)
 # downloadSong()
 Funkcja ta pobiera pojedynczy utwór muzyczny.
 Na początku tworzy klienta który potrzebuje `SPOTIFY_CLIENT_ID` oraz `SPOTIFY_CLIENT_SECRET` a bierze go z pliku `.env`. Następnie pobiera informacje o utworze ze serwera Spotify, po tym nazwa przelatuje przez funkcję [`sterylizator()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Other.js.md#sterylizator) która usuwa z nazwy znaki specjalne i po tym funkcja sprawdza czy plik istnieje jeżeli istnieje to wyświetla komunikat:
@@ -23,5 +31,8 @@ Po pobraniu pliku w konsoli wyświetli się poniższy komunikat:
 Funkcja ta pobiera playlistę muzyczną. Działa na takiej samej zasadzie co funkcja [`downloadSong()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicDownloader.js.md#downloadsong).
 # getTrackInfo()
 Funkcja ta rozpoznaje, jaki rodzaj linku został podany i wywołuje odpowiednią funkcję która sprawdza informacje o podanym tracku, playliście lub albumie.
+## Tryb Debugowania
+Przed rozpoznaniem linku funkcja zwraca log z informacją o wyniku splita i co z tego wynika:
+!["Jak wygląda log z funkcji getTrackInfo który mówi o wyniku splita i co wykrył w trybie debugowania"](https://i.imgur.com/NRNhpOs.png)
 # autoRemoveFiles()
 Funkcja ta usuwa pliki z folderu `onDemand`.
