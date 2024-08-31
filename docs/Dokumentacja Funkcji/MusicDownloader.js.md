@@ -6,7 +6,6 @@ Funkcje wyświetlić może 3 rodzaje komunikatów:
 - Jeżeli podany link jest playlistą to wyświetli się komunikat i przekieruje do funkcji [`downloadPlaylist()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicDownloader.js.md#downloadplaylist):
 !["Jak wygląda komunikat o playliście z funkcji downloader"](https://i.imgur.com/Hhnni2t.png)
 - Jeżeli podany link jest albumem to wyświetli się komunikat i przekieruje do funkcji [`downloadAlbum()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicDownloader.js.md#downloadalbum):
-
 !["Jak wygląda komunikat o albumie z funkcji downloader"](https://i.imgur.com/8MvZ6c4.png)
 - Jeżeli podany link jest nieprawidłowy i nie można go rozpoznać to wyświetli się komunikat:
 !["Jak wygląda komunikat o nieprawidłowym linku z funkcji downloader"](https://i.imgur.com/5tE6vA5.png)
@@ -17,6 +16,7 @@ Przed rozpoznaniem linku funkcja zwraca log z informacją o wyniku splita i co z
 !["Jak wygląda log z funkcji downloader który mówi o wyniku splita i co wykrył w trybie debugowania"](https://i.imgur.com/rLVq1Fr.png)
 
 W przypadku gdy nie wykryje linku to link jest zapisywany przez funkcje [`DebugSaveToFile()`]() w lokalizacji `debug/MusicDownloader/downloader/catched_link.txt` i zwraca log z informacją o tym:
+
 !["Jak wygląda log z funkcji downloader mówiący o zapisaniu linku do pliku w trybie debugowania"](https://i.imgur.com/YTqajCQ.png)
 
 # downloadSong()
@@ -27,6 +27,7 @@ Na początku tworzy klienta który potrzebuje `SPOTIFY_CLIENT_ID` oraz `SPOTIFY_
 
 Po wykryciu plik rozpoczyna się pobieranie pliku i wyświetla się następujący log:
 !["Jak wygląda log z funkcji downloadSong"](https://i.imgur.com/lkknRR7.png)
+
 Po pobraniu pliku w konsoli wyświetli się poniższy komunikat:
 
 !["Jak wygląda komunikat końcowy o pobraniu pliku z funkcji downloadSong"](https://i.imgur.com/3PYBkvD.png)
