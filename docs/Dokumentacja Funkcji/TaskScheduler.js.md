@@ -4,17 +4,32 @@ Funkcja ta zwraca liczbę zadań które zrobiły funkcje [`scheduleMusicTask()`]
 Wyświetla w formie takiego o to loga:
 
 !["Jak wygląda log z funkcji taskNumber"](https://i.imgur.com/WtiXhBo.png)
+W trybie debugowania wyświetla informacje o uruchomieniu tej funkcji który wygląda tak:
+!["Jak wygląda log z funkcji taskNumber w trybie debugowania"](https://i.imgur.com/VpmxwA9.png)
 # scheduleMusicTask()
 Planuje puszczanie muzyki z danej playlisty o danej godzinie ustawiając funkcje [`playPlaylist()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#playplaylist). Puszczenie poprzedza takim o to logiem w konsoli:
 !["Jak wygląda log z funkcji scheduleMusicTask"](https://i.imgur.com/6WH87AO.png)
+W trybie debugowania log informuje na kiedy została zaplanowana funkcja [`playPlaylist()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#playplaylist) oraz jaka playlista została jej podana:
+!["Jak wygląda log z funkcji scheduleMusicTask w trybie debugowania"](https://i.imgur.com/90GjKjS.png)
 # scheduleKillTask()
 Planuje zabicie odtwarzacza muzyki o danej godzinie ustawiając funkcje [`killPlayer()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#killplayer).
+W trybie debugowania log informuje na kiedy zostało zaplanowane zadanie uruchomienia funkcji [`killPlayer()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#killplayer):
+!["Jak wygląda log z funkcji scheduleKillTask w trybie debugowania"](https://i.imgur.com/kn3AFHO.png)
 # checkScheduleTime()
 Funkcja ta sprawdza czy czas zakończenia jest późniejszy niż czas rozpoczęcia i odwrotnie. Jeśli nie, zwraca false i pokazuje odpowiedni log w konsoli:
 Dla czasu zakończenia wcześniejszego niż czas rozpoczęcia (dla minutach):
 !["Jak wygląda log z funkcji checkScheduleTime gdy czas zakończenia jest późniejszy niż czas rozpoczęcia dla minut"](https://i.imgur.com/yJRBjTi.png)
 Dla czasu zakończenia późniejszego niż czas rozpoczęci (dla godzin):
 !["Jak wygląda log z funkcji checkScheduleTime gdy czas zakończenia jest późniejszy niż czas rozpoczęcia dla godzin"](https://i.imgur.com/KeQiAKC.png)
+## Tryb Debugowania
+Log informuje jaka zasada i numer przerwy został podany do funkcji w celu sprawdzenia:
+!["Jak wygląda log z funkcji checkScheduleTime w trybie debugowania informujący o tym co jest aktualnie do sprawdzenia przez funkcje"](https://i.imgur.com/fwvDB1b.png)
+Jeżeli godzina przerwy danej zasady jest prawidłowa zwracany log wygląda tak:
+!["Jak wygląda log z funkcji checkScheduleTime w trybie debugowania informujący o tym że godzina przerwy jest prawidłowa"](https://i.imgur.com/bwQNYhR.png)
+W przypadku gdy sprawdzenie wyszło że czas w minutach jest na minusie (czas zakończenia jest wcześniejszy niż czas rozpoczęcia) log wygląda tak:
+!["Jak wygląda log z funkcji checkScheduleTime w trybie debugowania informujący o tym że czas zakończenia jest wcześniejszy niż czas rozpoczęcia (sprawdzenie minut)"](https://i.imgur.com/LkOiUa5.png)
+W przypadku gdy sprawdzenie wyszło że czas w godzinie jest na minusie (czas zakończenia jest wcześniejszy niż czas rozpoczęcia) log wygląda tak:
+!["Jak wygląda log z funkcji checkScheduleTime w trybie debugowania informujący o tym że czas zakończenia jest wcześniejszy niż czas rozpoczęcia (sprawdzenie godzin)"](https://i.imgur.com/1Z2Z2Zv.png)
 # massSchedule()
 `massSchedule` jest funkcją, która planuje zadania związane z odtwarzaniem muzyki na podstawie harmonogramu pobranego z API. Funkcja ta zarządza zadaniami harmonogramu, usuwa stare pliki, pobiera dane z API, sprawdza poprawność czasów rozpoczęcia i zakończenia oraz tworzy nowe zadania harmonogramu dla odtwarzania muzyki.
 
