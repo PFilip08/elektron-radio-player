@@ -31,6 +31,7 @@ Jeżeli ścieżka wiedzie do ucieczki z katalogu ``mp3/`` zwraca komunikat:
 Jeżeli ścieżka zawiera "dwukropki" zwraca komunikat:
 
 !["Jak wygląda log z funkcji pathSecurityChecker mówiący o wykryciu dwukropków"](https://i.imgur.com/mFFUhWT.png)
+
 Jeżeli ścieżka nie narusza żadnego z tych warunków zwraca wartość ``NONE``.
 ## Tryb debugowania
 Log informuje o tym, co zostało przekazane do funkcji w celu sprawdzenia:

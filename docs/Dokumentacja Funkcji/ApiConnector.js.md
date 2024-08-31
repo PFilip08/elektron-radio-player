@@ -82,6 +82,7 @@ Jeżeli funkcja wejdzie w tryb recovery przy starcie to zwracany jest log z info
 !["Jak wygląda log z funkcji getApiData mówiący o użyciu danych zapisanych w skrypcie w trybie debugowania"](https://i.imgur.com/7utr2W2.png)
 
 Dane zapisane w skrypcie są zapisywane przez funkcję [`DebugSaveToFile()`]() w lokalizacji `debug/ApiConnector/getApiData/static_data.json` i potwierdzone to zostaje następującym logiem:
+
 !["Jak wygląda log z funkcji getApiData mówiący o zapisaniu static_data do pliku w trybie debugowania"](https://i.imgur.com/qcToM0V.png)
 
 # checkUpdate()

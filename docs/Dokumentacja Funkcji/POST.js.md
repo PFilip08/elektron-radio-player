@@ -12,6 +12,7 @@ Funkcja `POST()` służy do uruchomienia całego Automatu skrypt wykonuje instru
 
         ![Komunikat o błędzie dla systemu okno](https://i.imgur.com/yP5dJze.png)
         - W przypadku gdy skrypt jest uruchomiony w trybie debugowania to wyświetli następujący komunikat dalej postępując zgodnie z pierwszym punktem:
+        
             ![Komunikat o błędzie dla systemu okno w trybie debugowania](https://i.imgur.com/2H5Be1q.png)
 - Sprawdza czy istnieje zmienna środowiskowa o nazwie `WWW`
     - Jeżeli zmienna istnieje to skrypt aktywuje lokalne api (funkcja wewnętrzna `www()`) i wyświetli komunikat:

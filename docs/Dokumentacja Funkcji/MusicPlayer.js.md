@@ -118,6 +118,7 @@ Jeżeli plik istnieje, to funkcja wywołuje `cvlc` z odpowiednimi argumentami i 
 Przed odtworzeniem pliku funkcja zwraca log z informacją o tym co ma odtworzyć i informuje że będzie sprawdzać czy plik istnieje:
 
 !["Jak wygląda log z funkcji playMusic w trybie debugowania"](https://i.imgur.com/w51gJam.png)
+
 Jeżeli plik istnieje to funkcja zwraca log o wykonaniu tego zadania który wygląda tak:
 
 !["Jak wygląda log z funkcji playMusic który informuje że plik istnieje w trybie debugowania"](https://i.imgur.com/wBxJaMZ.png)

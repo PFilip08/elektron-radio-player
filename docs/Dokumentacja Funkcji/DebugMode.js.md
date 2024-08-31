@@ -28,7 +28,9 @@ Funkcja ta przyjmuje cztery argumenty:
 - `functionName` - nazwa funkcji z której jest wywoływana funkcja
 - `fileName` - nazwa pliku do którego ma zostać zapisany log
 - `data` - dane które mają zostać zapisane w pliku
+
 Jeżeli funkcja zostanie wywołana a tryb debugowania nie jest włączony to funkcja wywali player z błędem i logiem:
+
 ![Błąd który zostanie wywołany jeżeli tryb debugowania nie jest włączony](https://i.imgur.com/9hmVuCt.png)
 ![Log z funkcji DebugSaveToFile informujący o braku włączonego trybu debugowania](https://i.imgur.com/GQa69Vq.png)
 
