@@ -3,9 +3,11 @@ Funkcja ta nie przyjmuje żadnych argumentów służy ona do przełączenia zmie
 
 Kiedy w pliku `.env` zmienna `VERBOSE` jest ustawiona na `true` to funkcja `DebugStarter()` ustawia zmienną globalną `debugMode` na wartość `true`.
 I infomuje o tym logiem że tryb debugowaniua został uruchomiony:
+
 ![Log z funkcji DebugStarter informujący o uruchomieniu trybu debugowania](https://i.imgur.com/0N6Ml4o.png)
 
 Po tym infomuje jakie ustawienia są załadowane:
+
 ![Log z funkcji DebugStarter informujący o załadowanych ustawieniach](https://i.imgur.com/GFFF7L1.png)
 
 Jeżeli nie istnieje zmienna w pliku `.env`o nazwie `SPOTIFY_CLIENT_ID` to funkcja `DebugStarter()` wyświetla log o braku tej zmiennej:
