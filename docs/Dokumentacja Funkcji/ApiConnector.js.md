@@ -50,15 +50,19 @@ Przed uruchomieniem sprawdzane jest czy zmienna w jsonie `isOn` jest równa `fal
 !["Jak wygląda log z funckji getApiData przed sprawdzeniem w trybie debugowania"](https://i.imgur.com/VyRoHks.png)
 
 Jeżeli sprawdzenie zakończy się sukcesem to zwracany jest log:
+
 !["Jak wygląda log z funkcji getApiData po sprawdzeniu w trybie debugowania"](https://i.imgur.com/o5geNaw.png)
 
 Jeżeli funkcja wyszła z trybu recovery to zwracany jest log:
+
 !["Jak wygląda log z funkcji getApiData po wyjściu z trybu recovery w trybie debugowania"](https://i.imgur.com/0xSm4SE.png)
 
 Jeżeli zmienna `isOn` jest równa `false` to zwracany jest log:
+
 !["Jak wygląda log z funkcji getApiData po sprawdzeniu czy zmienna isOn jest równa false w trybie debugowania"](https://i.imgur.com/GCM9cxu.png)
 
 Response z serwera jest zapisywany przez funkcję [`DebugSaveToFile()`]() w lokalizacji `debug/ApiConnector/getApiData/response.json` i potwierdzone to zostaje następującym logiem:
+
 !["Jak wygląda log z funkcji getApiData mówiący o zapisaniu response do pliku w trybie debugowania"](https://i.imgur.com/8JXp7mR.png)
 
 Kiedy funkcja wchodzi w tryb recovery to zwracany jest log z informacją o tym i wyświetlany jest złapany błąd:
@@ -68,6 +72,7 @@ Błąd przez który funkcja weszła w tryb recovery jest zapisywany przez funkcj
 !["Jak wygląda log z funkcji getApiData mówiący o zapisaniu błędu do pliku w trybie debugowania"](https://i.imgur.com/RhQ3Xfb.png)
 
 Jeżeli funkcja wejdzie w tryb recovery w trakcie działania to zwracany jest log z informacją że będzie on używał danych zapisanych poprzednio w skrypcie:
+
 !["Jak wygląda log z funkcji getApiData mówiący o użyciu danych zapisanych w skrypcie w trybie debugowania"](https://i.imgur.com/yt132PU.png)
 
 Dane ze zmiennej `previousData` są zapisywane przez funkcję [`DebugSaveToFile()`]() w lokalizacji `debug/ApiConnector/getApiData/previousData.json` i potwierdzone to zostaje następującym logiem:
@@ -105,12 +110,15 @@ Przed sprawdzeniem czy podane dane są statyczne wyświetlany jest log:
 !["Jak wygląda log z funkcji checkUpdate przed sprawdzeniem czy dane są statyczne w trybie debugowania"](https://i.imgur.com/BNXWanM.png)
 
 Jeżeli dane są statyczne to zwracany jest log:
+
 !["Jak wygląda log z funkcji checkUpdate po sprawdzeniu czy dane są statyczne w trybie debugowania"](https://i.imgur.com/5GMS4rX.png)
 
 Przed sprawdzeniem czy dane są różne wyświetlany jest log:
+
 !["Jak wygląda log z funkcji checkUpdate przed sprawdzeniem czy dane są różne w trybie debugowania"](https://i.imgur.com/VmEg8K5.png)
 
 Jeżeli dane są różne to zwracany jest log:
+
 !["Jak wygląda log z funkcji checkUpdate po sprawdzeniu czy dane są różne w trybie debugowania"](https://imgur.com/0KV8z2A.png)
 
 Przed przekazaniem danych do funkcji `findChanges()` wyświetlany jest log:
@@ -138,15 +146,19 @@ Funkcja dokonuje sprawdzenia w następujący sposób:
 - Jeżeli miesiąc jest równy 7 (Lipiec) lub 8 (Sierpień) to funkcja ustawi zmienną `interval` na czas `intervalVacation`
 Jeżeli funkcja nigdy nie ustawiała czasu to przy pierwszym uruchomieni funkcję [`startInterval()`]() wysyłając do niej zmienną `interval` po uruchomieniu tej funkcji przechodzi dalej i zaczyna wyświetlać następujące logi w konsoli:
 - Jeżeli zmienna `interval` jest równa `intervalOnAir` to w konsoli pojawi się log:
+
 !["Jak wygląda log z funkcji scheduleUpdate w przypadku gdy interval jest równy intervalOnAir"](https://i.imgur.com/tO9kocE.png)
 
 - Jeżeli zmienna `interval` jest równa `intervalVacation` to w konsoli pojawi się log:
+
 !["Jak wygląda log z funkcji scheduleUpdate w przypadku gdy interval jest równy intervalVacation"](https://i.imgur.com/qE4ZHJF.png)
 
 - Jeżeli zmienna `interval` jest równa `intervalOffAir` to w konsoli pojawi się log:
+
 !["Jak wygląda log z funkcji scheduleUpdate w przypadku gdy interval jest równy intervalOffAir"](https://i.imgur.com/o1jm9oX.png)
 
 Po tym wszystkim funkcja zwróci loga:
+
 !["Jak wygląda log z funkcji scheduleUpdate przed czyszczeniem i startowaniem nowego interwału"](https://i.imgur.com/VOJZrpH.png)
 
 I wyczyści interwał i uruchomi nowy interwał przy użyciu funkcji [`startInterval()`]().
