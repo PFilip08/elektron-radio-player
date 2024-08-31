@@ -3,7 +3,7 @@ Funkcja `POST()` służy do uruchomienia całego Automatu skrypt wykonuje instru
 - Wyświetla log powitalny z informacją o twórcy skryptu i jak projekt się nazywa.
 
     ![Jak wygląda log powitalny?](https://i.imgur.com/n98C6uS.png)
-- Uruchamia funkcję [`DebugStarter()`]() która sprawdza czy skrypt uruchomiony jest w trybie debugowania
+- Uruchamia funkcję [`DebugStarter()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugstarter) która sprawdza czy skrypt uruchomiony jest w trybie debugowania
     - Jeżeli skrypt uruchomiony jest w trybie debugowania to wyświetli komunikat informujący na jakim systemie pracuje i pokazuje log o treści:
 
         ![Komunikat o z trybu debugowania informujący o tym na jakim systemie działa skrypt](https://i.imgur.com/9PQRZlu.png)
@@ -22,7 +22,7 @@ Funkcja `POST()` służy do uruchomienia całego Automatu skrypt wykonuje instru
 - Uruchamia funkcję [`massSchedule()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#massschedule) która ustawia zadania w playerze, o której ma grać muzyka w harmonogramie i wyświetla komunikat informujący o ustawieniu funkcji:
 
     ![Komunikat o ustawieniu harmonogramu](https://i.imgur.com/UnezZCp.png)
-- Uruchamia funkcję [`checkUpdate()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#checkupdate) która pobiera pierwsze dane z serwera a potem ustawia funkcje [`scheduleUpdate()`]() która uruchamia się co sekundę a po tym wyświetla komunikat:
+- Uruchamia funkcję [`checkUpdate()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#checkupdate) która pobiera pierwsze dane z serwera a potem ustawia funkcje [`scheduleUpdate()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#scheduleupdate) która uruchamia się co sekundę a po tym wyświetla komunikat:
 
     ![Komunikat o ustawieniu sprawdzania aktualizacji](https://i.imgur.com/Akm8cAd.png)
 - Pod koniec funkcja `POST()` wyświetli komunikat o treści:

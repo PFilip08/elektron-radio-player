@@ -103,7 +103,7 @@ A po uruchomieniu funkcji [`massSchedule()`](https://github.com/PFilip08/elektro
 
 Potem uruchamiana jest funkcja [`findChanges()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Logger.js.md#findchanges) której opis jest tu:
 
-Która zwraca dane do zmiennej `changes` i następnie dla tej zmiennej jest wykonywana funkcja `logChanges()` której opis znajduję się tu: [TUTAJ](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Logger.js.md#logchanges)
+Która zwraca dane do zmiennej `changes` i następnie dla tej zmiennej jest wykonywana funkcja [`logChanges()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Logger.js.md#logchanges) której opis znajduję się tu: [TUTAJ](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Logger.js.md#logchanges)
 
 ~~W przypadku gdy odpowiedz będzie błędna to w konsoli pojawi się log z błędem:~~ Nie działa na dzień 19.06.2024
 ## Tryb Debugowania
@@ -122,17 +122,17 @@ Jeżeli dane są różne to zwracany jest log:
 
 !["Jak wygląda log z funkcji checkUpdate po sprawdzeniu czy dane są różne w trybie debugowania"](https://imgur.com/0KV8z2A.png)
 
-Przed przekazaniem danych do funkcji `findChanges()` wyświetlany jest log:
+Przed przekazaniem danych do funkcji [`findChanges()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Logger.js.md#findchanges) wyświetlany jest log:
 !["Jak wygląda log z funkcji checkUpdate przed przekazaniem danych do findChanges w trybie debugowania"](https://i.imgur.com/E3yVIVX.png)
 
-Przed przekazaniem danych do funkcji `logChanges()` wyświetlany jest log:
+Przed przekazaniem danych do funkcji [`logChanges()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Logger.js.md#logchanges) wyświetlany jest log:
 !["Jak wygląda log z funkcji checkUpdate przed przekazaniem danych do logChanges w trybie debugowania"](https://imgur.com/9DctMT5.png)
 
 Przed zapisaniem danych do zmiennej `previousData` wyświetlany jest log:
 !["Jak wygląda log z funkcji checkUpdate przed zapisaniem danych do previousData w trybie debugowania"](https://i.imgur.com/udiyF1s.png)
 
 # startInterval()
-Jest funkcją która uruchamia funkcję [`checkUpdate()`]() w podany przez funkcję [`scheduleUpdate()`]() czasie.
+Jest funkcją która uruchamia funkcję [`checkUpdate()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#checkupdate) w podany przez funkcję [`scheduleUpdate()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#scheduleupdate) czasie.
 
 # scheduleUpdate()
 Funkcja w sobie posiada zapisane cztery ustawienia czasu w różnych zmiennych:
@@ -145,7 +145,7 @@ Funkcja dokonuje sprawdzenia w następujący sposób:
 - W innym przypadku funkcja ustawi zmienną `interval` na czas `intervalOffAir`
 - Jeżeli dzień tygodnia jest równy 6 (Sobota) lub 7 (Niedziela) to funkcja ustawi zmienną `interval` na czas `intervalWeekend`
 - Jeżeli miesiąc jest równy 7 (Lipiec) lub 8 (Sierpień) to funkcja ustawi zmienną `interval` na czas `intervalVacation`
-Jeżeli funkcja nigdy nie ustawiała czasu to przy pierwszym uruchomieni funkcję [`startInterval()`]() wysyłając do niej zmienną `interval` po uruchomieniu tej funkcji przechodzi dalej i zaczyna wyświetlać następujące logi w konsoli:
+Jeżeli funkcja nigdy nie ustawiała czasu to przy pierwszym uruchomieni funkcję [`startInterval()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#startinterval) wysyłając do niej zmienną `interval` po uruchomieniu tej funkcji przechodzi dalej i zaczyna wyświetlać następujące logi w konsoli:
 - Jeżeli zmienna `interval` jest równa `intervalOnAir` to w konsoli pojawi się log:
 
 !["Jak wygląda log z funkcji scheduleUpdate w przypadku gdy interval jest równy intervalOnAir"](https://i.imgur.com/tO9kocE.png)
@@ -162,7 +162,7 @@ Po tym wszystkim funkcja zwróci loga:
 
 !["Jak wygląda log z funkcji scheduleUpdate przed czyszczeniem i startowaniem nowego interwału"](https://i.imgur.com/VOJZrpH.png)
 
-I wyczyści interwał i uruchomi nowy interwał przy użyciu funkcji [`startInterval()`]().
+I wyczyści interwał i uruchomi nowy interwał przy użyciu funkcji [`startInterval()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#startinterval).
 
 ## Tryb Debugowania
 Po uruchomieniu funkcji log pokaże jakie ustawienia czasu są ustawione:

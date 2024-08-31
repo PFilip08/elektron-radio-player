@@ -48,7 +48,7 @@ Funkcja potrafi sama wykryć typ danych jakie do niej trawiły i zapisuje je w o
 Po rozpoznaniu typu danych funkcja zaczyna tworzyć folder w formacie `debug/P{Nazwa Modułu}/{Nazwa Funkcji}/`
 Po utworzeniu folderu funkcja tworzy plik zależny od tego co zostało przekazane do zmiennej dataType:
 - Jeżeli `dataType` to `JSON` to funkcja tworzy plik w formacie `.json`:
-    - W przypadku gdy dane pochodzą z funkcji [`logChanges()`]() to nie jest tworzony nowy plik tylko dane są dopisywane do tego pliku
+    - W przypadku gdy dane pochodzą z funkcji [`logChanges()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Logger.js.md#logchanges) to nie jest tworzony nowy plik tylko dane są dopisywane do tego pliku
     - W normalnym przypadku funkcja tworzy plik w formacie `.json` i zapisuje do niego dane w formacie JSON tworząc nowy plik lub nadpisując stary
 - Jeżeli `dataType` to `STACK` to funkcja tworzy plik w formacie `.txt`.
 - A w przypadku gdy funkcja nie będzie w stanie wykryć typu danych to wywali się z błędem i wywali program z kodem błędu 1:
