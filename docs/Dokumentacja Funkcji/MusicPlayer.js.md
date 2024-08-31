@@ -116,8 +116,10 @@ Jeżeli plik istnieje, to funkcja wywołuje `cvlc` z odpowiednimi argumentami i 
 !["Jak wygląda log z funkcji playMusic"](https://i.imgur.com/KQI9WqM.png)
 ## Tryb Debugowania
 Przed odtworzeniem pliku funkcja zwraca log z informacją o tym co ma odtworzyć i informuje że będzie sprawdzać czy plik istnieje:
+
 !["Jak wygląda log z funkcji playMusic w trybie debugowania"](https://i.imgur.com/w51gJam.png)
 Jeżeli plik istnieje to funkcja zwraca log o wykonaniu tego zadania który wygląda tak:
+
 !["Jak wygląda log z funkcji playMusic który informuje że plik istnieje w trybie debugowania"](https://i.imgur.com/wBxJaMZ.png)
 # playOnDemand()
 Funkcja przyjmuje jeden argument, którym jest `filename` jak sama nazwa wskazuje jest to nazwa pliku który ma być odtworzony. Funkcja na początku sprawdza czy plik istnieje, jeżeli nie to zwraca błąd który wygląda tak:
@@ -132,15 +134,19 @@ I jeżeli plik lub playlista istnieje to funkcja wywołuje `cvlc` z odpowiednimi
 Przed odtworzeniem pliku funkcja zwraca log z informacją o tym co ma odtworzyć i informuje że będzie sprawdzać czy plik istnieje:
 
 !["Jak wygląda log z funkcji playOnDemand informujący co ma ta funkcja otworzyć w trybie debugowania"](https://i.imgur.com/y7n8tOr.png)
+
 Jeżeli plik istnieje to funkcja zwraca log o wykonaniu tego zadania który wygląda tak:
 
 !["Jak wygląda log z funkcji playOnDemand który informuje że plik istnieje w trybie debugowania"](https://i.imgur.com/n0dvyMS.png)
+
 Po tym odbywa się sprawdzenie czy podana nazwa pliku nie jest katalogiem aby można było puszczać nie tylko pojedyńcze piosenki a także całe playlisty pobrane ze Spotify! Przed sprawdzeniem funcja zwraca log z informacją o tym że zaczyna sprawdzenie:
 
 !["Jak wygląda log z funkcji playOnDemand informujący o sprawdzaniu czy podana nazwa pliku nie jest katalogiem w trybie debugowania"](https://i.imgur.com/2i1GITZ.png)
 ~~Jeżeli podana nazwa pliku jest katalogiem to funkcja zwraca log o wykonaniu tego zadania który wygląda tak:
 
-!["Jak wygląda log z funkcji playOnDemand który informuje że podana nazwa pliku jest katalogiem w trybie debugowania"]()~~ Na dzień pisania tej dokumentacji 31.08.2024 ta funkcja nie działa
+!["Jak wygląda log z funkcji playOnDemand który informuje że podana nazwa pliku jest katalogiem w trybie debugowania"]()~~ 
+Na dzień pisania tej dokumentacji 31.08.2024 ta funkcja nie działa
+
 Jeżeli podana nazwa pliku nie jest katalogiem to funkcja zwraca log o wykonaniu tego zadania który wygląda tak:
 
 !["Jak wygląda log z funkcji playOnDemand który informuje że podana nazwa pliku nie jest katalogiem w trybie debugowania"](https://i.imgur.com/oOs69dK.png)
@@ -159,6 +165,7 @@ Jeżeli playlista będzie istnieć to funkcja wywołuje `cvlc` z odpowiednimi ar
 Przed odtworzeniem playlisty funkcja zwraca log z informacją o tym co zostało jej podane do odtworzenia i informuje że będzie sprawdzać czy playlista istnieje:
 
 !["Jak wygląda log z funkcji playPlaylist informujący co ma ta funkcja otworzyć w trybie debugowania"](https://i.imgur.com/R13Ud4H.png)
+
 Jeżeli playlista istnieje to funkcja zwraca log o wykonaniu tego zadania który wygląda tak:
 
 !["Jak wygląda log z funkcji playPlaylist który informuje że playlista istnieje w trybie debugowania"](https://i.imgur.com/zjp9lbx.png)
