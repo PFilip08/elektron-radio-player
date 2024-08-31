@@ -1,5 +1,5 @@
 # DebugStarter()
-Funkcja ta nie przyjmuje żadnych argumentów służy ona do przełączenia zmiennej globalnej `debugMode` oraz tworzy folder `debug/` gdzie funkcja `DebugSaveToFile()` zapisuje pliki.
+Funkcja ta nie przyjmuje żadnych argumentów służy ona do przełączenia zmiennej globalnej `debugMode` oraz tworzy folder `debug/` gdzie funkcja [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) zapisuje pliki.
 
 Kiedy w pliku `.env` zmienna `VERBOSE` jest ustawiona na `true` to funkcja `DebugStarter()` ustawia zmienną globalną `debugMode` na wartość `true`.
 I infomuje o tym logiem że tryb debugowaniua został uruchomiony:
@@ -16,7 +16,7 @@ Jeżeli nie istnieje zmienna w pliku `.env`o nazwie `SPOTIFY_CLIENT_ID` to funkc
 Jeżeli nie istnieje zmienna w pliku `.env`o nazwie `SPOTIFY_CLIENT_SECRET` to funkcja `DebugStarter()` wyświetla log o braku tej zmiennej:
 ![Log z funkcji DebugStarter informujący o braku zmiennej SPOTIFY_CLIENT_SECRET](https://i.imgur.com/vmAAsAv.png)
 
-i tworzy folder `debug/` w którym funkcja `DebugSaveToFile()` zapisuje pliki.
+i tworzy folder `debug/` w którym funkcja [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) zapisuje pliki.
 
 W przypadku gdy zmienna `VERBOSE` jest ustawiona na `false` to funkcja `DebugStarter()` ustawia zmienną globalną `debugMode` na wartość `false` 
 I jeżeli istnieje folder `debug/` po poprzedniej pracy w tym trybie to go usuwa i informuje o tym logiem:

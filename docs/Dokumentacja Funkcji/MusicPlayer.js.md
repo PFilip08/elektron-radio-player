@@ -37,7 +37,7 @@ W trybie debugowania jeżeli funkcja przekroczy czas bramki to zwraca log z info
 
 !["Jak wygląda log z funkcji getPlayingSong gdy funkcja przekroczy limit czasowy w trybie debugowania"](https://i.imgur.com/lof8Ku0.png)
 
-W przypadku błędu błąd zostaje zapisany przez [`DebugSaveToFile()`]() w lokalizacji ``debug/MusicPlayer/getPlayingSong/catched_error.txt`` i potwierdzone to zostaje następującym logiem:
+W przypadku błędu błąd zostaje zapisany przez [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji ``debug/MusicPlayer/getPlayingSong/catched_error.txt`` i potwierdzone to zostaje następującym logiem:
 
 !["Jak wygląda log z funkcji getPlayingSong mówiący o zapisaniu błędu do pliku w trybie debugowania"](https://i.imgur.com/Wsf9M6I.png)
 # playlistSongQuery()
@@ -83,7 +83,7 @@ I zwraca object:
 }
 ```
 ## Tryb Debugowania
-W przypadku błędu błąd zostaje zapisany przez [`DebugSaveToFile()`]() w lokalizacji ``debug/MusicPlayer/playlistSongQuery/catched_error.txt`` i potwierdzone to zostaje następującym logiem:
+W przypadku błędu błąd zostaje zapisany przez [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji ``debug/MusicPlayer/playlistSongQuery/catched_error.txt`` i potwierdzone to zostaje następującym logiem:
 
 !["Jak wygląda log z funkcji playlistSongQuery mówiący o zapisaniu błędu do pliku w trybie debugowania"](https://i.imgur.com/ct5esYk.png)
 # playlistListQuery()
@@ -102,7 +102,7 @@ Robi to poprzez zwykłe wylistowanie całego katalogu `mp3/` i sprawdzeniu co je
 W przypadku gdy wywali błąd to zwraca log z informacją o tym który wygląda tak:
 !["Jak wygląda log z funkcji playlistListQuery gdy funkcja wywali błąd"](https://i.imgur.com/JlKv7XK.png)
 ## Tryb Debugowania
-W przypadku błędu błąd zostaje zapisany przez [`DebugSaveToFile()`]() w lokalizacji ``debug/MusicPlayer/playlistListQuery/catched_error.txt`` i potwierdzone to zostaje następującym logiem:
+W przypadku błędu błąd zostaje zapisany przez [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji ``debug/MusicPlayer/playlistListQuery/catched_error.txt`` i potwierdzone to zostaje następującym logiem:
 
 !["Jak wygląda log z funkcji playlistListQuery mówiący o zapisaniu błędu do pliku w trybie debugowania"](https://i.imgur.com/KHoPmU0.png)
 # playMusic()
@@ -152,7 +152,7 @@ Jeżeli podana nazwa pliku nie jest katalogiem to funkcja zwraca log o wykonaniu
 
 !["Jak wygląda log z funkcji playOnDemand który informuje że podana nazwa pliku nie jest katalogiem w trybie debugowania"](https://i.imgur.com/oOs69dK.png)
 
-Błąd z tego sprawdzenia w razie czegoś zawsze jest zapisywany przez [`DebugSaveToFile()`]() w lokalizacji ``debug/MusicPlayer/playOnDemand/catched_error.txt`` i potwierdzone to zostaje następującym logiem:
+Błąd z tego sprawdzenia w razie czegoś zawsze jest zapisywany przez [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji ``debug/MusicPlayer/playOnDemand/catched_error.txt`` i potwierdzone to zostaje następującym logiem:
 
 !["Jak wygląda log z funkcji playOnDemand mówiący o zapisaniu błędu do pliku w trybie debugowania"](https://i.imgur.com/dpApOGB.png)
 # playPlaylist()

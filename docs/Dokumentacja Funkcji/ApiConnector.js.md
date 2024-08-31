@@ -61,27 +61,27 @@ Jeżeli zmienna `isOn` jest równa `false` to zwracany jest log:
 
 !["Jak wygląda log z funkcji getApiData po sprawdzeniu czy zmienna isOn jest równa false w trybie debugowania"](https://i.imgur.com/GCM9cxu.png)
 
-Response z serwera jest zapisywany przez funkcję [`DebugSaveToFile()`]() w lokalizacji `debug/ApiConnector/getApiData/response.json` i potwierdzone to zostaje następującym logiem:
+Response z serwera jest zapisywany przez funkcję [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji `debug/ApiConnector/getApiData/response.json` i potwierdzone to zostaje następującym logiem:
 
 !["Jak wygląda log z funkcji getApiData mówiący o zapisaniu response do pliku w trybie debugowania"](https://i.imgur.com/8JXp7mR.png)
 
 Kiedy funkcja wchodzi w tryb recovery to zwracany jest log z informacją o tym i wyświetlany jest złapany błąd:
 !["Jak wygląda log z funkcji getApiData mówiący o wejściu w tryb recovery i pokazujący błąd w trybie debugowania"](https://i.imgur.com/zNb7EWk.png)
 
-Błąd przez który funkcja weszła w tryb recovery jest zapisywany przez funkcję [`DebugSaveToFile()`]() w lokalizacji `debug/ApiConnector/getApiData/catched_error.txt` i potwierdzone to zostaje następującym logiem:
+Błąd przez który funkcja weszła w tryb recovery jest zapisywany przez funkcję [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji `debug/ApiConnector/getApiData/catched_error.txt` i potwierdzone to zostaje następującym logiem:
 !["Jak wygląda log z funkcji getApiData mówiący o zapisaniu błędu do pliku w trybie debugowania"](https://i.imgur.com/RhQ3Xfb.png)
 
 Jeżeli funkcja wejdzie w tryb recovery w trakcie działania to zwracany jest log z informacją że będzie on używał danych zapisanych poprzednio w skrypcie:
 
 !["Jak wygląda log z funkcji getApiData mówiący o użyciu danych zapisanych w skrypcie w trybie debugowania"](https://i.imgur.com/yt132PU.png)
 
-Dane ze zmiennej `previousData` są zapisywane przez funkcję [`DebugSaveToFile()`]() w lokalizacji `debug/ApiConnector/getApiData/previousData.json` i potwierdzone to zostaje następującym logiem:
+Dane ze zmiennej `previousData` są zapisywane przez funkcję [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji `debug/ApiConnector/getApiData/previousData.json` i potwierdzone to zostaje następującym logiem:
 !["Jak wygląda log z funkcji getApiData mówiący o zapisaniu previousData do pliku w trybie debugowania"](https://i.imgur.com/p9fZzjN.png)
 
 Jeżeli funkcja wejdzie w tryb recovery przy starcie to zwracany jest log z informacją o tym że będzie używał danych zapisanych w skrypcie:
 !["Jak wygląda log z funkcji getApiData mówiący o użyciu danych zapisanych w skrypcie w trybie debugowania"](https://i.imgur.com/7utr2W2.png)
 
-Dane zapisane w skrypcie są zapisywane przez funkcję [`DebugSaveToFile()`]() w lokalizacji `debug/ApiConnector/getApiData/static_data.json` i potwierdzone to zostaje następującym logiem:
+Dane zapisane w skrypcie są zapisywane przez funkcję [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji `debug/ApiConnector/getApiData/static_data.json` i potwierdzone to zostaje następującym logiem:
 
 !["Jak wygląda log z funkcji getApiData mówiący o zapisaniu static_data do pliku w trybie debugowania"](https://i.imgur.com/qcToM0V.png)
 

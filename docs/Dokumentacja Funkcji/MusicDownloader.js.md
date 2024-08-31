@@ -16,7 +16,7 @@ A funkcja zwróci stringa: ``Nie wykryto typu``.
 Przed rozpoznaniem linku funkcja zwraca log z informacją o wyniku splita i co z tego wynika:
 !["Jak wygląda log z funkcji downloader który mówi o wyniku splita i co wykrył w trybie debugowania"](https://i.imgur.com/rLVq1Fr.png)
 
-W przypadku gdy nie wykryje linku to link jest zapisywany przez funkcje [`DebugSaveToFile()`]() w lokalizacji `debug/MusicDownloader/downloader/catched_link.txt` i zwraca log z informacją o tym:
+W przypadku gdy nie wykryje linku to link jest zapisywany przez funkcje [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji `debug/MusicDownloader/downloader/catched_link.txt` i zwraca log z informacją o tym:
 
 !["Jak wygląda log z funkcji downloader mówiący o zapisaniu linku do pliku w trybie debugowania"](https://i.imgur.com/YTqajCQ.png)
 

@@ -6,9 +6,12 @@ Wyświetla w formie takiego o to loga:
 !["Jak wygląda log z funkcji taskNumber"](https://i.imgur.com/WtiXhBo.png)
 ## Tryb Debugowania
 Wyświetla informacje o uruchomieniu tej funkcji który wygląda tak:
+
 !["Jak wygląda log z funkcji taskNumber w trybie debugowania"](https://i.imgur.com/VpmxwA9.png)
 # scheduleMusicTask()
-Planuje puszczanie muzyki z danej playlisty o danej godzinie ustawiając funkcje [`playPlaylist()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#playplaylist). Puszczenie poprzedza takim o to logiem w konsoli:
+Planuje puszczanie muzyki z danej playlisty o danej godzinie ustawiając funkcje [`playPlaylist()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#playplaylist). 
+Puszczenie poprzedza takim o to logiem w konsoli:
+
 !["Jak wygląda log z funkcji scheduleMusicTask"](https://i.imgur.com/6WH87AO.png)
 ## Tryb Debugowania
 Log informuje na kiedy została zaplanowana funkcja [`playPlaylist()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#playplaylist) oraz jaka playlista została jej podana:

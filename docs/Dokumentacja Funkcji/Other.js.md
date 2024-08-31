@@ -7,15 +7,15 @@ W przypadku gdy funkcji nie uda się przeprowadzić sterylizacji zwraca pusty wy
 Log informuje o tym, co zostało przekazane do funkcji w celu przesterylizowania:
 !["Jak wygląda log z funkcji sterylizator w trybie debugowania"](https://i.imgur.com/kTkLLHR.png)
 
-Przed działaniem funkcji to co zostało przekazane do niej zostaje zapisane przez [`DebugSaveToFile()`]() w lokalizacji ``debug/Other/sterylizator/source.json`` i potwierdzone to zostaje następującym logiem:
+Przed działaniem funkcji to co zostało przekazane do niej zostaje zapisane przez [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji ``debug/Other/sterylizator/source.json`` i potwierdzone to zostaje następującym logiem:
 
 !["Jak wygląda log z funkcji sterylizator mówiący o zapisaniu tekstu źródłowego do pliku w trybie debugowania"](https://i.imgur.com/YVIEx2K.png)
 
-Po działaniu funkcji wysterylizowany tekst zostaje zapisany przez [`DebugSaveToFile()`]() w lokalizacji ``debug/Other/sterylizator/result.json`` i potwierdzone to zostaje następującym logiem:
+Po działaniu funkcji wysterylizowany tekst zostaje zapisany przez [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji ``debug/Other/sterylizator/result.json`` i potwierdzone to zostaje następującym logiem:
 
 !["Jak wygląda log z funkcji sterylizator mówiący o zapisaniu wyniku sterylizacji do pliku w trybie debugowania"](https://i.imgur.com/pr4RaBw.png)
 
-W przypadku błędu błąd zostaje zapisany przez [`DebugSaveToFile()`]() w lokalizacji ``debug/Other/sterylizator/catched_error.txt`` i potwierdzone to zostaje następującym logiem:
+W przypadku błędu błąd zostaje zapisany przez [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji ``debug/Other/sterylizator/catched_error.txt`` i potwierdzone to zostaje następującym logiem:
 
 !["Jak wygląda log z funkcji sterylizator mówiący o zapisaniu błędu do pliku w trybie debugowania"](https://i.imgur.com/CY6y06K.png)
 # pathSecurityChecker()
@@ -37,7 +37,7 @@ Jeżeli ścieżka nie narusza żadnego z tych warunków zwraca wartość ``NONE`
 Log informuje o tym, co zostało przekazane do funkcji w celu sprawdzenia:
 !["Jak wygląda log z funkcji pathSecurityChecker w trybie debugowania"](https://i.imgur.com/VpFDFnW.png)
 
-Przed sprawdzeniem ścieżki zostaje zapisana przez [`DebugSaveToFile()`]() w lokalizacji ``debug/Other/pathSecurityChecker/source.json`` i potwierdzone to zostaje następującym logiem:
+Przed sprawdzeniem ścieżki zostaje zapisana przez [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji ``debug/Other/pathSecurityChecker/source.json`` i potwierdzone to zostaje następującym logiem:
 
 !["Jak wygląda log z funkcji pathSecurityChecker mówiący o zapisaniu tekstu źródłowego do pliku w trybie debugowania"](https://i.imgur.com/qijGCMe.png)
 

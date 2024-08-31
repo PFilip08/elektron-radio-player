@@ -76,7 +76,7 @@ Funkcja będzie wyświetlała tylko to że klucz został zmieniony ale nie wyśw
 Przed rozpoczęciem działania funkcji informuje tym logiem o rozpoczęciu logowania zmian:
 !["Jak wygląda log z funkcji logChanges w trybie debugowania"](https://i.imgur.com/Aofi3J9.png)
 
-Zmiany które zostały wykryte są zapisywane przez funkcje [`DebugSaveToFile()`]() w lokalizacji `debug/Logger/logChanges/changes.txt`.
+Zmiany które zostały wykryte są zapisywane przez funkcje [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji `debug/Logger/logChanges/changes.txt`.
 
 Po zakończeniu działania funkcji informuje tym logiem o zakończeniu logowania zmian i ilości zmian które wykryła:
 !["Jak wygląda log z funkcji logChanges który informuje ile zmian zostało wykrytych przez tą funkcje w trybie debugowania"](https://i.imgur.com/FWuG4bP.png)
