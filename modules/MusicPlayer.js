@@ -60,7 +60,7 @@ async function playlistSongQuery(playlistID) {
         try {
             const metadata = await parseFile(filePath);
             const title = metadata.common.title || path.basename(filePath, path.extname(filePath));
-            const artist = metadata.common.artist || 'Nieznany artysta';
+            const artist = metadata.common.artist || 'Nieznany Artysta';
             const cover = metadata.common.picture || 'taboret';
             let coverData;
             if (cover === "taboret") coverData = cover;
