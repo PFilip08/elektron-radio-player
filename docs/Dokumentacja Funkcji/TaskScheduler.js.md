@@ -74,6 +74,7 @@ I dzwoni do funkcji [`downloader()`](https://github.com/PFilip08/elektron-radio-
 Przed uruchomieniem sprawdzenia czy czas jest prawidłowy funkcja do zmiennej `scheduleKey` przypisuje czas `start` i `end` z zasady która znajduje się w jsonie.
 
 Po tym funkcja sprawdza czy czas jest prawidłowy przy użyciu funkcji [`checkScheduleTime()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#checkscheduletime) jeżeli czas jest prawidłowy to funkcja przypisuje do zmiennej `checkedSchedules` dodaje zmienną `scheduleKey` a jeżeli czas jest nieprawidłowy to funkcja zwraca błąd który wygląda tak i kontynuuje wykonywanie następnej iteracji:
+
 !["Jak wygląda log z funkcji massSchedule gdy czas jest nieprawidłowy"](https://i.imgur.com/C741mZA.png)
 
 Jeżeli żaden z powyższych sprawdzeń nie wyłapał nic to funkcja tworzy zadania a tworzy je przez funkcję [`scheduleMusicTask()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#schedulemusictask) i jako argument podaje czas we zmiennej `time` a id playlisty we zmiennej `id`a tworzy zadanie przy pomocy funkcji [`scheduleKillTask()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#schedulekilltask) do której podaje czas w tej samej zmiennej `time`.
