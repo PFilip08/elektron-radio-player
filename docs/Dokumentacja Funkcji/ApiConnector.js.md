@@ -156,6 +156,10 @@ Jeżeli funkcja nigdy nie ustawiała czasu to przy pierwszym uruchomieni funkcj�
 
   !["Jak wygląda log z funkcji scheduleUpdate w przypadku gdy interval jest równy intervalVacation"](https://i.imgur.com/qE4ZHJF.png)
 
+- Jeżeli zmienna `interval` jest równa `intervalWeekend` to w konsoli pojawi się log:
+
+  !["Jak wygląda log z funkcji scheduleUpdate w przypadku gdy interval jest równy intervalWeekend"](https://i.imgur.com/MPenlIw.png)
+
 - Jeżeli zmienna `interval` jest równa `intervalOffAir` to w konsoli pojawi się log:
 
   !["Jak wygląda log z funkcji scheduleUpdate w przypadku gdy interval jest równy intervalOffAir"](https://i.imgur.com/o1jm9oX.png)

@@ -160,13 +160,14 @@ function scheduleUpdate() {
     const month = date.getMonth() + 1;
     const time = date.getHours();
     if (time>=7 && time<=15) interval=intervalOnAir; else interval=intervalOffAir;
-    if (day === 6 || day === 7) interval=intervalWeekend;
+    if (day === 6 || day === 0) interval=intervalWeekend;
     if (month === 7 || month === 8) interval=intervalVacation;
     if (oldInterval === interval) {
         if (oldInterval===undefined) startInterval(interval);
     } else {
         if (interval===intervalOnAir) logger('log', 'Praca radiowęzła, krótki update', 'scheduleUpdate');
         else if (interval===intervalVacation) logger('log', 'Wakacje, długi update', 'scheduleUpdate');
+        else if (interval===intervalWeekend) logger('log', 'Weekend, długi update', 'scheduleUpdate');
         else logger('log', 'Po pracy radiowęzła, zwykły update', 'scheduleUpdate');
         logger('log', 'Usuwanie starego intervala i startowanie nowego intervalu', 'scheduleUpdate');
         clearInterval(updateInterval);
