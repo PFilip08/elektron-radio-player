@@ -145,7 +145,7 @@ function playPlaylist(playlistID) {
     logger('verbose', `Sprawdzanie czy folder o podanym ID istnieje...`, 'playPlaylist');
     if(!fs.existsSync(`./mp3/${playlistID}/`)) return logger('error','Brak playlisty o podanym numerze!!', 'playPlaylist');
     logger('verbose', `Folder istnieje! Granie playlisty...`, 'playPlaylist');
-    const buffer = path.normalize(`./mp3/${playlistID}/`)
+    const buffer = path.normalize(`./mp3/${playlistID}/`);
     exec(`cvlc -I http --http-host 127.0.0.1 --http-port ${process.env.VLC_PORT || 4212} --http-password ${process.env.VLC_PASSWORD} --one-instance -Z --play-and-exit ${buffer}`);
     logger('task','--------Play Playlist - random--------', 'playPlaylist');
     logger('task','Playlista gra...', 'playPlaylist');

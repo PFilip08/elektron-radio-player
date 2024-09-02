@@ -8,7 +8,7 @@ export async function kill(req, res) {
     try {
         const force = req.query.force;
         logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - killPlayer');
-        if(force !== undefined) {
+        if (force !== undefined) {
             killPlayerForce();
             return res.status(201).send('force gut');
         }
