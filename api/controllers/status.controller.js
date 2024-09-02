@@ -35,7 +35,7 @@ export async function queryPlaylist(req, res) {
             DebugSaveToFile('LocalAPI', 'query/playlist/songs', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - queryPlaylist');
         }
-        throw e;
+        return res.status(500).send('Nie znaleziono playlisty o podanym ID!');
     }
 }
 
@@ -59,7 +59,6 @@ export async function queryPlayingMusic(req, res) {
             DebugSaveToFile('LocalAPI', 'query/playing', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - queryPlayingMusic');
         }
-        throw e;
     }
 }
 
@@ -92,6 +91,5 @@ export async function queryPlaylistList(req, res) {
             DebugSaveToFile('LocalAPI', 'query/playlist/list', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - queryPlaylistList');
         }
-        throw e;
     }
 }
