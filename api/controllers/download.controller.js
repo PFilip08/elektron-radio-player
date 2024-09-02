@@ -39,7 +39,7 @@ export async function downloadAndPlay(req, res) {
         const trackInfo = await getTrackInfo(uri);
         scheduleKillTask(killTime);
         schedule.scheduleJob(startTime, function () {
-            playOnDemand(sterylizator(trackInfo.name));
+            playOnDemand(sterylizator(trackInfo.artists.join('-')+'_'+trackInfo.name));
             logger('log', `On Demand: ${trackInfo.name}`,'massSchedule');
         });
         return res.status(201).send('gut, 3s opóźnienia');
