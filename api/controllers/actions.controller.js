@@ -1,12 +1,17 @@
 import {DebugSaveToFile} from "../../modules/DebugMode.js";
 import {logger} from "../../modules/Logger.js";
-import {killPlayer, playMusic, playPlaylist} from "../../modules/MusicPlayer.js";
+import {killPlayer, killPlayerForce, playMusic, playPlaylist} from "../../modules/MusicPlayer.js";
 import {pathSecurityChecker} from "../../modules/Other.js";
 
 // killPlayer
 export async function kill(req, res) {
     try {
+        const force = req.query.force;
         logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - killPlayer');
+        if(force !== undefined) {
+            killPlayerForce();
+            return res.status(201).send('force gut');
+        }
         killPlayer();
         return res.status(201).send('gut');
     } catch (e) {
@@ -15,7 +20,6 @@ export async function kill(req, res) {
             DebugSaveToFile('LocalAPI', 'kill', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - killPlayer');
         }
-        throw e;
     }
 }
 
@@ -40,7 +44,6 @@ export async function pMusic(req, res) {
             DebugSaveToFile('LocalAPI', 'play', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - pMusic');
         }
-        throw e;
     }
 }
 
@@ -65,6 +68,5 @@ export async function pPlaylist(req, res) {
             DebugSaveToFile('LocalAPI', 'playPlaylist', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - pPlaylist');
         }
-        throw e;
     }
 }

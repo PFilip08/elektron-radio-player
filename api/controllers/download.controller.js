@@ -21,7 +21,7 @@ export async function downloadSong(req, res) {
             DebugSaveToFile('LocalAPI', 'download', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - downloadSong');
         }
-        throw e;
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów');
     }
 }
 
@@ -49,6 +49,6 @@ export async function downloadAndPlay(req, res) {
             DebugSaveToFile('LocalAPI', 'download/override', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - downloadAndPlay');
         }
-        throw e;
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów');
     }
 }
