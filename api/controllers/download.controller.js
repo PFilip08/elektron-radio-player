@@ -21,7 +21,7 @@ export async function downloadSong(req, res) {
             DebugSaveToFile('LocalAPI', 'download', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - downloadSong');
         }
-        throw e;
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów');
     }
 }
 
@@ -39,7 +39,7 @@ export async function downloadAndPlay(req, res) {
         const trackInfo = await getTrackInfo(uri);
         scheduleKillTask(killTime);
         schedule.scheduleJob(startTime, function () {
-            playOnDemand(sterylizator(trackInfo.name));
+            playOnDemand(sterylizator(trackInfo.artists.join('-')+'_'+trackInfo.name));
             logger('log', `On Demand: ${trackInfo.name}`,'massSchedule');
         });
         return res.status(201).send('gut, 3s opóźnienia');
@@ -49,6 +49,6 @@ export async function downloadAndPlay(req, res) {
             DebugSaveToFile('LocalAPI', 'download/override', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - downloadAndPlay');
         }
-        throw e;
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów');
     }
 }
