@@ -33,13 +33,16 @@ export async function downloadAndPlay(req, res) {
         logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - downloadAndPlay');
         if (!uri) return res.status(400).send('Nie podano linku!');
         if (await downloader(uri) === 'Nie wykryto typu') return res.status(500).send('Nie można wykryć typu linku Spotify!');
-        await downloader(uri);
+        // await downloader(uri);
         const startTime = new Date(Date.now() + 3000);
         const killTime = new Date(Date.now() + 2000);
         const trackInfo = await getTrackInfo(uri);
         scheduleKillTask(killTime);
+        const urlParts = uri.split('?')[0].split("/");
+        let filename = sterylizator(trackInfo.name);
+        if (urlParts[3] === 'track') filename = sterylizator(trackInfo.artists.join('-')+'_'+trackInfo.name);
         schedule.scheduleJob(startTime, function () {
-            playOnDemand(sterylizator(trackInfo.artists.join('-')+'_'+trackInfo.name));
+            playOnDemand(filename);
             logger('log', `On Demand: ${trackInfo.name}`,'massSchedule');
         });
         return res.status(201).send('gut, 3s opóźnienia');
