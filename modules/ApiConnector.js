@@ -79,6 +79,7 @@ async function getApiData() {
             if (res.static) {
                 messageStartupBlocker = true;
                 logger('verbose','Używanie danych które są zapisane lokalnie w skrypcie!!!','getApiData');
+                previousData=res;
                 if (global.debugmode === true) {
                     DebugSaveToFile('ApiConnector','getApiData','static_data',res);
                     logger('verbose','Dane zapisane lokalnie zostały zrzucone','getApiData');
