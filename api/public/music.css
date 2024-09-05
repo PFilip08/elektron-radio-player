@@ -75,6 +75,31 @@
     height: 25px;
 }
 
+.current .mediacontrol {
+    width: 50%;
+    display: inline-block;
+    position: absolute;
+    text-align: center;
+    right: 0;
+    bottom: 45px;
+}
+
+.current .mediacontrol form {
+    display: inline-block;
+    position: relative;
+}
+
+.current .mediacontrol form:nth-child(2) {
+    width: 35%;
+    margin: auto;
+}
+
+.current .mediacontrol form input {
+    height: 20px;
+    font-size: 16px;
+    margin: auto;
+}
+
 .col {
     display: flex;
     flex-direction: column;
