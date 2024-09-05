@@ -77,7 +77,6 @@
 
 .current .mediacontrol {
     width: 50%;
-    display: inline-block;
     position: absolute;
     text-align: center;
     right: 0;
@@ -86,7 +85,6 @@
 
 .current .mediacontrol form {
     display: inline-block;
-    position: relative;
 }
 
 .current .mediacontrol form:nth-child(2) {
@@ -97,7 +95,6 @@
 .current .mediacontrol form input {
     height: 20px;
     font-size: 16px;
-    margin: auto;
 }
 
 .col {
