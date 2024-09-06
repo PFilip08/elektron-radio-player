@@ -1,4 +1,5 @@
 # getApiData()
+
 getApiData jest funkcją na którą inne funkcję będą czekały aby się wykonała.
 Funkcja getApiData nie przyjmuje żadnych argumentów.
 
@@ -14,10 +15,13 @@ Zmienna messageCounter w funkcji odpowiada za informowanie funkcji o stanie czy 
 i ustawia messageCounter na `false`.
 
 W przypadku gdy skrypt w trakcie swojego działania wykryje że serwer zwrócił wartość `isOn` równą `false` to funkcja zwróci jsona w takim formacie
+
 ```json
 {"isOn": false}
 ```
-W działaniu zasadniczym funkcja ustawi zmienną `messageCounter` na `true` oraz zwraca jsona w formacie obiektów js: 
+
+W działaniu zasadniczym funkcja ustawi zmienną `messageCounter` na `true` oraz zwraca jsona w formacie obiektów js:
+
 ```js
 {
   id: 'e0cc7295-cc34-4fe9-a4c9-33de31f4464b',
@@ -31,7 +35,9 @@ W działaniu zasadniczym funkcja ustawi zmienną `messageCounter` na `true` oraz
   }
 }
 ```
+
 ### Tryb Recovery
+
 W przypadku gdy funkcja nie będzie mogła połączyć się z serwerem to uruchomi tryb recovery wyświetlając taki log w konsoli:
 !["Jak wygląda log odpowiedzialny za tryb recovery"](https://i.imgur.com/1GUyAJx.png)
 
@@ -86,6 +92,7 @@ Dane zapisane w skrypcie są zapisywane przez funkcję [`DebugSaveToFile()`](htt
 !["Jak wygląda log z funkcji getApiData mówiący o zapisaniu static_data do pliku w trybie debugowania"](https://i.imgur.com/qcToM0V.png)
 
 # checkUpdate()
+
 checkUpdate jest funkcją która sprawdza czy jest dostępny json z informacji o godzinach puszczania muzyki.
 
 Funkcja checkUpdate nie przyjmuje żadnych argumentów.
@@ -93,11 +100,12 @@ Funkcja checkUpdate nie przyjmuje żadnych argumentów.
 W przypadku gdy tryb recovery uruchomi się w trybie w którym pobiera dane ze skryptu to funkcja nic nie zaloguje i po prostu zwróci tego samego jsona co funkcja getApiData.
 
 W stanie zasadniczym funkcja gdy dane poprzednie będą różniły się od danych pobranych z api to funkcja uruchomi następujące funkcje:
+
 - [`massSchedule()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#massschedule)
 - [`findChanges()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Logger.js.md#findchanges)
 - [`logChanges()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Logger.js.md#logchanges)
 
-A po uruchomieniu funkcji [`massSchedule()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#massschedule) w konsoli pojawi się log: 
+A po uruchomieniu funkcji [`massSchedule()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#massschedule) w konsoli pojawi się log:
 
 !["Jak wyglądają logi po wykonaniu funkcji checkUpdate?"](https://i.imgur.com/zbaKQkv.png)
 
@@ -106,7 +114,9 @@ Potem uruchamiana jest funkcja [`findChanges()`](https://github.com/PFilip08/ele
 Która zwraca dane do zmiennej `changes` i następnie dla tej zmiennej jest wykonywana funkcja [`logChanges()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Logger.js.md#logchanges) której opis znajduję się tu: [TUTAJ](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Logger.js.md#logchanges)
 
 ~~W przypadku gdy odpowiedz będzie błędna to w konsoli pojawi się log z błędem:~~ Nie działa na dzień 19.06.2024
+
 ## Tryb Debugowania
+
 Przed sprawdzeniem czy podane dane są statyczne wyświetlany jest log:
 !["Jak wygląda log z funkcji checkUpdate przed sprawdzeniem czy dane są statyczne w trybie debugowania"](https://i.imgur.com/BNXWanM.png)
 
@@ -132,22 +142,27 @@ Przed zapisaniem danych do zmiennej `previousData` wyświetlany jest log:
 !["Jak wygląda log z funkcji checkUpdate przed zapisaniem danych do previousData w trybie debugowania"](https://i.imgur.com/udiyF1s.png)
 
 # startInterval()
+
 Jest funkcją która uruchamia funkcję [`checkUpdate()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#checkupdate) w podany przez funkcję [`scheduleUpdate()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#scheduleupdate) czasie.
 
 # scheduleUpdate()
+
 Funkcja w sobie posiada zapisane cztery ustawienia czasu w różnych zmiennych:
+
 - `intervalOnAir` - czas który jest ustawiony podczas pracy radiowęzła (Domyślnie 3 sekundy)
 - `intervalOffAir` - czas który jest ustawiony po tym gdy radiowęzł już nie pracuje (Domyślnie 10 sekundy)
 - `intervalWeekend` - czas który jest ustawiony w weekend (Domyślnie 30 sekund)
 - `intervalVacation` - czas który jest ustawiony w czasie wakacji (Domyślnie 60 sekund)
 
 Funkcja dokonuje sprawdzenia w następujący sposób:
+
 - Jeżeli czas jest równy lub większy godzinie 7 i jest mniejszy lub równy godzinie 15 to funkcja ustawi zmienną `interval` na czas `intervalOnAir`
 - W innym przypadku funkcja ustawi zmienną `interval` na czas `intervalOffAir`
 - Jeżeli dzień tygodnia jest równy 6 (Sobota) lub 7 (Niedziela) to funkcja ustawi zmienną `interval` na czas `intervalWeekend`
 - Jeżeli miesiąc jest równy 7 (Lipiec) lub 8 (Sierpień) to funkcja ustawi zmienną `interval` na czas `intervalVacation`
 
 Jeżeli funkcja nigdy nie ustawiała czasu to przy pierwszym uruchomieni funkcję [`startInterval()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#startinterval) wysyłając do niej zmienną `interval` po uruchomieniu tej funkcji przechodzi dalej i zaczyna wyświetlać następujące logi w konsoli:
+
 - Jeżeli zmienna `interval` jest równa `intervalOnAir` to w konsoli pojawi się log:
 
   !["Jak wygląda log z funkcji scheduleUpdate w przypadku gdy interval jest równy intervalOnAir"](https://i.imgur.com/tO9kocE.png)
@@ -164,12 +179,13 @@ Jeżeli funkcja nigdy nie ustawiała czasu to przy pierwszym uruchomieni funkcj�
 
   !["Jak wygląda log z funkcji scheduleUpdate w przypadku gdy interval jest równy intervalOffAir"](https://i.imgur.com/o1jm9oX.png)
 
- - Po tym wszystkim funkcja zwróci loga:
+- Po tym wszystkim funkcja zwróci loga:
 
     !["Jak wygląda log z funkcji scheduleUpdate przed czyszczeniem i startowaniem nowego interwału"](https://i.imgur.com/VOJZrpH.png)
 
 I wyczyści interwał i uruchomi nowy interwał przy użyciu funkcji [`startInterval()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#startinterval).
 
 ## Tryb Debugowania
+
 Po uruchomieniu funkcji log pokaże jakie ustawienia czasu są ustawione:
 !["Jak wygląda log z funkcji scheduleUpdate który pokazuje ustawienia czasu w trybie debugowania"](https://i.imgur.com/vvIn0A4.png)

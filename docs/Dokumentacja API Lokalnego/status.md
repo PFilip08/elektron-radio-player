@@ -1,14 +1,21 @@
 # Endpoint query/playing
+
 ### Opis
+
 Ten endpoint zwraca informacje o aktualnie odtwarzanej piosence.
 ### Request
+
 - **Metoda:** GET
 - **Endpoint:** `/status/query/playing`
+
 ### Response
+
 W przypadku powodzenia ale gdy nic nie jest odtwarzane zwracany jest:
+
 - **Kod statusu:** 201
 - **Typ:** application/json
-- **Treść:** 
+- **Treść:**
+
 ```json
 {
     "isPlaying":false, //boolean <true,false>
@@ -16,10 +23,13 @@ W przypadku powodzenia ale gdy nic nie jest odtwarzane zwracany jest:
     "time":{} //object
 }
 ```
+
 W przypadku powodzenia ale jest coś odtwarzane zwracany jest:
+
 - **Kod statusu:** 201
 - **Typ:** application/json
-- **Treść:** 
+- **Treść:**
+
 ```json
 {
     "isPlaying":true, //boolean <true,false>
@@ -30,10 +40,13 @@ W przypadku powodzenia ale jest coś odtwarzane zwracany jest:
     }
 }
 ```
+
 W przypadku powodzenia ale jest coś odtwarzane zwracany jest:
+
 - **Kod statusu:** 201
 - **Typ:** application/json
-- **Treść:** 
+- **Treść:**
+
 ```json
 {   
     "isPlaying":true, //boolean <true,false>
@@ -44,21 +57,31 @@ W przypadku powodzenia ale jest coś odtwarzane zwracany jest:
     }
 }
 ```
+
 Przykład:
+
 ```bash
 curl -X GET http://localhost:8080/status/query/playing
 ```
+
 # Endpoint query/playlist/list
+
 ### Opis
+
 Ten endpoint zwraca listę playlist z folderu ./mp3 wraz z ich nazwami zapisanymi w funkcji getPlaylistName().
 ### Request
+
 - **Metoda:** GET
 - **Endpoint:** `/status/query/playlist/list`
+
 ### Response
+
 W przypadku powodzenia i gdy wszyskie playlisty są prawidłowe oraz nazwa została znaleziona zwracany jest:
+
 - **Kod statusu:** 201
 - **Typ:** application/json
-- **Treść:** 
+- **Treść:**
+
 ```json
 {
     "playlistNames": { //object <id playlisty: nazwa playlisty>
@@ -77,10 +100,13 @@ W przypadku powodzenia i gdy wszyskie playlisty są prawidłowe oraz nazwa zosta
     ]
 }
 ```
+
 W przypadku powodzenia ale gdy jednej z playlist nazwa nie została znaleziona zwracany jest:
+
 - **Kod statusu:** 201
 - **Typ:** application/json
-- **Treść:** 
+- **Treść:**
+
 ```json
 {   "playlistNames": { //object <id playlisty: nazwa playlisty>
         "1":"Klasyczna", //string <Nazwa playlisty>
@@ -100,10 +126,13 @@ W przypadku powodzenia ale gdy jednej z playlist nazwa nie została znaleziona z
     ]
 }
 ```
+
 W przypadku powodzenia ale gdy jedna z playlist jest nieprawidłowa zwracany jest
+
 - **Kod statusu:** 201
 - **Typ:** application/json
-- **Treść:** 
+- **Treść:**
+
 ```json
 {   
     "playlistNames": { //object <id playlisty: nazwa playlisty>
@@ -124,23 +153,33 @@ W przypadku powodzenia ale gdy jedna z playlist jest nieprawidłowa zwracany jes
     ]
 }
 ```
+
 Przykład:
+
 ```bash
 curl -X GET http://localhost:8080/status/query/playlist/list
 ```
+
 # Endpoint query/playlist/songs
+
 ### Opis
+
 Ten endpoint zwraca listę piosenek z playlisty o podanym id.
 ### Request
+
 - **Metoda:** GET
 - **Endpoint:** `/status/query/playlist/songs`
-- **Parametry:** 
-    - **id** - id playlisty
+- **Parametry:**
+  - **id** - id playlisty
+
 ### Response
+
 W przypadku powodzenia i gdy wszystkie piosenki posiadają metadane zwracany jest:
+
 - **Kod statusu:** 201
 - **Typ:** application/json
 - **Treść:**
+
 ```json
 {   
     "playlistName":"Klasyczna", //string <Nazwa playlisty>
@@ -204,10 +243,13 @@ W przypadku powodzenia i gdy wszystkie piosenki posiadają metadane zwracany jes
     ]
 }
 ```
+
 W przypadku powodzenia ale gdy jedna z piosenek nie posiada autora w metadanych zwracany jest:
+
 - **Kod statusu:** 201
 - **Typ:** application/json
 - **Treść:**
+
 ```json
 {
     "playlistName":"Ruskie Techno dla niesłyszących", //string <Nazwa playlisty>
@@ -223,10 +265,13 @@ W przypadku powodzenia ale gdy jedna z piosenek nie posiada autora w metadanych 
     ]
 }
 ```
+
 W przypadku powodzenia ale gdy jedna z piosenek nie posiada tytułu w metadanych zwracana wtedy jest nazwa z pliku:
+
 - **Kod statusu:** 201
 - **Typ:** application/json
 - **Treść:**
+
 ```json
 {
     "playlistName":"Ruskie Techno dla niesłyszących", //string <Nazwa playlisty>
@@ -242,12 +287,15 @@ W przypadku powodzenia ale gdy jedna z piosenek nie posiada tytułu w metadanych
     ]
 }
 ```
+
 W przypadku gdy playlista nie istnieje zwracany jest:
+
 - **Kod statusu:** 500
 - **Typ:** text/html
 - **Treść:** `Nie znaleziono playlisty o podanym ID!`
 
 Przykład:
+
 ```bash
 curl -X GET http://localhost:8080/status/query/playlist/songs?id=1
 ```
