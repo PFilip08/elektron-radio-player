@@ -177,3 +177,10 @@ Wykonanie tej funkcji jest logowane w konsoli takim oto logiem:
 ## Tryb Debugowania
 Przed zatrzymaniem odtwarzacza funkcja zwraca log z informacją o tym że rozpoczyna ubijanie plejera:
 !["Jak wygląda log z funkcji killPlayer w trybie debugowania"](https://i.imgur.com/f8GeqNt.png)
+# killPlayerForce()
+Funkcja działa tak samo jak [`killPlayer()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#killplayer) z tą różnicą że zatrzymuje odtwarzacz muzyki siłą poprzez ubicie procesu `vlc`.
+Wykonanie tej funkcji jest logowane w konsoli takim oto logiem:
+!["Jak wygląda log z funkcji killPlayerForce"](https://i.imgur.com/6VT4FHm.png)
+## Tryb Debugowania
+Przed zatrzymaniem odtwarzacza funkcja zwraca log z informacją o tym że rozpoczyna ubijanie plejera:
+!["Jak wygląda log z funkcji killPlayerForce w trybie debugowania"](https://i.imgur.com/lnouCDo.png)
