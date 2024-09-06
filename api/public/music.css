@@ -76,11 +76,15 @@
 }
 
 .current .mediacontrol {
-    width: 50%;
+    width: 40%;
     position: absolute;
     text-align: center;
+    background-color: #17191a;
     right: 0;
-    bottom: 45px;
+    left: 0;
+    bottom: -30px;
+    margin: auto;
+    padding: 0 5px 6px;
 }
 
 .current .mediacontrol form {
