@@ -32,6 +32,10 @@ app.get('/dash', function(req, res){
   res.sendFile(__dirname+'/public/musicpanel.html');
 });
 
+app.get('/dash2', function(req, res){
+  res.sendFile(__dirname+'/public/guestpanel.html');
+});
+
 app.get('/stats/api', function(req, res){
   const cpu = os.cpus();
   const totalmem = os.totalmem();
