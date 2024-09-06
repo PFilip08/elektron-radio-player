@@ -211,6 +211,7 @@ Jeżeli playlista istnieje to funkcja zwraca log o wykonaniu tego zadania który
 # killPlayer()
 
 Funkcja zatrzymuje odtwarzacz muzyki przy użyciu interfejsu programu `cvlc`.
+
 Wykonanie tej funkcji jest logowane w konsoli takim oto logiem:
 !["Jak wygląda log z funkcji killPlayer"](https://i.imgur.com/7eqTKBa.png)
 
@@ -222,6 +223,7 @@ Przed zatrzymaniem odtwarzacza funkcja zwraca log z informacją o tym że rozpoc
 # killPlayerForce()
 
 Funkcja działa tak samo jak [`killPlayer()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#killplayer) z tą różnicą że zatrzymuje odtwarzacz muzyki siłą poprzez ubicie procesu `vlc`.
+
 Wykonanie tej funkcji jest logowane w konsoli takim oto logiem:
 !["Jak wygląda log z funkcji killPlayerForce"](https://i.imgur.com/6VT4FHm.png)
 
