@@ -213,6 +213,7 @@ Jeżeli playlista istnieje to funkcja zwraca log o wykonaniu tego zadania który
 Funkcja zatrzymuje odtwarzacz muzyki przy użyciu interfejsu programu `cvlc`.
 
 Wykonanie tej funkcji jest logowane w konsoli takim oto logiem:
+
 !["Jak wygląda log z funkcji killPlayer"](https://i.imgur.com/7eqTKBa.png)
 
 ## Tryb Debugowania
