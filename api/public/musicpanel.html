@@ -56,8 +56,9 @@
             </div>
             <div class="col">
             <div class="panic">
-                <form method="get" action="/action/kill?force">
-                    <input type="submit" formtarget="res" value="Awaryjny stop">
+                <form method="get" action="/action/kill">
+                    <input type="hidden" name="force"/>
+                    <input type="submit" formtarget="res" value="Awaryjny stop"/>
                 </form>
             </div>
             <img src="/images/logo_zseis.gif" alt="kręciołek ckziu" class="kreciolek"/>
