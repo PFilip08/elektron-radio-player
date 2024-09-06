@@ -5,10 +5,11 @@ import {default as www} from "../api/app.js";
 import {DebugStarter} from "./DebugMode.js";
 
 async function POST() {
-    logger('POST', '------------------------------')
-    logger('POST', '    elektron-radio-player')
-    logger('POST', '        By PFilip :>')
-    logger('POST', '------------------------------')
+    logger('POST', '------------------------------');
+    logger('POST', '    elektron-radio-player');
+    logger('POST', '        By PFilip :>');
+    logger('POST', '       and Zaptyp ;w;');
+    logger('POST', '------------------------------');
     await DebugStarter();
     logger('verbose', `Wykryto system: ${process.platform}`, 'POST');
     if (process.platform === "win32") {
