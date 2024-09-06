@@ -2,7 +2,7 @@
 Funkcja `POST()` służy do uruchomienia całego Automatu skrypt wykonuje instrukcje w następującej kolejności:
 - Wyświetla log powitalny z informacją o twórcy skryptu i jak projekt się nazywa.
 
-    ![Jak wygląda log powitalny?](https://i.imgur.com/n98C6uS.png)
+    ![Jak wygląda log powitalny?](https://i.imgur.com/BsktlMl.png)
 - Uruchamia funkcję [`DebugStarter()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugstarter) która sprawdza czy skrypt uruchomiony jest w trybie debugowania
     - Jeżeli skrypt uruchomiony jest w trybie debugowania to wyświetli komunikat informujący na jakim systemie pracuje i pokazuje log o treści:
 
