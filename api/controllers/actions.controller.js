@@ -2,6 +2,7 @@ import {DebugSaveToFile} from "../../modules/DebugMode.js";
 import {logger} from "../../modules/Logger.js";
 import {killPlayer, killPlayerForce, playMusic, playPlaylist} from "../../modules/MusicPlayer.js";
 import {pathSecurityChecker} from "../../modules/Other.js";
+import VLC from "vlc-client";
 
 // killPlayer
 export async function kill(req, res) {
@@ -67,6 +68,63 @@ export async function pPlaylist(req, res) {
         if (global.debugmode === true) {
             DebugSaveToFile('LocalAPI', 'playPlaylist', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - pPlaylist');
+        }
+    }
+}
+
+export async function vlcPlay(req, res) {
+    try {
+        const vlc = new VLC.Client({
+            ip: '127.0.0.1',
+            port: Number(process.env.VLC_PORT) || 4212,
+            password: process.env.VLC_PASSWORD
+        });
+        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - vlcPlay');
+        await vlc.togglePlay();
+        return res.status(201).send('gut');
+    } catch (e) {
+        logger('verbose', 'Wystąpił błąd podczas próby zmiany odtwarzania', 'LocalAPI - vlcPlay');
+        if (global.debugmode === true) {
+            DebugSaveToFile('LocalAPI', 'vlcPlay', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - vlcPlay');
+        }
+    }
+}
+
+export async function vlcNext(req, res) {
+    try {
+        const vlc = new VLC.Client({
+            ip: '127.0.0.1',
+            port: Number(process.env.VLC_PORT) || 4212,
+            password: process.env.VLC_PASSWORD
+        });
+        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - vlcNext');
+        await vlc.next();
+        return res.status(201).send('gut');
+    } catch (e) {
+        logger('verbose', 'Wystąpił błąd podczas próby zmiany piosenki', 'LocalAPI - vlcNext');
+        if (global.debugmode === true) {
+            DebugSaveToFile('LocalAPI', 'vlcNext', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - vlcNext');
+        }
+    }
+}
+
+export async function vlcPrevious(req, res) {
+    try {
+        const vlc = new VLC.Client({
+            ip: '127.0.0.1',
+            port: Number(process.env.VLC_PORT) || 4212,
+            password: process.env.VLC_PASSWORD
+        });
+        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - vlcPrevious');
+        await vlc.previous();
+        return res.status(201).send('gut');
+    } catch (e) {
+        logger('verbose', 'Wystąpił błąd podczas próby zmiany piosenki', 'LocalAPI - vlcPrevious');
+        if (global.debugmode === true) {
+            DebugSaveToFile('LocalAPI', 'vlcPrevious', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - vlcPrevious');
         }
     }
 }

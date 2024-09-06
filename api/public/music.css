@@ -75,6 +75,32 @@
     height: 25px;
 }
 
+.current .mediacontrol {
+    width: 40%;
+    position: absolute;
+    text-align: center;
+    background-color: #17191a;
+    right: 0;
+    left: 0;
+    bottom: -30px;
+    margin: auto;
+    padding: 0 5px 6px;
+}
+
+.current .mediacontrol form {
+    display: inline-block;
+}
+
+.current .mediacontrol form:nth-child(2) {
+    width: 35%;
+    margin: auto;
+}
+
+.current .mediacontrol form input {
+    height: 20px;
+    font-size: 16px;
+}
+
 .col {
     display: flex;
     flex-direction: column;
