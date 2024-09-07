@@ -23,10 +23,10 @@ async function DebugStarter() {
     logger('verbose', `  - VERBOSE: ${process.env.VERBOSE}`, 'DebugStarter');
     logger('verbose', `  - WWW: ${process.env.WWW}`, 'DebugStarter');
     if (process.env.SPOTIFY_CLIENT_ID === undefined) {
-        logger('verbose', colors.red('Nie znaleziono zmiennej środowiskowej o nazwie SPOTIFY_CLIENT_ID'), 'POST');
+        logger('verbose', colors.red('Nie znaleziono zmiennej środowiskowej o nazwie SPOTIFY_CLIENT_ID'), 'DebugStarter');
     }
     if (process.env.SPOTIFY_CLIENT_SECRET === undefined) {
-        logger('verbose', colors.red('Nie znaleziono zmiennej środowiskowej o nazwie SPOTIFY_CLIENT_SECRET'), 'POST');
+        logger('verbose', colors.red('Nie znaleziono zmiennej środowiskowej o nazwie SPOTIFY_CLIENT_SECRET'), 'DebugStarter');
     }
 }
 
@@ -42,7 +42,7 @@ function DebugSaveToFile(moduleName, functionName, fileName, data) {
     }
     if (data.stack) {
         dataType = 'STACK';
-        logger('verbose', colors.red(`Zapisywane dane to stack error z funkcji ${functionName}`), 'DebugSaveToFile');
+        logger('verbose', colors.red(`Zapisywane dane to stacktrace errora z funkcji ${functionName}`), 'DebugSaveToFile');
     } else {
         try {
             if (JSON.parse(JSON.stringify(data))) {

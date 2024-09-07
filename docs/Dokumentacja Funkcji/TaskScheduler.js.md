@@ -1,70 +1,98 @@
 # taskNumber()
-Funkcja ta zwraca liczbę zadań które zrobiły funkcje [`scheduleMusicTask()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#schedulemusictask) oraz [`scheduleKillTask()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#schedulekilltask). 
+
+Funkcja ta zwraca liczbę zadań, które zrobiły funkcje [`scheduleMusicTask()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#schedulemusictask) oraz [`scheduleKillTask()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#schedulekilltask).
 
 Wyświetla w formie takiego o to loga:
 
 !["Jak wygląda log z funkcji taskNumber"](https://i.imgur.com/WtiXhBo.png)
+
+## Tryb Debugowania
+
+Wyświetla informacje o uruchomieniu tej funkcji, który wygląda tak:
+
+!["Jak wygląda log z funkcji taskNumber w trybie debugowania"](https://i.imgur.com/VpmxwA9.png)
+
 # scheduleMusicTask()
-Planuje puszczanie muzyki z danej playlisty o danej godzinie ustawiając funkcje [`playPlaylist()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#playplaylist). Puszczenie poprzedza takim o to logiem w konsoli:
+
+Planuje puszczanie muzyki, z danej playlisty o danej godzinie ustawiając funkcje [`playPlaylist()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#playplaylist).
+Puszczenie poprzedza takim o to logiem w konsoli:
+
 !["Jak wygląda log z funkcji scheduleMusicTask"](https://i.imgur.com/6WH87AO.png)
+
+## Tryb Debugowania
+
+Log informuje na, kiedy została zaplanowana funkcja [`playPlaylist()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#playplaylist) oraz jaka playlista została jej podana:
+
+!["Jak wygląda log z funkcji scheduleMusicTask w trybie debugowania"](https://i.imgur.com/90GjKjS.png)
+
 # scheduleKillTask()
+
 Planuje zabicie odtwarzacza muzyki o danej godzinie ustawiając funkcje [`killPlayer()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#killplayer).
+
+## Tryb Debugowania
+
+Log informuje na, kiedy zostało zaplanowane zadanie uruchomienia funkcji [`killPlayer()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#killplayer):
+!["Jak wygląda log z funkcji scheduleKillTask w trybie debugowania"](https://i.imgur.com/kn3AFHO.png)
+
 # checkScheduleTime()
-Funkcja ta sprawdza czy czas zakończenia jest późniejszy niż czas rozpoczęcia i odwrotnie. Jeśli nie, zwraca false i pokazuje odpowiedni log w konsoli:
+
+Funkcja ta sprawdza, czy czas zakończenia jest późniejszy niż czas rozpoczęcia i odwrotnie. Jeśli nie, zwraca false i pokazuje odpowiedni log w konsoli:
 Dla czasu zakończenia wcześniejszego niż czas rozpoczęcia (dla minutach):
-!["Jak wygląda log z funkcji checkScheduleTime gdy czas zakończenia jest późniejszy niż czas rozpoczęcia dla minut"](https://i.imgur.com/yJRBjTi.png)
+!["Jak wygląda log z funkcji checkScheduleTime, gdy czas zakończenia jest późniejszy niż czas rozpoczęcia dla minut"](https://i.imgur.com/yJRBjTi.png)
 Dla czasu zakończenia późniejszego niż czas rozpoczęci (dla godzin):
-!["Jak wygląda log z funkcji checkScheduleTime gdy czas zakończenia jest późniejszy niż czas rozpoczęcia dla godzin"](https://i.imgur.com/KeQiAKC.png)
+!["Jak wygląda log z funkcji checkScheduleTime, gdy czas zakończenia jest późniejszy niż czas rozpoczęcia dla godzin"](https://i.imgur.com/KeQiAKC.png)
+
+## Tryb Debugowania
+
+Log informuje jaka zasada i numer przerwy został podany do funkcji w celu sprawdzenia:
+
+!["Jak wygląda log z funkcji checkScheduleTime w trybie debugowania informujący o tym, co jest aktualnie do sprawdzenia przez funkcje"](https://i.imgur.com/fwvDB1b.png)
+
+Jeżeli godzina przerwy danej zasady jest prawidłowa zwracany log wygląda tak:
+
+!["Jak wygląda log z funkcji checkScheduleTime w trybie debugowania informujący o tym, że godzina przerwy jest prawidłowa"](https://i.imgur.com/bwQNYhR.png)
+
+W przypadku, gdy sprawdzenie wyszło, że czas w minutach jest na minusie (czas zakończenia jest wcześniejszy niż czas rozpoczęcia) log wygląda tak:
+
+!["Jak wygląda log z funkcji checkScheduleTime w trybie debugowania informujący o tym, że czas zakończenia jest wcześniejszy niż czas rozpoczęcia (sprawdzenie minut)"](https://i.imgur.com/LkOiUa5.png)
+
+W przypadku, gdy sprawdzenie wyszło, że czas w godzinie jest na minusie (czas zakończenia jest wcześniejszy niż czas rozpoczęcia) log wygląda tak:
+
+!["Jak wygląda log z funkcji checkScheduleTime w trybie debugowania informujący o tym że czas zakończenia jest wcześniejszy niż czas rozpoczęcia (sprawdzenie godzin)"](https://i.imgur.com/kbzgflM.png)
+
 # massSchedule()
-`massSchedule` jest funkcją, która planuje zadania związane z odtwarzaniem muzyki na podstawie harmonogramu pobranego z API. Funkcja ta zarządza zadaniami harmonogramu, usuwa stare pliki, pobiera dane z API, sprawdza poprawność czasów rozpoczęcia i zakończenia oraz tworzy nowe zadania harmonogramu dla odtwarzania muzyki.
 
-### Parametry
+`massSchedule` jest funkcją, która planuje zadania związane z odtwarzaniem muzyki na podstawie harmonogramu pobranego z API.
 
-Funkcja `massSchedule` nie przyjmuje żadnych argumentów.
+Na początku funkcja anuluje zaplanowane w poprzedniej sesji zadania i planuje zadanie uruchamiające funkcję automatycznego usuwania plików [`autoRemoveFiles()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicDownloader.js.md#autoremovefiles) codziennie o godzinie 5:00 od poniedziałku do piątku.
 
-### Opis działania
+Następnie wysyła zapytanie do funkcji [`getApiData()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#getapidata), która zwróci dane, z API po tym sprawdza, czy zmienna w jsonie `isOn` jest ustawiona na `true` jeżeli zmienna jest przełączona na `false` to funkcja zwróci błąd, który wygłąda tak:
 
-1. **Zakończenie bieżących zadań harmonogramu**:
-    - `await schedule.gracefulShutdown();` - Funkcja kończy wszystkie aktualnie zaplanowane zadania.
+!["Jak wygląda log z funkcji massSchedule, gdy zmienna isOn jest na false"](https://i.imgur.com/HJ1s8pE.png)
 
-2. **Planowanie automatycznego usuwania plików**:
-    - `schedule.scheduleJob('0 5 * * 1-5', autoRemoveFiles);` - Codziennie o godzinie 5:00 od poniedziałku do piątku uruchamia się zadanie `autoRemoveFiles`.
+Po tym sprawdzeniu rozpoczyna się pętla, która iteruje dni tygodnia z jsona i przypisuje im zasadę, która ma być zastosowana dla tego dnia.
+Potem zaczyna się cykl pętli:
 
-3. **Pobranie danych z API**:
-    - `const data = await`[`getApiData()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#getapidata)`;` - Funkcja pobiera dane z API, które zawierają informacje o harmonogramie odtwarzania muzyki.
+1. Pierwsza pętla iteruje tyle razy, ile istnieje dni tygodnia w jsonie.
+2. Druga pętla, która jest w środku pierwszej pętli iteruje tyle ile jest godzin w danej zasadzie przydzielonej do danego dnia tygodnia.
 
-4. **Sprawdzanie dostępności danych**:
-    - Jeśli dane nie zawierają klucza `isOn` ustawionego na `true`, funkcja loguje błąd i kończy działanie:
-    ```javascript
-    if (!data.isOn) {
-        taskNumber();
-        return logger('error','Brakuje danych!!!', 'massSchedule');
-    }
-    ```
+Działa główne funkcji znajduję się wewnątrz pętli drugiej i zostanie ona opisana poniżej, bo pętla pierwsza nie służy do niczego innego jak wykonania pętli drugiej tyle razy, ile trzeba.
 
-5. **Przetwarzanie danych harmonogramu**:
-    - Funkcja pobiera harmonogramy czasowe (`timeRules`) oraz dni tygodnia, dla których mają być zastosowane (`applyRule`).
-    - Tworzy mapowanie dni tygodnia na liczby (poniedziałek = 1, wtorek = 2, itd.).
+Ale warto wspomnieć, że w pętli pierwszej jest sprawdzane, czy zasada dla danego dnia tygodnia jest nie jest równa `0` jeżeli jest równa, to wykonywanie dla tej iteracji jest pomijane i pętla kontynuuje z wykonywaniem następnej iteracji.
 
-6. **Tworzenie zadań harmonogramu**:
-    - Dla każdego dnia tygodnia, dla którego harmonogram ma być zastosowany, funkcja iteruje przez wszystkie zaplanowane czasy odtwarzania muzyki.
-    - Sprawdza, czy czas zakończenia jest późniejszy niż czas rozpoczęcia, wykorzystując funkcję [`checkScheduleTime()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#checkscheduletime).
+Na początku funkcja przypisuje do zmiennej `id` numer playlisty głównej z jsona (`currentPlaylistId`)
 
-7. **Planowanie zadań**:
-    - Funkcja tworzy zadania harmonogramu dla odtwarzania playlisty ([`playPlaylist()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#playplaylist)).
-    - Jeśli zdefiniowane jest odtwarzanie na żądanie (`OnDemand`), pobiera pliki i planuje zadanie odtwarzania tych plików ([`playOnDemand()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#playondemand)).
-    - Planowanie zadań do zatrzymania odtwarzacza muzyki ([`killPlayer()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#killplayer)) po zakończeniu odtwarzania.
+Po tym jest sprawdzane, czy w jsonie pod daną zasadą jest zdefiniowana zmienna `playlist` jeżeli jest to zmienna `id` przyjmuje wartość zapisaną z tej zmiennej, jeżeli nie to zmienna `id` przyjmuje wartość domyślną ze zmiennej json `currentPlaylistId`.
 
-8. **Logowanie liczby zaplanowanych zadań**:
-    - [`taskNumber()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#tasknumber) - Funkcja loguje liczbę wszystkich zaplanowanych zadań.
-### Ważne funkcje pomocnicze
- - [`taskNumber()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#tasknumber): Loguje liczbę wszystkich zaplanowanych zadań.
- - [`scheduleMusicTask(time, id)`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#schedulemusictask): Planowanie zadania odtwarzania playlisty.
- - [`scheduleKillTask(time)`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#schedulekilltask): Planowanie zadania zatrzymania odtwarzacza muzyki.
- - [`checkScheduleTime(timeEnd, timeStart, rule, breakNumber)`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#checkscheduletime): Sprawdza poprawność czasów rozpoczęcia i zakończenia odtwarzania.
-### Przykłady logów
- - `logger('log', 'Granie playlisty nr: '+id.id,'scheduleMusicTask')` - Logowanie odtwarzania playlisty.
- - `logger('error', 'Brakuje danych!!!', 'massSchedule')` - Logowanie błędu braku danych.
- - `logger('log', 'ONDEMAND OMAJGAH!!!1!111!!1!1!!!', 'massSchedule')` - Logowanie odtwarzania na żądanie.
- Obsługa błędów
- Jeśli czas zakończenia jest wcześniejszy niż czas rozpoczęcia, funkcja [`checkScheduleTime()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#checkscheduletime) loguje odpowiedni błąd i zwraca false.
+Następnie funkcja sprawdza, czy w jsonie pod daną zasadą `playlist` nie równa się `0` jeżeli równa się, to iteracja jest pomijana i funkcja przechodzi do następnej iteracji.
+Jeżeli pod zasadą zdefiniowana jest zmienna `OnDemand` to funkcja wyświetli log:
+!["Jak wygląda log z funkcji massSchedule, gdy jest zdefiniowana zmienna OnDemand"](https://i.imgur.com/IvEVtBg.png)
+
+I dzwoni do funkcji [`downloader()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicDownloader.js.md#downloader) z podanym linkiem oraz do zmiennej `trackInfo` przypisuje funkcję [`getTrackInfo()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicDownloader.js.md#gettrackinfo) z podanym linkiem i wydobywa z jsona zasadę i z niej czas `start` rozłącza go na przy użyciu `split` szukając `:` obraca go przy użyciu `reverse` i łączy przy pomocy `join`, która elementy tablicy "spawa" przy pomocy spacji i po tym tworzy zadanie, które wykonuje funkcję [`playOnDemand()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#playondemand) i jako argument umieszcza wysterylizowaną przez funkcję [`sterylizator()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Other.js.md#sterylizator) nazwę pliku i pod koniec tworzy zadanie ubicia pjeyera przy użyciu tej samej metody co opisanej wcześniej i następna iteracja pętli jest kontynuowana.
+Przed uruchomieniem sprawdzenia, czy czas jest prawidłowy funkcja do zmiennej `scheduleKey` przypisuje czas `start` i `end` z zasady, która znajduje się w jsonie.
+
+Po tym funkcja sprawdza, czy czas jest prawidłowy przy użyciu funkcji [`checkScheduleTime()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#checkscheduletime) jeżeli czas jest prawidłowy, to funkcja przypisuje do zmiennej `checkedSchedules` dodaje zmienną `scheduleKey` a jeżeli czas jest nieprawidłowy, to funkcja zwraca błąd który wygląda tak i kontynuuje wykonywanie następnej iteracji:
+
+!["Jak wygląda log z funkcji massSchedule, gdy czas jest nieprawidłowy"](https://i.imgur.com/C741mZA.png)
+
+Jeżeli żaden z powyższych sprawdzeń nie wyłapał nic, to funkcja tworzy zadania a tworzy je przez funkcję [`scheduleMusicTask()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#schedulemusictask) i jako argument podaje czas we, zmiennej `time` a id playlisty we, zmiennej `id`a tworzy zadanie przy pomocy funkcji [`scheduleKillTask()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#schedulekilltask), do której podaje czas w tej samej zmiennej `time`.
