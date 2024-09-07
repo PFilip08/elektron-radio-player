@@ -10,7 +10,7 @@ Ten endpoint zwraca informacje o aktualnie odtwarzanej piosence.
 
 ### Response
 
-W przypadku powodzenia ale gdy nic nie jest odtwarzane zwracany jest:
+W przypadku powodzenia, ale gdy nic nie jest odtwarzane zwracany jest:
 
 - **Kod statusu:** 201
 - **Typ:** application/json
@@ -24,7 +24,7 @@ W przypadku powodzenia ale gdy nic nie jest odtwarzane zwracany jest:
 }
 ```
 
-W przypadku powodzenia ale jest coś odtwarzane zwracany jest:
+W przypadku powodzenia, ale jest coś odtwarzane zwracany jest:
 
 - **Kod statusu:** 201
 - **Typ:** application/json
@@ -41,7 +41,7 @@ W przypadku powodzenia ale jest coś odtwarzane zwracany jest:
 }
 ```
 
-W przypadku powodzenia ale jest coś odtwarzane zwracany jest:
+W przypadku powodzenia, ale jest coś odtwarzane zwracany jest:
 
 - **Kod statusu:** 201
 - **Typ:** application/json
@@ -101,7 +101,7 @@ W przypadku powodzenia i gdy wszyskie playlisty są prawidłowe oraz nazwa zosta
 }
 ```
 
-W przypadku powodzenia ale gdy jednej z playlist nazwa nie została znaleziona zwracany jest:
+W przypadku powodzenia, ale gdy jednej z playlist nazwa nie została znaleziona zwracany jest:
 
 - **Kod statusu:** 201
 - **Typ:** application/json
@@ -127,7 +127,7 @@ W przypadku powodzenia ale gdy jednej z playlist nazwa nie została znaleziona z
 }
 ```
 
-W przypadku powodzenia ale gdy jedna z playlist jest nieprawidłowa zwracany jest
+W przypadku powodzenia, ale gdy jedna z playlist jest nieprawidłowa zwracany jest
 
 - **Kod statusu:** 201
 - **Typ:** application/json
@@ -244,7 +244,7 @@ W przypadku powodzenia i gdy wszystkie piosenki posiadają metadane zwracany jes
 }
 ```
 
-W przypadku powodzenia ale gdy jedna z piosenek nie posiada autora w metadanych zwracany jest:
+W przypadku powodzenia, ale gdy jedna z piosenek nie posiada autora w metadanych zwracany jest:
 
 - **Kod statusu:** 201
 - **Typ:** application/json
@@ -266,7 +266,7 @@ W przypadku powodzenia ale gdy jedna z piosenek nie posiada autora w metadanych 
 }
 ```
 
-W przypadku powodzenia ale gdy jedna z piosenek nie posiada tytułu w metadanych zwracana wtedy jest nazwa z pliku:
+W przypadku powodzenia, ale gdy jedna z piosenek nie posiada tytułu w metadanych zwracana wtedy jest nazwa z pliku:
 
 - **Kod statusu:** 201
 - **Typ:** application/json

@@ -3,11 +3,11 @@
 Funkcja ta nie przyjmuje żadnych argumentów służy ona do przełączenia zmiennej globalnej `debugMode` oraz tworzy folder `debug/` gdzie funkcja [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) zapisuje pliki.
 
 Kiedy w pliku `.env` zmienna `VERBOSE` jest ustawiona na `true` to funkcja `DebugStarter()` ustawia zmienną globalną `debugMode` na wartość `true`.
-I infomuje o tym logiem że tryb debugowaniua został uruchomiony:
+I informuje o tym logiem, że tryb debugowania został uruchomiony:
 
 ![Log z funkcji DebugStarter informujący o uruchomieniu trybu debugowania](https://i.imgur.com/0N6Ml4o.png)
 
-Po tym infomuje jakie ustawienia są załadowane:
+Po tym informuje jakie ustawienia są załadowane:
 
 ![Log z funkcji DebugStarter informujący o załadowanych ustawieniach](https://i.imgur.com/GFFF7L1.png)
 
@@ -27,29 +27,29 @@ I jeżeli istnieje folder `debug/` po poprzedniej pracy w tym trybie to go usuwa
 
 Funkcja ta przyjmuje cztery argumenty:
 
-- `moduleName` - nazwa modułu z którego jest wywoływana funkcja
-- `functionName` - nazwa funkcji z której jest wywoływana funkcja
-- `fileName` - nazwa pliku do którego ma zostać zapisany log
-- `data` - dane które mają zostać zapisane w pliku
+- `moduleName` - nazwa modułu, z którego jest wywoływana funkcja
+- `functionName` - nazwa funkcji, z której jest wywoływana funkcja
+- `fileName` - nazwa pliku, do którego ma zostać zapisany log
+- `data` - dane, które mają zostać zapisane w pliku
 
-Jeżeli funkcja zostanie wywołana a tryb debugowania nie jest włączony to funkcja wywali player z błędem i logiem:
+Jeżeli funkcja zostanie wywołana a tryb debugowania nie jest włączony, to funkcja wywali player z błędem i logiem:
 
-![Błąd który zostanie wywołany jeżeli tryb debugowania nie jest włączony](https://i.imgur.com/9hmVuCt.png)
+![Błąd, który zostanie wywołany, jeżeli tryb debugowania nie jest włączony](https://i.imgur.com/9hmVuCt.png)
 ![Log z funkcji DebugSaveToFile informujący o braku włączonego trybu debugowania](https://i.imgur.com/GQa69Vq.png)
 
-Jeżeli tryb debugowania jest włączony to funkcja zapisuje dane do pliku w folderze `debug/`.
-Jeżeli zmienna `data` będzie pusta to funkcja nie zapisze do pliku a wyświetli log z informacją że nie ma danych do zapisania i skąd nastąpiło wywołanie:
+Jeżeli tryb debugowania jest włączony, to funkcja zapisuje dane do pliku w folderze `debug/`.
+Jeżeli zmienna `data` będzie pusta, to funkcja nie zapisze do pliku a wyświetli log z informacją że nie ma danych do zapisania i skąd nastąpiło wywołanie:
 ![Log z funkcji DebugSaveToFile informujący o braku danych do zapisania](https://i.imgur.com/E68Av8I.png)
 
-Funkcja potrafi sama wykryć typ danych jakie do niej trawiły i zapisuje je w odpowiednim formacie:
+Funkcja potrafi sama wykryć typ danych, jakie do niej trawiły i zapisuje je w odpowiednim formacie:
 
 - Jeżeli dane to stack trace to ustawia zmienną `dataType` na `STACK` i wyświetla log z informacją o tym oraz z skąd dane pochodzą:
-![Log z funkcji DebugSaveToFile informujący o tym że dane to stack trace](https://i.imgur.com/GEhLmWE.png)
+![Log z funkcji DebugSaveToFile informujący o tym, że dane to stack trace](https://i.imgur.com/GEhLmWE.png)
 
 - Jeżeli dane to JSON to ustawia zmienną `dataType` na `JSON` i wyświetla log z informacją o tym oraz z skąd dane pochodzą:
-![Log z funkcji DebugSaveToFile informujący o tym że dane to JSON](https://i.imgur.com/FSkCleR.png)
+![Log z funkcji DebugSaveToFile informujący o tym, że dane to JSON](https://i.imgur.com/FSkCleR.png)
 
-Po rozpoznaniu typu danych funkcja zaczyna tworzyć folder w formacie `debug/P{Nazwa Modułu}/{Nazwa Funkcji}/`
+Po rozpoznaniu typu danych funkcja zaczyna tworzyć folder w formacie `debug/{Nazwa Modułu}/{Nazwa Funkcji}/`
 Po utworzeniu folderu funkcja tworzy plik zależny od tego co zostało przekazane do zmiennej dataType:
 
 - Jeżeli `dataType` to `JSON` to funkcja tworzy plik w formacie `.json`:
@@ -57,4 +57,4 @@ Po utworzeniu folderu funkcja tworzy plik zależny od tego co zostało przekazan
   - W normalnym przypadku funkcja tworzy plik w formacie `.json` i zapisuje do niego dane w formacie JSON tworząc nowy plik lub nadpisując stary
 - Jeżeli `dataType` to `STACK` to funkcja tworzy plik w formacie `.txt`.
 - A w przypadku gdy funkcja nie będzie w stanie wykryć typu danych to wywali się z błędem i wywali program z kodem błędu 1:
-![Błąd który zostanie wywołany jeżeli funkcja nie będzie w stanie rozpoznać typu danych](https://i.imgur.com/tiuXlcT.png)
+![Błąd, który zostanie wywołany, jeżeli funkcja nie będzie w stanie rozpoznać typu danych](https://i.imgur.com/tiuXlcT.png)

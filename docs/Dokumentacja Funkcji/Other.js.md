@@ -50,12 +50,12 @@ Przed sprawdzeniem ścieżki zostaje zapisana przez [`DebugSaveToFile()`](https:
 
 Przed sprawdzeniem, czy ścieżka nie zawiera ``NULL_BYTE`` zwraca komunikat:
 
-!["Jak wygląda log z funkcji pathSecurityChecker mówiący o rozpoczęciu sprawdzania czy ścieżka nie zawiera NULL_BYTE w trybie debugowania"](https://i.imgur.com/6OMy6MJ.png)
+!["Jak wygląda log z funkcji pathSecurityChecker mówiący o rozpoczęciu sprawdzania, czy ścieżka nie zawiera NULL_BYTE w trybie debugowania"](https://i.imgur.com/6OMy6MJ.png)
 
 Przed sprawdzeniem, czy ścieżka nie wiedziecie do ucieczki z katalogu ``mp3/`` zwraca komunikat:
 
-!["Jak wygląda log z funkcji pathSecurityChecker mówiący o rozpoczęciu sprawdzania czy ścieżka nie wiedzie do ucieczki z katalogu mp3/ w trybie debugowania"](https://i.imgur.com/DYi2JLy.png)
+!["Jak wygląda log z funkcji pathSecurityChecker mówiący o rozpoczęciu sprawdzania, czy ścieżka nie wiedzie do ucieczki z katalogu mp3/ w trybie debugowania"](https://i.imgur.com/DYi2JLy.png)
 
 Przed sprawdzeniem, czy ścieżka nie zawiera "dwukropków" zwraca komunikat:
 
-!["Jak wygląda log z funkcji pathSecurityChecker mówiący o rozpoczęciu sprawdzania czy ścieżka nie zawiera dwukropków w trybie debugowania"](https://i.imgur.com/hJRlf6q.png)
+!["Jak wygląda log z funkcji pathSecurityChecker mówiący o rozpoczęciu sprawdzania, czy ścieżka nie zawiera dwukropków w trybie debugowania"](https://i.imgur.com/hJRlf6q.png)

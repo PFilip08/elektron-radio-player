@@ -10,7 +10,7 @@ Gdzie:
 
 - type - typ logu
 - content - treść logu
-- name - nazwa funkcji z której log pochodzi(nie będzie pokazywana dla logów typu POST i READY)
+- name - nazwa funkcji, z której log pochodzi(nie będzie pokazywana dla logów typu POST i READY)
 
 # Wygląd Logów w Konsoli
 
@@ -27,10 +27,10 @@ Logger posiada w sobie 7 typów logów pokazanych poniżej:
 - WARN - oznacza się nim logi, które zawierają ostrzeżenie na temat działania playera np że nie mógł się połączyć z api i używa trybu recovery przyjmuje on też parametr 'name'
 - ERROR - oznacza się nim logi, które zawierają błędy krtyczne, które wpłyneły na działanie playera np. błąd w funkcji lub niespodziewana odpowiedź z api albo oznacza się nimi błędy właśnościowe jak np. funkcja walidacji prawidłowości zapisu czasu przyjmuje on też parametr 'name'
 - DEBUG - oznacza się nim logi, które zawierają informacje pomocne w debugowaniu np. informacje o tym jakie dane zaaktualizowały się w jsonie, który został pobrany z API przyjmuje on też parametr 'name'
-- VERBOSE - oznacza się nim logi, które zawierają informacje pomocne procesie programowania i dokładnego debugowania np. informacje o tym jakie dane zaaktualizowały się w jsonie który został pobrany z API lub na jakim etapie w danej funkcji znajduje się player przyjmuje on też parametr 'name'
+- VERBOSE - oznacza się nim logi, które zawierają informacje pomocne procesie programowania i dokładnego debugowania np. informacje o tym, jakie dane zaaktualizowały się w jsonie który został pobrany z API lub na jakim etapie w danej funkcji znajduje się player przyjmuje on też parametr 'name'
 - TASK - oznacza się nim logi, które zawierają informacje o związane z zadaniami np. informacje o liczbie zadań lub uruchomienie konkretnego zadania przyjmuje on też parametr 'name'
-- POST - oznacza się nim logi głownie logi związane z plikiem POST.js i NIE przyjmuje on parametru 'name'
-- READY - nie powinno się go używać w kodzie ale jest on używany jako log specjalny informujący o gotowości automatu do działania i NIE przyjmuje on parametru 'name'
+- POST - oznacza się nim logi głównie logi związane z plikiem POST.js i NIE przyjmuje on parametru 'name'
+- READY - nie powinno się go używać w kodzie, ale jest on używany jako log specjalny informujący o gotowości automatu do działania i NIE przyjmuje on parametru 'name'
 
 # Przykład użycia
 

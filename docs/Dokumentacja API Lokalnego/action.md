@@ -9,10 +9,10 @@ Ten endpoint zatrzymuje odtwarzacz muzyki.
 - **Metoda:** GET
 - **Endpoint:** `/action/kill`
 - **Parametry zapytania:**
-  - `force` - Parametr opcjonalny, jeśli zostanie podany to zatrzymuje odtwarzacz muzyki siłowo.
+  - `force` - Parametr opcjonalny, jeśli zostanie podany, to zatrzymuje odtwarzacz muzyki siłowo.
 
 ### Response
-W przypadku powodzenia i gdy parametr `force` nie został podany to zwracany jest:
+W przypadku powodzenia i gdy parametr `force` nie został podany, to zwracany jest:
 
 - **Kod statusu:** 201
 - **Typ:** text/html
@@ -52,10 +52,10 @@ W przypadku gdy parametr `file` nie został podany bądź będzie pusty:
 - **Kod statusu:** 400
 - **Typ:** text/html
 - **Treść:** Nie podano nazwy pliku!
-W przypadku gdy użytkownik próbował podać ścieżkę która by uciekła poza folder mp3:
+W przypadku gdy użytkownik próbował podać ścieżkę, która by uciekła poza folder mp3:
 - **Kod statusu:** 403
 - **Typ:** text/html
-- **Treść:**Niebezpieczna ścieżka!
+- **Treść:** Niebezpieczna ścieżka!
 
 ### Przykład
 
@@ -87,7 +87,7 @@ W przypadku gdy parametr `id` nie został podany bądź będzie pusty:
 - **Kod statusu:** 400
 - **Typ:** text/html
 - **Treść:** Nie podano numeru playlisty!
-W przypadku gdy użytkownik próbował podać ścieżkę która by uciekła poza folder z mp3:
+W przypadku gdy użytkownik próbował podać ścieżkę, która by uciekła poza folder z mp3:
 - **Kod statusu:** 403
 - **Typ:** text/html
 - **Treść:** Niebezpieczna ścieżka!

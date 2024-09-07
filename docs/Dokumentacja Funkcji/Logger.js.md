@@ -39,58 +39,58 @@ Funkcja findChanges przyjmuje trzy argumenty:
 W trybie debugowania logi pokazują flow, którym myśli funkcja i co zwraca w wyniku porównania dwóch obiektów. Przykładowe logi wygląda tak:
 !["Jak wygląda log z funkcji findChanges w trybie debugowania"](https://i.imgur.com/ZzZi3RL.png)
 
-Tych logów jest za dużo aby opisywać, każdy z osobna przypadek.
+Tych logów jest za dużo, aby opisywać, każdy z osobna przypadek.
 
 # logChanges()
 
-logChanges jest funkcją, która ogarnia wyświetlanie zmian które wykryła funkcja [`findChanges()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Logger.js.md#findchanges) w czytelnej formie. Wykonuje się ona w pętli for i wykona się tyle razy ile [`findChanges()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Logger.js.md#findchanges) wykrył zmian.
+logChanges jest funkcją, która ogarnia wyświetlanie zmian, które wykryła funkcja [`findChanges()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Logger.js.md#findchanges) w czytelnej formie. Wykonuje się ona w pętli for i wykona się tyle razy ile [`findChanges()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Logger.js.md#findchanges) wykrył zmian.
 
 Log w domyślnej formie wyświetla się tak:
 !["Jak wygląda log domyślny z funkcji logChanges"](https://i.imgur.com/9y6FaPV.png)
 
 ### Dla klucza `start` i `end`
 
-Gdy zmieni się wartość godziny która jest określona przez klucze `start` lub `end` w JSONie to funkcja wyświetli log w konsoli:
-!["Jak wygląda log z funkcji logChanges gdy zmieni się godzina"](https://i.imgur.com/yC9EYZI.png)
+Gdy zmieni się wartość godziny, która jest określona przez klucze `start` lub `end` w JSONie, to funkcja wyświetli log w konsoli:
+!["Jak wygląda log z funkcji logChanges, gdy zmieni się godzina"](https://i.imgur.com/yC9EYZI.png)
 
 ### Dla klucza `playlist`
 
-Gdy klucz playlist zostanie usunięty z dowolnego klucza w JSONie to funkcja wyświetli log w konsoli:
-!["Jak wygląda log z funkcji logChanges gdy usunięty zostanie klucz playlist"](https://i.imgur.com/8YxXf4R.png)
+Gdy klucz playlist zostanie usunięty z dowolnego klucza w JSONie, to funkcja wyświetli log w konsoli:
+!["Jak wygląda log z funkcji logChanges, gdy usunięty zostanie klucz playlist"](https://i.imgur.com/8YxXf4R.png)
 
-Gdy klucz playlist zostanie dodany do dowolnego klucza w JSONie to funkcja wyświetli log w konsoli:
-!["Jak wygląda log z funkcji logChanges gdy dodany zostanie klucz playlist"](https://i.imgur.com/vCBV2gg.png)
-Gdy klucz playlist wartość klucza zostanie zmieniona w dowolnym kluczu w JSONie to funkcja wyświetli log w konsoli:
-!["Jak wygląda log z funkcji logChanges gdy zmieni się wartość klucza playlist"](https://i.imgur.com/Sr5LEby.png)
+Gdy klucz playlist zostanie dodany do dowolnego klucza w JSONie, to funkcja wyświetli log w konsoli:
+!["Jak wygląda log z funkcji logChanges, gdy dodany zostanie klucz playlist"](https://i.imgur.com/vCBV2gg.png)
+Gdy klucz playlist wartość klucza zostanie zmieniona w dowolnym kluczu w JSONie, to funkcja wyświetli log w konsoli:
+!["Jak wygląda log z funkcji logChanges, gdy zmieni się wartość klucza playlist"](https://i.imgur.com/Sr5LEby.png)
 
 ### Dla klucza `OnDemand`
 
-Gdy klucz OnDemand zostanie usunięty z dowolnego klucza w JSONie to funkcja wyświetli log w konsoli:
-!["Jak wygląda log z funkcji logChanges gdy usunięty zostanie klucz OnDemand"](https://i.imgur.com/0lHEohZ.png)
+Gdy klucz OnDemand zostanie usunięty z dowolnego klucza w JSONie, to funkcja wyświetli log w konsoli:
+!["Jak wygląda log z funkcji logChanges, gdy usunięty zostanie klucz OnDemand"](https://i.imgur.com/0lHEohZ.png)
 
-Gdy klucz OnDemand zostanie dodany do dowolnego klucza w JSONie to funkcja wyświetli log w konsoli:
-!["Jak wygląda log z funkcji logChanges gdy dodany zostanie klucz OnDemand"](https://i.imgur.com/sug4Wfv.png)
+Gdy klucz OnDemand zostanie dodany do dowolnego klucza w JSONie, to funkcja wyświetli log w konsoli:
+!["Jak wygląda log z funkcji logChanges, gdy dodany zostanie klucz OnDemand"](https://i.imgur.com/sug4Wfv.png)
 Gdy klucz OnDemand wartość klucza zostanie zmieniona w dowolnym kluczu w JSONie to funkcja wyświetli log w konsoli:
-!["Jak wygląda log z funkcji logChanges gdy zmieni się wartość klucza OnDemand"](https://i.imgur.com/1Q4AktC.png)
+!["Jak wygląda log z funkcji logChanges, gdy zmieni się wartość klucza OnDemand"](https://i.imgur.com/1Q4AktC.png)
 
 ### Dla klucza `applyRule`
 
-Funkcja dla klucza `applyRule` na początku rodziela klucz usuwając z niego znak `.` i zwraca ostatni obiekt w kluczu i obiekt jest następnie mapowany przez switcha który ustawia zmienną `day` w zależności na co on trafił następnie zwraca loga z informacją jaki dzień się zmienił oraz jaka zasada ma dla niej zastosowanie a wygląda ten log tak:
-!["Jak wygląda log z funkcji logChanges gdy zmieni się nr zasady dla dnia Poniedziałek"](https://i.imgur.com/BwzEwsb.png)
-Bardzo rzadki przypadek ale jeżeli switch nie wyłapie dla jakiego dnia klucz się zmienił to wyświetli taki komunikat:
-!["Jak wygląda log z funkcji logChanges gdy zmieni się nr zasady dla dnia który nie jest zdefiniowany"](https://i.imgur.com/CCyWD2A.png)
+Funkcja dla klucza `applyRule` na początku rodziela klucz usuwając z niego znak `.` i zwraca ostatni obiekt w kluczu i obiekt jest następnie mapowany przez switcha który ustawia zmienną `day` w zależności, na co on trafił następnie zwraca loga z informacją jaki dzień się zmienił oraz jaka zasada ma dla niej zastosowanie a wygląda ten log tak:
+!["Jak wygląda log z funkcji logChanges, gdy zmieni się nr zasady dla dnia Poniedziałek"](https://i.imgur.com/BwzEwsb.png)
+Bardzo rzadki przypadek, ale jeżeli switch nie wyłapie, dla jakiego dnia klucz się zmienił, to wyświetli taki komunikat:
+!["Jak wygląda log z funkcji logChanges, gdy zmieni się nr zasady dla dnia, który nie jest zdefiniowany"](https://i.imgur.com/CCyWD2A.png)
 
 ### Gdy pojawi się nowa zasada w kluczu `timeRules.rules`
 
-Gdy pojawi się nowa zasada w kluczu `timeRules.rules` to funkcja wyświetli taki o to ładny log który informuje jakie godziny wprowadza oraz dla ilu przerw:
-!["Jak wygląda log z funkcji logChanges gdy pojawi się nowa zasada"](https://i.imgur.com/9YYfkzc.png)
-Gdy natomiast zasada zostanie usunięta to pojawi się taki o to log:
-!["Jak wygląda log z funkcji logChanges gdy usunięta zostanie zasada"](https://i.imgur.com/rq3wKJa.png)
+Gdy pojawi się nowa zasada w kluczu `timeRules.rules` to funkcja wyświetli taki o to ładny log, który informuje jakie godziny wprowadza oraz dla ilu przerw:
+!["Jak wygląda log z funkcji logChanges, gdy pojawi się nowa zasada"](https://i.imgur.com/9YYfkzc.png)
+Gdy natomiast zasada zostanie usunięta, to pojawi się taki o to log:
+!["Jak wygląda log z funkcji logChanges, gdy usunięta zostanie zasada"](https://i.imgur.com/rq3wKJa.png)
 
 ### Dla klucza `currentPlaylistId`
 
-Gdy klucz `currentPlaylistId` zostanie zmieniony to funkcja wyświetli log w konsoli:
-!["Jak wygląda log z funkcji logChanges gdy zmieni się wartość klucza currentPlaylistId"](https://i.imgur.com/sXBWxHG.png)
+Gdy klucz `currentPlaylistId` zostanie zmieniony, to funkcja wyświetli log w konsoli:
+!["Jak wygląda log z funkcji logChanges, gdy zmieni się wartość klucza currentPlaylistId"](https://i.imgur.com/sXBWxHG.png)
 
 ### Dla kluczy `id` i `created_at`
 
@@ -98,7 +98,7 @@ Dla tych klucza funkcja nie wyświetla logów.
 
 ### Dla pozostałych kluczy
 
-Funkcja będzie wyświetlała tylko to że klucz został zmieniony ale nie wyświetla że został usunięty lub dodany.
+Funkcja będzie wyświetlała tylko to, że klucz został zmieniony, ale nie wyświetla, że został usunięty lub dodany.
 
 ## Tryb Debugowania
 
@@ -107,5 +107,5 @@ Przed rozpoczęciem działania funkcji informuje tym logiem o rozpoczęciu logow
 
 Zmiany, które zostały wykryte są zapisywane przez funkcje [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji `debug/Logger/logChanges/changes.txt`.
 
-Po zakończeniu działania funkcji informuje tym, logiem o zakończeniu logowania zmian i ilości zmian które wykryła:
-!["Jak wygląda log z funkcji logChanges który informuje ile zmian zostało wykrytych przez tą funkcje w trybie debugowania"](https://i.imgur.com/FWuG4bP.png)
+Po zakończeniu działania funkcji informuje tym, logiem o zakończeniu logowania zmian i ilości zmian, które wykryła:
+!["Jak wygląda log z funkcji logChanges, który informuje ile zmian zostało wykrytych przez tą funkcje w trybie debugowania"](https://i.imgur.com/FWuG4bP.png)
