@@ -14,7 +14,7 @@ Funkcja `POST()` służy do uruchomienia całego Automatu skrypt wykonuje instru
 
     ![Komunikat o błędzie dla systemu okno](https://i.imgur.com/yP5dJze.png)
         
-    - W przypadku gdy skrypt jest uruchomiony w trybie debugowania to wyświetli następujący komunikat dalej postępując zgodnie z pierwszym punktem:
+    - W przypadku, gdy skrypt jest uruchomiony w trybie debugowania, to wyświetli następujący komunikat dalej postępując zgodnie z pierwszym punktem:
         
         ![Komunikat o błędzie dla systemu okno w trybie debugowania](https://i.imgur.com/2H5Be1q.png)
 - Sprawdza czy istnieje zmienna środowiskowa o nazwie `WWW`
@@ -25,7 +25,7 @@ Funkcja `POST()` służy do uruchomienia całego Automatu skrypt wykonuje instru
 - Uruchamia funkcję [`massSchedule()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#massschedule) która ustawia zadania w playerze, o której ma grać muzyka w harmonogramie i wyświetla komunikat informujący o ustawieniu funkcji:
 
     ![Komunikat o ustawieniu harmonogramu](https://i.imgur.com/UnezZCp.png)
-- Uruchamia funkcję [`checkUpdate()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#checkupdate) która pobiera pierwsze dane z serwera a potem ustawia funkcje [`scheduleUpdate()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#scheduleupdate) która uruchamia się co sekundę a po tym wyświetla komunikat:
+- Uruchamia funkcję [`checkUpdate()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#checkupdate), która pobiera pierwsze dane z serwera a potem ustawia funkcje [`scheduleUpdate()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#scheduleupdate), która uruchamia się co sekundę a po tym wyświetla komunikat:
 
     ![Komunikat o ustawieniu sprawdzania aktualizacji](https://i.imgur.com/Akm8cAd.png)
 - Pod koniec funkcja `POST()` wyświetli komunikat o treści:

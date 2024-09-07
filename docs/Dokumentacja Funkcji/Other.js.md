@@ -2,7 +2,7 @@
 
 Funkcja `sterylizator()` jest używana do przekształcania wejściowego ciągu znaków, zamieniając spacje na podkreślenia oraz usuwając wszystkie znaki niealfabetyczne z wyjątkiem podkreśleń, myślników i niektórych znaków z języka japońskiego oraz chińskiego.
 
-W przypadku gdy funkcji nie uda się przeprowadzić sterylizacji zwraca pusty wynik i zostaje zwrócony log z błędem który wygłąda tak:
+W przypadku gdy funkcji nie uda się przeprowadzić sterylizacji zwraca pusty wynik i zostaje zwrócony log z błędem, który wygłąda tak:
 !["Jak wygląda log z funkcji sterylizator mówiący o błędzie"](https://i.imgur.com/pMZFqVN.png)
 
 ## Tryb debugowania
@@ -10,7 +10,7 @@ W przypadku gdy funkcji nie uda się przeprowadzić sterylizacji zwraca pusty wy
 Log informuje o tym, co zostało przekazane do funkcji w celu przesterylizowania:
 !["Jak wygląda log z funkcji sterylizator w trybie debugowania"](https://i.imgur.com/kTkLLHR.png)
 
-Przed działaniem funkcji to co zostało przekazane do niej zostaje zapisane przez [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji ``debug/Other/sterylizator/source.json`` i potwierdzone to zostaje następującym logiem:
+Przed działaniem funkcji to, co zostało przekazane do niej, zostaje zapisane przez [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji ``debug/Other/sterylizator/source.json`` i potwierdzone to zostaje następującym logiem:
 
 !["Jak wygląda log z funkcji sterylizator mówiący o zapisaniu tekstu źródłowego do pliku w trybie debugowania"](https://i.imgur.com/YVIEx2K.png)
 
@@ -48,14 +48,14 @@ Przed sprawdzeniem ścieżki zostaje zapisana przez [`DebugSaveToFile()`](https:
 
 !["Jak wygląda log z funkcji pathSecurityChecker mówiący o zapisaniu tekstu źródłowego do pliku w trybie debugowania"](https://i.imgur.com/qijGCMe.png)
 
-Przed sprawdzeniem czy ścieżka nie zawiera ``NULL_BYTE`` zwraca komunikat:
+Przed sprawdzeniem, czy ścieżka nie zawiera ``NULL_BYTE`` zwraca komunikat:
 
 !["Jak wygląda log z funkcji pathSecurityChecker mówiący o rozpoczęciu sprawdzania czy ścieżka nie zawiera NULL_BYTE w trybie debugowania"](https://i.imgur.com/6OMy6MJ.png)
 
-Przed sprawdzeniem czy ścieżka nie wiedziecie do ucieczki z katalogu ``mp3/`` zwraca komunikat:
+Przed sprawdzeniem, czy ścieżka nie wiedziecie do ucieczki z katalogu ``mp3/`` zwraca komunikat:
 
 !["Jak wygląda log z funkcji pathSecurityChecker mówiący o rozpoczęciu sprawdzania czy ścieżka nie wiedzie do ucieczki z katalogu mp3/ w trybie debugowania"](https://i.imgur.com/DYi2JLy.png)
 
-Przed sprawdzeniem czy ścieżka nie zawiera "dwukropków" zwraca komunikat:
+Przed sprawdzeniem, czy ścieżka nie zawiera "dwukropków" zwraca komunikat:
 
 !["Jak wygląda log z funkcji pathSecurityChecker mówiący o rozpoczęciu sprawdzania czy ścieżka nie zawiera dwukropków w trybie debugowania"](https://i.imgur.com/hJRlf6q.png)
