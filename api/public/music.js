@@ -55,208 +55,220 @@ function formatTime(seconds) {
 
 let previousPlaylists, previousSongs, currentSongData, previousSong, progressInterval = null;
 let playlista, id, oldRowId, intervalReset, noDataCounter, cover;
+let isProcessing = false;
 
 async function replaceData() {
-    const data = await getData();
-    /*
-    data:
-    0 - playing
-    1 - playlists
-     */
-    const songName = document.getElementById('songName');
-    const songArtist = document.getElementById('songArtist');
-    const duration = document.getElementById('duration');
-    const durationText = document.getElementById('durationText');
-    const currentPlaylist = document.getElementById('currentPlaylist');
-    const playlistsTable = document.getElementById('playlists');
-    const songsTable = document.getElementById('songlist');
-    const coverCover = document.getElementById('cover');
+    if (isProcessing) {console.log('slowdown'); return;}
+    isProcessing = true;
 
-    await replacePlaylists(data);
+    try {
+        const data = await getData();
+        /*
+        data:
+        0 - playing
+        1 - playlists
+         */
+        const songName = document.getElementById('songName');
+        const songArtist = document.getElementById('songArtist');
+        const duration = document.getElementById('duration');
+        const durationText = document.getElementById('durationText');
+        const currentPlaylist = document.getElementById('currentPlaylist');
+        const playlistsTable = document.getElementById('playlists');
+        const songsTable = document.getElementById('songlist');
+        const coverCover = document.getElementById('cover');
 
-    if (!data[0].isPlaying) {
-        //songName.innerText = '--------------';
-        updateSongName('--------------');
-        songArtist.innerText = '----------';
-        currentPlaylist.innerText = '---';
-        durationText.innerText = '';
-        coverCover.src = "../images/taboret.png";
-        clearInterval(progressInterval);
-        clearTable(songsTable);
-        const row = songsTable.insertRow(-1);
-        row.insertCell(0).innerText = 'brak danych';
-        row.insertCell(1).innerText = 'brak danych';
-        if (oldRowId) {
-            playlistsTable.rows[oldRowId].style.removeProperty('color');
-            playlistsTable.rows[oldRowId].style.removeProperty('background-color');
-        }
-        currentSongData=null;
-        return;
-    }
+        await replacePlaylists(data);
 
-    if (previousSong !== data[0].playingSongName) {
-        // console.log("Zmiana piosenki")
-        krzeslo:
-        for (let i in data[1].playlistNames) {
-            // console.log(data[1].playlistList);
-            // if (!(!isNaN(Number(data[1].playlistList[i-1])) && data[1].playlistList[i-1].trim() !== '')) continue;
-            // console.log(i)
-            // console.log(data[1].playlistList[i-1])
-            let playlist;
-            try {
-                playlist = await getSongs(data[1].playlistList[i-1]);
-            } catch (e) {
-                id=null;
-                break;
-            }
-            for (let j in playlist.playlistSongsName) {
-                // console.log(kastracja(playlist.playlistSongsName[j].title))
-                // console.log(playlist.playlistSongsName[j])
-                // console.log(kastracja(data[0].playingSongName))
-                // console.log("--------------------------------")
-                // console.log("Playlista nr %s",i)
-                // console.log("Nazwa muzyki: %s", kastracja(data[0].playingSongName))
-                // console.log("Nazwa piosenki z playlisty: %s",kastracja(playlist.playlistSongsName[j].title))
-                // console.log("Nazwa artysty z playlisty: %s",kastracja(playlist.playlistSongsName[j].artist))
-                // console.log("Warunki:")
-                // console.log("Warunek nr 1: %s",kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title)))
-                // console.log("Warunek nr 2: %s",kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].artist)))
-                // console.log("--------------------------------")
-                if ((kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title)) && kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].artist)))) {
-                    // console.log(data[1].playlistNames[i]);
-                    // console.log(i)
-                    id=i;
-                    cover = `data:${playlist.playlistSongsName[j].coverData.format};base64,${playlist.playlistSongsName[j].coverData.data}`;
-                    break krzeslo;
-                } else {
-                    id=null;
-                    cover="../images/taboret.png";
-                }
-            }
-        }
-        if (id === null) {
-            let playlist;
-            playlist = await getSongs('onDemand');
-            for (let j in playlist.playlistSongsName) {
-                // console.log("--------------------------------")
-                // console.log("onDemand")
-                // console.log("Nazwa muzyki: %s", kastracja(data[0].playingSongName))
-                // console.log("Nazwa artysty z playlisty: %s",kastracja(playlist.playlistSongsName[j].artist))
-                // console.log("Warunki:")
-                // console.log("Warunek nr 1: %s",kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title)))
-                // console.log("Warunek nr 2: %s",kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].artist)))
-                // console.log("--------------------------------")
-                if ((kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title))) && kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].artist))) {
-                    id='onDemand';
-                    cover = `data:${playlist.playlistSongsName[j].coverData.format};base64,${playlist.playlistSongsName[j].coverData.data}`;
-                    break;
-                } else {
-                    id=null;
-                    cover="../images/taboret.png";
-                }
-            }
-        }
-        previousSong = data[0].playingSongName;
-    }
-    if (id === 'onDemand') {
-        playlista = await getSongs(id); noDataCounter = true;
-    } else if (id) playlista = await getSongs(data[1].playlistList[id-1]); noDataCounter = true;
-
-    coverCover.src = cover;
-
-    if (!playlista) {
-        if (!noDataCounter) {
-            clearTable(songsTable);
-            const row = songsTable.insertRow(-1);
-            row.insertCell(0).innerText = 'brak danych';
-            row.insertCell(1).innerText = 'brak danych';
-            noDataCounter=true;
-        }
-        currentPlaylist.innerText = '---';
-        if (oldRowId) {
-            playlistsTable.rows[oldRowId].style.removeProperty('color');
-            playlistsTable.rows[oldRowId].style.removeProperty('background-color');
-        }
-    }
-
-    if (JSON.stringify(playlista) !== JSON.stringify(previousSongs)) {
-        clearTable(songsTable);
-        if (oldRowId) {
-            playlistsTable.rows[oldRowId].style.removeProperty('color');
-            playlistsTable.rows[oldRowId].style.removeProperty('background-color');
-        }
-        if (id !== 'onDemand') {
-            playlistsTable.rows[id].style.color = 'cyan';
-            playlistsTable.rows[id].style.backgroundColor = 'yellowgreen';
-            oldRowId = id;
-        }
-        for (let i = 0; i < playlista.playlistSongsName.length; i++) {
-            const row = songsTable.insertRow(-1);
-            row.insertCell(0).innerText = playlista.playlistSongsName[i].title;
-            row.insertCell(1).innerText = playlista.playlistSongsName[i].artist;
-        }
-        previousSongs = playlista;
-    }
-
-    if (intervalReset) {
-        startProgressBar(duration);
-    }
-
-    duration.value = data[0].time.played;
-    duration.max = data[0].time.toPlay;
-
-    if (!currentSongData || currentSongData.playingSongName !== data[0].playingSongName) {
-        if (data[0].playingSongName && !id) {
-            updateSongName(data[0].playingSongName);
-            songArtist.innerText = 'nieznane';
-            currentPlaylist.innerText = 'nieznane';
-            if (oldRowId) {
-                playlistsTable.rows[oldRowId].style.removeProperty('color');
-                playlistsTable.rows[oldRowId].style.removeProperty('background-color');
-            }
-            clearTable(songsTable);
-            const row = songsTable.insertRow(-1);
-            row.insertCell(0).innerText = 'brak danych';
-            row.insertCell(1).innerText = 'brak danych';
-            noDataCounter=true;
-            startProgressBar(duration);
-            return;
-        }
-        if (!playlista) {
+        if (!data[0].isPlaying) {
             //songName.innerText = '--------------';
             updateSongName('--------------');
             songArtist.innerText = '----------';
             currentPlaylist.innerText = '---';
+            durationText.innerText = '';
+            coverCover.src = "../images/taboret.png";
+            clearInterval(progressInterval);
+            clearTable(songsTable);
+            const row = songsTable.insertRow(-1);
+            row.insertCell(0).innerText = 'brak danych';
+            row.insertCell(1).innerText = 'brak danych';
+            if (oldRowId) {
+                playlistsTable.rows[oldRowId].style.removeProperty('color');
+                playlistsTable.rows[oldRowId].style.removeProperty('background-color');
+            }
+            currentSongData = null;
             return;
         }
-        currentPlaylist.innerText = id+` (${data[1].playlistNames[id]})`;
-        if (id === 'onDemand') currentPlaylist.innerText = id;
-        for (let i in playlista.playlistSongsName) {
-            // console.log("--------------------------------")
-            // console.log(i)
-            // console.log("Nazwa muzyki: %s", kastracja(data[0].playingSongName))
-            // console.log("Nazwa artysty z playlisty: %s",kastracja(playlista.playlistSongsName[i].artist))
-            // console.log("Warunki:")
-            // console.log("Warunek nr 1: %s",kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].title)))
-            // console.log("Warunek nr 2: %s",kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].artist)))
-            // console.log("--------------------------------")
-            if ((kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].title))) && kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].artist))) {
-                //songName.innerText = playlista.playlistSongsName[i].title;
-                updateSongName(playlista.playlistSongsName[i].title);
-                songArtist.innerText = playlista.playlistSongsName[i].artist;
-                break;
-            } else {
-                songArtist.innerText = 'brak danych';
+
+        if (previousSong !== data[0].playingSongName) {
+            // console.log("Zmiana piosenki")
+            krzeslo:
+                for (let i in data[1].playlistNames) {
+                    // console.log(data[1].playlistList);
+                    // if (!(!isNaN(Number(data[1].playlistList[i-1])) && data[1].playlistList[i-1].trim() !== '')) continue;
+                    // console.log(i)
+                    // console.log(data[1].playlistList[i-1])
+                    let playlist;
+                    try {
+                        playlist = await getSongs(data[1].playlistList[i - 1]);
+                    } catch (e) {
+                        id = null;
+                        break;
+                    }
+                    for (let j in playlist.playlistSongsName) {
+                        // console.log(kastracja(playlist.playlistSongsName[j].title))
+                        // console.log(playlist.playlistSongsName[j])
+                        // console.log(kastracja(data[0].playingSongName))
+                        // console.log("--------------------------------")
+                        // console.log("Playlista nr %s",i)
+                        // console.log("Nazwa muzyki: %s", kastracja(data[0].playingSongName))
+                        // console.log("Nazwa piosenki z playlisty: %s",kastracja(playlist.playlistSongsName[j].title))
+                        // console.log("Nazwa artysty z playlisty: %s",kastracja(playlist.playlistSongsName[j].artist))
+                        // console.log("Warunki:")
+                        // console.log("Warunek nr 1: %s",kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title)))
+                        // console.log("Warunek nr 2: %s",kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].artist)))
+                        // console.log("--------------------------------")
+                        if ((kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title)) && kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].artist)))) {
+                            // console.log(data[1].playlistNames[i]);
+                            // console.log(i)
+                            id = i;
+                            cover = `data:${playlist.playlistSongsName[j].coverData.format};base64,${playlist.playlistSongsName[j].coverData.data}`;
+                            break krzeslo;
+                        } else {
+                            id = null;
+                            cover = "../images/taboret.png";
+                        }
+                    }
+                }
+            if (id === null) {
+                let playlist;
+                playlist = await getSongs('onDemand');
+                for (let j in playlist.playlistSongsName) {
+                    // console.log("--------------------------------")
+                    // console.log("onDemand")
+                    // console.log("Nazwa muzyki: %s", kastracja(data[0].playingSongName))
+                    // console.log("Nazwa artysty z playlisty: %s",kastracja(playlist.playlistSongsName[j].artist))
+                    // console.log("Warunki:")
+                    // console.log("Warunek nr 1: %s",kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title)))
+                    // console.log("Warunek nr 2: %s",kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].artist)))
+                    // console.log("--------------------------------")
+                    if ((kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title))) && kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].artist))) {
+                        id = 'onDemand';
+                        cover = `data:${playlist.playlistSongsName[j].coverData.format};base64,${playlist.playlistSongsName[j].coverData.data}`;
+                        break;
+                    } else {
+                        id = null;
+                        cover = "../images/taboret.png";
+                    }
+                }
+            }
+            previousSong = data[0].playingSongName;
+        }
+        if (id === 'onDemand') {
+            playlista = await getSongs(id);
+            noDataCounter = true;
+        } else if (id) playlista = await getSongs(data[1].playlistList[id - 1]);
+        noDataCounter = true;
+
+        coverCover.src = cover;
+
+        if (!playlista) {
+            if (!noDataCounter) {
+                clearTable(songsTable);
+                const row = songsTable.insertRow(-1);
+                row.insertCell(0).innerText = 'brak danych';
+                row.insertCell(1).innerText = 'brak danych';
+                noDataCounter = true;
+            }
+            currentPlaylist.innerText = '---';
+            if (oldRowId) {
+                playlistsTable.rows[oldRowId].style.removeProperty('color');
+                playlistsTable.rows[oldRowId].style.removeProperty('background-color');
             }
         }
 
-        const playedFormatted = formatTime(data[0].time.played);
-        const toPlayFormatted = formatTime(data[0].time.toPlay);
-        durationText.innerText = `${playedFormatted} / ${toPlayFormatted}`;
+        if (JSON.stringify(playlista) !== JSON.stringify(previousSongs)) {
+            clearTable(songsTable);
+            if (oldRowId) {
+                playlistsTable.rows[oldRowId].style.removeProperty('color');
+                playlistsTable.rows[oldRowId].style.removeProperty('background-color');
+            }
+            if (id !== 'onDemand') {
+                playlistsTable.rows[id].style.color = 'cyan';
+                playlistsTable.rows[id].style.backgroundColor = 'yellowgreen';
+                oldRowId = id;
+            }
+            for (let i = 0; i < playlista.playlistSongsName.length; i++) {
+                const row = songsTable.insertRow(-1);
+                row.insertCell(0).innerText = playlista.playlistSongsName[i].title;
+                row.insertCell(1).innerText = playlista.playlistSongsName[i].artist;
+            }
+            previousSongs = playlista;
+        }
+
+        if (intervalReset) {
+            startProgressBar(duration);
+        }
+
+        duration.value = data[0].time.played;
+        duration.max = data[0].time.toPlay;
+
+        if (!currentSongData || currentSongData.playingSongName !== data[0].playingSongName) {
+            if (data[0].playingSongName && !id) {
+                updateSongName(data[0].playingSongName);
+                songArtist.innerText = 'nieznane';
+                currentPlaylist.innerText = 'nieznane';
+                if (oldRowId) {
+                    playlistsTable.rows[oldRowId].style.removeProperty('color');
+                    playlistsTable.rows[oldRowId].style.removeProperty('background-color');
+                }
+                clearTable(songsTable);
+                const row = songsTable.insertRow(-1);
+                row.insertCell(0).innerText = 'brak danych';
+                row.insertCell(1).innerText = 'brak danych';
+                noDataCounter = true;
+                startProgressBar(duration);
+                return;
+            }
+            if (!playlista) {
+                //songName.innerText = '--------------';
+                updateSongName('--------------');
+                songArtist.innerText = '----------';
+                currentPlaylist.innerText = '---';
+                return;
+            }
+            currentPlaylist.innerText = id + ` (${data[1].playlistNames[id]})`;
+            if (id === 'onDemand') currentPlaylist.innerText = id;
+            for (let i in playlista.playlistSongsName) {
+                // console.log("--------------------------------")
+                // console.log(i)
+                // console.log("Nazwa muzyki: %s", kastracja(data[0].playingSongName))
+                // console.log("Nazwa artysty z playlisty: %s",kastracja(playlista.playlistSongsName[i].artist))
+                // console.log("Warunki:")
+                // console.log("Warunek nr 1: %s",kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].title)))
+                // console.log("Warunek nr 2: %s",kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].artist)))
+                // console.log("--------------------------------")
+                if ((kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].title))) && kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].artist))) {
+                    //songName.innerText = playlista.playlistSongsName[i].title;
+                    updateSongName(playlista.playlistSongsName[i].title);
+                    songArtist.innerText = playlista.playlistSongsName[i].artist;
+                    break;
+                } else {
+                    songArtist.innerText = 'brak danych';
+                }
+            }
+
+            const playedFormatted = formatTime(data[0].time.played);
+            const toPlayFormatted = formatTime(data[0].time.toPlay);
+            durationText.innerText = `${playedFormatted} / ${toPlayFormatted}`;
 
 
-        currentSongData = data[0];
-        startProgressBar(duration);
+            currentSongData = data[0];
+            startProgressBar(duration);
+        }
+    } catch (e) {
+        console.log(e);
+    } finally {
+        isProcessing = false;
     }
 }
 
