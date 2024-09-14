@@ -64,8 +64,8 @@ async function playlistSongQuery(playlistID) {
             const cover = metadata.common.picture || 'taboret';
             let coverData;
             if (cover === "taboret") coverData = cover;
-            else cover[0].data=(uint8ArrayToBase64(cover[0].data)); coverData = cover[0];
-            return { title, artist, coverData };
+            else { cover[0].data=(uint8ArrayToBase64(cover[0].data)); coverData = cover[0]; }
+            return { title, artist, coverData, filePath };
         } catch (error) {
             logger('error', `Wystąpił błąd podczas próby odczytania metadanych z pliku ${filePath}`, 'queryPlaylistSongQuery');
             if (global.debugmode === true) {
