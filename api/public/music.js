@@ -131,7 +131,11 @@ async function replaceData() {
                             // console.log(data[1].playlistNames[i]);
                             // console.log(i)
                             id = i;
-                            cover = `data:${playlist.playlistSongsName[j].coverData.format};base64,${playlist.playlistSongsName[j].coverData.data}`;
+                            if (playlist.playlistSongsName[j].coverData !== 'taboret'){
+                                cover = `data:${playlist.playlistSongsName[j].coverData.format};base64,${playlist.playlistSongsName[j].coverData.data}`;
+                            } else {
+                                cover = "../images/taboret.png";
+                            }
                             break krzeslo;
                         } else {
                             id = null;
@@ -153,7 +157,11 @@ async function replaceData() {
                     // console.log("--------------------------------")
                     if ((kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title))) && kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].artist))) {
                         id = 'onDemand';
-                        cover = `data:${playlist.playlistSongsName[j].coverData.format};base64,${playlist.playlistSongsName[j].coverData.data}`;
+                        if (playlist.playlistSongsName[j].coverData !== 'taboret'){
+                            cover = `data:${playlist.playlistSongsName[j].coverData.format};base64,${playlist.playlistSongsName[j].coverData.data}`;
+                        } else {
+                            cover = "../images/taboret.png";
+                        }
                         break;
                     } else {
                         id = null;
