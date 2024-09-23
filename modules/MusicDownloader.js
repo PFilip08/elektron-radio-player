@@ -159,6 +159,8 @@ async function downloadYT(url) {
         stream.pipe(tempFileStream);
         tempFileStream.on('error', (err) => {
             logger('error', `Błąd podczas zapisywania pliku tymczasowego: ${err.message}`, 'downloadYT');
+            logger('verbose', `Sprzątam pierdolnik po błędzie`, 'downloadYT');
+            fs.unlinkSync(tempFilePath);
             if (global.debugmode === true) {
                 DebugSaveToFile('MusicDownloader', 'downloadYT', 'error_tempfile_save', err);
                 logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadYT');
@@ -190,11 +192,16 @@ async function downloadYT(url) {
                         .input(`${os.tmpdir()}/${file}.jpg`)
                         .on('end', () => {
                             logger('log', `Metadane dodane pomyślnie! Plik zapisany jako: ${outputFilePath}`, 'downloadYT');
+                            logger('verbose', `Usuwam pliki tymczasowe: ${tempFilePath}`, 'downloadYT');
                             fs.unlinkSync(tempFilePath);
+                            fs.unlinkSync(`${os.tmpdir()}/${file}.jpg`);
                             resolve();
                         })
                         .on('error', (err) => {
                             logger('error', `Błąd podczas dodawania metadanych: ${err.message}`, 'downloadYT');
+                            logger('verbose', `Sprzątam pierdolnik po błędzie`, 'downloadYT');
+                            fs.unlinkSync(tempFilePath);
+                            fs.unlinkSync(`${os.tmpdir()}/${file}.jpg`);
                             if (global.debugmode === true) {
                                 DebugSaveToFile('MusicDownloader', 'downloadYT', 'error_metadata', err);
                                 logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadYT');
@@ -206,6 +213,8 @@ async function downloadYT(url) {
                 });
             } catch (e) {
                 logger('error', `Błąd podczas dodawania metadanych: ${e.message}`, 'downloadYT');
+                fs.unlinkSync(tempFilePath);
+                fs.unlinkSync(`${os.tmpdir()}/${file}.jpg`);
                 if (global.debugmode === true) {
                     DebugSaveToFile('MusicDownloader', 'downloadYT', 'error', e);
                     logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadYT');
