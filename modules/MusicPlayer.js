@@ -16,6 +16,7 @@ function getPlaylistName(id) {
         case 3: return 'RAP';
         case 4: return 'ROCK';
         case 5: return 'Soundtracki';
+        case 6: return 'Specjalna';
         default: return id;
     }
 }
