@@ -18,7 +18,7 @@
     "express": "^4.21.0",
     "music-metadata": "^10.5.0",
     "node-schedule": "^2.1.1",
-    "nodemon": "^3.1.4",
+    "nodemon": "^3.1.7",
     "spotifydl-core": "git+https://github.com/Zaptyp/spotifydl-core",
     "vlc-client": "^1.1.1"
   },
