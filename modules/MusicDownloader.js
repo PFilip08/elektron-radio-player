@@ -136,12 +136,12 @@ async function downloadYT(url) {
             logger('log', `KATEGORIA ENTERTAINMENT!`, 'downloadYT');
             if (musicKeywords.some(keyword => title.includes(keyword) || description.includes(keyword))) {
                 if (song.videoDetails.lengthSeconds > 600) {
-                    logger('log', `To jest film, nie piosenka, bo jest zbyt długa!`, 'downloadYT');
+                    logger('warn', `To jest film, nie piosenka, bo jest zbyt długa!`, 'downloadYT');
                     return;
                 }
                 logger('log', `Wykryto, że to piosenka z kategorii Entertainment!`, 'downloadYT');
             } else {
-                logger('log', `Nie wykryto słów kluczowych aby rozpoznać, czy jest to piosenka!`, 'downloadYT');
+                logger('warn', `Nie wykryto słów kluczowych aby rozpoznać, czy jest to piosenka!`, 'downloadYT');
                 return;
             }
         }
@@ -157,51 +157,69 @@ async function downloadYT(url) {
         
         const tempFileStream = fs.createWriteStream(tempFilePath);
         stream.pipe(tempFileStream);
-
-        tempFileStream.on('finish', async () => {
-            logger('log', `Dodawanie metadanych dla pliku: ${song.videoDetails.title}`, 'downloadYT');
-
-            const metadata = {
-                title: song.videoDetails.title,
-                artist: song.videoDetails.author.name,
-                album: song.videoDetails.media ? song.videoDetails.media.artist : '',
-                genre: song.videoDetails.category,
-                date: song.videoDetails.publishDate
-            };
-            const response = await axios.get(song.videoDetails.thumbnails[3].url, { responseType: 'arraybuffer' });
-            fs.writeFileSync(`${os.tmpdir()}/${file}.jpg`, response.data);
-            const outputOptions = ['-map', '0:0', '-map', '1',];
-            Object.keys(metadata).forEach((key) => {
-                if (metadata[key]) {
-                    outputOptions.push('-metadata', `${String(key)}=${metadata[key]}`);
-                }
-            });
-
-            Ffmpeg()
-                .input(tempFilePath)
-                .input(`${os.tmpdir()}/${file}.jpg`)
-                .on('end', () => {
-                    logger('log', `Metadane dodane pomyślnie! Plik zapisany jako: ${outputFilePath}`, 'downloadYT');
-                    fs.unlinkSync(tempFilePath);
-                })
-                .on('error', (err) => {
-                    logger('error', `Błąd podczas dodawania metadanych: ${err.message}`, 'downloadYT');
-                    if (global.debugmode === true) {
-                        DebugSaveToFile('MusicDownloader', 'downloadYT', 'error', err);
-                        logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadYT');
-                    }
-                })
-                .addOutputOptions(...outputOptions)
-                .saveToFile(outputFilePath);
+        tempFileStream.on('error', (err) => {
+            logger('error', `Błąd podczas zapisywania pliku tymczasowego: ${err.message}`, 'downloadYT');
+            if (global.debugmode === true) {
+                DebugSaveToFile('MusicDownloader', 'downloadYT', 'error_tempfile_save', err);
+                logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadYT');
+            }
         });
-
+        await new Promise((resolve, reject) => {
+            try {
+                tempFileStream.on('finish', async () => {
+                    logger('log', `Dodawanie metadanych dla pliku: ${song.videoDetails.title}`, 'downloadYT');
+        
+                    const metadata = {
+                        title: song.videoDetails.title,
+                        artist: song.videoDetails.author.name,
+                        album: song.videoDetails.media ? song.videoDetails.media.artist : '',
+                        genre: song.videoDetails.category,
+                        date: song.videoDetails.publishDate
+                    };
+                    const response = await axios.get(song.videoDetails.thumbnails[3].url, { responseType: 'arraybuffer' });
+                    fs.writeFileSync(`${os.tmpdir()}/${file}.jpg`, response.data);
+                    const outputOptions = ['-map', '0:0', '-map', '1',];
+                    Object.keys(metadata).forEach((key) => {
+                        if (metadata[key]) {
+                            outputOptions.push('-metadata', `${String(key)}=${metadata[key]}`);
+                        }
+                    });
+        
+                    Ffmpeg()
+                        .input(tempFilePath)
+                        .input(`${os.tmpdir()}/${file}.jpg`)
+                        .on('end', () => {
+                            logger('log', `Metadane dodane pomyślnie! Plik zapisany jako: ${outputFilePath}`, 'downloadYT');
+                            fs.unlinkSync(tempFilePath);
+                            resolve();
+                        })
+                        .on('error', (err) => {
+                            logger('error', `Błąd podczas dodawania metadanych: ${err.message}`, 'downloadYT');
+                            if (global.debugmode === true) {
+                                DebugSaveToFile('MusicDownloader', 'downloadYT', 'error_metadata', err);
+                                logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadYT');
+                            }
+                            reject();
+                        })
+                        .addOutputOptions(...outputOptions)
+                        .saveToFile(outputFilePath);
+                });
+            } catch (e) {
+                logger('error', `Błąd podczas dodawania metadanych: ${e.message}`, 'downloadYT');
+                if (global.debugmode === true) {
+                    DebugSaveToFile('MusicDownloader', 'downloadYT', 'error', e);
+                    logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadYT');
+                }
+                reject();
+            }
+        });
         return logger('log', 'Pobrano :>', 'downloadYT');
 
     } catch (e) {
         logger('error', "Błąd w trakcie wykonywania funkcji downloadYT", 'downloadYT');
         logger('error', e, 'downloadYT');
         if (global.debugmode === true) {
-            DebugSaveToFile('MusicDownloader', 'downloadYT', 'error', e);
+            DebugSaveToFile('MusicDownloader', 'downloadYT', 'error_main_function', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadYT');
         }
     }
