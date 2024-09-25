@@ -63,6 +63,36 @@
                         </form>
                     </td>
                 </tr>
+                <tr>
+                    <th><hr/></th>
+                    <th><hr/></th>
+                </tr>
+                <tr>
+                    <th>Wzmacniacz</th>
+                    <td>
+                        <form method="get" action="/power/wzmak" style="display: inline-block;">
+                            <input type="hidden" name="action" value="on"/>
+                            <input type="submit" formtarget="res" value="ON"/>
+                        </form>
+                        <form method="get" action="/power/wzmak" style="display: inline-block;">
+                            <input type="hidden" name="action" value="off"/>
+                            <input type="submit" formtarget="res" value="OFF"/>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Mixer</th>
+                    <td>
+                        <form method="get" action="/power/mixer" style="display: inline-block;">
+                            <input type="hidden" name="action" value="on"/>
+                            <input type="submit" formtarget="res" value="ON"/>
+                        </form>
+                        <form method="get" action="/power/mixer" style="display: inline-block;">
+                            <input type="hidden" name="action" value="off"/>
+                            <input type="submit" formtarget="res" value="OFF"/>
+                        </form>
+                    </td>
+                </tr>
             </table>
             <iframe name="res" class="res"></iframe>
             <br/>
