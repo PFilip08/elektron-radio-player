@@ -146,7 +146,7 @@ async function downloadYT(url) {
             }
         }
 
-        const file = sterylizator(song.videoDetails.title);
+        const file = sterylizator(song.videoDetails.author.name+' - '+song.videoDetails.title);
         const filePath = `./mp3/onDemand/${file}.mp3`;
         if (fs.existsSync(filePath)) return logger('warn', `Plik istnieje!`, 'downloadYT');
         
