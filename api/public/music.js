@@ -127,11 +127,23 @@ async function replaceData() {
                         // console.log("Warunek nr 1: %s",kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title)))
                         // console.log("Warunek nr 2: %s",kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].artist)))
                         // console.log("--------------------------------")
-                        if ((kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title)) && kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].artist)))) {
+                        if (kastracja(playlist.playlistSongsName[j].filePath).includes(kastracja(data[0].playingSongName))) {
+                            id = i;
+                            if (playlist.playlistSongsName[j].coverData !== 'taboret'){
+                                cover = `data:${playlist.playlistSongsName[j].coverData.format};base64,${playlist.playlistSongsName[j].coverData.data}`;
+                            } else {
+                                cover = "../images/taboret.png";
+                            }
+                            break krzeslo;
+                        } else if ((kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title)) && kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].artist)))) {
                             // console.log(data[1].playlistNames[i]);
                             // console.log(i)
                             id = i;
-                            cover = `data:${playlist.playlistSongsName[j].coverData.format};base64,${playlist.playlistSongsName[j].coverData.data}`;
+                            if (playlist.playlistSongsName[j].coverData !== 'taboret'){
+                                cover = `data:${playlist.playlistSongsName[j].coverData.format};base64,${playlist.playlistSongsName[j].coverData.data}`;
+                            } else {
+                                cover = "../images/taboret.png";
+                            }
                             break krzeslo;
                         } else {
                             id = null;
@@ -153,7 +165,11 @@ async function replaceData() {
                     // console.log("--------------------------------")
                     if ((kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title))) && kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].artist))) {
                         id = 'onDemand';
-                        cover = `data:${playlist.playlistSongsName[j].coverData.format};base64,${playlist.playlistSongsName[j].coverData.data}`;
+                        if (playlist.playlistSongsName[j].coverData !== 'taboret'){
+                            cover = `data:${playlist.playlistSongsName[j].coverData.format};base64,${playlist.playlistSongsName[j].coverData.data}`;
+                        } else {
+                            cover = "../images/taboret.png";
+                        }
                         break;
                     } else {
                         id = null;
@@ -247,7 +263,11 @@ async function replaceData() {
                 // console.log("Warunek nr 1: %s",kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].title)))
                 // console.log("Warunek nr 2: %s",kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].artist)))
                 // console.log("--------------------------------")
-                if ((kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].title))) && kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].artist))) {
+                if (kastracja(playlista.playlistSongsName[i].filePath).includes(kastracja(data[0].playingSongName))) {
+                    updateSongName(playlista.playlistSongsName[i].title);
+                    songArtist.innerText = playlista.playlistSongsName[i].artist;
+                    break;
+                } else if ((kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].title))) && kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].artist))) {
                     //songName.innerText = playlista.playlistSongsName[i].title;
                     updateSongName(playlista.playlistSongsName[i].title);
                     songArtist.innerText = playlista.playlistSongsName[i].artist;

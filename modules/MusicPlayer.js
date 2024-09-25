@@ -16,6 +16,7 @@ function getPlaylistName(id) {
         case 3: return 'RAP';
         case 4: return 'ROCK';
         case 5: return 'Soundtracki';
+        case 6: return 'Specjalna';
         default: return id;
     }
 }
@@ -64,8 +65,8 @@ async function playlistSongQuery(playlistID) {
             const cover = metadata.common.picture || 'taboret';
             let coverData;
             if (cover === "taboret") coverData = cover;
-            else cover[0].data=(uint8ArrayToBase64(cover[0].data)); coverData = cover[0];
-            return { title, artist, coverData };
+            else { cover[0].data=(uint8ArrayToBase64(cover[0].data)); coverData = cover[0]; }
+            return { title, artist, coverData, filePath };
         } catch (error) {
             logger('error', `Wystąpił błąd podczas próby odczytania metadanych z pliku ${filePath}`, 'queryPlaylistSongQuery');
             if (global.debugmode === true) {
