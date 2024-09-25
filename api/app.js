@@ -3,6 +3,7 @@ import {logger} from "../modules/Logger.js";
 import downloadRouter from "./routes/download.router.js";
 import actionsRouter from "./routes/actions.router.js";
 import statusRouter from "./routes/status.router.js";
+import powerRouter from "./routes/power.router.js";
 import * as path from "node:path";
 import {fileURLToPath} from 'url';
 import * as os from "node:os";
@@ -52,7 +53,8 @@ app.get('/stats/api', function(req, res){
 
 app.use('/download', downloadRouter);
 app.use('/action', actionsRouter);
-app.use('/status', statusRouter)
+app.use('/status', statusRouter);
+app.use('/power', powerRouter);
 
 export default function () {
   app.listen(port, () => {
