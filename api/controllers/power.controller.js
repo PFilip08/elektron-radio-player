@@ -21,7 +21,7 @@ export async function wzmakPower(req, res) {
         }
         return res.status(402).send('nieznanen');
     } catch (e) {
-        logger('verbose', 'Wystąpił błąd podczas próby zmiany piosenki', 'LocalAPI - wzmakPower');
+        logger('verbose', 'Wystąpił błąd podczas komunikacji z wtyczką', 'LocalAPI - wzmakPower');
         if (global.debugmode === true) {
             DebugSaveToFile('LocalAPI', 'wzmakPower', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - wzmakPower');
@@ -43,7 +43,7 @@ export async function mixerPower(req, res) {
         }
         return res.status(402).send('nieznanen');
     } catch (e) {
-        logger('verbose', 'Wystąpił błąd podczas próby zmiany piosenki', 'LocalAPI - mixerPower');
+        logger('verbose', 'Wystąpił błąd podczas komunikacji z wtyczką', 'LocalAPI - mixerPower');
         if (global.debugmode === true) {
             DebugSaveToFile('LocalAPI', 'mixerPower', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - mixerPower');
