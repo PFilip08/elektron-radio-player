@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pl">
+    <head>
+        <meta charset="UTF-8">
+        <title>Power Stats Panel - localapi</title>
+        <link rel="stylesheet" href="../style.css">
+    </head>
+    <body>
+        <div class="center">
+            <h1>Statystyki prundu</h1>
+            <h2><span class="skew">localapi</span></h2>
+            <img src="../images/construction.gif" alt="konstrukcja"/>
+        </div>
+        <div class="center main">
+            <div class="power">
+                <table>
+                    <tr>
+                        <th></th>
+                        <th>Wzmacniacz</th>
+                        <th>Mixer</th>
+                    </tr>
+                    <tr>
+                        <th>Napięcie</th>
+                        <td><span id="wzmakVoltage"></span></td>
+                        <td><span id="mixerVoltage"></span></td>
+                    </tr>
+                    <tr>
+                        <th>Prąd</th>
+                        <td><span id="wzmakCurrent"></span></td>
+                        <td><span id="mixerCurrent"></span></td>
+                    </tr>
+                    <tr>
+                        <th>Moc</th>
+                        <td><span id="wzmakPower"></span></td>
+                        <td><span id="mixerPower"></span></td>
+
+                    </tr>
+                    <tr>
+                        <th>Zużycie wczoraj</th>
+                        <td><span id="wzmakConsumptionYesterday"></span></td>
+                        <td><span id="mixerConsumptionYesterday"></span></td>
+
+                    </tr>
+                    <tr>
+                        <th>Zużycie ogólne</th>
+                        <td><span id="wzmakConsumptionTotal"></span></td>
+                        <td><span id="mixerConsumptionTotal"></span></td>
+
+                    </tr>
+                </table>
+            </div>
+            <br/>
+            <br/>
+            <a href="/admin"><img src="/images/admin.gif" alt="admin"/></a>
+            <br/>
+            <br/>
+            <img src="../images/ie_exploder.gif" alt="norton"/>
+            <img src="../images/norton.gif" alt="norton"/>
+            <img src="../images/linux_powered.gif" alt="norton"/>
+        </div>
+        <script src="../power.js"></script>
+    </body>
+</html>

@@ -80,6 +80,29 @@ table {
     position: relative;
 }
 
+.power {
+    width: 400px;
+    height: 200px;
+    background-color: white;
+    margin: auto;
+    color: greenyellow;
+    text-align: center;
+    background-image: url('../images/To_przykad.png');
+    background-position: center;
+    background-size: cover;
+    position: relative;
+}
+
+.power table {
+    background-color: rgba(0, 128, 0, 0.45);
+}
+
+.power table,.power th,.power td {
+    width: 100%;
+    height: 100%;
+    border: 1px outset black;
+}
+
 /*.button {*/
 /*    width: 88px;*/
 /*    height: 31px;*/
