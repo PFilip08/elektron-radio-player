@@ -5,7 +5,7 @@ import {DebugSaveToFile} from "../../modules/DebugMode.js";
 import axios from "axios";
 
 const wzmakURI = `http://${process.env.WZMAK}/cm?cmnd=`;
-const mixerURI = `http://${process.env.MIXERURI}/cm?cmnd=`;
+const mixerURI = `http://${process.env.MIXER}/cm?cmnd=`;
 
 export async function wzmakPower(req, res) {
     try {
