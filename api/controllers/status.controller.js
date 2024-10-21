@@ -3,9 +3,11 @@ import {logger} from "../../modules/Logger.js";
 import {getPlaylistName, playlistSongQuery, playlistListQuery, getPlayingSong} from "../../modules/MusicPlayer.js";
 import { pathSecurityChecker } from "../../modules/Other.js";
 
+const playlistCache = new Map();
 export async function queryPlaylist(req, res) {
     try {
         const id = req.query.id;
+        const force = req.query.force;
         let playlistName = getPlaylistName(id);
         // logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlaylist');
         if (!id) {
@@ -16,17 +18,29 @@ export async function queryPlaylist(req, res) {
             logger('warn', `Próba odtworzenia pliku z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${req.hostname}`, 'LocalAPI - queryPlaylist');
             return res.status(403).send('Niebezpieczna ścieżka!');
         }
+        if (playlistCache.has(id) && force !== 'true') {
+            const cachedData = playlistCache.get(id);
+            logger('warn', `Zwrócono z cache: ${cachedData}`, 'LocalAPI - queryPlaylist');
+            return res.status(200).json(cachedData);
+        }
         if (playlistName.includes('onDemand')) {
             playlistName = 'Playlista na żądanie - ' + playlistName.replace('onDemand/', '').replace(/_/g, ' ');
         }
         if (playlistName !== id && playlistName !== 'nicość' || playlistName.includes('onDemand')) {
             const playlistSongsName = await playlistSongQuery(id);
-            return res.status(201).json(
-                {
-                    playlistName: playlistName,
-                    playlistSongsName: playlistSongsName
-                }
-            )
+            const playlistResponse = {
+                playlistName: playlistName,
+                playlistSongsName: playlistSongsName
+            }
+            playlistCache.set(id, playlistResponse);
+            // return res.status(201).json(
+            //     {
+            //         playlistName: playlistName,
+            //         playlistSongsName: playlistSongsName
+            //     }
+            // )
+
+            return res.status(201).json(playlistResponse);
         }
         return res.status(500).send('Nie znaleziono playlisty o podanym ID!');
     } catch (e) {
