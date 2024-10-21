@@ -113,8 +113,26 @@ function logChanges(changes) {
             message += `Playlista główna została zmieniona z ${oldValue} na ${newValue}`;
         }
       }
+      else if (key.startsWith('timeRules.rules.') && !Array.isArray(newValue) && !Array.isArray(oldValue) && Number.isInteger(parseInt(key.split('.').pop()))) {
+        if (oldValue === undefined){
+          message += `Zasada o numerze ${key.split('.').pop()} została dodana, wartość nowego klucza wynosi: ${newValue.start}`;
+        } else if (newValue === undefined) {
+          message += `Zasada o numerze ${key.split('.').pop()} została usunięta`;
+        } else {
+          message += `Wartość klucza "rules" została zmieniona z ${oldValue} na ${newValue}`;
+        }
+      }
+      // else {
+      //   message += `Wartość została zmieniona z ${oldValue} na ${newValue}`;
+      // }
       else {
-        message += `Wartość została zmieniona z ${oldValue} na ${newValue}`;
+        if (oldValue === undefined) {
+          message += `Nieznany funkcji klucz ${key} został dodany, wartość nowego obcego klucza wynosi: ${newValue}`;
+        } else if (newValue === undefined) {
+          message += `Nieznany funkcji klucz ${key} został usunięty`;
+        } else {
+          message += `Wartość nieznanego dla funkcji klucza ${key} została zmieniona z ${oldValue} na ${newValue}`;
+        }
       }
       if (!key.includes('id') && !key.includes('created_at') === true) {
         if (oldValue !== undefined || newValue !== undefined) {
