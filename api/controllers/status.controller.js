@@ -20,7 +20,7 @@ export async function queryPlaylist(req, res) {
         }
         if (playlistCache.has(id) && force !== 'true') {
             const cachedData = playlistCache.get(id);
-            logger('warn', `Zwrócono z cache: ${cachedData}`, 'LocalAPI - queryPlaylist');
+            logger('verbose', `Zwrócono z cache: ${cachedData}`, 'LocalAPI - queryPlaylist');
             return res.status(200).json(cachedData);
         }
         if (playlistName.includes('onDemand')) {
