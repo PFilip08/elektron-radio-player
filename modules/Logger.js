@@ -53,93 +53,104 @@ function findChanges(obj1, obj2, path = '') {
 function logChanges(changes) {
     let counter = 0;
     logger('verbose', `Rozpoczęto logowanie zmian`, 'logChanges');
-    changes.forEach(change => {
-      counter++;
-      const { key, oldValue, newValue } = change;
-      let message = `Zmiana w ${key}: `;
-      
-      if (key.includes('start') || key.includes('end')) {
-        message += `Godzina została zmieniona z ${oldValue} na ${newValue}`;
-      } 
-      else if (key.includes('playlist')) {
-        if (newValue === undefined) {
-          message += `Klucz "playlist" został usunięty`;
-        } else if (oldValue === undefined) {
-          message += `Klucz "playlist" został dodany, wartość nowego klucza wynosi: ${newValue}`;
-        } else {
-          message += `Wartość klucza "playlist" została zmieniona z ${oldValue} na ${newValue}`;
+    try {
+      changes.forEach(change => {
+        counter++;
+        const { key, oldValue, newValue } = change;
+        let message = `Zmiana w ${key}: `;
+        if (key.include('static')) {
+          logger('verbose',colors.yellow('Wykryto przejście z trybu recovery który używał danych statycznych do trybu normalnego. Nie ma potrzeby aby porównywać tych danych!'), 'logChanges');
+          throw new Error('Wykryto przejście z trybu recovery który używał danych statycznych do trybu normalnego. Nie ma potrzeby aby porównywać tych danych!');
         }
-      } 
-      else if (key.includes('OnDemand')) {
-        if (newValue === undefined) {
-            message += `Klucz "OnDemand" został usunięty`;
-        } else if (oldValue === undefined) {
-            message += `Klucz "OnDemand" został dodany, wartość nowego klucza wynosi: ${newValue}\n`;
-        } else {
-            message += `Wartość klucza "OnDemand" została zmieniona z ${oldValue} na ${newValue}\n`;
-        }
-      } 
-      else if (key.includes('applyRule')) {
-        let day = key.split('.').pop();
-        switch (day) {
-            case 'Mon': day = 'Poniedziałek'; break;
-            case 'Tue': day = 'Wtorek'; break;
-            case 'Wed': day = 'Środa'; break;
-            case 'Thu': day = 'Czwartek'; break;
-            case 'Fri': day = 'Piątek'; break;
-            case 'Sat': day = 'Sobota'; break;
-            case 'Sun': day = 'Niedziela'; break;
-            default: day = 'Nieznany dzień'; break;
-        }
-        message += `Zasada dla dnia ${day} została zmieniona z ${oldValue} na ${newValue}`;
-      } 
-      else if (key.startsWith('timeRules.rules') && Array.isArray(newValue)) {
-        message += `Zasada o numerze ${key.split('.').pop()} została dodana i wprowadza takie zasady dla ${newValue.length} przerw\n`;
-        newValue.forEach((rule, index) => {
-            message += ` - Przerwa ${index + 1}: `;
-            Object.entries(rule).forEach(([ruleKey, ruleValue]) => {
-              message += `${ruleKey}: ${ruleValue}, `;
+        if (key.includes('start') || key.includes('end')) {
+          message += `Godzina została zmieniona z ${oldValue} na ${newValue}`;
+        } 
+        else if (key.includes('playlist')) {
+          if (newValue === undefined) {
+            message += `Klucz "playlist" został usunięty`;
+          } else if (oldValue === undefined) {
+            message += `Klucz "playlist" został dodany, wartość nowego klucza wynosi: ${newValue}`;
+          } else {
+            message += `Wartość klucza "playlist" została zmieniona z ${oldValue} na ${newValue}`;
+          }
+        } 
+        else if (key.includes('OnDemand')) {
+          if (newValue === undefined) {
+              message += `Klucz "OnDemand" został usunięty`;
+          } else if (oldValue === undefined) {
+              message += `Klucz "OnDemand" został dodany, wartość nowego klucza wynosi: ${newValue}\n`;
+          } else {
+              message += `Wartość klucza "OnDemand" została zmieniona z ${oldValue} na ${newValue}\n`;
+          }
+        } 
+        else if (key.includes('applyRule')) {
+          let day = key.split('.').pop();
+          switch (day) {
+              case 'Mon': day = 'Poniedziałek'; break;
+              case 'Tue': day = 'Wtorek'; break;
+              case 'Wed': day = 'Środa'; break;
+              case 'Thu': day = 'Czwartek'; break;
+              case 'Fri': day = 'Piątek'; break;
+              case 'Sat': day = 'Sobota'; break;
+              case 'Sun': day = 'Niedziela'; break;
+              default: day = 'Nieznany dzień'; break;
+          }
+          message += `Zasada dla dnia ${day} została zmieniona z ${oldValue} na ${newValue}`;
+        } 
+        else if (key.startsWith('timeRules.rules') && Array.isArray(newValue)) {
+          message += `Zasada o numerze ${key.split('.').pop()} została dodana i wprowadza takie zasady dla ${newValue.length} przerw\n`;
+          newValue.forEach((rule, index) => {
+              message += ` - Przerwa ${index + 1}: `;
+              Object.entries(rule).forEach(([ruleKey, ruleValue]) => {
+                message += `${ruleKey}: ${ruleValue}, `;
+              });
+              message += '\n';
             });
-            message += '\n';
-          });
-      } 
-      else if (key.startsWith('timeRules.rules') && Array.isArray(oldValue)) {
-        message += `Zasada o numerze ${key.split('.').pop()} została usunięta`;
-      } 
-      else if (key.includes('currentPlaylistId')) {
-        if (oldValue === undefined || newValue === undefined) {
-            message += ``;
-        } else if (oldValue !== newValue || newValue !== oldValue) {
-            message += `Playlista główna została zmieniona z ${oldValue} na ${newValue}`;
-        }
-      }
-      else if (key.startsWith('timeRules.rules.') && !Array.isArray(newValue) && !Array.isArray(oldValue) && Number.isInteger(parseInt(key.split('.').pop()))) {
-        if (oldValue === undefined){
-          message += `Zasada o numerze ${key.split('.').pop()} została dodana, wartość nowego klucza wynosi: ${newValue.start}`;
-        } else if (newValue === undefined) {
+        } 
+        else if (key.startsWith('timeRules.rules') && Array.isArray(oldValue)) {
           message += `Zasada o numerze ${key.split('.').pop()} została usunięta`;
-        } else {
-          message += `Wartość klucza "rules" została zmieniona z ${oldValue} na ${newValue}`;
+        } 
+        else if (key.includes('currentPlaylistId')) {
+          if (oldValue === undefined || newValue === undefined) {
+              message += ``;
+          } else if (oldValue !== newValue || newValue !== oldValue) {
+              message += `Playlista główna została zmieniona z ${oldValue} na ${newValue}`;
+          }
         }
-      }
-      // else {
-      //   message += `Wartość została zmieniona z ${oldValue} na ${newValue}`;
-      // }
-      else {
-        if (oldValue === undefined) {
-          message += `Nieznany funkcji klucz ${key} został dodany, wartość nowego obcego klucza wynosi: ${newValue}`;
-        } else if (newValue === undefined) {
-          message += `Nieznany funkcji klucz ${key} został usunięty`;
-        } else {
-          message += `Wartość nieznanego dla funkcji klucza ${key} została zmieniona z ${oldValue} na ${newValue}`;
+        else if (key.startsWith('timeRules.rules.') && !Array.isArray(newValue) && !Array.isArray(oldValue) && Number.isInteger(parseInt(key.split('.').pop()))) {
+          if (oldValue === undefined){
+            message += `Zasada o numerze ${key.split('.').pop()} została dodana, wartość nowego klucza wynosi: ${newValue.start}`;
+          } else if (newValue === undefined) {
+            message += `Zasada o numerze ${key.split('.').pop()} została usunięta`;
+          } else {
+            message += `Wartość klucza "rules" została zmieniona z ${oldValue} na ${newValue}`;
+          }
         }
-      }
-      if (!key.includes('id') && !key.includes('created_at') === true) {
-        if (oldValue !== undefined || newValue !== undefined) {
-            logger('debug', colors.yellow(message), 'logChanges');
+        // else {
+        //   message += `Wartość została zmieniona z ${oldValue} na ${newValue}`;
+        // }
+        else {
+          if (oldValue === undefined) {
+            message += `Nieznany funkcji klucz ${key} został dodany, wartość nowego obcego klucza wynosi: ${newValue}`;
+          } else if (newValue === undefined) {
+            message += `Nieznany funkcji klucz ${key} został usunięty`;
+          } else {
+            message += `Wartość nieznanego dla funkcji klucza ${key} została zmieniona z ${oldValue} na ${newValue}`;
+          }
         }
+        if (!key.includes('id') && !key.includes('created_at') === true) {
+          if (oldValue !== undefined || newValue !== undefined) {
+              logger('debug', colors.yellow(message), 'logChanges');
+          }
+        }
+      });
+    } catch (error) {
+      logger('verbose', colors.red(`Wystąpił błąd podczas logowania zmian: ${error}`), 'logChanges');
+      if (global.debugmode === true) {
+        DebugSaveToFile('Logger', 'logChanges', 'catched_error', error);
+        logger('verbose', `Stacktrace został zrzucony do debug/`, 'logChanges');
       }
-    });
+    }
     if (global.debugmode === true) {
       DebugSaveToFile('Logger', 'logChanges', 'changes', changes);
     }
