@@ -56,21 +56,21 @@ function pathSecurityChecker(filepath) {
     return 'NONE'
 }
 
-async function killVLCatStartup() {
-    await ps.lookup({
+function killVLCatStartup() {
+    ps.lookup({
         command: 'vlc',
         psargs: 'ux'
     }, function(err, resultList ) {
         if (err) {
             if (global.debugmode === true) {
-                DebugSaveToFile('Other','killVLCatStartup','process', err);
+                DebugSaveToFile('Other','killVLCatStartup','catched_error', err);
                 logger('verbose',`Stacktrace został zrzucony do debug/`,'killVLCatStartup');
             }
             return logger('error', 'Błąd przy ubijaniu VLC', 'killVLCatStartup');
         }
 
         resultList.forEach(function( process ){
-            if( process ){
+            if (process) {
                 logger('verbose',`PID: ${process.pid}, COMMAND: ${process.command}, ARGUMENTS: ${process.arguments}`,'killVLCatStartup');
                 if (global.debugmode === true) {
                     DebugSaveToFile('Other','killVLCatStartup','process',`PID: ${process.pid}, COMMAND: ${process.command}, ARGUMENTS: ${process.arguments}`);
