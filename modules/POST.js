@@ -3,6 +3,7 @@ import {massSchedule} from "./TaskScheduler.js";
 import {checkUpdate, scheduleUpdate} from "./ApiConnector.js";
 import {default as www} from "../api/app.js";
 import {DebugStarter} from "./DebugMode.js";
+import {killVLCatStartup} from "./Other.js";
 
 async function POST() {
     logger('POST', '------------------------------');
@@ -21,6 +22,9 @@ async function POST() {
     if (process.env.WWW || false) {
         logger('task', 'Aktywowanie lokalnego API', 'POST');
         www();
+    }
+    if (process.env.KILL_AT_STARTUP === 'true') {
+        await killVLCatStartup();
     }
     logger('task', 'Planowanie zadań…', 'POST');
     await massSchedule();

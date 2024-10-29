@@ -19,6 +19,7 @@
     "music-metadata": "^10.5.1",
     "node-schedule": "^2.1.1",
     "nodemon": "^3.1.7",
+    "ps-node": "^0.1.6",
     "spotifydl-core": "git+https://github.com/Zaptyp/spotifydl-core",
     "vlc-client": "^1.1.1"
   },

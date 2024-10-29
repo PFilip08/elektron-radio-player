@@ -2,6 +2,8 @@ import {DebugSaveToFile} from "./DebugMode.js";
 import {logger} from "./Logger.js";
 import path from 'path';
 import colors from 'colors';
+import ps from "ps-node";
+import {exec} from "child_process";
 
 function sterylizator(input) {
     let sterilised = '';
@@ -54,4 +56,31 @@ function pathSecurityChecker(filepath) {
     return 'NONE'
 }
 
-export { sterylizator, pathSecurityChecker };
+async function killVLCatStartup() {
+    await ps.lookup({
+        command: 'vlc',
+        psargs: 'ux'
+    }, function(err, resultList ) {
+        if (err) {
+            if (global.debugmode === true) {
+                DebugSaveToFile('Other','killVLCatStartup','process', err);
+                logger('verbose',`Stacktrace został zrzucony do debug/`,'killVLCatStartup');
+            }
+            return logger('error', 'Błąd przy ubijaniu VLC', 'killVLCatStartup');
+        }
+
+        resultList.forEach(function( process ){
+            if( process ){
+                logger('verbose',`PID: ${process.pid}, COMMAND: ${process.command}, ARGUMENTS: ${process.arguments}`,'killVLCatStartup');
+                if (global.debugmode === true) {
+                    DebugSaveToFile('Other','killVLCatStartup','process',`PID: ${process.pid}, COMMAND: ${process.command}, ARGUMENTS: ${process.arguments}`);
+                    logger('verbose',`Dane zostały zrzucone`,'killVLCatStartup');
+                }
+                logger('task', 'Ubito VLC.', 'killVLCatStartup');
+                exec('pkill -9 vlc');
+            }
+        });
+    });
+}
+
+export { sterylizator, pathSecurityChecker, killVLCatStartup };
