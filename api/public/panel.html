@@ -27,14 +27,14 @@
                 <tr>
                     <th>Odtwarzanie pliku</th>
                     <td>
-                        <input type="search" id="playFile" placeholder="song" required />
+                        <input type="search" id="playFile" placeholder="song" required/>
                         <button onclick="performAction('/action/play', { file: document.getElementById('playFile').value })">OK</button>
                     </td>
                 </tr>
                 <tr>
                     <th>Odtwarzanie playlisty</th>
                     <td>
-                        <input type="search" id="playPlaylist" placeholder="1" required />
+                        <input type="search" id="playPlaylist" placeholder="1" required/>
                         <button onclick="performAction('/action/playPlaylist', { id: document.getElementById('playPlaylist').value })">OK</button>
                     </td>
                 </tr>
@@ -42,15 +42,26 @@
                 <tr>
                     <th>Pobieranie muzyki</th>
                     <td>
-                        <input type="search" id="downloadUri" placeholder="https://open.spotify.com/track/..." required />
+                        <input type="search" id="downloadUri" placeholder="https://open.spotify.com/track/..." required/>
                         <button onclick="performAction('/download', { uri: document.getElementById('downloadUri').value })">OK</button>
                     </td>
                 </tr>
                 <tr>
                     <th>Pobieranie muzyki - override</th>
                     <td>
-                        <input type="search" id="downloadUriOverride" placeholder="https://open.spotify.com/track/..." required />
+                        <input type="search" id="downloadUriOverride" placeholder="https://open.spotify.com/track/..." required/>
                         <button onclick="performAction('/download/override', { uri: document.getElementById('downloadUriOverride').value })">OK</button>
+                    </td>
+                <tr>
+                    <th>Czyszczenie cache</th>
+                    <td>
+                        <input type="search" id="cacheID" placeholder="5" required/>
+                        <button onclick="performAction('/status/query/playlist/songs', { id: document.getElementById('cacheID').value, nocache: true })">OK</button>
+                    </td>
+                </tr>
+                    <th>Czyszczenie cache - wszystko</th>
+                    <td>
+                        <button onclick="performAction('/status/query/playlist/songs', { cacheclean: true })">tu</button>
                     </td>
                 </tr>
                 <tr>
