@@ -18,9 +18,9 @@ export async function queryPlaylist(req, res) {
         const force = req.query.nocache;
         const forceall = req.query.cacheclean;
         let playlistName = getPlaylistName(id);
-        // logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlaylist');
+
         if (forceall === 'true') {
-            if (playlistCache.size === 0) {
+            if (!playlistCache.size) {
                 logger('verbose', `Cache playlist jest pusty!`, 'LocalAPI - queryPlaylist');
                 return res.status(400).send('Cache playlist jest pusty!');
             }
@@ -46,18 +46,12 @@ export async function queryPlaylist(req, res) {
         }
         if (playlistName !== id && playlistName !== 'nicość' || playlistName.includes('onDemand')) {
             const playlistSongsName = await playlistSongQuery(id);
-            let playlistResponse = {
+            const playlistResponse = {
                 playlistName: playlistName,
                 Date: timestamp,
                 playlistSongsName: playlistSongsName
             }
             playlistCache.set(id, playlistResponse);
-            // return res.status(201).json(
-            //     {
-            //         playlistName: playlistName,
-            //         playlistSongsName: playlistSongsName
-            //     }
-            // )
 
             return res.status(201).json(playlistResponse);
         }
@@ -75,7 +69,7 @@ export async function queryPlaylist(req, res) {
 export async function queryPlayingMusic(req, res) {
     try {
         logger('verbose', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlayingMusic');
-        let [ isPlaying, songName, playedTime, toPlayTime ] = await getPlayingSong();
+        const [ isPlaying, songName, playedTime, toPlayTime ] = await getPlayingSong();
         return res.status(201).json(
             {
                 isPlaying: isPlaying,
@@ -98,10 +92,10 @@ export async function queryPlayingMusic(req, res) {
 export async function queryPlaylistList(req, res) {
     try {
         logger('verbose', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlaylistList');
-        let playlistListFromFiles = await playlistListQuery()
+        const playlistListFromFiles = await playlistListQuery()
         let playlistListNames = {};
         playlistListFromFiles.forEach((playlistID, index) => {
-            let playlistName = getPlaylistName(playlistID)
+            const playlistName = getPlaylistName(playlistID)
             if (playlistName !== playlistID) {
                 playlistListNames[index + 1] = getPlaylistName(playlistID);
             } else if (playlistName.includes('onDemand/')) {
