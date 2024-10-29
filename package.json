@@ -15,16 +15,20 @@
     "colorette": "^2.0.20",
     "colors": "^1.4.0",
     "dotenv": "^16.4.5",
-    "express": "^4.21.0",
-    "music-metadata": "^10.5.0",
+    "express": "^4.21.1",
+    "music-metadata": "^10.5.1",
     "node-schedule": "^2.1.1",
     "nodemon": "^3.1.7",
+    "ps-node": "^0.1.6",
     "spotifydl-core": "git+https://github.com/Zaptyp/spotifydl-core",
     "vlc-client": "^1.1.1"
   },
   "overrides": {
     "tough-cookie": {
       "psl": "https://github.com/lupomontero/psl"
+    },
+    "yt-search": {
+      "jsonpath-plus": "^10.1.0"
     }
   }
 }

@@ -21,88 +21,74 @@
                 <tr>
                     <th>Ubicie playera</th>
                     <td>
-                        <form method="get" action="/action/kill">
-                            <input type="submit" formtarget="res" value="OK"/>
-                        </form>
+                        <button onclick="performAction('/action/kill')">OK</button>
                     </td>
                 </tr>
                 <tr>
                     <th>Odtwarzanie pliku</th>
                     <td>
-                        <form method="get" action="/action/play">
-                            <input type="search" name="file" placeholder="song" required/>
-                            <input type="submit" formtarget="res" value="OK"/>
-                        </form>
+                        <input type="search" id="playFile" placeholder="song" required/>
+                        <button onclick="performAction('/action/play', { file: document.getElementById('playFile').value })">OK</button>
                     </td>
                 </tr>
                 <tr>
                     <th>Odtwarzanie playlisty</th>
                     <td>
-                        <form method="get" action="/action/playPlaylist">
-                            <input type="search" name="id" placeholder="1" required/>
-                            <input type="submit" formtarget="res" value="OK"/>
-                        </form>
+                        <input type="search" id="playPlaylist" placeholder="1" required/>
+                        <button onclick="performAction('/action/playPlaylist', { id: document.getElementById('playPlaylist').value })">OK</button>
                     </td>
                 </tr>
                 <tr></tr>
                 <tr>
                     <th>Pobieranie muzyki</th>
                     <td>
-                        <form method="get" action="/download">
-                            <input type="search" name="uri" placeholder="https://open.spotify.com/track/4PTG3Z6ehGkBFwjybzWkR8" required/>
-                            <input type="submit" formtarget="res" value="OK"/>
-                        </form>
+                        <input type="search" id="downloadUri" placeholder="https://open.spotify.com/track/..." required/>
+                        <button onclick="performAction('/download', { uri: document.getElementById('downloadUri').value })">OK</button>
                     </td>
                 </tr>
                 <tr>
                     <th>Pobieranie muzyki - override</th>
                     <td>
-                        <form method="get" action="/download/override">
-                            <input type="search" name="uri" placeholder="https://open.spotify.com/track/4PTG3Z6ehGkBFwjybzWkR8" required/>
-                            <input type="submit" formtarget="res" value="OK"/>
-                        </form>
+                        <input type="search" id="downloadUriOverride" placeholder="https://open.spotify.com/track/..." required/>
+                        <button onclick="performAction('/download/override', { uri: document.getElementById('downloadUriOverride').value })">OK</button>
+                    </td>
+                <tr>
+                    <th>Czyszczenie cache</th>
+                    <td>
+                        <input type="search" id="cacheID" placeholder="5" required/>
+                        <button onclick="performAction('/status/query/playlist/songs', { id: document.getElementById('cacheID').value, nocache: true })">OK</button>
+                    </td>
+                </tr>
+                    <th>Czyszczenie cache - wszystko</th>
+                    <td>
+                        <button onclick="performAction('/status/query/playlist/songs', { cacheclean: true })">tu</button>
                     </td>
                 </tr>
                 <tr>
-                    <th><hr/></th>
-                    <th><hr/></th>
+                    <th colspan="2"><hr /></th>
                 </tr>
                 <tr>
                     <th>Wzmacniacz</th>
                     <td>
-                        <form method="get" action="/power/wzmak" style="display: inline-block;">
-                            <input type="hidden" name="action" value="on"/>
-                            <input type="submit" formtarget="res" value="ON"/>
-                        </form>
-                        <form method="get" action="/power/wzmak" style="display: inline-block;">
-                            <input type="hidden" name="action" value="off"/>
-                            <input type="submit" formtarget="res" value="OFF"/>
-                        </form>
+                        <button onclick="performAction('/power/wzmak', { action: 'on' })">ON</button>
+                        <button onclick="performAction('/power/wzmak', { action: 'off' })">OFF</button>
                     </td>
                 </tr>
                 <tr>
                     <th>Mixer</th>
                     <td>
-                        <form method="get" action="/power/mixer" style="display: inline-block;">
-                            <input type="hidden" name="action" value="on"/>
-                            <input type="submit" formtarget="res" value="ON"/>
-                        </form>
-                        <form method="get" action="/power/mixer" style="display: inline-block;">
-                            <input type="hidden" name="action" value="off"/>
-                            <input type="submit" formtarget="res" value="OFF"/>
-                        </form>
+                        <button onclick="performAction('/power/mixer', { action: 'on' })">ON</button>
+                        <button onclick="performAction('/power/mixer', { action: 'off' })">OFF</button>
                     </td>
                 </tr>
                 <tr>
                     <th>Statystyki</th>
                     <td>
-                        <form method="get" action="/power/stats" style="display: inline-block;">
-                            <input type="submit" formtarget="_self" value="tutaj"/>
-                        </form>
+                        <button onclick="window.location.href='/power/stats'">tutaj</button>
                     </td>
                 </tr>
             </table>
-            <iframe name="res" class="res"></iframe>
+            <iframe name="res" class="res" id="res" height="230px"></iframe>
             <br/>
             <br/>
             <a href="/stats"><img src="/images/stats.gif" alt="stats"/></a>
@@ -113,5 +99,6 @@
             <img src="../images/norton.gif" alt="norton"/>
             <img src="../images/linux_powered.gif" alt="norton"/>
         </div>
+        <script src="../admin.js"></script>
     </body>
 </html>
