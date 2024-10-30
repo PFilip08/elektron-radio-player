@@ -58,7 +58,7 @@ function logChanges(changes) {
         counter++;
         const { key, oldValue, newValue } = change;
         let message = `Zmiana w ${key}: `;
-        if (key.include('static')) {
+        if (key.includes('static')) {
           logger('verbose',colors.yellow('Wykryto przejście z trybu recovery który używał danych statycznych do trybu normalnego. Nie ma potrzeby aby porównywać tych danych!'), 'logChanges');
           throw new Error('Wykryto przejście z trybu recovery który używał danych statycznych do trybu normalnego. Nie ma potrzeby aby porównywać tych danych!');
         }
