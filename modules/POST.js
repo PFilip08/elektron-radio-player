@@ -24,7 +24,7 @@ async function POST() {
         www();
     }
     if (process.env.KILL_AT_STARTUP === 'true') {
-        await killVLCatStartup();
+        killVLCatStartup();
     }
     logger('task', 'Planowanie zadań…', 'POST');
     await massSchedule();
