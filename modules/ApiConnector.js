@@ -4,7 +4,7 @@ import {massSchedule} from "./TaskScheduler.js";
 import {logger, findChanges, logChanges } from "./Logger.js";
 import colors from 'colors';
 import {DebugSaveToFile} from "./DebugMode.js";
-let url = 'https://radio-elektron.vercel.app/api/timeTables';
+let url = 'https://radio-elektron.vercel.app/api/timeTables'; // TODO: wyrzucić do enva
 let previousData = null;
 let messageCounter = false;
 let messageStartupBlocker = false;
@@ -177,4 +177,4 @@ function scheduleUpdate() {
     }
 }
 
-export { getApiData, checkUpdate, scheduleUpdate };
+export { getApiData, checkUpdate, scheduleUpdate, messageCounter };

@@ -1,10 +1,11 @@
 import schedule from "node-schedule";
 import {killPlayer, playOnDemand, playPlaylist} from "./MusicPlayer.js";
-import {getApiData} from "./ApiConnector.js";
+import {getApiData, messageCounter} from "./ApiConnector.js";
 import {autoRemoveFiles, downloader, getTrackInfo} from "./MusicDownloader.js";
 import {logger} from "./Logger.js";
 import {sterylizator} from "./Other.js";
 import colors from 'colors';
+import {getVotesData} from "./VotesConnector.js";
 
 function taskNumber() {
     let n = 0;
@@ -69,6 +70,15 @@ async function massSchedule() {
     const day = data.timeRules.applyRule;
     const currentPlaylist = data.currentPlaylistId;
 
+    if (currentPlaylist === 7 && !messageCounter) {
+        const data = await getVotesData();
+        // console.log(data);
+        for (let i in data) {
+            // console.log(data[i].uSongs.url)
+            await downloader(data[i].uSongs.url, true);
+        }
+    }
+
     const dayMapping = {
         Mon: 1,
         Tue: 2,
@@ -92,6 +102,7 @@ async function massSchedule() {
     for (let l in mappedDays) {
         if (mappedDays[l] === 0) continue;
         for (let i in time[mappedDays[l]]) {
+            const scheduleKey = `${time[mappedDays[l]][i].start}-${time[mappedDays[l]][i].end}`;
             let id = currentPlaylist;
             if (time[mappedDays[l]][i].playlist !== undefined) {
                 logger('verbose', `Znaleziono playlistę!`, 'massSchedule');
@@ -99,6 +110,21 @@ async function massSchedule() {
             }
             if (time[mappedDays[l]][i].playlist === 0) {
                 logger('verbose', 'Znaleziono playlistę 0 wpis wyłączony. Kontynuowanie wykonywania pętli...', 'massSchedule');
+                continue;
+            }
+            if (!checkedSchedules.has(scheduleKey)) {
+                logger('verbose', `Sprawdzanie zapisu czasu ${scheduleKey}`, 'massSchedule');
+                checkedSchedules.add(scheduleKey);
+                const isValidTime = await checkScheduleTime(time[mappedDays[l]][i].end, time[mappedDays[l]][i].start, mappedDays[l], i);
+                if (!isValidTime) {
+                    logger('error', 'Odrzucono nieprawidłowy zapis czasu!!!', 'massSchedule');
+                    continue;
+                }
+            }
+            if (messageCounter && time[mappedDays[l]][i].playlist === undefined && currentPlaylist === 7) { // gdy nie ma neta
+                const random = Math.floor(Math.random() * 5); // rosyjska ruletka od 1 do 5
+                scheduleMusicTask(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, {random});
+                scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`);
                 continue;
             }
             if (time[mappedDays[l]][i].OnDemand !== undefined) {
@@ -113,17 +139,7 @@ async function massSchedule() {
                 scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`);
                 continue;
             }
-            const scheduleKey = `${time[mappedDays[l]][i].start}-${time[mappedDays[l]][i].end}`;
 
-            if (!checkedSchedules.has(scheduleKey)) {
-                logger('verbose', `Sprawdzanie zapisu czasu ${scheduleKey}`, 'massSchedule');
-                checkedSchedules.add(scheduleKey);
-                const isValidTime = await checkScheduleTime(time[mappedDays[l]][i].end, time[mappedDays[l]][i].start, mappedDays[l], i);
-                if (!isValidTime) {
-                    logger('error', 'Odrzucono nieprawidłowy zapis czasu!!!', 'massSchedule');
-                    continue;
-                }
-            }
             // checkScheduleTime(time[mappedDays[l]][i].end,time[mappedDays[l]][i].start)
             logger('verbose', 'Planowanie zadań...', 'massSchedule');
             scheduleMusicTask(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, {id});
