@@ -74,7 +74,11 @@ async function getApiData() {
                     DebugSaveToFile('ApiConnector','getApiData','previousData',res);
                     logger('verbose',`Dane z previousData zostały zrzucone`,'getApiData');
                 }
-                if (!messageCounter) logger('warn','Używanie danych pobranych poprzednio z API!','getApiData');
+                if (!messageCounter) {
+                    // massSchedule() powstał tu dlatego że zadania po wejściu w tryb recovery nie były ponownie planowane co powodowało że kod w linijkach 130 - 136 w pliku TaskScheduler.js nie był wykonywany
+                    massSchedule();
+                    logger('warn','Używanie danych pobranych poprzednio z API!','getApiData');
+                }
             }
             if (res.static) {
                 messageStartupBlocker = true;

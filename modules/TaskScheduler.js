@@ -18,7 +18,14 @@ function taskNumber() {
 
 function scheduleMusicTask(time, id) {
     logger('verbose', `Zadanie zaplanowane na ${time}`, 'scheduleMusicTask');
+    logger('verbose', 'Sprawdzanie czy playlista nie jest ustawione na 0', 'scheduleMusicTask');
+    if (id.id == 0) {
+        logger('verbose', colors.yellow("Wykryto playlistę zero!!! Co nie powinno mieć miejsca!"), 'scheduleMusicTask')
+        logger('error', 'Playlista zero nie może być odtwarzana!!! A została przekazana do funkcji', 'scheduleMusicTask')
+        return
+    }
     logger('verbose', `ID playlisty: ${id.id}`, 'scheduleMusicTask');
+    console.log(id)
     schedule.scheduleJob(time, function () {
         logger('log', 'Granie playlisty nr: '+id.id,'scheduleMusicTask')
         playPlaylist(id.id);
@@ -71,6 +78,7 @@ async function massSchedule() {
     const currentPlaylist = data.currentPlaylistId;
 
     if (currentPlaylist === 7 && !messageCounter) {
+        logger('verbose', 'Pobieranie danych z getVotesData', 'massSchedule');
         const data = await getVotesData();
         // console.log(data);
         for (let i in data) {
@@ -122,9 +130,10 @@ async function massSchedule() {
                 }
             }
             if (messageCounter && time[mappedDays[l]][i].playlist === undefined && currentPlaylist === 7) { // gdy nie ma neta
-                const random = Math.floor(Math.random() * 5); // rosyjska ruletka od 1 do 5
-                scheduleMusicTask(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, {random});
+                const id = Math.floor(Math.random() * 5) + 1; // rosyjska ruletka od 1 do 5
+                scheduleMusicTask(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, {id});
                 scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`);
+                console.log("Taboret losował: ", id)
                 continue;
             }
             if (time[mappedDays[l]][i].OnDemand !== undefined) {

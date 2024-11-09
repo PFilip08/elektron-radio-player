@@ -62,6 +62,10 @@ function logChanges(changes) {
           logger('verbose',colors.yellow('Wykryto przejście z trybu recovery który używał danych statycznych do trybu normalnego. Nie ma potrzeby aby porównywać tych danych!'), 'logChanges');
           throw new Error('Wykryto przejście z trybu recovery który używał danych statycznych do trybu normalnego. Nie ma potrzeby aby porównywać tych danych!');
         }
+        if (key.includes('isOn')) {
+          logger('verbose',colors.yellow('Wykryto zmianę klucza "isOn". Nie ma potrzeby aby porównywać tych danych!'), 'logChanges');
+          throw new Error('Wykryto zmianę klucza "isOn". Nie ma potrzeby aby porównywać tych danych!');
+        }
         if (key.includes('start') || key.includes('end')) {
           message += `Godzina została zmieniona z ${oldValue} na ${newValue}`;
         } 
