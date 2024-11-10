@@ -21,6 +21,7 @@ function getPlaylistName(id) {
         case 5: return 'Soundtracki';
         case 6: return 'Specjalna';
         case 7: return 'Playlista do krojenia kotleta';
+        case 22: return 'Taborety i kotlety';
         default: return id;
     }
 }
