@@ -25,7 +25,7 @@ function scheduleMusicTask(time, id) {
         return
     }
     logger('verbose', `ID playlisty: ${id.id}`, 'scheduleMusicTask');
-    console.log(id)
+    // console.log(id)
     schedule.scheduleJob(time, function () {
         logger('log', 'Granie playlisty nr: '+id.id,'scheduleMusicTask')
         playPlaylist(id.id);
@@ -65,6 +65,8 @@ async function massSchedule() {
     await schedule.gracefulShutdown();
     logger('verbose', 'Planowanie zadania automatycznego usuwania plików...', 'massSchedule');
     schedule.scheduleJob('0 5 * * 1-5', autoRemoveFiles);
+    logger('verbose', 'Planowanie zadania automatycznej aktualizacji głosów...', 'massSchedule');
+    schedule.scheduleJob('50 6 * * 1-5', getVotesData);
     logger('verbose', 'Pobieranie danych przy użyciu getApiData', 'massSchedule');
     const data = await getApiData();
     logger('verbose', 'Sprawdzanie czy isOn jest ustawione na false', 'massSchedule');
@@ -77,14 +79,22 @@ async function massSchedule() {
     const day = data.timeRules.applyRule;
     const currentPlaylist = data.currentPlaylistId;
 
-    if (currentPlaylist === 7 && !messageCounter) {
+    // pobieranie
+    let downloaded = false;
+    async function downloadVotes() {
         logger('verbose', 'Pobieranie danych z getVotesData', 'massSchedule');
         const data = await getVotesData();
+        if (data === 'brak') return logger('log', 'Brak danych!!!', 'massSchedule - downloadVotes');
         // console.log(data);
         for (let i in data) {
             // console.log(data[i].uSongs.url)
             await downloader(data[i].uSongs.url, true);
         }
+    }
+
+    if (currentPlaylist === 7 && !messageCounter && !downloaded) {
+        downloaded = true;
+        await downloadVotes();
     }
 
     const dayMapping = {
@@ -147,6 +157,10 @@ async function massSchedule() {
                 });
                 scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`);
                 continue;
+            }
+            if (currentPlaylist !== 7 && !messageCounter && time[mappedDays[l]][i].playlist === 7 && !downloaded) {
+                downloaded = true;
+                await downloadVotes();
             }
 
             // checkScheduleTime(time[mappedDays[l]][i].end,time[mappedDays[l]][i].start)

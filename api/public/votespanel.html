@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Votes Panel - localapi</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../music.css">
+</head>
+<body>
+<div class="center">
+    <h1>Votes panel</h1>
+    <h2><span class="skew">localapi</span></h2>
+    <img src="../images/construction.gif" alt="konstrukcja"/>
+</div>
+<div class="center main">
+    <h1>Lista Głosów</h1>
+    <table id="votesTable" style="background: blue;">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tytuł</th>
+            <th>Wykonawca</th>
+            <th>Czas trwania</th>
+            <th>Akcja</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+        <tr>
+            <td colspan="5" class="center">
+                <button onclick="reset()">Reset</button>
+                <button onclick="save()">Zapisz</button>
+            </td>
+        </tr>
+    </table>
+    <br/>
+    <p>Info: przy reset lub usuń trza zapisz, aby zapisało</p>
+    <br/>
+    <br/>
+    <a href="/admin"><img src="/images/admin.gif" alt="admin"/></a>
+    <a href="/dash"><img width="100px" src="/images/cd.gif" alt="cd"/></a>
+    <br/>
+    <br/>
+    <img src="../images/ie_exploder.gif" alt="norton"/>
+    <img src="../images/norton.gif" alt="norton"/>
+    <img src="../images/linux_powered.gif" alt="norton"/>
+</div>
+<script src="../votes.js"></script>
+</body>
+</html>
