@@ -4,7 +4,7 @@ import fs from "fs";
 import {logger} from "./Logger.js";
 import {messageCounter} from "./ApiConnector.js";
 
-const url = 'https://partyvote.ciac.me/api/playlist?hostId=1&date=';
+const url = process.env.URI+'/api/playlist?hostId=1&date=';
 export const votesPath = './mp3/Votes.json'
 
 const api = axios.create({
