@@ -20,18 +20,14 @@ async function getVotesData(force) {
     date.setDate(date.getDate() - 1); // wczoraj
     date=date.toLocaleDateString('en-CA') // YYYY-MM-DD
     const res = await api.get(url+date);
-    // if (res.data.playlist) {
-    //     await fs.writeFileSync('./mp3/Votes.json', JSON.stringify(res.data.playlist, null, 4));
-    //     console.log('Playlist zapisany do pliku Votes.json');
-    //     return res.data.playlist;
-    // }
+
     async function download() {
         await fs.writeFileSync(votesPath, JSON.stringify(res.data.playlist, null, 4));
     }
     if (force) return await download();
     if (!res.data.playlist) return;
     if (res.data.playlist.length === 0) {
-        logger('log', 'Brak danych.', 'getVotesData')
+        logger('log', 'Brak danych.', 'getVotesData');
         return 'brak';
     }
     if (!fs.existsSync(votesPath)) await download();
@@ -39,7 +35,6 @@ async function getVotesData(force) {
     if (JSON.parse(fs.readFileSync(votesPath))[0].created_at !== date) await download();  // tu osobno plik, bo inaczej stary był dalej w zmiennej
 
     return JSON.parse(fs.readFileSync(votesPath));
-    // return
 }
 
 export {getVotesData};

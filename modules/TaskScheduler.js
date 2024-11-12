@@ -25,7 +25,6 @@ function scheduleMusicTask(time, id) {
         return
     }
     logger('verbose', `ID playlisty: ${id.id}`, 'scheduleMusicTask');
-    // console.log(id)
     schedule.scheduleJob(time, function () {
         logger('log', 'Granie playlisty nr: '+id.id,'scheduleMusicTask')
         playPlaylist(id.id);
@@ -85,9 +84,7 @@ async function massSchedule() {
         logger('verbose', 'Pobieranie danych z getVotesData', 'massSchedule');
         const data = await getVotesData();
         if (data === 'brak') return logger('log', 'Brak danych!!!', 'massSchedule - downloadVotes');
-        // console.log(data);
         for (let i in data) {
-            // console.log(data[i].uSongs.url)
             await downloader(data[i].uSongs.url, true);
         }
     }
@@ -163,7 +160,6 @@ async function massSchedule() {
                 await downloadVotes();
             }
 
-            // checkScheduleTime(time[mappedDays[l]][i].end,time[mappedDays[l]][i].start)
             logger('verbose', 'Planowanie zadań...', 'massSchedule');
             scheduleMusicTask(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, {id});
             scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`);

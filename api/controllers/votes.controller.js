@@ -8,7 +8,7 @@ import path from "path";
 export async function getVotes(req, res) {
     try {
         if (!fs.existsSync(votesPath)) return res.status(500).send('Brak pliku!!');
-        const data = JSON.parse(fs.readFileSync(votesPath))
+        const data = JSON.parse(fs.readFileSync(votesPath));
         return res.status(200).send(data);
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas pobierania głosów', 'LocalAPI - getVotes');
