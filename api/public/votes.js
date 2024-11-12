@@ -1,3 +1,5 @@
+console.log('Inicjowanie tworzenia trzyfazowego połączenie multibinarnego do cewki komutatora pokrywy bulbulatora');
+
 async function fetchVotes() {
     try {
         const response = await fetch('/votes/get');
