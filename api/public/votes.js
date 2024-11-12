@@ -11,9 +11,9 @@ async function fetchVotes() {
 
             row.innerHTML = `
         <td>${vote.id}</td>
-        <td>${vote.uSongs.title || 'Brak danych'}</td>
-        <td>${vote.uSongs.artist || 'Brak danych'}</td>
-        <td>${vote.uSongs.duration || 'Brak danych'}</td>
+        <td>${vote.uSongs.title || 'Przekorny Los'}</td>
+        <td>${vote.uSongs.artist || 'Akcent'}</td>
+        <td>${vote.uSongs.duration || '21:37'}</td>
         <td>
           <button onclick="delVote(${vote.id})">Usuń</button>
         </td>
