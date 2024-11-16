@@ -1,5 +1,5 @@
 import schedule from "node-schedule";
-import {killPlayer, playOnDemand, playPlaylist} from "./MusicPlayer.js";
+import {killPlayer, pausePlayer, playOnDemand, playPlaylist} from "./MusicPlayer.js";
 import {getApiData, messageCounter} from "./ApiConnector.js";
 import {autoRemoveFiles, downloader, getTrackInfo} from "./MusicDownloader.js";
 import {logger} from "./Logger.js";
@@ -119,7 +119,7 @@ async function massSchedule() {
         for (let i in time[mappedDays[l]]) {
             const scheduleKey = `${time[mappedDays[l]][i].start}-${time[mappedDays[l]][i].end}`;
             let id = currentPlaylist;
-            if (time[mappedDays[l]][i].playlist !== undefined) {
+            if (time[mappedDays[l]][i].playlist !== undefined && currentPlaylist !== 7 ) {
                 logger('verbose', `Znaleziono playlistę!`, 'massSchedule');
                 id = time[mappedDays[l]][i].playlist;
             }
@@ -143,6 +143,15 @@ async function massSchedule() {
                 console.log("Taboret losował: ", id)
                 continue;
             }
+            if (currentPlaylist !== 7 && !messageCounter && time[mappedDays[l]][i].playlist === 7 && !downloaded) {
+                downloaded = true;
+                await downloadVotes();
+            }
+            if (currentPlaylist === 7) { // gdy główna na 7
+                scheduleMusicTask(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, {id});
+                schedule.scheduleJob(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, pausePlayer);
+                continue;
+            }
             if (time[mappedDays[l]][i].OnDemand !== undefined) {
                 logger('verbose', 'Znaleziono OnDemand!!!', 'massSchedule');
                 logger('log', 'ONDEMAND OMAJGAH!!!1!111!!1!1!!!', 'massSchedule');
@@ -154,10 +163,6 @@ async function massSchedule() {
                 });
                 scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`);
                 continue;
-            }
-            if (currentPlaylist !== 7 && !messageCounter && time[mappedDays[l]][i].playlist === 7 && !downloaded) {
-                downloaded = true;
-                await downloadVotes();
             }
 
             logger('verbose', 'Planowanie zadań...', 'massSchedule');

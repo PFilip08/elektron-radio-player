@@ -148,7 +148,8 @@ function playOnDemand(filename) {
 
 function playPlaylist(playlistID) {
     let z,random = '';
-    if (szuffle) {z = '-Z'; random = ' - random';}
+    if (szuffle === 'true') {z = '-Z';random = ' - random';}
+    else {z = ''; random = '';}
     logger('verbose', `Odtwarzanie playlisty o ID: ${playlistID}`, 'playPlaylist');
     logger('verbose', `Sprawdzanie czy folder o podanym ID istnieje...`, 'playPlaylist');
     if(!fs.existsSync(`./mp3/${playlistID}/`)) return logger('error','Brak playlisty o podanym numerze!!', 'playPlaylist');
@@ -181,7 +182,7 @@ function pausePlayer() {
     logger('verbose', `Pauzowanie plajera...`, 'pausePlayer');
     exec(`cvlc --one-instance vlc://pause`);
     logger('task','--------Pause Player--------', 'pausePlayer');
-    logger('task','Plajer ubity', 'pausePlayer');
+    logger('task','Plajer zapałzowany', 'pausePlayer');
     logger('task','--------Pause Player--------', 'pausePlayer');
 }
 

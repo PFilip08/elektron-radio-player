@@ -4,7 +4,7 @@ import {killPlayer, killPlayerForce, playMusic, playPlaylist} from "../../module
 import {pathSecurityChecker} from "../../modules/Other.js";
 import VLC from "vlc-client";
 
-export let szuffle = true;
+export let szuffle = 'true';
 
 // killPlayer
 export async function kill(req, res) {
