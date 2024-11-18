@@ -17,12 +17,11 @@ async function downloader(url, votes) {
     if (urlParts[3] === 'track') {
         logger('log', 'Wykryto piosenkę', 'downloader');
         return downloadSong(url, votes);
+    } else if (votes) {
+        logger('warn', 'Coś przeciekło', 'downloader');
+        url='https://open.spotify.com/track/5Wrl4uc9SjC8ZnAimiMtys'; // No przekorny los, bo przeciekło
+        return downloadSong(url, votes);
     } else if (urlParts[3] === 'album') {
-        if (votes) {
-            logger('warn', 'Coś przeciekło', 'downloader');
-            url='https://open.spotify.com/track/5Wrl4uc9SjC8ZnAimiMtys'; // No przekorny los, bo przeciekło
-            return downloadSong(url, votes);
-        }
         logger('log', 'Wykryto album', 'downloader');
         return downloadAlbum(url);
     } else if (urlParts[3] === 'playlist') {
