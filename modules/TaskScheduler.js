@@ -1,9 +1,9 @@
 import schedule from "node-schedule";
-import {killPlayer, pausePlayer, playOnDemand, playPlaylist} from "./MusicPlayer.js";
+import {killPlayer, pausePlayer, playOnDemand, playPlayer, playPlaylist} from "./MusicPlayer.js";
 import {getApiData, messageCounter} from "./ApiConnector.js";
 import {autoRemoveFiles, downloader, getTrackInfo} from "./MusicDownloader.js";
 import {logger} from "./Logger.js";
-import {sterylizator} from "./Other.js";
+import {checkIfVLCisRunning, checkIfVLConVotes, sterylizator} from "./Other.js";
 import colors from 'colors';
 import {getVotesData} from "./VotesConnector.js";
 
@@ -20,13 +20,13 @@ function scheduleMusicTask(time, id) {
     logger('verbose', `Zadanie zaplanowane na ${time}`, 'scheduleMusicTask');
     logger('verbose', 'Sprawdzanie czy playlista nie jest ustawione na 0', 'scheduleMusicTask');
     if (id.id == 0) {
-        logger('verbose', colors.yellow("Wykryto playlistę zero!!! Co nie powinno mieć miejsca!"), 'scheduleMusicTask')
-        logger('error', 'Playlista zero nie może być odtwarzana!!! A została przekazana do funkcji', 'scheduleMusicTask')
-        return
+        logger('verbose', colors.yellow("Wykryto playlistę zero!!! Co nie powinno mieć miejsca!"), 'scheduleMusicTask');
+        logger('error', 'Playlista zero nie może być odtwarzana!!! A została przekazana do funkcji', 'scheduleMusicTask');
+        return;
     }
     logger('verbose', `ID playlisty: ${id.id}`, 'scheduleMusicTask');
     schedule.scheduleJob(time, function () {
-        logger('log', 'Granie playlisty nr: '+id.id,'scheduleMusicTask')
+        logger('log', 'Granie playlisty nr: '+id.id,'scheduleMusicTask');
         playPlaylist(id.id);
     });
 }
@@ -34,6 +34,29 @@ function scheduleMusicTask(time, id) {
 function scheduleKillTask(time) {
     logger('verbose', `Zadanie ubicia Pleyera zaplanowane na ${time}`, 'scheduleKillTask');
     schedule.scheduleJob(time, killPlayer);
+}
+
+function scheduleVotes(timeStart, timeEnd, id) {
+    logger('verbose', `Zadanie zaplanowane na ${timeStart}`, 'scheduleVotes');
+    logger('verbose', `ID playlisty: ${id} (powinno być 7)`, 'scheduleVotes');
+    if (id !== 7) {
+        logger('error', `${id}, a nie siódma playlista!!! Głosowanie skopane!!!`, 'scheduleVotes');
+        return;
+    }
+    schedule.scheduleJob(timeStart, async function () {
+        logger('log', 'Granie playlisty nr: '+id,'scheduleVotes');
+        // console.log(await checkIfVLCisRunning(), await checkIfVLConVotes());
+        if (await checkIfVLCisRunning() && await checkIfVLConVotes()) {
+            await playPlayer();
+        } else playPlaylist(id);
+    });
+    schedule.scheduleJob(timeEnd, function () {
+        try {
+            pausePlayer();
+        } catch (e) {
+            killPlayer();
+        }
+    });
 }
 
 async function checkScheduleTime(timeEnd, timeStart, rule, breakNumber) {
@@ -148,8 +171,7 @@ async function massSchedule() {
                 await downloadVotes();
             }
             if (currentPlaylist === 7) { // gdy główna na 7
-                scheduleMusicTask(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, {id});
-                schedule.scheduleJob(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, pausePlayer);
+                scheduleVotes(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, `${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, id);
                 continue;
             }
             if (time[mappedDays[l]][i].OnDemand !== undefined) {
@@ -166,6 +188,10 @@ async function massSchedule() {
             }
 
             logger('verbose', 'Planowanie zadań...', 'massSchedule');
+            if (id === 7) { // gdy pojedyncza na 7
+                scheduleVotes(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, `${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, id);
+                continue;
+            }
             scheduleMusicTask(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, {id});
             scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`);
         }

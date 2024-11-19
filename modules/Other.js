@@ -4,6 +4,8 @@ import path from 'path';
 import colors from 'colors';
 import ps from "ps-node";
 import {exec} from "child_process";
+import fs from "fs";
+import VLC from "vlc-client";
 
 function sterylizator(input) {
     let sterilised = '';
@@ -83,4 +85,52 @@ function killVLCatStartup() {
     });
 }
 
-export { sterylizator, pathSecurityChecker, killVLCatStartup };
+function checkIfVLCisRunning() {
+    return new Promise((resolve, reject) => {
+        ps.lookup({
+            command: 'vlc',
+            psargs: 'ux'
+        }, (err, resultList) => {
+            if (err) {
+                if (global.debugmode === true) {
+                    DebugSaveToFile('Other', 'checkIfVLCisRunning', 'catched_error', err);
+                    logger('verbose', 'Stacktrace został zrzucony do debug/', 'checkIfVLCisRunning');
+                }
+                logger('error', 'Błąd przy ubijaniu VLC', 'checkIfVLCisRunning');
+                return reject(err);
+            }
+
+            const isVlcRunning = resultList.some(process => {
+                if (process) {
+                    logger('verbose', `PID: ${process.pid}, COMMAND: ${process.command}, ARGUMENTS: ${process.arguments}`, 'checkIfVLCisRunning');
+                    logger('task', 'VLC istnieje.', 'checkIfVLCisRunning');
+                    return true;
+                } else {
+                    logger('task', 'VLC nie jest uruchomiony.', 'checkIfVLCisRunning');
+                    return false;
+                }
+            });
+
+            if (!isVlcRunning) {
+
+            }
+
+            resolve(isVlcRunning);
+        });
+    });
+}
+
+async function checkIfVLConVotes() {
+    try {
+        const vlc = new VLC.Client({
+            ip: '127.0.0.1',
+            port: Number(process.env.VLC_PORT) || 4212,
+            password: process.env.VLC_PASSWORD
+        });
+        return fs.existsSync('./mp3/7/'+await vlc.getFileName());
+    } catch (e) {
+        return false;
+    }
+}
+
+export { sterylizator, pathSecurityChecker, killVLCatStartup, checkIfVLCisRunning, checkIfVLConVotes };

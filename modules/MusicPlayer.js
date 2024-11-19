@@ -178,12 +178,30 @@ function killPlayerForce() {
     logger('task','--------Kill Player FORCE--------', 'killPlayerForce');
 }
 
-function pausePlayer() {
+async function pausePlayer() {
     logger('verbose', `Pauzowanie plajera...`, 'pausePlayer');
-    exec(`cvlc --one-instance vlc://pause`);
+    const vlc = new VLC.Client({
+        ip: '127.0.0.1',
+        port: Number(process.env.VLC_PORT) || 4212,
+        password: process.env.VLC_PASSWORD
+    });
+    await vlc.pause();
     logger('task','--------Pause Player--------', 'pausePlayer');
     logger('task','Plajer zapałzowany', 'pausePlayer');
     logger('task','--------Pause Player--------', 'pausePlayer');
 }
 
-export { playMusic, killPlayer, playPlaylist, playOnDemand, playlistSongQuery, playlistListQuery, getPlaylistName, getPlayingSong, killPlayerForce, pausePlayer};
+async function playPlayer() {
+    logger('verbose', `Plejowanie plajera...`, 'playPlayer');
+    const vlc = new VLC.Client({
+        ip: '127.0.0.1',
+        port: Number(process.env.VLC_PORT) || 4212,
+        password: process.env.VLC_PASSWORD
+    });
+    await vlc.play();
+    logger('task','--------Pause Player--------', 'playPlayer');
+    logger('task','Plajer zplejowany', 'playPlayer');
+    logger('task','--------Pause Player--------', 'playPlayer');
+}
+
+export { playMusic, killPlayer, playPlaylist, playOnDemand, playlistSongQuery, playlistListQuery, getPlaylistName, getPlayingSong, killPlayerForce, pausePlayer, playPlayer};
