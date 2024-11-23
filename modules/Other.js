@@ -122,12 +122,21 @@ function checkIfVLCisRunning() {
 
 async function checkIfVLConVotes() {
     try {
-        const vlc = new VLC.Client({
-            ip: '127.0.0.1',
-            port: Number(process.env.VLC_PORT) || 4212,
-            password: process.env.VLC_PASSWORD
-        });
-        return fs.existsSync('./mp3/7/'+await vlc.getFileName());
+        const timeout = new Promise((_, reject) =>
+            setTimeout(() => reject(
+                logger('verbose', 'Czas wykonania funkcji przekroczony!', 'getPlayingSong'),
+                new Error('Czas wykonania funkcji przekroczony'
+                )), 3000)
+        );
+        const vlcOperation = (async () => {
+            const vlc = new VLC.Client({
+                ip: '127.0.0.1',
+                port: Number(process.env.VLC_PORT) || 4212,
+                password: process.env.VLC_PASSWORD
+            });
+            return fs.existsSync('./mp3/7/' + await vlc.getFileName());
+        })();
+        return await Promise.race([vlcOperation, timeout]);
     } catch (e) {
         return false;
     }

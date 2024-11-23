@@ -4,6 +4,8 @@ import fs from "fs";
 import {getVotesData, votesPath} from "../../modules/VotesConnector.js";
 import {downloader} from "../../modules/MusicDownloader.js";
 import path from "path";
+import {checkIfVLConVotes} from "../../modules/Other.js";
+import {killPlayerForce} from "../../modules/MusicPlayer.js";
 
 export async function getVotes(req, res) {
     try {
@@ -59,6 +61,8 @@ export async function resetVotes(req, res) {
 
 export async function saveVotes(req, res) {
     try {
+        if (await checkIfVLConVotes()) killPlayerForce();
+        // console.log(await checkIfVLConVotes());
         fs.readdir('./mp3/7', (err, files) => {
             if (err) {
                 res.status(500).send('dział taboretów trza zagonić do roboty');

@@ -30,8 +30,8 @@ async function getPlayingSong() {
         const timeout = new Promise((_, reject) => 
             setTimeout(() => reject(
                 logger('verbose', 'Czas wykonania funkcji przekroczony!', 'getPlayingSong'),
-                new Error('Czas wykonania funkcji przekroczony'
-                )), 4000)
+                new Error('Czas wykonania funkcji przekroczony')
+            ), 4000)
         );
         const vlcOperation = (async () => {
             const vlc = new VLC.Client({
