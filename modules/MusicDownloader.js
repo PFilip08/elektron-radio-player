@@ -18,6 +18,7 @@ async function downloader(url, votes) {
         logger('log', 'Wykryto piosenkę', 'downloader');
         return downloadSong(url, votes);
     } else if (votes) {
+        logger('verbose', 'Wykryto próbę pobrania piosenki nie piosenki w głosach!', 'downloader');
         logger('warn', 'Coś przeciekło', 'downloader');
         url='https://open.spotify.com/track/5Wrl4uc9SjC8ZnAimiMtys'; // No przekorny los, bo przeciekło
         return downloadSong(url, votes);
@@ -52,11 +53,20 @@ async function downloadSong(url, votes) {
     const data = await spotify.getTrack(url);
     const file = sterylizator(data.artists.join('-')+'_'+data.name);
     logger('log',`Pobieram: ${data.name+' by: '+data.artists.join(', ')}`,'downloadSong');
+    logger('verbose','Sprawdzanie czy nie pobieram z głosów...','downloadSong');
     if (votes) {
+        logger('verbose','Pobieranie z głosowania!','downloadSong');
         if (fs.existsSync(`./mp3/7/${file}.mp3`)) return logger('warn',`Plik istnieje!`,'downloadSong');
         const song = await spotify.downloadTrack(url);
         fs.writeFileSync(`./mp3/7/${file}.mp3`, song);
-        exec(`mp3gain -r -c ./mp3/7/${file}.mp3`, (error, stdout, stderr) => logger('verbose', stdout, 'downloadSong'));
+        logger('verbose','Normalizacja dźwięku przy użyciu mp3gain...','downloadSong');
+        exec(`mp3gain -r -c ./mp3/7/${file}.mp3`, (error, stdout, stderr) => {
+            logger('verbose', stdout, 'downloadSong')
+            if (global.debugmode === true) {
+                DebugSaveToFile('MusicDownloader', 'downloadSong', 'mp3gain', stdout);
+                logger('verbose', `Zapisano do debug/`, 'downloadSong');
+            }
+        });
         return logger('log','Pobrano :>','downloadSong');
     }
     if (fs.existsSync(`./mp3/onDemand/${file}.mp3`)) return logger('warn',`Plik istnieje!`,'downloadSong');

@@ -38,8 +38,11 @@ function scheduleKillTask(time) {
 
 function scheduleVotes(timeStart, timeEnd, id) {
     logger('verbose', `Zadanie zaplanowane na ${timeStart}`, 'scheduleVotes');
+    logger('verbose', `Zadanie zapałzowaia (lub ubicia) Pleyera zaplanowane na ${timeEnd}`, 'scheduleVotes');
     logger('verbose', `ID playlisty: ${id} (powinno być 7)`, 'scheduleVotes');
+    logger('verbose', 'Sprawdzanie czy playlista nie jest ustawiona na inną playlistę niż 7', 'scheduleVotes');
     if (id !== 7) {
+        logger('verbose', colors.yellow("Wykryto playlistę inną niż 7!!! Co nie powinno mieć miejsca!"), 'scheduleVotes');
         logger('error', `${id}, a nie siódma playlista!!! Głosowanie skopane!!!`, 'scheduleVotes');
         return;
     }
@@ -111,9 +114,11 @@ async function massSchedule() {
             await downloader(data[i].uSongs.url, true);
         }
     }
-
+    logger('verbose', 'Sprawdzanie czy głosowanie jest włączone, czy jest internet oraz czy już nie pobrano głosów...', 'massSchedule');
     if (currentPlaylist === 7 && !messageCounter && !downloaded) {
+        logger('verbose', 'Głosowanie jest włączone, jest internet i nie pobrano głosów', 'massSchedule');
         downloaded = true;
+        logger('verbose', 'Dzwonienie do funkcji downloadVotes...', 'massSchedule');
         await downloadVotes();
     }
 
@@ -160,6 +165,7 @@ async function massSchedule() {
                 }
             }
             if ((messageCounter && time[mappedDays[l]][i].playlist === undefined && currentPlaylist === 7) || emptyVotes) { // gdy nie ma neta i gdy puste głosy
+                logger('verbose', colors.yellow('Wykryto brak internetu lub pusty response z funkcji getVotesData! Losowanie playlist statycznych...'), 'massSchedule');
                 const id = Math.floor(Math.random() * 5) + 1; // rosyjska ruletka od 1 do 5
                 scheduleMusicTask(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, {id});
                 scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`);
@@ -167,6 +173,7 @@ async function massSchedule() {
                 continue;
             }
             if (currentPlaylist !== 7 && !messageCounter && time[mappedDays[l]][i].playlist === 7 && !downloaded) {
+                logger('verbose', 'Znaleziono playlistę 7! Uruchamianie pobierania piosenek z głosowania', 'massSchedule');
                 downloaded = true;
                 await downloadVotes();
             }
@@ -189,6 +196,7 @@ async function massSchedule() {
 
             logger('verbose', 'Planowanie zadań...', 'massSchedule');
             if (id === 7) { // gdy pojedyncza na 7
+                logger('verbose', 'Znaleziono playlistę 7! Uruchamianie planowania dla niej zadania...', 'massSchedule');
                 scheduleVotes(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, `${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, id);
                 continue;
             }

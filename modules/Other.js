@@ -59,11 +59,13 @@ function pathSecurityChecker(filepath) {
 }
 
 function killVLCatStartup() {
+    logger('verbose', 'Sprawdzanie czy VLC jest uruchomione przy starcie...', 'killVLCatStartup');
     ps.lookup({
         command: 'vlc',
         psargs: 'ux'
     }, function(err, resultList ) {
         if (err) {
+            logger('verbose',`Złapano błąd przy szukaniu procesu VLC: ${err}`,'killVLCatStartup');
             if (global.debugmode === true) {
                 DebugSaveToFile('Other','killVLCatStartup','catched_error', err);
                 logger('verbose',`Stacktrace został zrzucony do debug/`,'killVLCatStartup');
@@ -73,25 +75,29 @@ function killVLCatStartup() {
 
         resultList.forEach(function( process ){
             if (process) {
+                logger('verbose','Znaleziono takie procesy VLC:','killVLCatStartup');
                 logger('verbose',`PID: ${process.pid}, COMMAND: ${process.command}, ARGUMENTS: ${process.arguments}`,'killVLCatStartup');
                 if (global.debugmode === true) {
                     DebugSaveToFile('Other','killVLCatStartup','process',`PID: ${process.pid}, COMMAND: ${process.command}, ARGUMENTS: ${process.arguments}`);
-                    logger('verbose',`Dane zostały zrzucone`,'killVLCatStartup');
+                    logger('verbose',`Dane zostały zrzucone!`,'killVLCatStartup');
                 }
-                logger('task', 'Ubito VLC.', 'killVLCatStartup');
+                logger('verbose', 'Ubijanie procesu VLC...', 'killVLCatStartup');
                 exec('pkill -9 vlc');
+                logger('task', 'Ubito VLC.', 'killVLCatStartup');
             }
         });
     });
 }
 
 function checkIfVLCisRunning() {
+    logger('verbose', 'Sprawdzanie czy VLC jest uruchomione...', 'checkIfVLCisRunning');
     return new Promise((resolve, reject) => {
         ps.lookup({
             command: 'vlc',
             psargs: 'ux'
         }, (err, resultList) => {
             if (err) {
+                logger('verbose', `Złapano błąd przy szukaniu procesu VLC: ${err}`, 'checkIfVLCisRunning');
                 if (global.debugmode === true) {
                     DebugSaveToFile('Other', 'checkIfVLCisRunning', 'catched_error', err);
                     logger('verbose', 'Stacktrace został zrzucony do debug/', 'checkIfVLCisRunning');
@@ -102,10 +108,12 @@ function checkIfVLCisRunning() {
 
             const isVlcRunning = resultList.some(process => {
                 if (process) {
+                    logger('verbose','Znaleziono takie procesy VLC:', 'checkIfVLCisRunning');
                     logger('verbose', `PID: ${process.pid}, COMMAND: ${process.command}, ARGUMENTS: ${process.arguments}`, 'checkIfVLCisRunning');
                     logger('task', 'VLC istnieje.', 'checkIfVLCisRunning');
                     return true;
                 } else {
+                    logger('verbose', 'Nie znaleziono procesów VLC.', 'checkIfVLCisRunning');
                     logger('task', 'VLC nie jest uruchomiony.', 'checkIfVLCisRunning');
                     return false;
                 }
@@ -121,6 +129,7 @@ function checkIfVLCisRunning() {
 }
 
 async function checkIfVLConVotes() {
+    logger('verbose', 'Sprawdzanie czy VLC jest uruchomione na odtwarzanie muzyki z głosów...', 'checkIfVLConVotes');
     try {
         const timeout = new Promise((_, reject) =>
             setTimeout(() => reject(
@@ -138,6 +147,11 @@ async function checkIfVLConVotes() {
         })();
         return await Promise.race([vlcOperation, timeout]);
     } catch (e) {
+        logger('verbose', `Wystąpił błąd podczas próby sprawdzenia czy VLC odtwarza głosy!`, 'checkIfVLConVotes');
+        if (global.debugmode === true) {
+            DebugSaveToFile('Other', 'checkIfVLConVotes', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do /debug`, 'checkIfVLConVotes');
+        }
         return false;
     }
 }
