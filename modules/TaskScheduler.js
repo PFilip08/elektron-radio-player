@@ -60,10 +60,10 @@ function scheduleVotes(timeStart, timeEnd, id) {
 }
 
 async function checkScheduleTime(timeEnd, timeStart, rule, breakNumber) {
-    logger('verbose', `Sprawdzanie zasady ${rule} i przerwy ${breakNumber}`, 'checkScheduleTime');
     let timeEndArray = timeEnd.split(':');
     let timeStartArray = timeStart.split(':');
     let breakNumberInt = parseInt(breakNumber, 10) + 1;
+    logger('verbose', `Sprawdzanie zasady ${rule} i przerwy ${breakNumberInt}`, 'checkScheduleTime');
     breakNumber = (breakNumber + 1);
     if (timeEndArray[0] < timeStartArray[0]) {
         logger('verbose', colors.yellow('WYKRYTO RÓŻNICĘ W GODZINIE!!!'), 'checkScheduleTime');
