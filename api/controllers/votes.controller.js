@@ -66,6 +66,10 @@ export async function saveVotes(req, res) {
         fs.readdir('./mp3/7', (err, files) => {
             if (err) {
                 res.status(500).send('dział taboretów trza zagonić do roboty');
+                if (global.debugmode === true) {
+                    DebugSaveToFile('LocalAPI', 'saveVotes', 'catched_error', err);
+                    logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - saveVotes');
+                }
                 return logger('error ' + err, 'saveVotes');
             }
             if (files.length === 0) return logger('task','Brak plików do usunięcia.','saveVotes');
