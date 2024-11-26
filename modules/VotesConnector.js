@@ -25,7 +25,7 @@ async function getVotesData(force) {
     logger('verbose', 'Wysyłanie zapytania do API...', 'getVotesData');
     const res = await api.get(url+date);
     if (global.debugmode === true) {
-        DebugSaveToFile('VotesConnector', 'getVotesData', 'response', res);
+        DebugSaveToFile('VotesConnector', 'getVotesData', 'response', res.data);
         logger('verbose', `Response z serwera został zrzucony!`, 'getVotesData');
     }
 
