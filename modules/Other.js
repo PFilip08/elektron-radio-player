@@ -89,39 +89,39 @@ function killVLCatStartup() {
     });
 }
 
-function checkIfVLCisRunning() {
+async function checkIfVLCisRunning() {
     logger('verbose', 'Sprawdzanie czy VLC jest uruchomione...', 'checkIfVLCisRunning');
-    return new Promise((resolve, reject) => {
-        ps.lookup({
-            command: 'vlc',
-            psargs: 'ux'
-        }, (err, resultList) => {
-            if (err) {
-                logger('verbose', `Złapano błąd przy szukaniu procesu VLC: ${err}`, 'checkIfVLCisRunning');
-                if (global.debugmode === true) {
-                    DebugSaveToFile('Other', 'checkIfVLCisRunning', 'catched_error', err);
-                    logger('verbose', 'Stacktrace został zrzucony do debug/', 'checkIfVLCisRunning');
-                }
-                logger('error', 'Błąd przy ubijaniu VLC', 'checkIfVLCisRunning');
-                return reject(err);
-            }
 
-            const isVlcRunning = resultList.some(process => {
-                if (process) {
-                    logger('verbose','Znaleziono takie procesy VLC:', 'checkIfVLCisRunning');
-                    logger('verbose', `PID: ${process.pid}, COMMAND: ${process.command}, ARGUMENTS: ${process.arguments}`, 'checkIfVLCisRunning');
-                    logger('task', 'VLC istnieje.', 'checkIfVLCisRunning');
-                    return true;
-                } else {
-                    logger('verbose', 'Nie znaleziono procesów VLC.', 'checkIfVLCisRunning');
-                    logger('task', 'VLC nie jest uruchomiony.', 'checkIfVLCisRunning');
-                    return false;
-                }
+    try {
+        const resultList = await new Promise((resolve, reject) => {
+            ps.lookup({ command: 'vlc', psargs: 'ux' }, (err, resultList) => {
+                if (err) return reject(err);
+                resolve(resultList);
             });
-
-            resolve(isVlcRunning);
         });
-    });
+
+        if (resultList.length === 0) {
+            logger('verbose', 'Nie znaleziono procesów VLC.', 'checkIfVLCisRunning');
+            logger('task', 'VLC nie jest uruchomiony.', 'checkIfVLCisRunning');
+            return false;
+        }
+
+        logger('verbose', 'Znaleziono następujące procesy VLC:', 'checkIfVLCisRunning');
+        resultList.forEach(process => {
+            logger('verbose', `PID: ${process.pid}, COMMAND: ${process.command}, ARGUMENTS: ${process.arguments}`, 'checkIfVLCisRunning');
+        });
+        logger('task', 'VLC istnieje.', 'checkIfVLCisRunning');
+        return true;
+
+    } catch (err) {
+        logger('verbose', `Złapano błąd przy szukaniu procesu VLC: ${err}`, 'checkIfVLCisRunning');
+        if (global.debugmode === true) {
+            DebugSaveToFile('Other', 'checkIfVLCisRunning', 'catched_error', err);
+            logger('verbose', 'Stacktrace został zrzucony do debug/', 'checkIfVLCisRunning');
+        }
+        logger('error', 'Błąd podczas sprawdzania procesu VLC', 'checkIfVLCisRunning');
+        throw err;
+    }
 }
 
 async function checkIfVLConVotes() {
