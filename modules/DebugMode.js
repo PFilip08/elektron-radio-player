@@ -45,9 +45,16 @@ function DebugSaveToFile(moduleName, functionName, fileName, data) {
         logger('verbose', colors.red(`Zapisywane dane to stacktrace errora z funkcji ${functionName}`), 'DebugSaveToFile');
     } else {
         try {
-            if (JSON.parse(JSON.stringify(data))) {
-                dataType = 'JSON';
-                logger('verbose', colors.red(`Zapisywane dane to JSON z funkcji ${functionName}`), 'DebugSaveToFile');
+            try {
+                if (JSON.parse(JSON.stringify(data))) {
+                    dataType = 'JSON';
+                    logger('verbose', colors.red(`Zapisywane dane to JSON z funkcji ${functionName}`), 'DebugSaveToFile');
+                }
+            } catch (e) {
+                if (removeCircularReferences(data)) {
+                    dataType = 'ChińskiJSON';
+                    logger('verbose', colors.red(`Zapisywane dane to JSON z cyklami z funkcji ${functionName}`), 'DebugSaveToFile');
+                }
             }
         } catch (e) {
             console.log(e);
@@ -73,6 +80,13 @@ function DebugSaveToFile(moduleName, functionName, fileName, data) {
             return;
         }
     }
+    if (dataType === 'ChińskiJSON') {
+        fs.writeFileSync(`debug/${moduleName}/${functionName}/${fileName}.json`, JSON.stringify(removeCircularReferences(data), null, 4), 'utf8', (e) => {
+            logger('verbose', colors.red(`Nie można zapisać pliku ${fileName}.json`), 'DebugSaveToFile');
+            console.log(e);
+        });
+        return
+    }
     if (dataType === 'STACK') {
         fs.writeFileSync(`debug/${moduleName}/${functionName}/${fileName}.txt`, String(data.stack), 'utf8', (e) => {
             logger('verbose', colors.red(`Nie można zapisać pliku ${fileName}.txt`), 'DebugSaveToFile');
@@ -84,6 +98,40 @@ function DebugSaveToFile(moduleName, functionName, fileName, data) {
         console.log(data);
         process.exit(1);
     }
+}
+
+function removeCircularReferences(obj) {
+    const seenObjects = new WeakSet();
+
+    function cleanObject(input) {
+        if (typeof input !== "object" || input === null) {
+            return input; // Przeskocz prymitywy
+        }
+
+        if (seenObjects.has(input)) {
+            return "[Circular]"; // Zamień cykliczne referencje
+        }
+
+        seenObjects.add(input);
+
+        if (Array.isArray(input)) {
+            return input.map(cleanObject); // Przetwórz tablice
+        }
+
+        const clean = {};
+        for (const key in input) {
+            if (Object.prototype.hasOwnProperty.call(input, key)) {
+                try {
+                    clean[key] = cleanObject(input[key]);
+                } catch (error) {
+                    clean[key] = `[Error: ${error.message}]`; // Obsługa błędów getterów
+                }
+            }
+        }
+        return clean;
+    }
+
+    return cleanObject(obj);
 }
 
 export { DebugSaveToFile, DebugStarter };
