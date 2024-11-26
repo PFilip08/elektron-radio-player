@@ -4,6 +4,7 @@ import fs from "fs";
 import {logger} from "./Logger.js";
 import {messageCounter} from "./ApiConnector.js";
 import { DebugSaveToFile } from "./DebugMode.js";
+import colors from "colors";
 
 const url = process.env.URI+'/api/playlist?hostId=1&date=';
 export const votesPath = './mp3/Votes.json'
