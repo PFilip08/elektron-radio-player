@@ -19,7 +19,7 @@ async function getVotesData(force) {
     logger('verbose', 'Sprawdzanie czy jest internet...', 'getVotesData');
     if (messageCounter) return logger('warn', 'Brak neta, pomijanie…', 'getVotesData');
     let date = new Date(); // dzisiaj
-    date.setDate(date.getDate()); // wczoraj
+    date.setDate(date.getDate() - 1); // wczoraj
     date=date.toLocaleDateString('en-CA') // YYYY-MM-DD
     logger('verbose', 'Wysyłanie zapytania do API...', 'getVotesData');
     const res = await api.get(url+date);

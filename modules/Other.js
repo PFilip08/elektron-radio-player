@@ -119,10 +119,6 @@ function checkIfVLCisRunning() {
                 }
             });
 
-            if (!isVlcRunning) {
-
-            }
-
             resolve(isVlcRunning);
         });
     });
