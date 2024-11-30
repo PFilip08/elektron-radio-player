@@ -79,6 +79,11 @@ async function checkScheduleTime(timeEnd, timeStart, rule, breakNumber) {
             logger('error', `Dla zasady ${rule} i przerwy ${breakNumberInt}, czas zakończenia (${timeEnd} aka "end" w JSONie) jest wcześniejszy niż czas rozpoczęcia (${timeStart} aka "start" w JSONie), różnica wynosi ${(timeStartArray[1] - timeEndArray[1])} minut.`, 'checkScheduleTime')
             return false;
         }
+        else if (timeEndArray[1] === timeStartArray[1]) {
+            logger('verbose', colors.yellow('WYKRYTO BEZ SENSU ZAPIS!!!'), 'checkScheduleTime');
+            logger('error', `Dla zasady ${rule} i przerwy ${breakNumberInt}, czas zakończenia (${timeEnd} aka "end" w JSONie) jest taki sam jak czas rozpoczęcia (${timeStart} aka "start" w JSONie).`, 'checkScheduleTime')
+            return false;
+        }
     }
     logger('verbose', `Zasada ${rule} i przerwa ${breakNumberInt} jest poprawna`, 'checkScheduleTime');
     return true;
