@@ -16,12 +16,14 @@ const api = axios.create({
     }
 });
 
-async function getVotesData(force) {
+async function getVotesData(force, data) {
     logger('verbose', 'Sprawdzanie czy jest internet...', 'getVotesData');
     if (messageCounter) return logger('warn', 'Brak neta, pomijanie…', 'getVotesData');
     let date = new Date(); // dzisiaj
     date.setDate(date.getDate() - 1); // wczoraj
     date=date.toLocaleDateString('en-CA') // YYYY-MM-DD
+    if (data) date=data;
+    // console.log(data);
     logger('verbose', 'Wysyłanie zapytania do API...', 'getVotesData');
     const res = await api.get(url+date);
     if (global.debugmode === true) {

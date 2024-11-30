@@ -15,19 +15,21 @@ function performAction(url, params = {}) {
         });
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-    fetch('/action/vlcSzuffle?state=check', { method: 'GET' })
-        .then(response => response.text())
-        .then(data => {
-            const shuffleOn = document.getElementById('shuffleOn');
-            const shuffleOff = document.getElementById('shuffleOff');
-            if (data === 'true') {
-                shuffleOn.checked = true;
-            } else {
-                shuffleOff.checked = true;
-            }
-        })
-        .catch(error => {
-            console.error('Błąd odczytu statusu:', error);
-        });
-});
+if(document.getElementById('shuffleOn')) {
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch('/action/vlcSzuffle?state=check', {method: 'GET'})
+            .then(response => response.text())
+            .then(data => {
+                const shuffleOn = document.getElementById('shuffleOn');
+                const shuffleOff = document.getElementById('shuffleOff');
+                if (data === 'true') {
+                    shuffleOn.checked = true;
+                } else {
+                    shuffleOff.checked = true;
+                }
+            })
+            .catch(error => {
+                console.error('Błąd odczytu statusu:', error);
+            });
+    });
+}

@@ -8,6 +8,11 @@ async function fetchVotes() {
         const tableBody = document.querySelector('#votesTable tbody');
         tableBody.innerHTML = '';
 
+        const dateVotes = document.getElementById('date');
+        let date = '1970-01-01';
+        if (votes[0]) date = votes[0].created_at;
+        dateVotes.innerHTML = date;
+
         votes.forEach(vote => {
             const row = document.createElement('tr');
 
