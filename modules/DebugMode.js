@@ -6,12 +6,14 @@ async function DebugStarter() {
     if (process.env.VERBOSE === "true") {
         logger('verbose', 'WŁĄCZONO TRYB DEBUGOWANIA!!!', 'DebugStarter');
         global.debugmode = true;
-        fs.mkdirSync('./debug', { recursive: true }, (e) => {
+        try {
+            fs.mkdirSync('./debug', { recursive: true });
+        } catch (e) {
             logger('verbose', colors.red('Nie można utworzyć folderu debug'), 'DebugStarter');
             console.log(e);
             logger('verbose', colors.red('Wywalanie procesu z kodem 2'), 'DebugStarter');
             process.exit(2);
-        });
+        }
     } else {
         global.debugmode = false;
         if (fs.existsSync('./debug')) {
@@ -61,37 +63,47 @@ function DebugSaveToFile(moduleName, functionName, fileName, data) {
             logger('verbose', colors.red('Zapisywane dane nie są JSONem'), 'DebugSaveToFile');
         }
     }
-    fs.mkdirSync(`./debug/${moduleName}/${functionName}/`, { recursive: true }, (e) => {
+    try {
+        fs.mkdirSync(`./debug/${moduleName}/${functionName}/`, { recursive: true });
+    } catch (e) {
         logger('verbose', colors.red(`Nie można utworzyć folderu /debug/${moduleName}/${functionName}/`), 'DebugSaveToFile');
         console.log(e);
-    });
+    }
     if (dataType === 'JSON') {
         if (functionName === 'logChanges') {
-            fs.appendFileSync(`./debug/${moduleName}/${functionName}/${fileName}.json`, JSON.stringify(data, null, 4) + '\n', 'utf8', (e) => {
+            try {
+                fs.appendFileSync(`./debug/${moduleName}/${functionName}/${fileName}.json`, JSON.stringify(data, null, 4) + '\n', 'utf8');
+            } catch (e) {
                 logger('verbose', colors.red(`Nie można zapisać pliku ${fileName}.json`), 'DebugSaveToFile');
                 console.log(e);
-            });
+            }
             return;
         } else {
-            fs.writeFileSync(`debug/${moduleName}/${functionName}/${fileName}.json`, JSON.stringify(data, null, 4), 'utf8', (e) => {
+            try {
+                fs.writeFileSync(`debug/${moduleName}/${functionName}/${fileName}.json`, JSON.stringify(data, null, 4), 'utf8');
+            } catch (e) {
                 logger('verbose', colors.red(`Nie można zapisać pliku ${fileName}.json`), 'DebugSaveToFile');
                 console.log(e);
-            })
+            }
             return;
         }
     }
     if (dataType === 'ChińskiJSON') {
-        fs.writeFileSync(`debug/${moduleName}/${functionName}/${fileName}.json`, JSON.stringify(removeCircularReferences(data), null, 4), 'utf8', (e) => {
+        try {
+            fs.writeFileSync(`debug/${moduleName}/${functionName}/${fileName}.json`, JSON.stringify(removeCircularReferences(data), null, 4), 'utf8');
+        } catch (e) {
             logger('verbose', colors.red(`Nie można zapisać pliku ${fileName}.json`), 'DebugSaveToFile');
             console.log(e);
-        });
+        }
         return
     }
     if (dataType === 'STACK') {
-        fs.writeFileSync(`debug/${moduleName}/${functionName}/${fileName}.txt`, String(data.stack), 'utf8', (e) => {
+        try {
+            fs.writeFileSync(`debug/${moduleName}/${functionName}/${fileName}.txt`, String(data.stack), 'utf8');
+        } catch (e) {
             logger('verbose', colors.red(`Nie można zapisać pliku ${fileName}.txt`), 'DebugSaveToFile');
             console.log(e);
-        });
+        }
     }
     else {
         logger('verbose', colors.red(`Nie można rozpoznać typu danych do zapisania! Dane pochodzą z funkcji ${functionName}`), 'DebugSaveToFile');
