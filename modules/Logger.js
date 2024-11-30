@@ -123,7 +123,10 @@ function logChanges(changes) {
         }
         else if (key.startsWith('timeRules.rules.') && !Array.isArray(newValue) && !Array.isArray(oldValue) && Number.isInteger(parseInt(key.split('.').pop()))) {
           if (oldValue === undefined){
-            message += `Zasada o numerze ${key.split('.').pop()} została dodana, wartość nowego klucza wynosi: ${newValue.start}`;
+            if (!newValue.playlist) {
+              message += `Zasada o numerze ${key.split('.').pop()} została dodana i wprowadza takie godziny: ${newValue.start} - ${newValue.end}`;
+            }
+            message += `Zasada o numerze ${key.split('.').pop()} została dodana i wprowadza takie godziny: ${newValue.start} - ${newValue.end} z playlistą: ${newValue.playlist}`;
           } else if (newValue === undefined) {
             message += `Zasada o numerze ${key.split('.').pop()} została usunięta`;
           } else {
