@@ -15,12 +15,16 @@ async function fetchVotes() {
 
         votes.forEach(vote => {
             const row = document.createElement('tr');
+            let explicit = String();
+            if (vote.uSongs.explicit) {
+                explicit = `<img src="../images/explicit.gif" alt="explicit" width="50px" style="position: absolute; right: 0;"/>`;
+            }
 
             row.innerHTML = `
         <td>${vote.id}</td>
-        <td>${vote.uSongs.title || 'Przekorny Los'}</td>
+        <td style="position: relative;">${vote.uSongs.title+explicit || 'Przekorny Los'}</td>
         <td>${vote.uSongs.artist || 'Akcent'}</td>
-        <td>${vote.uSongs.duration || '21:37'}</td>
+        <td>${vote.uSongs.duration || `21:37`}</td>
         <td>
           <button onclick="delVote(${vote.id})">Usuń</button>
         </td>
