@@ -152,4 +152,8 @@ async function checkIfVLConVotes() {
     }
 }
 
-export { sterylizator, pathSecurityChecker, killVLCatStartup, checkIfVLCisRunning, checkIfVLConVotes };
+function uint8ArrayToBase64(uint8Array) {
+    return Buffer.from(uint8Array).toString('base64');
+}  
+
+export { sterylizator, pathSecurityChecker, killVLCatStartup, checkIfVLCisRunning, checkIfVLConVotes, uint8ArrayToBase64 };

@@ -5,7 +5,7 @@ import {logger} from "./Logger.js";
 import {DebugSaveToFile} from './DebugMode.js';
 import {parseFile} from 'music-metadata';
 import VLC from 'vlc-client';
-import {uint8ArrayToBase64} from 'uint8array-extras';
+import {uint8ArrayToBase64} from './Other.js';
 import {szuffle} from "../api/controllers/actions.controller.js";
 
 const vlc = `cvlc -I http --http-host 127.0.0.1 --http-port ${process.env.VLC_PORT || 4212} --http-password ${process.env.VLC_PASSWORD} --one-instance`
