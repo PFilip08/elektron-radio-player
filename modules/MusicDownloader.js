@@ -62,7 +62,7 @@ async function downloadSong(url, votes) {
             fs.writeFileSync(`./mp3/7/${file}.mp3`, song);
             logger('verbose', 'Normalizacja dźwięku przy użyciu mp3gain...', 'downloadSong');
             exec(`mp3gain -r -c ./mp3/7/${file}.mp3`, (error, stdout, stderr) => {
-                logger('verbose', stdout, 'downloadSong')
+                logger('verbose', "\n"+ stdout, 'downloadSong')
                 if (global.debugmode === true) {
                     DebugSaveToFile('MusicDownloader', 'downloadSong', 'mp3gain', stdout);
                     logger('verbose', `Zapisano do debug/`, 'downloadSong');
@@ -73,7 +73,7 @@ async function downloadSong(url, votes) {
         if (fs.existsSync(`./mp3/onDemand/${file}.mp3`)) return logger('warn', `Plik istnieje!`, 'downloadSong');
         const song = await spotify.downloadTrack(url);
         fs.writeFileSync(`./mp3/onDemand/${file}.mp3`, song);
-        exec(`mp3gain -r -c ./mp3/onDemand/${file}.mp3`, (error, stdout, stderr) => logger('verbose', stdout, 'downloadSong'));
+        exec(`mp3gain -r -c ./mp3/onDemand/${file}.mp3`, (error, stdout, stderr) => logger('verbose',"\n" + stdout, 'downloadSong'));
         return logger('log', 'Pobrano :>', 'downloadSong');
     } catch (e) {
         logger('error', "Błąd w trakcie wykonywania funkcji downloadSong", 'downloadSong');
