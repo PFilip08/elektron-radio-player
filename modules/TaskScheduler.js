@@ -96,7 +96,7 @@ async function massSchedule() {
     logger('verbose', 'Planowanie zadania automatycznego usuwania plików...', 'massSchedule');
     schedule.scheduleJob('0 5 * * 1-5', autoRemoveFiles);
     logger('verbose', 'Planowanie zadania automatycznej aktualizacji głosów...', 'massSchedule');
-    schedule.scheduleJob('50 6 * * 1-5', getVotesData);
+    schedule.scheduleJob('50 6 * * 1-5', downloadVotes);
     logger('verbose', 'Pobieranie danych przy użyciu getApiData', 'massSchedule');
     const data = await getApiData();
     logger('verbose', 'Sprawdzanie czy isOn jest ustawione na false', 'massSchedule');
