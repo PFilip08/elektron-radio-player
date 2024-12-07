@@ -18,7 +18,7 @@ async function downloader(url, votes) {
         logger('log', 'Wykryto piosenkę', 'downloader');
         return downloadSong(url, votes);
     } else if (votes) {
-        logger('verbose', 'Wykryto próbę pobrania piosenki nie piosenki w głosach!', 'downloader');
+        logger('verbose', 'Wykryto próbę pobrania nieautoryzowanego typu linku w głosach!', 'downloader');
         logger('warn', 'Coś przeciekło', 'downloader');
         url='https://open.spotify.com/track/5Wrl4uc9SjC8ZnAimiMtys'; // No przekorny los, bo przeciekło
         return downloadSong(url, votes);
@@ -79,7 +79,7 @@ async function downloadSong(url, votes) {
         logger('error', "Błąd w trakcie wykonywania funkcji downloadSong", 'downloadSong');
         logger('error', e, 'downloadSong');
         if (global.debugmode === true) {
-            DebugSaveToFile('MusicDownloader', 'downloadSong', 'error_main_function', e);
+            DebugSaveToFile('MusicDownloader', 'downloadSong', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadSong');
         }
     }
@@ -94,12 +94,12 @@ async function downloadPlaylist(url) {
     try {
         const data = await spotify.getPlaylist(url);
         for (let i in data.tracks) {
-            let song = await getTrackInfo(data.tracks[i])
+            let song = await getTrackInfo(data.tracks[i]);
             logger('log', `Pobieranie: ${song.name + ' by: ' + song.artists.join(', ')}`, 'downloadPlaylist');
         }
         const playlist = await spotify.downloadPlaylist(url)
         for (let i in playlist) {
-            let song = await getTrackInfo(data.tracks[i])
+            let song = await getTrackInfo(data.tracks[i]);
             const dir = sterylizator(data.name);
             if (!fs.existsSync(`./mp3/onDemand/${dir}`)) {
                 fs.mkdirSync(`./mp3/onDemand/${dir}`);
@@ -112,10 +112,10 @@ async function downloadPlaylist(url) {
             fs.writeFileSync(`./mp3/onDemand/${dir}/${file}.mp3`, playlist[i]);
         }
     } catch (e) {
-        logger('error', "Błąd w trakcie wykonywania funkcji downloadSong", 'downloadPlaylist');
+        logger('error', "Błąd w trakcie wykonywania funkcji downloadPlaylist", 'downloadPlaylist');
         logger('error', e, 'downloadPlaylist');
         if (global.debugmode === true) {
-            DebugSaveToFile('MusicDownloader', 'downloadPlaylist', 'error_main_function', e);
+            DebugSaveToFile('MusicDownloader', 'downloadPlaylist', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadPlaylist');
         }
     }
@@ -134,7 +134,7 @@ async function downloadAlbum(url) {
             fs.mkdirSync(`./mp3/onDemand/${dir}`);
         }
         for (let i in data.tracks) {
-            let song = await getTrackInfo(data.tracks[i])
+            let song = await getTrackInfo(data.tracks[i]);
             logger('log', `Pobieranie: ${song.name + ' by: ' + song.artists.join(', ')}`, 'downloadAlbum');
         }
         const album = await spotify.downloadAlbum(url);
@@ -148,10 +148,10 @@ async function downloadAlbum(url) {
             fs.writeFileSync(`./mp3/onDemand/${dir}/${file}.mp3`, album[i]);
         }
     } catch (e) {
-        logger('error', "Błąd w trakcie wykonywania funkcji downloadSong", 'downloadAlbum');
+        logger('error', "Błąd w trakcie wykonywania funkcji downloadAlbum", 'downloadAlbum');
         logger('error', e, 'downloadAlbum');
         if (global.debugmode === true) {
-            DebugSaveToFile('MusicDownloader', 'downloadAlbum', 'error_main_function', e);
+            DebugSaveToFile('MusicDownloader', 'downloadAlbum', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadAlbum');
         }
     }
@@ -177,10 +177,10 @@ async function getTrackInfo(url) {
         return await spotify.getTrack(url);
     }
     } catch (e) {
-        logger('error', "Błąd w trakcie wykonywania funkcji downloadSong", 'getTrackInfo');
+        logger('error', "Błąd w trakcie wykonywania funkcji getTrackInfo", 'getTrackInfo');
         logger('error', e, 'getTrackInfo');
         if (global.debugmode === true) {
-            DebugSaveToFile('MusicDownloader', 'getTrackInfo', 'error_main_function', e);
+            DebugSaveToFile('MusicDownloader', 'getTrackInfo', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'getTrackInfo');
         }
     }
@@ -312,11 +312,11 @@ async function autoRemoveFiles() {
         for (let i in files) {
             if (fs.lstatSync('./mp3/7/'+files[i]).isDirectory()) {
                 logger('task', `Usunięto folder "${files[i]}" wraz z zawartością`, 'autoRemoveFiles');
-                fs.rmSync('./mp3/7/'+files[i], { recursive: true, force: true })
+                fs.rmSync('./mp3/7/'+files[i], { recursive: true, force: true });
                 continue;
             }
             fs.unlinkSync(path.join('./mp3/7', files[i]));
-            logger('task', `Usunięto ${files[i]}`, 'autoRemoveFiles')
+            logger('task', `Usunięto ${files[i]}`, 'autoRemoveFiles');
         }
     });
 }

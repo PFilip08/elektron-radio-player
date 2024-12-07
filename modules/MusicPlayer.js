@@ -8,7 +8,7 @@ import VLC from 'vlc-client';
 import {uint8ArrayToBase64} from './Other.js';
 import {szuffle} from "../api/controllers/actions.controller.js";
 
-const vlc = `cvlc -I http --http-host 127.0.0.1 --http-port ${process.env.VLC_PORT || 4212} --http-password ${process.env.VLC_PASSWORD} --one-instance`
+const vlc = `cvlc -I http --http-host 127.0.0.1 --http-port ${process.env.VLC_PORT || 4212} --http-password ${process.env.VLC_PASSWORD} --one-instance`;
 
 function getPlaylistName(id) {
     logger('verbose', `Pobieranie nazwy playlisty o ID: ${parseInt(id)}`, 'getPlaylistName');

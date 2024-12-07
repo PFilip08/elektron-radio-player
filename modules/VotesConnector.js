@@ -7,7 +7,7 @@ import { DebugSaveToFile } from "./DebugMode.js";
 import colors from "colors";
 
 const url = process.env.URI+'/api/playlist?hostId=1&date=';
-export const votesPath = './mp3/Votes.json'
+export const votesPath = './mp3/Votes.json';
 
 const api = axios.create({
     httpsAgent: new Agent(),
@@ -21,7 +21,7 @@ async function getVotesData(force, data) {
     if (messageCounter) return logger('warn', 'Brak neta, pomijanie…', 'getVotesData');
     let date = new Date(); // dzisiaj
     date.setDate(date.getDate() - 1); // wczoraj
-    date=date.toLocaleDateString('en-CA') // YYYY-MM-DD
+    date=date.toLocaleDateString('en-CA'); // YYYY-MM-DD
     if (data) date=data;
     // console.log(data);
     logger('verbose', 'Wysyłanie zapytania do API...', 'getVotesData');

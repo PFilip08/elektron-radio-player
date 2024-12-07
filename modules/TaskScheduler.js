@@ -70,18 +70,18 @@ async function checkScheduleTime(timeEnd, timeStart, rule, breakNumber) {
     breakNumber = (breakNumber + 1);
     if (timeEndArray[0] < timeStartArray[0]) {
         logger('verbose', colors.yellow('WYKRYTO RÓŻNICĘ W GODZINIE!!!'), 'checkScheduleTime');
-        logger('error', `Dla zasady ${rule} i przerwy ${breakNumberInt}, czas zakończenia (${timeEnd} aka "end" w JSONie) jest wcześniejszy niż czas rozpoczęcia (${timeStart}), różnica wynosi ${(timeStartArray[0] - timeEndArray[0])} godziny.`, 'checkScheduleTime')
+        logger('error', `Dla zasady ${rule} i przerwy ${breakNumberInt}, czas zakończenia (${timeEnd} aka "end" w JSONie) jest wcześniejszy niż czas rozpoczęcia (${timeStart}), różnica wynosi ${(timeStartArray[0] - timeEndArray[0])} godziny.`, 'checkScheduleTime');
         return false;
     }
     if (timeEndArray[0] === timeStartArray[0]) {
         if (timeEndArray[1] < timeStartArray[1]) {
             logger('verbose', colors.yellow('WYKRYTO RÓŻNICĘ W MINUTACH!!!'), 'checkScheduleTime');
-            logger('error', `Dla zasady ${rule} i przerwy ${breakNumberInt}, czas zakończenia (${timeEnd} aka "end" w JSONie) jest wcześniejszy niż czas rozpoczęcia (${timeStart} aka "start" w JSONie), różnica wynosi ${(timeStartArray[1] - timeEndArray[1])} minut.`, 'checkScheduleTime')
+            logger('error', `Dla zasady ${rule} i przerwy ${breakNumberInt}, czas zakończenia (${timeEnd} aka "end" w JSONie) jest wcześniejszy niż czas rozpoczęcia (${timeStart} aka "start" w JSONie), różnica wynosi ${(timeStartArray[1] - timeEndArray[1])} minut.`, 'checkScheduleTime');
             return false;
         }
         else if (timeEndArray[1] === timeStartArray[1]) {
             logger('verbose', colors.yellow('WYKRYTO BEZ SENSU ZAPIS!!!'), 'checkScheduleTime');
-            logger('error', `Dla zasady ${rule} i przerwy ${breakNumberInt}, czas zakończenia (${timeEnd} aka "end" w JSONie) jest taki sam jak czas rozpoczęcia (${timeStart} aka "start" w JSONie).`, 'checkScheduleTime')
+            logger('error', `Dla zasady ${rule} i przerwy ${breakNumberInt}, czas zakończenia (${timeEnd} aka "end" w JSONie) jest taki sam jak czas rozpoczęcia (${timeStart} aka "start" w JSONie).`, 'checkScheduleTime');
             return false;
         }
     }
@@ -103,7 +103,7 @@ async function massSchedule() {
     if (!data.isOn) {
         logger('verbose', `Zwrócono ${JSON.stringify(data)}}`, 'massSchedule');
         taskNumber();
-        return logger('error','Brakuje danych!!!', 'massSchedule')
+        return logger('error','Brakuje danych!!!', 'massSchedule');
     }
     const time = data.timeRules.rules;
     const day = data.timeRules.applyRule;

@@ -36,10 +36,10 @@ export async function delVotes(req, res) {
 
         return res.status(200).send('Głos usunięty');
     } catch (e) {
-        logger('verbose', 'Wystąpił błąd podczas usuwania głosu', 'LocalAPI - setVotes');
+        logger('verbose', 'Wystąpił błąd podczas usuwania głosu', 'LocalAPI - delVotes');
         if (global.debugmode === true) {
-            DebugSaveToFile('LocalAPI', 'setVotes', 'catched_error', e);
-            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - setVotes');
+            DebugSaveToFile('LocalAPI', 'delVotes', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - delVotes');
         }
         return res.status(500).send('Błąd serwera podczas usuwania głosu');
     }
@@ -76,11 +76,11 @@ export async function saveVotes(req, res) {
             for (let i in files) {
                 if (fs.lstatSync('./mp3/7/'+files[i]).isDirectory()) {
                     logger('task', `Usunięto folder "${files[i]}" wraz z zawartością`, 'saveVotes');
-                    fs.rmSync('./mp3/7/'+files[i], { recursive: true, force: true })
+                    fs.rmSync('./mp3/7/'+files[i], { recursive: true, force: true });
                     continue;
                 }
                 fs.unlinkSync(path.join('./mp3/7', files[i]));
-                logger('task', `Usunięto ${files[i]}`, 'saveVotes')
+                logger('task', `Usunięto ${files[i]}`, 'saveVotes');
             }
         });
         const data = await getVotesData();
@@ -179,7 +179,7 @@ export async function addVotes(req, res) {
             DebugSaveToFile('LocalAPI', 'addVotes', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - addVotes');
         }
-        res.status(500).send('Wystąpił błąd serwera');
+        return res.status(500).send('Wystąpił błąd serwera');
     }
 }
 
@@ -187,7 +187,7 @@ export async function download(req, res) {
     try {
         let data = JSON.parse(fs.readFileSync(votesPath));
         if (data === '[]') {
-            logger('log', 'Brak danych!!!', 'download')
+            logger('log', 'Brak danych!!!', 'download');
             return res.status(410).send('brak danych');
         }
         for (let i in data) {
@@ -220,7 +220,7 @@ export async function delmp3(req, res) {
                     continue;
                 }
                 fs.unlinkSync(path.join('./mp3/7', files[i]));
-                logger('task', `Usunięto ${files[i]}`, 'delmp3')
+                logger('task', `Usunięto ${files[i]}`, 'delmp3');
             }
         });
         logger('log', 'Usunięto mp3', 'delmp3');
