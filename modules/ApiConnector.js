@@ -4,7 +4,7 @@ import {massSchedule} from "./TaskScheduler.js";
 import {logger, findChanges, logChanges } from "./Logger.js";
 import colors from 'colors';
 import {DebugSaveToFile} from "./DebugMode.js";
-let url = 'https://radio-elektron.vercel.app/api/timeTables';
+const url = process.env.URI+'/api/timeTables';
 let previousData = null;
 let messageCounter = false;
 let messageStartupBlocker = false;
@@ -19,12 +19,6 @@ const api = axios.create({
         'User-Agent': 'Radio-Elektron_SAW_MONITORING v1.0'
     }
 });
-
-// async function getApiData() {
-//     api.get(url)
-//         .then(res => console.log(res.data.timeTable[0].timeRules.rules))
-//         .catch(err=>console.log(err));
-// }
 
 async function getApiData() {
     return await api.get(url)
@@ -57,7 +51,6 @@ async function getApiData() {
             return res.data.timeTable[0];
         })
         .catch((error)=>{
-            // console.log(err);
             logger('verbose','Wchodzenie w tryb recovery...','getApiData');
             logger('verbose',`Złapano błąd: ${error}`,'getApiData');
             if (global.debugmode === true) {
@@ -65,7 +58,6 @@ async function getApiData() {
                 logger('verbose',`Pełen stackrace zrzucono do pliku recovery_reason.json!`,'getApiData');
             }
             if (!messageCounter) logger('warn','Tryb RECOVERY AKTYWNY!!!','getApiData');
-            // let res =
             let res = {"static":true,"isOn":true,"currentPlaylistId":1,"timeRules":{"rules":{"1":[{"end":"07:10","start":"07:07"},{"end":"08:00","start":"07:55"},{"end":"08:50","start":"08:45"},{"end":"09:45","start":"09:35"},{"end":"10:35","start":"10:30"},{"end":"11:40","start":"11:20"},{"end":"12:30","start":"12:25"},{"end":"13:20","start":"13:15"},{"end":"14:10","start":"14:05"},{"end":"15:00","start":"14:55"},{"end":"15:50","start":"15:45"}]},"applyRule":{"Fri":1,"Mon":1,"Sat":0,"Sun":0,"Thu":1,"Tue":1,"Wed":1}}};
             if (previousData !== null) {
                 res = previousData;
@@ -74,7 +66,11 @@ async function getApiData() {
                     DebugSaveToFile('ApiConnector','getApiData','previousData',res);
                     logger('verbose',`Dane z previousData zostały zrzucone`,'getApiData');
                 }
-                if (!messageCounter) logger('warn','Używanie danych pobranych poprzednio z API!','getApiData');
+                if (!messageCounter) {
+                    // massSchedule() powstał tu dlatego że zadania po wejściu w tryb recovery nie były ponownie planowane co powodowało że kod w linijkach 130 - 136 w pliku TaskScheduler.js nie był wykonywany
+                    massSchedule();
+                    logger('warn','Używanie danych pobranych poprzednio z API!','getApiData');
+                }
             }
             if (res.static) {
                 messageStartupBlocker = true;
@@ -177,4 +173,4 @@ function scheduleUpdate() {
     }
 }
 
-export { getApiData, checkUpdate, scheduleUpdate };
+export { getApiData, checkUpdate, scheduleUpdate, messageCounter };

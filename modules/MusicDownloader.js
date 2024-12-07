@@ -8,14 +8,20 @@ import {sterylizator} from "./Other.js";
 import {DebugSaveToFile} from "./DebugMode.js";
 import os from "os";
 import axios from "axios";
+import {exec} from "child_process";
 
-async function downloader(url) {
+async function downloader(url, votes) {
     const urlParts = url.split('?')[0].split("/");
     logger('verbose', `Wynik splita: ${urlParts}`, 'downloader');
     logger('verbose', `Wykryto: ${urlParts[3]}`, 'downloader');
     if (urlParts[3] === 'track') {
         logger('log', 'Wykryto piosenkę', 'downloader');
-        return downloadSong(url);
+        return downloadSong(url, votes);
+    } else if (votes) {
+        logger('verbose', 'Wykryto próbę pobrania nieautoryzowanego typu linku w głosach!', 'downloader');
+        logger('warn', 'Coś przeciekło', 'downloader');
+        url='https://open.spotify.com/track/5Wrl4uc9SjC8ZnAimiMtys'; // No przekorny los, bo przeciekło
+        return downloadSong(url, votes);
     } else if (urlParts[3] === 'album') {
         logger('log', 'Wykryto album', 'downloader');
         return downloadAlbum(url);
@@ -38,19 +44,45 @@ async function downloader(url) {
     }
 }
 
-async function downloadSong(url) {
+async function downloadSong(url, votes) {
     const spotify = new Spotify({
         clientId: process.env.SPOTIFY_CLIENT_ID,
         clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
     });
 
-    const data = await spotify.getTrack(url);
-    const file = sterylizator(data.artists.join('-')+'_'+data.name);
-    logger('log',`Pobieram: ${data.name+' by: '+data.artists.join(', ')}`,'downloadSong');
-    if (fs.existsSync(`./mp3/onDemand/${file}.mp3`)) return logger('warn',`Plik istnieje!`,'downloadSong');
-    const song = await spotify.downloadTrack(url);
-    fs.writeFileSync(`./mp3/onDemand/${file}.mp3`, song);
-    return logger('log','Pobrano :>','downloadSong');
+    try {
+        const data = await spotify.getTrack(url);
+        const file = sterylizator(data.artists.join('-') + '_' + data.name);
+        logger('log', `Pobieram: ${data.name + ' by: ' + data.artists.join(', ')}`, 'downloadSong');
+        logger('verbose', 'Sprawdzanie czy nie pobieram z głosów...', 'downloadSong');
+        if (votes) {
+            logger('verbose', 'Pobieranie z głosowania!', 'downloadSong');
+            if (fs.existsSync(`./mp3/7/${file}.mp3`)) return logger('warn', `Plik istnieje!`, 'downloadSong');
+            const song = await spotify.downloadTrack(url);
+            fs.writeFileSync(`./mp3/7/${file}.mp3`, song);
+            logger('verbose', 'Normalizacja dźwięku przy użyciu mp3gain...', 'downloadSong');
+            exec(`mp3gain -r -c ./mp3/7/${file}.mp3`, (error, stdout, stderr) => {
+                logger('verbose', "\n"+ stdout, 'downloadSong')
+                if (global.debugmode === true) {
+                    DebugSaveToFile('MusicDownloader', 'downloadSong', 'mp3gain', stdout);
+                    logger('verbose', `Zapisano do debug/`, 'downloadSong');
+                }
+            });
+            return logger('log', 'Pobrano :>', 'downloadSong');
+        }
+        if (fs.existsSync(`./mp3/onDemand/${file}.mp3`)) return logger('warn', `Plik istnieje!`, 'downloadSong');
+        const song = await spotify.downloadTrack(url);
+        fs.writeFileSync(`./mp3/onDemand/${file}.mp3`, song);
+        exec(`mp3gain -r -c ./mp3/onDemand/${file}.mp3`, (error, stdout, stderr) => logger('verbose',"\n" + stdout, 'downloadSong'));
+        return logger('log', 'Pobrano :>', 'downloadSong');
+    } catch (e) {
+        logger('error', "Błąd w trakcie wykonywania funkcji downloadSong", 'downloadSong');
+        logger('error', e, 'downloadSong');
+        if (global.debugmode === true) {
+            DebugSaveToFile('MusicDownloader', 'downloadSong', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadSong');
+        }
+    }
 }
 
 async function downloadPlaylist(url) {
@@ -59,24 +91,33 @@ async function downloadPlaylist(url) {
         clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
     });
 
-    const data = await spotify.getPlaylist(url);
-    for (let i in data.tracks) {
-        let song = await getTrackInfo(data.tracks[i])
-        logger('log',`Pobieranie: ${song.name+' by: '+song.artists.join(', ')}`,'downloadPlaylist');
-    }
-    const playlist = await spotify.downloadPlaylist(url)
-    for (let i in playlist) {
-        let song = await getTrackInfo(data.tracks[i])
-        const dir = sterylizator(data.name);
-        if (!fs.existsSync(`./mp3/onDemand/${dir}`)){
-            fs.mkdirSync(`./mp3/onDemand/${dir}`);
+    try {
+        const data = await spotify.getPlaylist(url);
+        for (let i in data.tracks) {
+            let song = await getTrackInfo(data.tracks[i]);
+            logger('log', `Pobieranie: ${song.name + ' by: ' + song.artists.join(', ')}`, 'downloadPlaylist');
         }
-        const file = sterylizator(song.artists.join('-')+'_'+song.name);
-        if (fs.existsSync(`./mp3/onDemand/${dir}/${file}.mp3`)) {
-            logger('warn',`${file}.mp3 - Plik istnieje!`,'downloadPlaylist');
-            continue;
+        const playlist = await spotify.downloadPlaylist(url)
+        for (let i in playlist) {
+            let song = await getTrackInfo(data.tracks[i]);
+            const dir = sterylizator(data.name);
+            if (!fs.existsSync(`./mp3/onDemand/${dir}`)) {
+                fs.mkdirSync(`./mp3/onDemand/${dir}`);
+            }
+            const file = sterylizator(song.artists.join('-') + '_' + song.name);
+            if (fs.existsSync(`./mp3/onDemand/${dir}/${file}.mp3`)) {
+                logger('warn', `${file}.mp3 - Plik istnieje!`, 'downloadPlaylist');
+                continue;
+            }
+            fs.writeFileSync(`./mp3/onDemand/${dir}/${file}.mp3`, playlist[i]);
         }
-        fs.writeFileSync(`./mp3/onDemand/${dir}/${file}.mp3`, playlist[i]);
+    } catch (e) {
+        logger('error', "Błąd w trakcie wykonywania funkcji downloadPlaylist", 'downloadPlaylist');
+        logger('error', e, 'downloadPlaylist');
+        if (global.debugmode === true) {
+            DebugSaveToFile('MusicDownloader', 'downloadPlaylist', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadPlaylist');
+        }
     }
 }
 
@@ -86,24 +127,33 @@ async function downloadAlbum(url) {
         clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
     });
 
-    const data = await spotify.getAlbum(url);
-    const dir = sterylizator(data.name);
-    if (!fs.existsSync(`./mp3/onDemand/${dir}`)){
-        fs.mkdirSync(`./mp3/onDemand/${dir}`);
-    }
-    for (let i in data.tracks) {
-        let song = await getTrackInfo(data.tracks[i])
-        logger('log',`Pobieranie: ${song.name+' by: '+song.artists.join(', ')}`,'downloadAlbum');
-    }
-    const album = await spotify.downloadAlbum(url);
-    for (let i in album) {
-        let song = await getTrackInfo(data.tracks[i]);
-        const file = sterylizator(song.artists.join('-')+'_'+song.name);
-        if (fs.existsSync(`./mp3/onDemand/${dir}/${file}.mp3`)) {
-            logger('warn',`${file}.mp3 - Plik istnieje!`,'downloadAlbum');
-            continue;
+    try {
+        const data = await spotify.getAlbum(url);
+        const dir = sterylizator(data.name);
+        if (!fs.existsSync(`./mp3/onDemand/${dir}`)) {
+            fs.mkdirSync(`./mp3/onDemand/${dir}`);
         }
-        fs.writeFileSync(`./mp3/onDemand/${dir}/${file}.mp3`, album[i]);
+        for (let i in data.tracks) {
+            let song = await getTrackInfo(data.tracks[i]);
+            logger('log', `Pobieranie: ${song.name + ' by: ' + song.artists.join(', ')}`, 'downloadAlbum');
+        }
+        const album = await spotify.downloadAlbum(url);
+        for (let i in album) {
+            let song = await getTrackInfo(data.tracks[i]);
+            const file = sterylizator(song.artists.join('-') + '_' + song.name);
+            if (fs.existsSync(`./mp3/onDemand/${dir}/${file}.mp3`)) {
+                logger('warn', `${file}.mp3 - Plik istnieje!`, 'downloadAlbum');
+                continue;
+            }
+            fs.writeFileSync(`./mp3/onDemand/${dir}/${file}.mp3`, album[i]);
+        }
+    } catch (e) {
+        logger('error', "Błąd w trakcie wykonywania funkcji downloadAlbum", 'downloadAlbum');
+        logger('error', e, 'downloadAlbum');
+        if (global.debugmode === true) {
+            DebugSaveToFile('MusicDownloader', 'downloadAlbum', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadAlbum');
+        }
     }
 }
 
@@ -112,6 +162,7 @@ async function getTrackInfo(url) {
         clientId: process.env.SPOTIFY_CLIENT_ID,
         clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
     });
+    try {
     const urlParts = url.split("/");
     logger('verbose', `Wynik splita: ${urlParts}`, 'getTrackInfo');
     logger('verbose', `Wykryto: ${urlParts[3]}`, 'getTrackInfo');
@@ -124,6 +175,14 @@ async function getTrackInfo(url) {
     } else {
         logger('log', 'Wykryto piosenkę', 'getTrackInfo');
         return await spotify.getTrack(url);
+    }
+    } catch (e) {
+        logger('error', "Błąd w trakcie wykonywania funkcji getTrackInfo", 'getTrackInfo');
+        logger('error', e, 'getTrackInfo');
+        if (global.debugmode === true) {
+            DebugSaveToFile('MusicDownloader', 'getTrackInfo', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'getTrackInfo');
+        }
     }
 }
 async function downloadYT(url) {
@@ -246,7 +305,20 @@ async function autoRemoveFiles() {
             fs.unlinkSync(path.join('./mp3/onDemand', files[i]));
             logger('task', `Usunięto ${files[i]}`, 'autoRemoveFiles')
         }
-    })
+    });
+    fs.readdir('./mp3/7', (err, files) => {
+        if (err) return logger('error '+err,'autoRemoveFiles');
+        if (files.length === 0) return logger('task','Brak plików do usunięcia.','autoRemoveFiles');
+        for (let i in files) {
+            if (fs.lstatSync('./mp3/7/'+files[i]).isDirectory()) {
+                logger('task', `Usunięto folder "${files[i]}" wraz z zawartością`, 'autoRemoveFiles');
+                fs.rmSync('./mp3/7/'+files[i], { recursive: true, force: true });
+                continue;
+            }
+            fs.unlinkSync(path.join('./mp3/7', files[i]));
+            logger('task', `Usunięto ${files[i]}`, 'autoRemoveFiles');
+        }
+    });
 }
 
 export { downloader, downloadPlaylist, downloadAlbum, getTrackInfo, autoRemoveFiles, downloadYT };

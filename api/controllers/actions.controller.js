@@ -4,6 +4,8 @@ import {killPlayer, killPlayerForce, playMusic, playPlaylist} from "../../module
 import {pathSecurityChecker} from "../../modules/Other.js";
 import VLC from "vlc-client";
 
+export let szuffle = 'true';
+
 // killPlayer
 export async function kill(req, res) {
     try {
@@ -125,6 +127,23 @@ export async function vlcPrevious(req, res) {
         if (global.debugmode === true) {
             DebugSaveToFile('LocalAPI', 'vlcPrevious', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - vlcPrevious');
+        }
+    }
+}
+
+export async function vlcSzuffle(req, res) {
+    try {
+        const state = req.query.state;
+        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - vlcSzuffle');
+        if (state === 'check') return res.status(200).send(szuffle);
+        if (!state) return res.status(400).send('Nie podano stanu!');
+        szuffle=state;
+        return res.status(201).send(`Szuffle ${state}`);
+    } catch (e) {
+        logger('verbose', 'Wystąpił błąd podczas próby zmiany stanu', 'LocalAPI - vlcSzuffle');
+        if (global.debugmode === true) {
+            DebugSaveToFile('LocalAPI', 'vlcSzuffle', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - vlcSzuffle');
         }
     }
 }

@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Admin Panel - localapi</title>
-        <link rel="stylesheet" href="../style.css">
+        <link rel="stylesheet" href="../css/style.css">
     </head>
     <body>
         <div class="center">
@@ -65,6 +65,19 @@
                     </td>
                 </tr>
                 <tr>
+                    <th>Szuffle (VLC)</th>
+                    <td>
+                        <label>
+                            <input type="radio" name="shuffle" value="on" id="shuffleOn" onchange="performAction('/action/vlcSzuffle', { state: 'true' })">
+                            ON
+                        </label>
+                        <label>
+                            <input type="radio" name="shuffle" value="off" id="shuffleOff" onchange="performAction('/action/vlcSzuffle', { state: 'false' })">
+                            OFF
+                        </label>
+                    </td>
+                </tr>
+                <tr>
                     <th colspan="2"><hr /></th>
                 </tr>
                 <tr>
@@ -93,12 +106,13 @@
             <br/>
             <a href="/stats"><img src="/images/stats.gif" alt="stats"/></a>
             <a href="/dash"><img width="100px" src="/images/cd.gif" alt="cd"/></a>
+            <a href="/votes"><img src="/images/votesong.gif" alt="vote"/></a>
             <br/>
             <br/>
             <img src="../images/ie_exploder.gif" alt="norton"/>
             <img src="../images/norton.gif" alt="norton"/>
             <img src="../images/linux_powered.gif" alt="norton"/>
         </div>
-        <script src="../admin.js"></script>
+        <script src="../js/admin.js"></script>
     </body>
 </html>

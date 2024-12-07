@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pl">
+    <head>
+        <meta charset="UTF-8">
+        <title>Votes Panel - localapi</title>
+        <link rel="stylesheet" href="../css/style.css">
+        <link rel="stylesheet" href="../css/music.css">
+    </head>
+    <body>
+    <div class="center">
+        <h1>Votes panel</h1>
+        <h2><span class="skew">localapi</span></h2>
+        <img src="../images/construction.gif" alt="konstrukcja"/>
+    </div>
+    <div class="center main">
+        <h1>Lista Głosów</h1>
+        <table id="votesTable" style="background: blue;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tytuł</th>
+                    <th>Wykonawca</th>
+                    <th>Czas trwania</th>
+                    <th>Akcja</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            <tr>
+                <td colspan="3" class="center">
+                    <button onclick="reset()">Reset</button>
+                    <button onclick="save()">Zapisz</button>
+                </td>
+                <td colspan="2" class="center">
+                    Data: <span id="date">h</span>
+                </td>
+            </tr>
+        </table>
+        <div>
+            <h2>Override!</h2>
+            <table id="" style="background: red;">
+                <thead>
+                    <tr>
+                        <th colspan="2">Akcja</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+                <tr>
+                    <td class="center">
+                        <span>Pobieranie na dzień:</span>
+                    </td>
+                    <td class="center">
+                        <input type="date" id="dateInput" placeholder="1970-01-01" maxlength="10" min="2024-11-08" required/>
+                        <button onclick="performAction('/votes/downloadVotes', { date: document.getElementById('dateInput').value })">OK</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="center">
+                        <span>Dodanie wpisu:</span>
+                    </td>
+                    <td class="center">
+                        <input type="search" id="downloadUri" placeholder="https://open.spotify.com/track/..." required/>
+                        <button onclick="performAction('/votes/add', { uri: document.getElementById('downloadUri').value })">OK</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="center">
+                        <span>Pobieranie - override:</span>
+                    </td>
+                    <td class="center">
+                        <button onclick="performAction('/votes/download')">OK</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="center">
+                        <span>Usuwanie mp3:</span>
+                    </td>
+                    <td class="center">
+                        <button onclick="performAction('/votes/delmp3')">OK</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <br/>
+        <p>Info: przy reset lub usuń trza zapisz, aby zapisało</p>
+        <p>Info²: przy pobieraniu na dzień trza odświeżyć stronę po "ok"</p>
+        <br/>
+        <iframe name="res" class="res" id="res"></iframe>
+        <br/>
+        <a href="/dash"><img width="100px" src="/images/cd.gif" alt="cd"/></a>
+        <a href="/admin"><img src="/images/admin.gif" alt="admin"/></a>
+        <br/>
+        <br/>
+        <img src="../images/ie_exploder.gif" alt="norton"/>
+        <img src="../images/norton.gif" alt="norton"/>
+        <img src="../images/linux_powered.gif" alt="norton"/>
+    </div>
+    <script src="../js/votes.js"></script>
+    <script src="../js/admin.js"></script>
+    </body>
+</html>

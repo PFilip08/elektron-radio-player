@@ -5,7 +5,10 @@ import {logger} from "./Logger.js";
 import {DebugSaveToFile} from './DebugMode.js';
 import {parseFile} from 'music-metadata';
 import VLC from 'vlc-client';
-import {uint8ArrayToBase64} from 'uint8array-extras';
+import {uint8ArrayToBase64} from './Other.js';
+import {szuffle} from "../api/controllers/actions.controller.js";
+
+const vlc = `cvlc -I http --http-host 127.0.0.1 --http-port ${process.env.VLC_PORT || 4212} --http-password ${process.env.VLC_PASSWORD} --one-instance`;
 
 function getPlaylistName(id) {
     logger('verbose', `Pobieranie nazwy playlisty o ID: ${parseInt(id)}`, 'getPlaylistName');
@@ -17,6 +20,8 @@ function getPlaylistName(id) {
         case 4: return 'ROCK';
         case 5: return 'Soundtracki';
         case 6: return 'Specjalna';
+        case 7: return 'Playlista do krojenia kotleta';
+        case 22: return 'Taborety i kotlety';
         default: return id;
     }
 }
@@ -25,8 +30,8 @@ async function getPlayingSong() {
         const timeout = new Promise((_, reject) => 
             setTimeout(() => reject(
                 logger('verbose', 'Czas wykonania funkcji przekroczony!', 'getPlayingSong'),
-                new Error('Czas wykonania funkcji przekroczony'
-                )), 4000)
+                new Error('Czas wykonania funkcji przekroczony')
+            ), 4000)
         );
         const vlcOperation = (async () => {
             const vlc = new VLC.Client({
@@ -111,7 +116,7 @@ function playMusic(filename) {
     logger('verbose', `Plik istnieje! Granie pliku muzycznego...`, 'playMusic');
     const buffer = path.resolve(`./mp3/${filename}.mp3`);
 
-    exec(`cvlc -I http --http-host 127.0.0.1 --http-port ${process.env.VLC_PORT || 4212} --http-password ${process.env.VLC_PASSWORD} --one-instance --play-and-exit ${buffer}`);
+    exec(`${vlc} --play-and-exit ${buffer}`);
     logger('task','--------Play Music--------', 'playMusic');
     logger('task','Muzyka gra...', 'playMusic');
     logger('task',`Gra aktualnie: ${buffer}`, 'playMusic');
@@ -134,7 +139,7 @@ function playOnDemand(filename) {
             logger('verbose',`Stacktrace został zrzucony do /debug`,'playOnDemand');
         }
     }
-    exec(`cvlc -I http --http-host 127.0.0.1 --http-port ${process.env.VLC_PORT || 4212} --http-password ${process.env.VLC_PASSWORD} --one-instance --loop ${buffer}`);
+    exec(`${vlc} --loop ${buffer}`);
     logger('task','--------Play Music (On Demand Mode)--------', 'playOnDemand');
     logger('task','Muzyka gra...', 'playOnDemand');
     logger('task',`Gra aktualnie: ${buffer}`, 'playOnDemand');
@@ -142,16 +147,19 @@ function playOnDemand(filename) {
 }
 
 function playPlaylist(playlistID) {
+    let z,random = '';
+    if (szuffle === 'true') {z = '-Z';random = ' - random';}
+    else {z = ''; random = '';}
     logger('verbose', `Odtwarzanie playlisty o ID: ${playlistID}`, 'playPlaylist');
     logger('verbose', `Sprawdzanie czy folder o podanym ID istnieje...`, 'playPlaylist');
     if(!fs.existsSync(`./mp3/${playlistID}/`)) return logger('error','Brak playlisty o podanym numerze!!', 'playPlaylist');
     logger('verbose', `Folder istnieje! Granie playlisty...`, 'playPlaylist');
     const buffer = path.normalize(`./mp3/${playlistID}/`);
-    exec(`cvlc -I http --http-host 127.0.0.1 --http-port ${process.env.VLC_PORT || 4212} --http-password ${process.env.VLC_PASSWORD} --one-instance -Z --play-and-exit ${buffer}`);
-    logger('task','--------Play Playlist - random--------', 'playPlaylist');
+    exec(`${vlc} ${z} --play-and-exit ${buffer}`);
+    logger('task',`--------Play Playlist${random}--------`, 'playPlaylist');
     logger('task','Playlista gra...', 'playPlaylist');
     logger('task',`Gra aktualnie playlista: ${getPlaylistName(playlistID)}`, 'playPlaylist');
-    logger('task','--------Play Playlist - random--------', 'playPlaylist');
+    logger('task',`--------Play Playlist${random}--------`, 'playPlaylist');
 }
 
 function killPlayer() {
@@ -170,4 +178,30 @@ function killPlayerForce() {
     logger('task','--------Kill Player FORCE--------', 'killPlayerForce');
 }
 
-export { playMusic, killPlayer, playPlaylist, playOnDemand, playlistSongQuery, playlistListQuery, getPlaylistName, getPlayingSong, killPlayerForce};
+async function pausePlayer() {
+    logger('verbose', `Pauzowanie plajera...`, 'pausePlayer');
+    const vlc = new VLC.Client({
+        ip: '127.0.0.1',
+        port: Number(process.env.VLC_PORT) || 4212,
+        password: process.env.VLC_PASSWORD
+    });
+    await vlc.pause();
+    logger('task','--------Pause Player--------', 'pausePlayer');
+    logger('task','Plajer zapałzowany', 'pausePlayer');
+    logger('task','--------Pause Player--------', 'pausePlayer');
+}
+
+async function playPlayer() {
+    logger('verbose', `Plejowanie plajera...`, 'playPlayer');
+    const vlc = new VLC.Client({
+        ip: '127.0.0.1',
+        port: Number(process.env.VLC_PORT) || 4212,
+        password: process.env.VLC_PASSWORD
+    });
+    await vlc.play();
+    logger('task','--------Pause Player--------', 'playPlayer');
+    logger('task','Plajer zplejowany', 'playPlayer');
+    logger('task','--------Pause Player--------', 'playPlayer');
+}
+
+export { playMusic, killPlayer, playPlaylist, playOnDemand, playlistSongQuery, playlistListQuery, getPlaylistName, getPlayingSong, killPlayerForce, pausePlayer, playPlayer};

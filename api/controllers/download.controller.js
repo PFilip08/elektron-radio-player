@@ -40,7 +40,7 @@ export async function downloadAndPlay(req, res) {
         scheduleKillTask(killTime);
         const urlParts = uri.split('?')[0].split("/");
         let filename = sterylizator(trackInfo.name);
-        if (urlParts[3] === 'track') filename = sterylizator(trackInfo.artists.join('-')+'_'+trackInfo.name);
+        if (urlParts[3] === 'track' || urlParts[3] === 'watch') filename = sterylizator(trackInfo.artists.join('-')+'_'+trackInfo.name);
         schedule.scheduleJob(startTime, function () {
             playOnDemand(filename);
             logger('log', `On Demand: ${trackInfo.name}`,'massSchedule');

@@ -107,7 +107,7 @@
 }
 
 .panic {
-    background: url("https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Felectro24.pl%2Fuserdata%2Fpublic%2Fgfx%2F56506%2Fedcbc8d04e0ab5da77698987a9d3.jpg");
+    background: url('/images/panic.jpg');
     background-size: contain;
     width: 200px;
     height: 100px;
