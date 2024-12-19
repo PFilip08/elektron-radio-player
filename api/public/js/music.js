@@ -1,4 +1,5 @@
 function kastracja(input) {
+    if (!input) return '';
     return input
         .toLowerCase()
         .split(' ').join('_')
@@ -129,7 +130,8 @@ async function replaceData() {
                         // console.log("--------------------------------")
                         if (kastracja(playlist.playlistSongsName[j].filePath).includes(kastracja(data[0].playingSongName))) {
                             id = i;
-                            if (playlist.playlistSongsName[j].coverData !== 'taboret'){
+                            //console.log(playlist.playlistSongsName[j].coverData)
+                            if (playlist.playlistSongsName[j].coverData !== 'taboret' && playlist.playlistSongsName[j].coverData !== undefined){
                                 cover = `data:${playlist.playlistSongsName[j].coverData.format};base64,${playlist.playlistSongsName[j].coverData.data}`;
                             } else {
                                 cover = "../images/taboret.png";
