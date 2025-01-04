@@ -16,9 +16,9 @@
     "colors": "^1.4.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "music-metadata": "^10.6.2",
+    "music-metadata": "^10.6.4",
     "node-schedule": "^2.1.1",
-    "nodemon": "^3.1.7",
+    "nodemon": "^3.1.9",
     "ps-node": "^0.1.6",
     "spotifydl-core": "git+https://github.com/Zaptyp/spotifydl-core",
     "vlc-client": "^1.1.1"

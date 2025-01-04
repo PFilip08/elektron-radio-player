@@ -67,9 +67,9 @@ async function playlistSongQuery(playlistID) {
             const metadata = await parseFile(filePath);
             const title = metadata.common.title || path.basename(filePath, path.extname(filePath));
             const artist = metadata.common.artist || 'Nieznany Artysta';
-            const cover = metadata.common.picture || 'taboret';
+            const cover = metadata.common.picture || "taboret";
             let coverData;
-            if (cover === "taboret") coverData = cover;
+            if (cover === "taboret" || cover === "undefined") coverData = cover;
             else { cover[0].data=(uint8ArrayToBase64(cover[0].data)); coverData = cover[0]; }
             return { title, artist, coverData, filePath };
         } catch (error) {
@@ -78,7 +78,7 @@ async function playlistSongQuery(playlistID) {
                 DebugSaveToFile('MusicPlayer', 'queryPlaylistSongQuery', 'catched_error', error);
                 logger('verbose',`Stacktrace został zrzucony do /debug`,'queryPlaylistSongQuery');    
             }
-            return { title: path.basename(filePath, path.extname(filePath)), artist: 'Nieznany Artysta' };
+            return { title: path.basename(filePath, path.extname(filePath)), artist: 'Nieznany Artysta', filePath};
         }
     };
 
