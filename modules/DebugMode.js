@@ -42,6 +42,14 @@ function DebugSaveToFile(moduleName, functionName, fileName, data) {
         logger('verbose', colors.red(`Brak danych do zapisania. Wywołanie z funkcji ${functionName}`), 'DebugSaveToFile');
         return;
     }
+    if (data === null) {
+        logger('verbose', colors.red(`Brak danych do zapisania! Data jest NULL!!!. Wywołanie z funkcji ${functionName}`), 'DebugSaveToFile');
+        return;
+    }
+    if (data === '') {
+        logger('verbose', colors.red(`Brak danych do zapisania! Pusty String!. Wywołanie z funkcji ${functionName}`), 'DebugSaveToFile');
+        return;
+    }
     if (data.stack) {
         dataType = 'STACK';
         logger('verbose', colors.red(`Zapisywane dane to stacktrace errora z funkcji ${functionName}`), 'DebugSaveToFile');
