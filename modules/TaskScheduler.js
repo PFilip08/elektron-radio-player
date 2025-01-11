@@ -89,6 +89,7 @@ async function checkScheduleTime(timeEnd, timeStart, rule, breakNumber) {
     return true;
 }
 
+let downloaded = false, emptyVotes = false;
 async function massSchedule() {
     logger('verbose', 'Rozpoczęto masowe planowanie zadań...', 'massSchedule');
     logger('verbose', 'Zatrzymywanie wszystkich zadań', 'massSchedule');
@@ -110,7 +111,8 @@ async function massSchedule() {
     const currentPlaylist = data.currentPlaylistId;
 
     // pobieranie
-    let downloaded = false, emptyVotes = false;
+    downloaded = false;
+    emptyVotes = false;
     async function downloadVotes() {
         logger('verbose', 'Pobieranie danych z getVotesData', 'massSchedule');
         const data = await getVotesData();
