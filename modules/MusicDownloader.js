@@ -10,42 +10,46 @@ import os from "os";
 import axios from "axios";
 import {exec} from "child_process";
 
-async function downloader(url, votes) { //TODO: Rewrite downloader
+async function downloader(url, votes) {
     const urlParts = url.split('?')[0].split("/");
+    const type = urlParts[3];
     logger('verbose', `Wynik splita: ${urlParts}`, 'downloader');
     logger('verbose', `Wykryto: ${urlParts[3]}`, 'downloader');
-    if (urlParts[3] === 'track') {
-        logger('log', 'Wykryto piosenkę', 'downloader');
-        return downloadSong(url, votes);
-    } else if (votes) {
-        if (url.includes('youtube.com/watch?v=')) {
-            logger('log', 'Wykryto link YT', 'downloader');
-            return downloadYT(url, votes);
-        }
+
+    switch (type) {
+        case 'track':
+            logger('log', 'Wykryto piosenkę', 'downloader');
+            return downloadSong(url, votes);
+        case 'album':
+            logger('log', 'Wykryto playlistę', 'downloader');
+            return downloadAlbum(url);
+        case 'playlist':
+            logger('log', 'Wykryto playlistę', 'downloader');
+            return downloadPlaylist(url);
+        default:
+            return handleDefaultCase(url, votes);
+    }
+}
+
+function handleDefaultCase(url, votes) {
+    logger('log', 'Sprawdzam czy to link YT', 'downloader');
+    if (url.includes('youtube.com/watch?v=')) {
+        logger('log', 'Wykryto link YT', 'downloader');
+        return downloadYT(url, votes);
+    }
+    if (votes) {
         logger('verbose', 'Wykryto próbę pobrania nieautoryzowanego typu linku w głosach!', 'downloader');
         logger('warn', 'Coś przeciekło', 'downloader');
         url='https://open.spotify.com/track/5Wrl4uc9SjC8ZnAimiMtys'; // No przekorny los, bo przeciekło
         return downloadSong(url, votes);
-    } else if (urlParts[3] === 'album') {
-        logger('log', 'Wykryto album', 'downloader');
-        return downloadAlbum(url);
-    } else if (urlParts[3] === 'playlist') {
-        logger('log', 'Wykryto playlistę', 'downloader');
-        return downloadPlaylist(url);
-    } else {
-        logger('warn', 'Nie wykryto typu linku Spotify!', 'downloader');
-        logger('log', 'Sprawdzam czy to link YT', 'downloader');
-        if (url.includes('youtube.com/watch?v=')) {
-            logger('log', 'Wykryto link YT', 'downloader');
-            return downloadYT(url);
-        }
-        logger('warn', 'Nie wykryto typu linku!', 'downloader');
-        if (global.debugmode === true) {
-            DebugSaveToFile('MusicDownloader', 'downloader', 'catched_link', url);
-            logger('verbose', `Zapisano link do debug/`, 'downloader');
-        }
-        return 'Nie wykryto typu';
     }
+    // logger('warn', 'Nie wykryto typu linku Spotify!', 'downloader');
+    logger('warn', 'Nie wykryto typu linku!', 'downloader');
+    if (global.debugmode === true) {
+        DebugSaveToFile('MusicDownloader', 'downloader', 'catched_link', url);
+        logger('verbose', `Zapisano link do debug/`, 'downloader');
+    }
+    return 'Nie wykryto typu';
 }
 
 async function downloadSong(url, votes) {
