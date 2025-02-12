@@ -10,7 +10,7 @@ import os from "os";
 import axios from "axios";
 import {exec} from "child_process";
 
-async function downloader(url, votes) {
+async function downloader(url, votes) { //TODO: Rewrite downloader
     const urlParts = url.split('?')[0].split("/");
     logger('verbose', `Wynik splita: ${urlParts}`, 'downloader');
     logger('verbose', `Wykryto: ${urlParts[3]}`, 'downloader');
@@ -18,6 +18,10 @@ async function downloader(url, votes) {
         logger('log', 'Wykryto piosenkę', 'downloader');
         return downloadSong(url, votes);
     } else if (votes) {
+        if (url.includes('youtube.com/watch?v=')) {
+            logger('log', 'Wykryto link YT', 'downloader');
+            return downloadYT(url, votes);
+        }
         logger('verbose', 'Wykryto próbę pobrania nieautoryzowanego typu linku w głosach!', 'downloader');
         logger('warn', 'Coś przeciekło', 'downloader');
         url='https://open.spotify.com/track/5Wrl4uc9SjC8ZnAimiMtys'; // No przekorny los, bo przeciekło
@@ -29,12 +33,12 @@ async function downloader(url, votes) {
         logger('log', 'Wykryto playlistę', 'downloader');
         return downloadPlaylist(url);
     } else {
-        /*logger('warn', 'Nie wykryto typu linku Spotify!', 'downloader');
+        logger('warn', 'Nie wykryto typu linku Spotify!', 'downloader');
         logger('log', 'Sprawdzam czy to link YT', 'downloader');
         if (url.includes('youtube.com/watch?v=')) {
             logger('log', 'Wykryto link YT', 'downloader');
             return downloadYT(url);
-        }*/
+        }
         logger('warn', 'Nie wykryto typu linku!', 'downloader');
         if (global.debugmode === true) {
             DebugSaveToFile('MusicDownloader', 'downloader', 'catched_link', url);
@@ -194,7 +198,7 @@ async function getTrackInfo(url) {
         }
     }
 }
-async function downloadYT(url) {
+async function downloadYT(url, votes) {
     try {
         const song = await ytdl.getBasicInfo(url);
         const description = song.videoDetails.description.toLowerCase();
@@ -215,13 +219,16 @@ async function downloadYT(url) {
         }
 
         const file = sterylizator(song.videoDetails.author.name+' - '+song.videoDetails.title);
-        const filePath = `./mp3/onDemand/${file}.mp3`;
+        let filePath = `./mp3/onDemand/${file}.mp3`;
+        if (votes) filePath = `./mp3/7/${file}.mp3`;
         if (fs.existsSync(filePath)) return logger('warn', `Plik istnieje!`, 'downloadYT');
         
         const stream = ytdl(url, { filter: 'audioonly', quality: 'highestaudio' });
 
         const tempFilePath = path.resolve(`${os.tmpdir()}/${file}.webm`);
-        const outputFilePath = path.resolve(`./mp3/onDemand/${file}.mp3`);
+        let outputFilePath = path.resolve(`./mp3/onDemand/${file}.mp3`);
+        if (votes) outputFilePath = path.resolve(`./mp3/7/${file}.mp3`);
+        // console.log(votes, outputFilePath, filePath);
         
         const tempFileStream = fs.createWriteStream(tempFilePath);
         stream.pipe(tempFileStream);
