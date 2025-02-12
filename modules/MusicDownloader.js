@@ -26,17 +26,15 @@ async function downloader(url, votes) {
         case 'playlist':
             logger('log', 'Wykryto playlistę', 'downloader');
             return downloadPlaylist(url);
+        case 'watch':
+            logger('log', 'Wykryto link YT', 'downloader');
+            return downloadYT(url, votes);
         default:
             return handleDefaultCase(url, votes);
     }
 }
 
 function handleDefaultCase(url, votes) {
-    logger('log', 'Sprawdzam czy to link YT', 'downloader');
-    if (url.includes('youtube.com/watch?v=')) {
-        logger('log', 'Wykryto link YT', 'downloader');
-        return downloadYT(url, votes);
-    }
     if (votes) {
         logger('verbose', 'Wykryto próbę pobrania nieautoryzowanego typu linku w głosach!', 'downloader');
         logger('warn', 'Coś przeciekło', 'downloader');
