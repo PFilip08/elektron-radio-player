@@ -170,7 +170,7 @@ async function getTrackInfo(url) {
     const urlParts = url.split("/");
     logger('verbose', `Wynik splita: ${urlParts}`, 'getTrackInfo');
     logger('verbose', `Wykryto: ${urlParts[3]}`, 'getTrackInfo');
-    /*if (url.includes("youtube.com/watch?v=")) {
+    if (url.includes("youtube.com/watch?v=")) {
         logger('log', 'Wykryto link YT', 'getTrackInfo');
         const taboret = await ytdl.getBasicInfo(url);
         const trackInfo = {
@@ -178,7 +178,7 @@ async function getTrackInfo(url) {
             artists: [taboret.videoDetails.author.name + "_-" || "Unknown Artist"],
         };
         return trackInfo;
-    }*/
+    }
     if (urlParts[3] === 'album') {
         logger('log', 'Wykryto album', 'getTrackInfo');
         return await spotify.getAlbum(url);
