@@ -36,16 +36,16 @@ async function downloader(url, votes) {
 
 function handleDefaultCase(url, votes) {
     if (votes) {
-        logger('verbose', 'Wykryto próbę pobrania nieautoryzowanego typu linku w głosach!', 'downloader');
-        logger('warn', 'Coś przeciekło', 'downloader');
+        logger('verbose', 'Wykryto próbę pobrania nieautoryzowanego typu linku w głosach!', 'handleDefaultCase');
+        logger('warn', 'Coś przeciekło', 'handleDefaultCase');
         url='https://open.spotify.com/track/5Wrl4uc9SjC8ZnAimiMtys'; // No przekorny los, bo przeciekło
         return downloadSong(url, votes);
     }
     // logger('warn', 'Nie wykryto typu linku Spotify!', 'downloader');
-    logger('warn', 'Nie wykryto typu linku!', 'downloader');
+    logger('warn', 'Nie wykryto typu linku!', 'handleDefaultCase');
     if (global.debugmode === true) {
-        DebugSaveToFile('MusicDownloader', 'downloader', 'catched_link', url);
-        logger('verbose', `Zapisano link do debug/`, 'downloader');
+        DebugSaveToFile('MusicDownloader', 'handleDefaultCase', 'catched_link', url);
+        logger('verbose', `Zapisano link do debug/`, 'handleDefaultCase');
     }
     return 'Nie wykryto typu';
 }
