@@ -29,10 +29,13 @@ export async function downloadSong(req, res) {
 export async function downloadAndPlay(req, res) {
     try {
         const uri = req.query.uri;
+        const downloadStatus = await downloader(uri);
         // const time = req.query.time;
         logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - downloadAndPlay');
         if (!uri) return res.status(400).send('Nie podano linku!');
-        if (await downloader(uri) === 'Nie wykryto typu') return res.status(500).send('Nie można wykryć typu linku Spotify!');
+        if (downloadStatus === 'Nie wykryto typu') return res.status(500).send('Nie można wykryć typu linku Spotify!');
+        if (downloadStatus === 'Nie można pobrać bo to jest film') return res.status(500).send('Nie można pobrać z YT bo to jest film a nie muzyka!');
+        if (downloadStatus === 'Nie można pobrać bo nie wykryto słów kluczowych w opisie') return res.status(500).send('Nie można pobrać z YT bo nie wykryto słów kluczowych w opisie!');
         // await downloader(uri);
         const startTime = new Date(Date.now() + 3000);
         const killTime = new Date(Date.now() + 2000);

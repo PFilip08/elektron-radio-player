@@ -211,12 +211,12 @@ async function downloadYT(url, votes) {
             if (musicKeywords.some(keyword => title.includes(keyword) || description.includes(keyword))) {
                 if (song.videoDetails.lengthSeconds > 600) {
                     logger('warn', `To jest film, nie piosenka, bo jest zbyt długa!`, 'downloadYT');
-                    return;
+                    return 'Nie można pobrać bo to jest film';
                 }
                 logger('log', `Wykryto, że to piosenka z kategorii Entertainment!`, 'downloadYT');
             } else {
                 logger('warn', `Nie wykryto słów kluczowych aby rozpoznać, czy jest to piosenka!`, 'downloadYT');
-                return;
+                return 'Nie można pobrać bo nie wykryto słów kluczowych w opisie';
             }
         }
 
