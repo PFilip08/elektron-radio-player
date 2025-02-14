@@ -15,7 +15,7 @@ async function downloader(url, votes) {
     const type = urlParts[3];
     logger('verbose', `Wynik splita: ${urlParts}`, 'downloader');
     logger('verbose', `Wykryto: ${urlParts[3]}`, 'downloader');
-
+    //Ty tak marudzisz na temat mp3gain że nima z YT a jak masz przypadek playlisty i albumu to już nie trzeba mp3gaina? xD
     switch (type) {
         case 'track':
             logger('log', 'Wykryto piosenkę', 'downloader');
@@ -297,6 +297,21 @@ async function downloadYT(url, votes) {
                     logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadYT');
                 }
                 reject();
+            }
+        });
+        logger('log', `Normalizacja dźwięku w pliku ${outputFilePath} przy użyciu mp3gain...`, 'downloadYT');
+        exec(`mp3gain -r -c ${filePath}`, (error, stdout, stderr) => {
+            logger('verbose', "\n"+ stdout, 'downloadYT')
+            if (global.debugmode === true) {
+                DebugSaveToFile('MusicDownloader', 'downloadYT', 'mp3gain_output', stdout);
+                logger('verbose', `Zapisano do debug/`, 'downloadYT');
+            }
+            if (error) {
+                logger('error', `Błąd podczas próby normalizacji dźwięku przy użyciu mp3gain: ${error.message}`, 'downloadYT');
+                if (global.debugmode === true) {
+                    DebugSaveToFile('MusicDownloader', 'downloadYT', 'mp3gain_error', error);
+                    logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadYT');
+                }
             }
         });
         return logger('log', 'Pobrano :>', 'downloadYT');
