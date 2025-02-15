@@ -39,12 +39,12 @@ async function sortData() {
             mappedDays[mappedDay] = day[i];
         }
     }
-    // const today = new Date().toLocaleString('en-US', { weekday: 'short' });
-    const today = 'Fri';
+    const today = new Date().toLocaleString('en-US', { weekday: 'short' });
+    // const today = 'Fri';
     const ruleNumber = data.timeRules.applyRule[today] || 0;
     if (ruleNumber === 0) {
         // console.log(`Dziś (${today}) nie obowiązuje żadna reguła.`);
-        return { today, ruleNumber };
+        return { today, ruleNumber, currentPlaylist };
     }
 
     const timeRules = data.timeRules.rules[ruleNumber] || [];
