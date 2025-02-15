@@ -67,19 +67,30 @@ async function downloadSong(url, votes) {
             const song = await spotify.downloadTrack(url);
             fs.writeFileSync(`./mp3/7/${file}.mp3`, song);
             logger('verbose', 'Normalizacja dźwięku przy użyciu mp3gain...', 'downloadSong');
-            exec(`mp3gain -r -c ./mp3/7/${file}.mp3`, (error, stdout, stderr) => {
-                logger('verbose', "\n"+ stdout, 'downloadSong')
-                if (global.debugmode === true) {
-                    DebugSaveToFile('MusicDownloader', 'downloadSong', 'mp3gain', stdout);
-                    logger('verbose', `Zapisano do debug/`, 'downloadSong');
-                }
-            });
+            await new Promise((resolve, reject) => {
+                exec(`mp3gain -r -c ./mp3/7/${file}.mp3`, (error, stdout, stderr) => {
+                    logger('verbose', "\n"+ stdout, 'downloadSong')
+                    if (global.debugmode === true) {
+                        DebugSaveToFile('MusicDownloader', 'downloadSong', 'mp3gain_output', stdout);
+                        logger('verbose', `Zapisano do debug/`, 'downloadSong');
+                    }
+                    if (error) {
+                        logger('error', `Błąd podczas próby normalizacji dźwięku przy użyciu mp3gain: ${error.message}`, 'downloadSong');
+                        if (global.debugmode === true) {
+                            DebugSaveToFile('MusicDownloader', 'downloadSong', 'mp3gain_error', error);
+                            logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadSong');
+                        }
+                        reject(error);
+                    }
+                    resolve(stdout);
+                });
+            })
             return logger('log', 'Pobrano :>', 'downloadSong');
         }
         if (fs.existsSync(`./mp3/onDemand/${file}.mp3`)) return logger('warn', `Plik istnieje!`, 'downloadSong');
         const song = await spotify.downloadTrack(url);
         fs.writeFileSync(`./mp3/onDemand/${file}.mp3`, song);
-        exec(`mp3gain -r -c ./mp3/onDemand/${file}.mp3`, (error, stdout, stderr) => logger('verbose',"\n" + stdout, 'downloadSong'));
+        await new Promise((resolve, reject) => exec(`mp3gain -r -c ./mp3/onDemand/${file}.mp3`, (error, stdout) => (logger('verbose', `\n${stdout}`, 'downloadSong'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadSong', 'mp3gain_output', stdout), logger('verbose', `Zapisano do debug/`, 'downloadSong')), error ? (logger('error', `Błąd podczas próby normalizacji dźwięku przy użyciu mp3gain: ${error.message}`, 'downloadSong'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadSong', 'mp3gain_error', error), logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadSong')), reject(error)) : resolve(stdout))));
         return logger('log', 'Pobrano :>', 'downloadSong');
     } catch (e) {
         logger('error', "Błąd w trakcie wykonywania funkcji downloadSong", 'downloadSong');
@@ -116,7 +127,7 @@ async function downloadPlaylist(url) {
                 continue;
             }
             fs.writeFileSync(`./mp3/onDemand/${dir}/${file}.mp3`, playlist[i]);
-            exec(`mp3gain -r -c ./mp3/onDemand/${dir}/${file}.mp3`, (error, stdout, stderr) => logger('verbose',"\n" + stdout, 'downloadPlaylist'));
+            await new Promise((resolve, reject) => exec(`mp3gain -r -c ./mp3/onDemand/${dir}/${file}.mp3`, (error, stdout) => (logger('verbose', `\n${stdout}`, 'downloadPlaylist'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadPlaylist', 'mp3gain_output', stdout), logger('verbose', `Zapisano do debug/`, 'downloadPlaylist')), error ? (logger('error', `Błąd podczas próby normalizacji dźwięku przy użyciu mp3gain: ${error.message}`, 'downloadPlaylist'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadPlaylist', 'mp3gain_error', error), logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadPlaylist')), reject(error)) : resolve(stdout))));
         }
     } catch (e) {
         logger('error', "Błąd w trakcie wykonywania funkcji downloadPlaylist", 'downloadPlaylist');
@@ -153,7 +164,7 @@ async function downloadAlbum(url) {
                 continue;
             }
             fs.writeFileSync(`./mp3/onDemand/${dir}/${file}.mp3`, album[i]);
-            exec(`mp3gain -r -c ./mp3/onDemand/${dir}/${file}.mp3`, (error, stdout, stderr) => logger('verbose',"\n" + stdout, 'downloadAlbum'));
+            await new Promise((resolve, reject) => exec(`mp3gain -r -c ./mp3/onDemand/${dir}/${file}.mp3`, (error, stdout) => (logger('verbose', `\n${stdout}`, 'downloadAlbum'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadAlbum', 'mp3gain_output', stdout), logger('verbose', `Zapisano do debug/`, 'downloadAlbum')), error ? (logger('error', `Błąd podczas próby normalizacji dźwięku przy użyciu mp3gain: ${error.message}`, 'downloadAlbum'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadAlbum', 'mp3gain_error', error), logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadAlbum')), reject(error)) : resolve(stdout))));
         }
     } catch (e) {
         logger('error', "Błąd w trakcie wykonywania funkcji downloadAlbum", 'downloadAlbum');
