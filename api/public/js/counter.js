@@ -160,4 +160,4 @@ async function checkCounterUpdate() {
 
 replaceCounterData().then(r => r);
 setInterval(replaceCounterData, 1000);
-setInterval(checkCounterUpdate, 2000);
+setInterval(checkCounterUpdate, 3600000);
