@@ -15,7 +15,7 @@ async function downloader(url, votes) {
     const type = urlParts[3];
     logger('verbose', `Wynik splita: ${urlParts}`, 'downloader');
     logger('verbose', `Wykryto: ${urlParts[3]}`, 'downloader');
-    //Ty tak marudzisz na temat mp3gain że nima z YT a jak masz przypadek playlisty i albumu to już nie trzeba mp3gaina? xD
+    // możliwe
     switch (type) {
         case 'track':
             logger('log', 'Wykryto piosenkę', 'downloader');
@@ -116,6 +116,7 @@ async function downloadPlaylist(url) {
                 continue;
             }
             fs.writeFileSync(`./mp3/onDemand/${dir}/${file}.mp3`, playlist[i]);
+            exec(`mp3gain -r -c ./mp3/onDemand/${dir}/${file}.mp3`, (error, stdout, stderr) => logger('verbose',"\n" + stdout, 'downloadPlaylist'));
         }
     } catch (e) {
         logger('error', "Błąd w trakcie wykonywania funkcji downloadPlaylist", 'downloadPlaylist');
@@ -152,6 +153,7 @@ async function downloadAlbum(url) {
                 continue;
             }
             fs.writeFileSync(`./mp3/onDemand/${dir}/${file}.mp3`, album[i]);
+            exec(`mp3gain -r -c ./mp3/onDemand/${dir}/${file}.mp3`, (error, stdout, stderr) => logger('verbose',"\n" + stdout, 'downloadAlbum'));
         }
     } catch (e) {
         logger('error', "Błąd w trakcie wykonywania funkcji downloadAlbum", 'downloadAlbum');
