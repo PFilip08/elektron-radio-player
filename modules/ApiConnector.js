@@ -173,4 +173,4 @@ function scheduleUpdate() {
     }
 }
 
-export { getApiData, checkUpdate, scheduleUpdate, messageCounter };
+export { getApiData, checkUpdate, scheduleUpdate, messageCounter, previousData };

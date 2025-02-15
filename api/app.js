@@ -9,6 +9,7 @@ import * as path from "node:path";
 import {fileURLToPath} from 'url';
 import * as os from "node:os";
 import {DebugSaveToFile} from '../modules/DebugMode.js';
+import {previousData} from "../modules/ApiConnector.js";
 const app = express();
 const port = process.env.PORT || 8080;
 
@@ -50,6 +51,10 @@ app.get('/stats/api', function(req, res){
     logger('verbose', 'Dane response dla /stats/api zostały zapisane!', 'LocalAPI - stats/api');
   }
   res.status(200).send(data);
+});
+
+app.get('/stats/data', async function (req, res) {
+  res.status(200).send(previousData);
 });
 
 app.use('/download', downloadRouter);
