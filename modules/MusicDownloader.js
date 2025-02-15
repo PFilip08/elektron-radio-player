@@ -302,19 +302,23 @@ async function downloadYT(url, votes) {
             }
         });
         logger('log', `Normalizacja dźwięku w pliku ${outputFilePath} przy użyciu mp3gain...`, 'downloadYT');
-        exec(`mp3gain -r -c ${filePath}`, (error, stdout, stderr) => {
-            logger('verbose', "\n"+ stdout, 'downloadYT')
-            if (global.debugmode === true) {
-                DebugSaveToFile('MusicDownloader', 'downloadYT', 'mp3gain_output', stdout);
-                logger('verbose', `Zapisano do debug/`, 'downloadYT');
-            }
-            if (error) {
-                logger('error', `Błąd podczas próby normalizacji dźwięku przy użyciu mp3gain: ${error.message}`, 'downloadYT');
+        await new Promise((resolve, reject) => {
+            exec(`mp3gain -r -c ${filePath}`, (error, stdout, stderr) => {
+                logger('verbose', "\n"+ stdout, 'downloadYT')
                 if (global.debugmode === true) {
-                    DebugSaveToFile('MusicDownloader', 'downloadYT', 'mp3gain_error', error);
-                    logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadYT');
+                    DebugSaveToFile('MusicDownloader', 'downloadYT', 'mp3gain_output', stdout);
+                    logger('verbose', `Zapisano do debug/`, 'downloadYT');
                 }
-            }
+                if (error) {
+                    logger('error', `Błąd podczas próby normalizacji dźwięku przy użyciu mp3gain: ${error.message}`, 'downloadYT');
+                    if (global.debugmode === true) {
+                        DebugSaveToFile('MusicDownloader', 'downloadYT', 'mp3gain_error', error);
+                        logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadYT');
+                    }
+                    reject(error);
+                }
+                resolve(stdout);
+            });
         });
         return logger('log', 'Pobrano :>', 'downloadYT');
 
