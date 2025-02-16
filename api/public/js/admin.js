@@ -51,6 +51,15 @@ async function panelSafeguard() {
         () => console.log("Kliknięto Anuluj"),
         );
     }
+    else {
+        showCustomAlert(
+            "Logika się zjebała",
+            "OK",
+            null,
+            () => console.log("Zjebaną logikę zaakceptowano"),
+            () => console.log("Kliknięto Anuluj"),
+        )
+    }
 }
 
 if(document.getElementById('shuffleOn')) {
