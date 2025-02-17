@@ -137,10 +137,10 @@ async function replaceCounterData() {
     // console.log(data);
     if(data.data === 'taboret') return counterDiv.innerHTML = 'Radio off';
     counterDiv.innerHTML = `
-    Główna playlista: ${data.data.currentPlaylist}<br/>
-    Dziś jest ${data.today}.<br/>
-    ${timeToNextRule}
-    ${data.currentRule ? data.currentRule.playlist ? `<br/>Playlista: ${data.currentRule.playlist}` : '' : ''}<br/>
+    <span class="playlist">Główna playlista: ${data.data.currentPlaylist}</span>
+    <span class="day">Dziś jest <span class="day2">${data.today}</span>.</span>
+    <span class="rule">${timeToNextRule}</span>
+    ${data.currentRule ? data.currentRule.playlist ? `<span>Playlista: ${data.currentRule.playlist}</span>` : '' : ''}
     `;
 }
 
@@ -158,5 +158,5 @@ async function checkCounterUpdate() {
 
 
 replaceCounterData().then(r => r);
-setInterval(replaceCounterData, 1000);
+// setInterval(replaceCounterData, 1000);
 setInterval(checkCounterUpdate, 900000);
