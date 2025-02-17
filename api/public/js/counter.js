@@ -136,7 +136,7 @@ async function replaceCounterData() {
         data.currentRule = null;
     }
     // console.log(data);
-
+    if(data.data === 'taboret') return counterDiv.innerHTML = 'Radio off';
     counterDiv.innerHTML = `
     Główna playlista: ${data.data.currentPlaylist}<br/>
     Dziś jest ${data.today}.<br/>
