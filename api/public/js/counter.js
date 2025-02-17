@@ -129,7 +129,6 @@ function parseTime(timeString) {
 
 async function replaceCounterData() {
     const data = await todayData();
-    let playlistId;
     let timeToNextRule = data.timeToNextRule;
     if (data.timeToNextRule === 'taboret') {
         timeToNextRule = 'Brak danych';
