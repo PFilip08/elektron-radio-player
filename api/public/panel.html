@@ -13,6 +13,7 @@
             <img src="../images/construction.gif" alt="konstrukcja"/>
             <h1 style="color: red;">DO NOT RELEASE THIS TOOL TO CUSTOMER!</h1>
             <div class="center counter" id="counter"></div>
+            <div class="center blink" style="color: darkred; font-size: xx-large;" id="safeguard"></div>
         </div>
         <div class="center main">
             <table>
@@ -30,14 +31,14 @@
                     <th>Odtwarzanie pliku</th>
                     <td>
                         <input type="search" id="playFile" placeholder="song" required/>
-                        <button onclick="performAction('/action/play', { file: document.getElementById('playFile').value })">OK</button>
+                        <button onclick="panelSafeguard('/action/play', { file: document.getElementById('playFile').value })">OK</button>
                     </td>
                 </tr>
                 <tr>
                     <th>Odtwarzanie playlisty</th>
                     <td>
                         <input type="search" id="playPlaylist" placeholder="1" required/>
-                        <button onclick="performAction('/action/playPlaylist', { id: document.getElementById('playPlaylist').value })">OK</button>
+                        <button onclick="panelSafeguard('/action/playPlaylist', { id: document.getElementById('playPlaylist').value })">OK</button>
                     </td>
                 </tr>
                 <tr></tr>
@@ -45,14 +46,14 @@
                     <th>Pobieranie muzyki</th>
                     <td>
                         <input type="search" id="downloadUri" placeholder="https://open.spotify.com/track/..." required/>
-                        <button onclick="performAction('/download', { uri: document.getElementById('downloadUri').value })">OK</button>
+                        <button onclick="panelSafeguard('/download', { uri: document.getElementById('downloadUri').value })">OK</button>
                     </td>
                 </tr>
                 <tr>
                     <th>Pobieranie muzyki - override</th>
                     <td>
                         <input type="search" id="downloadUriOverride" placeholder="https://open.spotify.com/track/..." required/>
-                        <button onclick="performAction('/download/override', { uri: document.getElementById('downloadUriOverride').value })">OK</button>
+                        <button onclick="panelSafeguard('/download/override', { uri: document.getElementById('downloadUriOverride').value })">OK</button>
                     </td>
                 <tr>
                     <th>Czyszczenie cache</th>
@@ -85,7 +86,7 @@
                 <tr>
                     <th>Wzmacniacz</th>
                     <td>
-                        <button onclick="performAction('/power/wzmak', { action: 'on' })">ON</button>
+                        <button onclick="panelSafeguard('/power/wzmak', { action: 'on' })">ON</button>
                         <button onclick="performAction('/power/wzmak', { action: 'off' })">OFF</button>
                     </td>
                 </tr>
