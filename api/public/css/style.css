@@ -283,7 +283,7 @@ input[type="submit"]:hover, td button:hover {
     align-items: center;
 }
 .alert-box {
-    background: white;
+    background: #161516;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
@@ -307,3 +307,13 @@ button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+.blink {
+    animation: blinker 1.5s step-start infinite;
+  }
+  
+  @keyframes blinker {
+    50% {
+      opacity: 0;
+    }
+  }
