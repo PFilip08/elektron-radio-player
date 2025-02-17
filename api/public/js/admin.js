@@ -43,15 +43,15 @@ async function panelSafeguard(endpoint, params = {}) {
         performAction(endpoint, params);
         return;
     }
-    if (!endpoint) {
-        return;
-    }
     if (localStorage.getItem("safeguardOverride") === "true") {
         if (safeguardWarn.querySelector('p')) {
             safeguardWarn.removeChild(safeguardWarn.querySelector('p'));
             fetch('/stats/confident?type=safeguarde', { method: 'POST' });
             return;
         }
+    }
+    if (!endpoint) {
+        return;
     }
     const warningText = `<div class="blink" style="color: red; font-size: xx-large;">OSTRZEŻENIE! OSTRZEŻENIE!</div>`
     if (tocos2.data.today === 'Sat' || tocos2.data.today === 'Sun') {
