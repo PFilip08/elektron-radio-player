@@ -44,7 +44,7 @@ export async function queryPlaylist(req, res) {
         if (playlistName.includes('onDemand')) {
             playlistName = 'Playlista na żądanie - ' + playlistName.replace('onDemand/', '').replace(/_/g, ' ');
         }
-        if (playlistName !== id && playlistName !== 'nicość' || playlistName.includes('onDemand')) {
+        if (playlistName !== id && playlistName !== 'nicość' || playlistName.includes('onDemand') || playlistName.includes('7')) {
             const playlistSongsName = await playlistSongQuery(id);
             const playlistResponse = {
                 playlistName: playlistName,
