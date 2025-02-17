@@ -61,28 +61,28 @@ app.post('/stats/confident', async function (req, res) {
   const logType = req.query.type;
   switch (logType) {
     case 'safeguardd':
-      logger('warn', `UWAGA! WYŁĄCZONO SAFEGUARD!!! EKonfident nie będzie rejestrował prób puszczenia muzyki!!! Request od ${req.hostname} o useragencie ${req.get('User-Agent')}`, 'LocalAPI - EKonfident');
+      logger('warn', colors.red(`UWAGA! WYŁĄCZONO SAFEGUARD!!! EKonfident nie będzie rejestrował prób puszczenia muzyki!!! Request od ${req.hostname} o useragencie ${req.get('User-Agent')}`), 'LocalAPI - EKonfident');
       break;
     case 'safeguarde':
       logger('log', `UWAGA! WŁĄCZONO SAFEGUARD!!! EKonfident będzie ponownie rejestrował próby puszczenia muzyki!!! Request od ${req.hostname} o useragencie ${req.get('User-Agent')}`, 'LocalAPI - EKonfident');
       break;
     case 'weekend':
-      logger('warn', `UWAGA! Puszczono muzykę w WEEKEND!!! Request od ${req.hostname} o useragencie ${req.get('User-Agent')}`, 'LocalAPI - EKonfident');
+      logger('warn', colors.red(`UWAGA! Puszczono muzykę w WEEKEND!!! Request od ${req.hostname} o useragencie ${req.get('User-Agent')}`), 'LocalAPI - EKonfident');
       break;
     case 'weekenda':
-      logger('log', `UWAGA! Próba puszczenia muzyki w WEEKEND!!! Request od ${req.hostname} o useragencie ${req.get('User-Agent')}`, 'LocalAPI - EKonfident');
+      logger('log', colors.yellow(`UWAGA! Próba puszczenia muzyki w WEEKEND!!! Request od ${req.hostname} o useragencie ${req.get('User-Agent')}`), 'LocalAPI - EKonfident');
       break;
     case 'lesson':
-      logger('warn', `UWAGA! Puszczono muzykę w trakcie LEKCJI!!! MOŻLIWE SĄ POWAŻNE KONSEKWENCJĘ DLA RADIA!!! Request od ${req.hostname} o useragencie ${req.get('User-Agent')}`, 'LocalAPI - EKonfident');
+      logger('warn', colors.red(`UWAGA! Puszczono muzykę w trakcie LEKCJI!!! MOŻLIWE SĄ POWAŻNE KONSEKWENCJĘ DLA RADIA!!! Request od ${req.hostname} o useragencie ${req.get('User-Agent')}`), 'LocalAPI - EKonfident');
       break;
     case 'lessona':
-      logger('log', `UWAGA! Próba puszczenia muzyki w trakcie LEKCJI!!! Request od ${req.hostname} o useragencie ${req.get('User-Agent')}`, 'LocalAPI - EKonfident');
+      logger('log', colors.red(`UWAGA! Próba puszczenia muzyki w trakcie LEKCJI!!! Request od ${req.hostname} o useragencie ${req.get('User-Agent')}`), 'LocalAPI - EKonfident');
       break;
     case 'hebel':
-      logger('warn', `UWAGA! Próba puszczenie muzyki gdy zarządzono CAŁKOWITY ZAKAZ PUSZCZANIA MUZYKI!!! Request od ${req.hostname} o useragencie ${req.get('User-Agent')}`, 'LocalAPI - EKonfident');
+      logger('warn', colors.yellow(`UWAGA! Próba puszczenie muzyki gdy zarządzono CAŁKOWITY ZAKAZ PUSZCZANIA MUZYKI!!! Request od ${req.hostname} o useragencie ${req.get('User-Agent')}`), 'LocalAPI - EKonfident');
       break;
     case 'after':
-      logger('warn', `UWAGA! Próba puszczenia muzyki po godzinach pracy radia! Request od ${req.hostname} o useragencie ${req.get('User-Agent')}`, 'LocalAPI - EKonfident');
+      logger('warn', colors.yellow(`UWAGA! Próba puszczenia muzyki po godzinach pracy radia! Request od ${req.hostname} o useragencie ${req.get('User-Agent')}`), 'LocalAPI - EKonfident');
       break;
     case 'logicfail':
       logger('error', colors.yellow(`UWAGA! Logika safeguarda się posypała! Request od ${req.hostname} o useragencie ${req.get('User-Agent')}`), 'LocalAPI - EKonfident');
