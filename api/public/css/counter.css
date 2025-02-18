@@ -29,3 +29,11 @@
     font-weight: bold;
     color: orangered;
 }
+
+.counter .off {
+    color: transparent;
+    background: linear-gradient(45deg, #ff7e5f, #feb47b);
+    -webkit-background-clip: text;
+    background-clip: text;
+    font-size: 1.4em;
+}
