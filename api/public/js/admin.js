@@ -29,13 +29,17 @@ function toggleSafeguard() {
 async function panelSafeguard(endpoint, params = {}) {
     let tocos2 = await todayData();
     const safeguardWarn = document.getElementById('safeguard');
+    const safeguardWarnButton = document.getElementById('safeguard-button');
     if (localStorage.getItem("safeguardOverride") === "false") {
         console.warn('OSTRZEŻENIE! OSTRZEŻENIE!\nZabezpieczenie panelu jest wyłączone!!!');
         if (!endpoint) {
             if (!safeguardWarn.querySelector('p')) {
                 const p = document.createElement('p');
+                const button = document.createElement('button');
                 p.innerHTML = `OSTRZEŻENIE! OSTRZEŻENIE!<br>Zabezpieczenie panelu jest wyłączone!!!`;
                 safeguardWarn.appendChild(p);
+                button.innerHTML = `<button onclick="toggleSafeguard()">WŁĄCZ ZABEZPIECZENIE PANELU</button>`;
+                safeguardWarnButton.appendChild(button);
                 fetch('/stats/confident?type=safeguardd', { method: 'POST' });
                 return;
             }
@@ -46,6 +50,7 @@ async function panelSafeguard(endpoint, params = {}) {
     if (localStorage.getItem("safeguardOverride") === "true") {
         if (safeguardWarn.querySelector('p')) {
             safeguardWarn.removeChild(safeguardWarn.querySelector('p'));
+            safeguardWarnButton.removeChild(safeguardWarnButton.querySelector('button'));
             fetch('/stats/confident?type=safeguarde', { method: 'POST' });
             return;
         }
@@ -68,6 +73,7 @@ async function panelSafeguard(endpoint, params = {}) {
         return;
     }
     if ((tocos2.data.today === 'Mon' || tocos2.data.today === 'Tue' || tocos2.data.today === 'Wed' || tocos2.data.today === 'Thu' || tocos2.data.today === 'Fri')) {
+        console.log("Weszło w dzień roboczy");
         if (tocos2.timeToNextRule.includes("Przerwa")) {
             showCustomAlert(
                 `${warningText}\nAKTUALNIE TRWA LEKCJA!!!\nPuszczenie muzyki w tym momencie może spowodować problemy u Dyrekcji Szkoły i skargi do Opiekuna SU!!!\n PRÓBA ZOSTAŁA JUŻ ZAREJESTROWANA!\nPUSZCZENIE MUZYKI WYKONUJESZ NA WŁASNĄ ODPOWIEDZIALNOŚĆ!!!\n Czy na pewno chcesz kontynuować?`,
@@ -80,7 +86,8 @@ async function panelSafeguard(endpoint, params = {}) {
             () => fetch('/stats/confident?type=lessona', { method: 'POST' }),
             );
             return;
-        } if (tocos2.timeToNextRule === 'taboret') {
+        } 
+        if (tocos2.timeToNextRule === 'taboret') {
             showCustomAlert(
                 `${warningText}\nPRÓBA PUSZCZENIA MUZYKI W RADIU PO GODZINACH PRACY RADIA!!!\n BLOKADA PANELU ZOSTAŁA ZAINICJOWANA!!!\nA PRÓBA ZOSTAŁA ZAREJESTROWANA!`,
                 "OK",
@@ -88,6 +95,11 @@ async function panelSafeguard(endpoint, params = {}) {
                 () => fetch('/stats/confident?type=after', { method: 'POST' }),
                 null,
             );
+            return;
+        }
+        if (tocos2.timeToNextRule.includes("Lekcja") && tocos2.currentRule.end) {
+            console.log("Warunek safeguarda: prawidłowy");
+            performAction(endpoint, params);
             return;
         }
     }
@@ -108,7 +120,7 @@ async function panelSafeguard(endpoint, params = {}) {
             null,
             () => fetch('/stats/confident?type=logicfail', { method: 'POST' }),
             null,
-            0,
+            1,
         )
         return;
     }
