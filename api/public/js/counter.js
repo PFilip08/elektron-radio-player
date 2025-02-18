@@ -100,17 +100,22 @@ async function todayData() {
                 timeToNextRule = `Lekcja za: ${time}`;
                 if (whole < 0) timeToNextRule = 'taboret';
                 break;
-            } else if (!currentRule || rule.start > currentRule.start && rule.start) {
+            } else if (rule.start && whole > 0) {
                 currentRule = rule;
                 timeToNextRule = `Przerwa za: ${time}`;
-                if (whole < 0) timeToNextRule = 'taboret';
-            }
+                break;
+            } else if (whole < 0) timeToNextRule = 'taboret';
+
+            // console.log(`Reguła: ${rule.start} - ${rule.end}, czas do reguły: ${time}`);
+            // console.log(`Czy jesteśmy w regule: ${isInRule}`);
+            // console.log(currentRule);
+            // console.log(rule);
         }
     } else timeToNextRule = 'taboret';
 
     if (currentRule) {
-        const ruleStart = currentRule.start;
-        const ruleEnd = currentRule.end;
+        // const ruleStart = currentRule.start;
+        // const ruleEnd = currentRule.end;
         // console.log(`Dziś (${today}) najbliższa reguła zaczyna się o ${ruleStart} i kończy o ${ruleEnd}`);
         // console.log(timeToNextRule);
         return { today, timeToNextRule, data, currentRule };
