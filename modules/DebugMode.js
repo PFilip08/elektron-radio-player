@@ -24,11 +24,19 @@ async function DebugStarter() {
     logger('verbose', 'Następujące ustawienia są załadowane:', 'DebugStarter');
     logger('verbose', `  - VERBOSE: ${process.env.VERBOSE}`, 'DebugStarter');
     logger('verbose', `  - WWW: ${process.env.WWW}`, 'DebugStarter');
+    logger('verbose', `  - KILL_AT_STARTUP: ${process.env.KILL_AT_STARTUP}`, 'DebugStarter');
+    if (process.env.URI === undefined) {
+        logger('verbose', colors.red('Nie znaleziono zmiennej środowiskowej o nazwie URI! Player nie będzie bez tego funkcjonował!'), 'DebugStarter');
+    }
+    logger('verbose', `  - URI: ${process.env.URI}`, 'DebugStarter');
     if (process.env.SPOTIFY_CLIENT_ID === undefined) {
         logger('verbose', colors.red('Nie znaleziono zmiennej środowiskowej o nazwie SPOTIFY_CLIENT_ID'), 'DebugStarter');
     }
     if (process.env.SPOTIFY_CLIENT_SECRET === undefined) {
         logger('verbose', colors.red('Nie znaleziono zmiennej środowiskowej o nazwie SPOTIFY_CLIENT_SECRET'), 'DebugStarter');
+    }
+    if (process.env.VLC_PASSWORD === undefined) {
+        logger('verbose', colors.red('Nie znaleziono zmiennej środowiskowej o nazwie VLC_PASSWORD'), 'DebugStarter');
     }
 }
 
