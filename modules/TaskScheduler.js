@@ -159,7 +159,8 @@ async function massSchedule() {
                 id = time[mappedDays[l]][i].playlist;
             }
             if (time[mappedDays[l]][i].playlist === 0) {
-                logger('verbose', 'Znaleziono playlistę 0 wpis wyłączony. Kontynuowanie wykonywania pętli...', 'massSchedule');
+                logger('verbose', 'Znaleziono playlistę 0, tylko ubijanie. Kontynuowanie wykonywania pętli...', 'massSchedule');
+                scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`);
                 continue;
             }
             if (!checkedSchedules.has(scheduleKey)) {
