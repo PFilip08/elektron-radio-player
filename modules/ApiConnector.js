@@ -140,10 +140,10 @@ function startInterval(interval) {
 
 function scheduleUpdate() {
     let interval;
-    const intervalOnAir = 3000;
-    const intervalOffAir = 10000;
-    const intervalWeekend = 30000;
-    const intervalVacation = 60000;
+    const intervalOnAir = 10000; // 10 sekund
+    const intervalOffAir = 20000; // 20 sekund
+    const intervalWeekend = 300000; // 5 minut
+    const intervalVacation = 3600000; // 1 godzina
     if (debugIntervalBlock) {
         logger('verbose', 'Sprawdzanie ustawień interwału...', 'scheduleUpdate');
         logger('verbose',` - Praca radiowęzła: ${intervalOnAir / 1000} sekund`,'scheduleUpdate');
