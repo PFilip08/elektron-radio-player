@@ -15,7 +15,7 @@ async function getCounterData() {
 }
 
 async function sortData() {
-    const data = await getCounterData()
+    const data = await getCounterData();
     if (!data.isOn) {
         return 'taboret';
     }
