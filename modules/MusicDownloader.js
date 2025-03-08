@@ -10,42 +10,44 @@ import os from "os";
 import axios from "axios";
 import {exec} from "child_process";
 
-async function downloader(url, votes) { //TODO: Rewrite downloader
+async function downloader(url, votes) {
     const urlParts = url.split('?')[0].split("/");
+    const type = urlParts[3];
     logger('verbose', `Wynik splita: ${urlParts}`, 'downloader');
     logger('verbose', `Wykryto: ${urlParts[3]}`, 'downloader');
-    if (urlParts[3] === 'track') {
-        logger('log', 'Wykryto piosenkę', 'downloader');
-        return downloadSong(url, votes);
-    } else if (votes) {
-        if (url.includes('youtube.com/watch?v=')) {
+    // możliwe
+    switch (type) {
+        case 'track':
+            logger('log', 'Wykryto piosenkę', 'downloader');
+            return downloadSong(url, votes);
+        case 'album':
+            logger('log', 'Wykryto playlistę', 'downloader');
+            return downloadAlbum(url);
+        case 'playlist':
+            logger('log', 'Wykryto playlistę', 'downloader');
+            return downloadPlaylist(url);
+        case 'watch':
             logger('log', 'Wykryto link YT', 'downloader');
             return downloadYT(url, votes);
-        }
-        logger('verbose', 'Wykryto próbę pobrania nieautoryzowanego typu linku w głosach!', 'downloader');
-        logger('warn', 'Coś przeciekło', 'downloader');
+        default:
+            return handleDefaultCase(url, votes);
+    }
+}
+
+function handleDefaultCase(url, votes) {
+    if (votes) {
+        logger('verbose', 'Wykryto próbę pobrania nieautoryzowanego typu linku w głosach!', 'handleDefaultCase');
+        logger('warn', 'Coś przeciekło', 'handleDefaultCase');
         url='https://open.spotify.com/track/5Wrl4uc9SjC8ZnAimiMtys'; // No przekorny los, bo przeciekło
         return downloadSong(url, votes);
-    } else if (urlParts[3] === 'album') {
-        logger('log', 'Wykryto album', 'downloader');
-        return downloadAlbum(url);
-    } else if (urlParts[3] === 'playlist') {
-        logger('log', 'Wykryto playlistę', 'downloader');
-        return downloadPlaylist(url);
-    } else {
-        logger('warn', 'Nie wykryto typu linku Spotify!', 'downloader');
-        logger('log', 'Sprawdzam czy to link YT', 'downloader');
-        if (url.includes('youtube.com/watch?v=')) {
-            logger('log', 'Wykryto link YT', 'downloader');
-            return downloadYT(url);
-        }
-        logger('warn', 'Nie wykryto typu linku!', 'downloader');
-        if (global.debugmode === true) {
-            DebugSaveToFile('MusicDownloader', 'downloader', 'catched_link', url);
-            logger('verbose', `Zapisano link do debug/`, 'downloader');
-        }
-        return 'Nie wykryto typu';
     }
+    // logger('warn', 'Nie wykryto typu linku Spotify!', 'downloader');
+    logger('warn', 'Nie wykryto typu linku!', 'handleDefaultCase');
+    if (global.debugmode === true) {
+        DebugSaveToFile('MusicDownloader', 'handleDefaultCase', 'catched_link', url);
+        logger('verbose', `Zapisano link do debug/`, 'handleDefaultCase');
+    }
+    return 'Nie wykryto typu';
 }
 
 async function downloadSong(url, votes) {
@@ -65,19 +67,30 @@ async function downloadSong(url, votes) {
             const song = await spotify.downloadTrack(url);
             fs.writeFileSync(`./mp3/7/${file}.mp3`, song);
             logger('verbose', 'Normalizacja dźwięku przy użyciu mp3gain...', 'downloadSong');
-            exec(`mp3gain -r -c ./mp3/7/${file}.mp3`, (error, stdout, stderr) => {
-                logger('verbose', "\n"+ stdout, 'downloadSong')
-                if (global.debugmode === true) {
-                    DebugSaveToFile('MusicDownloader', 'downloadSong', 'mp3gain', stdout);
-                    logger('verbose', `Zapisano do debug/`, 'downloadSong');
-                }
-            });
+            await new Promise((resolve, reject) => {
+                exec(`mp3gain -r -c ./mp3/7/${file}.mp3`, (error, stdout, stderr) => {
+                    logger('verbose', "\n"+ stdout, 'downloadSong')
+                    if (global.debugmode === true) {
+                        DebugSaveToFile('MusicDownloader', 'downloadSong', 'mp3gain_output', stdout);
+                        logger('verbose', `Zapisano do debug/`, 'downloadSong');
+                    }
+                    if (error) {
+                        logger('error', `Błąd podczas próby normalizacji dźwięku przy użyciu mp3gain: ${error.message}`, 'downloadSong');
+                        if (global.debugmode === true) {
+                            DebugSaveToFile('MusicDownloader', 'downloadSong', 'mp3gain_error', error);
+                            logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadSong');
+                        }
+                        reject(error);
+                    }
+                    resolve(stdout);
+                });
+            })
             return logger('log', 'Pobrano :>', 'downloadSong');
         }
         if (fs.existsSync(`./mp3/onDemand/${file}.mp3`)) return logger('warn', `Plik istnieje!`, 'downloadSong');
         const song = await spotify.downloadTrack(url);
         fs.writeFileSync(`./mp3/onDemand/${file}.mp3`, song);
-        exec(`mp3gain -r -c ./mp3/onDemand/${file}.mp3`, (error, stdout, stderr) => logger('verbose',"\n" + stdout, 'downloadSong'));
+        await new Promise((resolve, reject) => exec(`mp3gain -r -c ./mp3/onDemand/${file}.mp3`, (error, stdout) => (logger('verbose', `\n${stdout}`, 'downloadSong'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadSong', 'mp3gain_output', stdout), logger('verbose', `Zapisano do debug/`, 'downloadSong')), error ? (logger('error', `Błąd podczas próby normalizacji dźwięku przy użyciu mp3gain: ${error.message}`, 'downloadSong'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadSong', 'mp3gain_error', error), logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadSong')), reject(error)) : resolve(stdout))));
         return logger('log', 'Pobrano :>', 'downloadSong');
     } catch (e) {
         logger('error', "Błąd w trakcie wykonywania funkcji downloadSong", 'downloadSong');
@@ -114,6 +127,7 @@ async function downloadPlaylist(url) {
                 continue;
             }
             fs.writeFileSync(`./mp3/onDemand/${dir}/${file}.mp3`, playlist[i]);
+            await new Promise((resolve, reject) => exec(`mp3gain -r -c ./mp3/onDemand/${dir}/${file}.mp3`, (error, stdout) => (logger('verbose', `\n${stdout}`, 'downloadPlaylist'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadPlaylist', 'mp3gain_output', stdout), logger('verbose', `Zapisano do debug/`, 'downloadPlaylist')), error ? (logger('error', `Błąd podczas próby normalizacji dźwięku przy użyciu mp3gain: ${error.message}`, 'downloadPlaylist'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadPlaylist', 'mp3gain_error', error), logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadPlaylist')), reject(error)) : resolve(stdout))));
         }
     } catch (e) {
         logger('error', "Błąd w trakcie wykonywania funkcji downloadPlaylist", 'downloadPlaylist');
@@ -150,6 +164,7 @@ async function downloadAlbum(url) {
                 continue;
             }
             fs.writeFileSync(`./mp3/onDemand/${dir}/${file}.mp3`, album[i]);
+            await new Promise((resolve, reject) => exec(`mp3gain -r -c ./mp3/onDemand/${dir}/${file}.mp3`, (error, stdout) => (logger('verbose', `\n${stdout}`, 'downloadAlbum'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadAlbum', 'mp3gain_output', stdout), logger('verbose', `Zapisano do debug/`, 'downloadAlbum')), error ? (logger('error', `Błąd podczas próby normalizacji dźwięku przy użyciu mp3gain: ${error.message}`, 'downloadAlbum'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadAlbum', 'mp3gain_error', error), logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadAlbum')), reject(error)) : resolve(stdout))));
         }
     } catch (e) {
         logger('error', "Błąd w trakcie wykonywania funkcji downloadAlbum", 'downloadAlbum');
@@ -209,12 +224,12 @@ async function downloadYT(url, votes) {
             if (musicKeywords.some(keyword => title.includes(keyword) || description.includes(keyword))) {
                 if (song.videoDetails.lengthSeconds > 600) {
                     logger('warn', `To jest film, nie piosenka, bo jest zbyt długa!`, 'downloadYT');
-                    return;
+                    return 'Nie można pobrać bo to jest film';
                 }
                 logger('log', `Wykryto, że to piosenka z kategorii Entertainment!`, 'downloadYT');
             } else {
                 logger('warn', `Nie wykryto słów kluczowych aby rozpoznać, czy jest to piosenka!`, 'downloadYT');
-                return;
+                return 'Nie można pobrać bo nie wykryto słów kluczowych w opisie';
             }
         }
 
@@ -296,6 +311,25 @@ async function downloadYT(url, votes) {
                 }
                 reject();
             }
+        });
+        logger('log', `Normalizacja dźwięku w pliku ${outputFilePath} przy użyciu mp3gain...`, 'downloadYT');
+        await new Promise((resolve, reject) => {
+            exec(`mp3gain -r -c ${filePath}`, (error, stdout, stderr) => {
+                logger('verbose', "\n"+ stdout, 'downloadYT')
+                if (global.debugmode === true) {
+                    DebugSaveToFile('MusicDownloader', 'downloadYT', 'mp3gain_output', stdout);
+                    logger('verbose', `Zapisano do debug/`, 'downloadYT');
+                }
+                if (error) {
+                    logger('error', `Błąd podczas próby normalizacji dźwięku przy użyciu mp3gain: ${error.message}`, 'downloadYT');
+                    if (global.debugmode === true) {
+                        DebugSaveToFile('MusicDownloader', 'downloadYT', 'mp3gain_error', error);
+                        logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadYT');
+                    }
+                    reject(error);
+                }
+                resolve(stdout);
+            });
         });
         return logger('log', 'Pobrano :>', 'downloadYT');
 

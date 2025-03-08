@@ -1,0 +1,39 @@
+.counter {
+    position: absolute;
+    right: 0;
+    top: 0;
+    background: #17191a;
+    padding: 10px 15px;
+    border: #2ed330 2px solid;
+    border-bottom-left-radius: 25px;
+}
+
+.counter span {
+    display: block;
+}
+.counter .playlist {
+    font-size: 1.3em;
+}
+
+.counter .day {
+    font-size: 1.2em;
+}
+
+.counter .day2 {
+    color: teal;
+    display: inline-block;
+}
+
+.counter .rule {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: orangered;
+}
+
+.counter .off {
+    color: transparent;
+    background: linear-gradient(45deg, #ff7e5f, #feb47b);
+    -webkit-background-clip: text;
+    background-clip: text;
+    font-size: 1.4em;
+}

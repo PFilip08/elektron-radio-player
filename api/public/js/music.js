@@ -6,19 +6,32 @@ function kastracja(input) {
         .replace(/[^a-z0-9_\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/g, "");
 }
 
+let cachedPlaylists = null;
+const urlPlaying = '/status/query/playing';
+const urlPlaylists = '/status/query/playlist/list';
 async function getData() {
-    const urlPlaying = '/status/query/playing';
-    const urlPlaylists = '/status/query/playlist/list';
 
     const playing = await fetch(urlPlaying);
-    const playlists = await fetch(urlPlaylists);
+    let playlists;
+
+    if (!cachedPlaylists) {
+        const playlists = await fetch(urlPlaylists);
+        cachedPlaylists = await playlists.json();
+    }
+    playlists = cachedPlaylists;
 
     /*
     data:
     0 - Current playing song
     1 - All playlists
      */
-    return [await playing.json(), await playlists.json()];
+    return [await playing.json(), playlists];
+}
+
+async function checkPlaylistsUpdate() {
+    const playlists = await fetch(urlPlaylists);
+    cachedPlaylists = await playlists.json();
+    console.log('Playlists updated');
 }
 
 async function getSongs(playlista){
@@ -332,3 +345,4 @@ function updateSongName(text) {
 
 replaceData().then(r => r);
 setInterval(replaceData, 5000);
+setInterval(checkPlaylistsUpdate, 3600000);

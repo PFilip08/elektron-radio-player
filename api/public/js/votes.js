@@ -1,5 +1,18 @@
 console.log('Inicjowanie tworzenia trzyfazowego połączenie multibinarnego do cewki komutatora pokrywy bulbulatora');
 
+const spotifyRegex = /^(?:https?:\/\/)?(?:www\.)?(?:open\.spotify\.com|spotify\.com)\/.+$/;
+const youtubeRegex = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|music\.youtube\.com|youtu\.be)\/.+$/;
+
+function getURIType(url) {
+    if (spotifyRegex.test(url)) {
+        return "spotify";
+    } else if (youtubeRegex.test(url)) {
+        return "yt";
+    } else {
+        return "ni ma";
+    }
+}
+
 async function fetchVotes() {
     try {
         const response = await fetch('/votes/get');
@@ -16,8 +29,17 @@ async function fetchVotes() {
         votes.forEach(vote => {
             const row = document.createElement('tr');
             let explicit = String();
+            let service = 'taboret';
             if (vote.uSongs.explicit) {
                 explicit = `<img src="../images/explicit.gif" alt="explicit" width="50px" style="position: absolute; right: 0;"/>`;
+            }
+            if (vote.uSongs.url) {
+                let type = getURIType(vote.uSongs.url);
+                if (type === 'spotify') {
+                    service = `<img src="../images/spotify.png" alt="spotify" width="24px" style="position: absolute; transform: translate(-50%, -50%);"/>`;
+                } else if (type === 'yt') {
+                    service = `<img src="../images/yt.png" alt="youtube" width="26px" style="position: absolute; transform: translate(-50%, -50%);"/>`;
+                }
             }
 
             row.innerHTML = `
@@ -25,6 +47,7 @@ async function fetchVotes() {
         <td style="position: relative;">${vote.uSongs.title+explicit || 'Przekorny Los'}</td>
         <td>${vote.uSongs.artist || 'Akcent'}</td>
         <td>${vote.uSongs.duration || `21:37`}</td>
+        <td>${service}</td>
         <td>
           <button onclick="delVote(${vote.id})">Usuń</button>
         </td>
