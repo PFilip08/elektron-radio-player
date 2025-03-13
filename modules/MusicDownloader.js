@@ -238,7 +238,7 @@ async function downloadYT(url, votes) {
         if (votes) filePath = `./mp3/7/${file}.mp3`;
         if (fs.existsSync(filePath)) return logger('warn', `Plik istnieje!`, 'downloadYT');
         
-        const stream = ytdl(url, { filter: 'audioonly', quality: 'highestaudio' });
+        const stream = ytdl(url, { quality: 'highestaudio' });
 
         const tempFilePath = path.resolve(`${os.tmpdir()}/${file}.webm`);
         let outputFilePath = path.resolve(`./mp3/onDemand/${file}.mp3`);
