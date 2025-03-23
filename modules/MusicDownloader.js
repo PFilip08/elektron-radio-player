@@ -8,7 +8,8 @@ import {DebugSaveToFile} from "./DebugMode.js";
 import os from "os";
 import axios from "axios";
 import {exec} from "child_process";
-import YTDlpWrap from 'yt-dlp-wrap';
+import * as ytdlpwrap from 'yt-dlp-wrap';
+const YTDlpWrap = ytdlpwrap.default.default;
 
 async function downloader(url, votes) {
     const urlParts = url.split('?')[0].split("/");
@@ -239,7 +240,7 @@ async function downloadYT(url, votes) {
         if (votes) filePath = `./mp3/7/${file}.mp3`;
         if (fs.existsSync(filePath)) return logger('warn', `Plik istnieje!`, 'downloadYT');
         
-        stream = ytdlpDown.execStream([url, '-f', 'ba', '-x']);
+        let stream = ytdlpDown.execStream([url, '-f', 'ba', '-x']);
 
         const tempFilePath = path.resolve(`${os.tmpdir()}/${file}.webm`);
         let outputFilePath = path.resolve(`./mp3/onDemand/${file}.mp3`);
