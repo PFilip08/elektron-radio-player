@@ -1,6 +1,5 @@
 import {Spotify} from "spotifydl-core";
 import Ffmpeg from 'fluent-ffmpeg'
-import ytdl from '@distube/ytdl-core';
 import * as fs from "fs";
 import {logger} from "./Logger.js";
 import * as path from "path";
@@ -9,6 +8,7 @@ import {DebugSaveToFile} from "./DebugMode.js";
 import os from "os";
 import axios from "axios";
 import {exec} from "child_process";
+import YTDlpWrap from 'yt-dlp-wrap';
 
 async function downloader(url, votes) {
     const urlParts = url.split('?')[0].split("/");
@@ -215,7 +215,8 @@ async function getTrackInfo(url) {
 }
 async function downloadYT(url, votes) {
     try {
-        const song = await ytdl.getBasicInfo(url);
+        const ytdlpDown = new YTDlpWrap();
+        const song = await ytdlpDown.getBasicInfo(url);
         const description = song.videoDetails.description.toLowerCase();
         const title = song.videoDetails.title.toLowerCase();
         const musicKeywords = ['official music video', 'lyrics', 'audio', 'album', 'song', 'spotify', 'tidal', 'muzyka', 'muzy', 'muza'];
@@ -238,7 +239,7 @@ async function downloadYT(url, votes) {
         if (votes) filePath = `./mp3/7/${file}.mp3`;
         if (fs.existsSync(filePath)) return logger('warn', `Plik istnieje!`, 'downloadYT');
         
-        const stream = ytdl(url, { quality: 'highestaudio' });
+        stream = ytdlpDown.execStream([url, '-f', 'ba', '-x']);
 
         const tempFilePath = path.resolve(`${os.tmpdir()}/${file}.webm`);
         let outputFilePath = path.resolve(`./mp3/onDemand/${file}.mp3`);
