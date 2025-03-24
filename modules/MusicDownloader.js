@@ -8,8 +8,7 @@ import {DebugSaveToFile} from "./DebugMode.js";
 import os from "os";
 import axios from "axios";
 import {exec} from "child_process";
-import * as ytdlpwrap from 'yt-dlp-wrap';
-const YTDlpWrap = ytdlpwrap.default.default;
+import YTDlpWrap from 'yt-dlp-wrap';
 
 async function downloader(url, votes) {
     const urlParts = url.split('?')[0].split("/");
