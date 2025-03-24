@@ -187,7 +187,8 @@ async function getTrackInfo(url) {
     logger('verbose', `Wykryto: ${urlParts[3]}`, 'getTrackInfo');
     if (url.includes("youtube.com/watch?v=")) {
         logger('log', 'Wykryto link YT', 'getTrackInfo');
-        const taboret = await ytdl.getBasicInfo(url);
+        const ytdlp = new YTDlpWrap();
+        const taboret = await ytdlp.getBasicInfo(url);
         const trackInfo = {
             name: taboret.videoDetails.title,
             artists: [taboret.videoDetails.author.name + "_-" || "Unknown Artist"],
@@ -219,7 +220,7 @@ async function downloadYT(url, votes) {
         const song = await ytdlpDown.getBasicInfo(url);
         const description = song.videoDetails.description.toLowerCase();
         const title = song.videoDetails.title.toLowerCase();
-        const musicKeywords = ['official music video', 'lyrics', 'audio', 'album', 'song', 'spotify', 'tidal', 'muzyka', 'muzy', 'muza'];
+        const musicKeywords = ['official music video', 'lyrics', 'audio', 'album', 'song', 'spotify', 'tidal', 'muzyka', 'muzy', 'muza', 'płytę'];
         if (song.videoDetails.category !== 'Music') {
             logger('log', `KATEGORIA ENTERTAINMENT!`, 'downloadYT');
             if (musicKeywords.some(keyword => title.includes(keyword) || description.includes(keyword))) {
