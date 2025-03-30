@@ -38,6 +38,12 @@ async function getApiData() {
                 logger('verbose','Wychodzenie z trybu recovery...','getApiData');
                 logger('log','Przywrócono połączenie z internetem','getApiData');
                 logger('log','Używanie danych z API','getApiData');
+                if (res.data.timeTable[0].currentPlaylistId === 7) {
+                    // to powstało tu dlatego, że po przywróceniu połączenia z internetem losowe playlisty zostawały, a nie z głosów (7)
+                    logger('log', 'Wykryto nieaktualne zadania, wykonywanie funkcji massSchedule()','getApiData');
+                    logger('verbose','Przywracanie zadań...','getApiData');
+                    massSchedule();
+                }
                 messageCounter = false;
             }
             if (res.data.timeTable[0].isOn === false) {
