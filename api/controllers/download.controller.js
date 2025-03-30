@@ -37,18 +37,18 @@ export async function downloadAndPlay(req, res) {
         if (downloadStatus === 'Nie można pobrać bo to jest film') return res.status(500).send('Nie można pobrać z YT bo to jest film a nie muzyka!');
         if (downloadStatus === 'Nie można pobrać bo nie wykryto słów kluczowych w opisie') return res.status(500).send('Nie można pobrać z YT bo nie wykryto słów kluczowych w opisie!');
         // await downloader(uri);
-        const startTime = new Date(Date.now() + 3000);
-        const killTime = new Date(Date.now() + 2000);
         const trackInfo = await getTrackInfo(uri);
-        scheduleKillTask(killTime);
         const urlParts = uri.split('?')[0].split("/");
         let filename = sterylizator(trackInfo.name);
         if (urlParts[3] === 'track' || urlParts[3] === 'watch') filename = sterylizator(trackInfo.artists.join('-')+'_'+trackInfo.name);
+        const startTime = new Date(Date.now() + 1000);
+        const killTime = new Date(Date.now() + 500);
+        scheduleKillTask(killTime);
         schedule.scheduleJob(startTime, function () {
             playOnDemand(filename);
             logger('log', `On Demand: ${trackInfo.name}`,'massSchedule');
         });
-        return res.status(201).send('gut, 3s opóźnienia');
+        return res.status(201).send('gut, 1s opóźnienia');
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby odtworzenia pliku', 'LocalAPI - downloadAndPlay');
         if (global.debugmode === true) {
