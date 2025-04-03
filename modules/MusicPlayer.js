@@ -179,29 +179,45 @@ function killPlayerForce() {
 }
 
 async function pausePlayer() {
-    logger('verbose', `Pauzowanie plajera...`, 'pausePlayer');
-    const vlc = new VLC.Client({
-        ip: '127.0.0.1',
-        port: Number(process.env.VLC_PORT) || 4212,
-        password: process.env.VLC_PASSWORD
-    });
-    await vlc.pause();
-    logger('task','--------Pause Player--------', 'pausePlayer');
-    logger('task','Plajer zapałzowany', 'pausePlayer');
-    logger('task','--------Pause Player--------', 'pausePlayer');
+    try {
+        logger('verbose', `Pauzowanie plajera...`, 'pausePlayer');
+        const vlc = new VLC.Client({
+            ip: '127.0.0.1',
+            port: Number(process.env.VLC_PORT) || 4212,
+            password: process.env.VLC_PASSWORD
+        });
+        await vlc.pause();
+        logger('task','--------Pause Player--------', 'pausePlayer');
+        logger('task','Plajer zapałzowany', 'pausePlayer');
+        logger('task','--------Pause Player--------', 'pausePlayer');
+    } catch (e) {
+        logger('error', `Wystąpił błąd podczas próby pauzowania plejera!`, 'pausePlayer');
+        if (global.debugmode === true) {
+            DebugSaveToFile('MusicPlayer', 'pausePlayer', 'catched_error', e);
+            logger('verbose',`Stacktrace został zrzucony do /debug`,'pausePlayer');
+        }
+    }
 }
 
 async function playPlayer() {
-    logger('verbose', `Plejowanie plajera...`, 'playPlayer');
-    const vlc = new VLC.Client({
-        ip: '127.0.0.1',
-        port: Number(process.env.VLC_PORT) || 4212,
-        password: process.env.VLC_PASSWORD
-    });
-    await vlc.play();
-    logger('task','--------Pause Player--------', 'playPlayer');
-    logger('task','Plajer zplejowany', 'playPlayer');
-    logger('task','--------Pause Player--------', 'playPlayer');
+    try {
+        logger('verbose', `Plejowanie plajera...`, 'playPlayer');
+        const vlc = new VLC.Client({
+            ip: '127.0.0.1',
+            port: Number(process.env.VLC_PORT) || 4212,
+            password: process.env.VLC_PASSWORD
+        });
+        await vlc.play();
+        logger('task', '--------Pause Player--------', 'playPlayer');
+        logger('task', 'Plajer zplejowany', 'playPlayer');
+        logger('task', '--------Pause Player--------', 'playPlayer');
+    } catch (e) {
+        logger('error', `Wystąpił błąd podczas próby plejowania plejera!`, 'playPlayer');
+        if (global.debugmode === true) {
+            DebugSaveToFile('MusicPlayer', 'playPlayer', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do /debug`, 'playPlayer');
+        }
+    }
 }
 
 export { playMusic, killPlayer, playPlaylist, playOnDemand, playlistSongQuery, playlistListQuery, getPlaylistName, getPlayingSong, killPlayerForce, pausePlayer, playPlayer};
