@@ -73,10 +73,10 @@ async function playlistSongQuery(playlistID) {
             else { cover[0].data=(uint8ArrayToBase64(cover[0].data)); coverData = cover[0]; }
             return { title, artist, coverData, filePath };
         } catch (error) {
-            logger('error', `Wystąpił błąd podczas próby odczytania metadanych z pliku ${filePath}`, 'queryPlaylistSongQuery');
+            logger('error', `Wystąpił błąd podczas próby odczytania metadanych z pliku ${filePath}`, 'playlistSongQuery');
             if (global.debugmode === true) {
-                DebugSaveToFile('MusicPlayer', 'queryPlaylistSongQuery', 'catched_error', error);
-                logger('verbose',`Stacktrace został zrzucony do /debug`,'queryPlaylistSongQuery');    
+                DebugSaveToFile('MusicPlayer', 'playlistSongQuery', 'catched_error', error);
+                logger('verbose',`Stacktrace został zrzucony do /debug`,'playlistSongQuery');    
             }
             return { title: path.basename(filePath, path.extname(filePath)), artist: 'Nieznany Artysta', filePath};
         }
