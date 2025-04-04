@@ -1,4 +1,4 @@
-import {Spotify} from "spotifydl-core";
+import {Spotify} from "@zaptyp/spotifydl-core";
 import Ffmpeg from 'fluent-ffmpeg'
 import * as fs from "fs";
 import {logger} from "./Logger.js";
@@ -8,7 +8,7 @@ import {DebugSaveToFile} from "./DebugMode.js";
 import os from "os";
 import axios from "axios";
 import {exec} from "child_process";
-import YTDlpWrap from 'yt-dlp-wrap';
+import YTDlpWrap from 'yt-dlp-core';
 
 async function downloader(url, votes) {
     const urlParts = url.split('?')[0].split("/");
