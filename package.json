@@ -11,16 +11,16 @@
   "author": "PFilip",
   "license": "ISC",
   "dependencies": {
-    "axios": "^1.8.1",
+    "@zaptyp/spotifydl-core": "^0.4.1",
+    "axios": "^1.8.4",
     "colorette": "^2.0.20",
     "colors": "^1.4.0",
     "dotenv": "^16.4.7",
-    "express": "^4.21.2",
-    "music-metadata": "^11.0.0",
+    "express": "^5.1.0",
+    "music-metadata": "^11.0.5",
     "node-schedule": "^2.1.1",
     "nodemon": "^3.1.9",
     "ps-node": "^0.1.6",
-    "spotifydl-core": "git+https://github.com/Zaptyp/spotifydl-core",
     "vlc-client": "^1.1.1"
   },
   "overrides": {
