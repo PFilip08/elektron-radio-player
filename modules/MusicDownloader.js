@@ -220,7 +220,7 @@ async function downloadYT(url, votes) {
         const song = await ytdlpDown.getBasicInfo(url);
         const description = song.videoDetails.description.toLowerCase();
         const title = song.videoDetails.title.toLowerCase();
-        const musicKeywords = ['official music video', 'lyrics', 'audio', 'album', 'song', 'spotify', 'tidal', 'muzyka', 'muzy', 'muza', 'płytę'];
+        const musicKeywords = ['official music video', 'lyrics', 'audio', 'album', 'song', 'spotify', 'tidal', 'muzyka', 'muzy', 'muza', 'płytę', 'feat', 'remastered', 'vevo', 'mix', 'nightcore', 'hardstyle'];
         if (song.videoDetails.category !== 'Music') {
             logger('log', `KATEGORIA ENTERTAINMENT!`, 'downloadYT');
             if (musicKeywords.some(keyword => title.includes(keyword) || description.includes(keyword))) {
