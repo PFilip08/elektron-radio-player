@@ -1,6 +1,5 @@
-import {Spotify} from "spotifydl-core";
+import {Spotify} from "@zaptyp/spotifydl-core";
 import Ffmpeg from 'fluent-ffmpeg'
-import ytdl from '@distube/ytdl-core';
 import * as fs from "fs";
 import {logger} from "./Logger.js";
 import * as path from "path";
@@ -9,6 +8,7 @@ import {DebugSaveToFile} from "./DebugMode.js";
 import os from "os";
 import axios from "axios";
 import {exec} from "child_process";
+import YTDlpWrap from 'yt-dlp-core';
 
 async function downloader(url, votes) {
     const urlParts = url.split('?')[0].split("/");
@@ -187,7 +187,8 @@ async function getTrackInfo(url) {
     logger('verbose', `Wykryto: ${urlParts[3]}`, 'getTrackInfo');
     if (url.includes("youtube.com/watch?v=")) {
         logger('log', 'Wykryto link YT', 'getTrackInfo');
-        const taboret = await ytdl.getBasicInfo(url);
+        const ytdlp = new YTDlpWrap();
+        const taboret = await ytdlp.getBasicInfo(url);
         const trackInfo = {
             name: taboret.videoDetails.title,
             artists: [taboret.videoDetails.author.name + "_-" || "Unknown Artist"],
@@ -215,10 +216,11 @@ async function getTrackInfo(url) {
 }
 async function downloadYT(url, votes) {
     try {
-        const song = await ytdl.getBasicInfo(url);
+        const ytdlpDown = new YTDlpWrap();
+        const song = await ytdlpDown.getBasicInfo(url);
         const description = song.videoDetails.description.toLowerCase();
         const title = song.videoDetails.title.toLowerCase();
-        const musicKeywords = ['official music video', 'lyrics', 'audio', 'album', 'song', 'spotify', 'tidal', 'muzyka', 'muzy', 'muza'];
+        const musicKeywords = ['official music video', 'lyrics', 'audio', 'album', 'song', 'spotify', 'tidal', 'muzyka', 'muzy', 'muza', 'płytę', 'feat', 'remastered', 'vevo', 'mix', 'nightcore', 'hardstyle'];
         if (song.videoDetails.category !== 'Music') {
             logger('log', `KATEGORIA ENTERTAINMENT!`, 'downloadYT');
             if (musicKeywords.some(keyword => title.includes(keyword) || description.includes(keyword))) {
@@ -238,7 +240,7 @@ async function downloadYT(url, votes) {
         if (votes) filePath = `./mp3/7/${file}.mp3`;
         if (fs.existsSync(filePath)) return logger('warn', `Plik istnieje!`, 'downloadYT');
         
-        const stream = ytdl(url, { quality: 'highestaudio' });
+        let stream = ytdlpDown.execStream([url, '-f', 'ba', '-x']);
 
         const tempFilePath = path.resolve(`${os.tmpdir()}/${file}.webm`);
         let outputFilePath = path.resolve(`./mp3/onDemand/${file}.mp3`);
