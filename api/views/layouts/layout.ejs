@@ -1,0 +1,26 @@
+<!-- layouts/lauout.ejs -->
+<!DOCTYPE html>
+<html lang="pl">
+    <head>
+        <meta charset="UTF-8">
+        <title><%= title %> - localapi</title>
+        <link rel="stylesheet" href="../css/style.css">
+        <link rel="stylesheet" href="../css/music.css">
+        <link rel="stylesheet" href="../css/counter.css">
+    </head>
+    <body>
+        <%- include('../partials/header') %>
+        <div class="center main">
+            <%- body %>
+            <% if (!locals.guest) { %>
+            <%- include('../partials/navbar.ejs') -%>
+            <% } %>
+            <br/>
+            <br/>
+            <img src="../images/ie_exploder.gif" alt="norton"/>
+            <img src="../images/norton.gif" alt="norton"/>
+            <img src="../images/linux_powered.gif" alt="norton"/>
+        </div>
+
+    </body>
+</html>

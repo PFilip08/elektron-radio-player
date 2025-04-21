@@ -12,7 +12,10 @@ votesRouter.get('/downloadVotes', downloadVotes);
 votesRouter.get('/download', download);
 votesRouter.get('/delmp3', delmp3);
 votesRouter.get('/', (req, res) => {
-    res.sendFile(__dirname+'/public/votespanel.html');
+    res.render('votespanel', {
+        title: 'Votes panel',
+        welcome: 'Votes panel',
+    });
 });
 
 export default votesRouter;

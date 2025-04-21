@@ -1,0 +1,92 @@
+<!-- adminpanel.ejs -->
+<table>
+    <tr>
+        <th>Akcje</th>
+        <th></th>
+    </tr>
+    <tr>
+        <th>Ubicie playera</th>
+        <td>
+            <button onclick="performAction('/action/kill')">OK</button>
+        </td>
+    </tr>
+    <tr>
+        <th>Odtwarzanie pliku</th>
+        <td>
+            <input type="search" id="playFile" placeholder="song" required/>
+            <button onclick="panelSafeguard('/action/play', { file: document.getElementById('playFile').value })">OK</button>
+        </td>
+    </tr>
+    <tr>
+        <th>Odtwarzanie playlisty</th>
+        <td>
+            <input type="search" id="playPlaylist" placeholder="1" required/>
+            <button onclick="panelSafeguard('/action/playPlaylist', { id: document.getElementById('playPlaylist').value })">OK</button>
+        </td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <th>Pobieranie muzyki</th>
+        <td>
+            <input type="search" id="downloadUri" placeholder="https://open.spotify.com/track/..." required/>
+            <button onclick="panelSafeguard('/download', { uri: document.getElementById('downloadUri').value })">OK</button>
+        </td>
+    </tr>
+    <tr>
+        <th>Pobieranie muzyki - override</th>
+        <td>
+            <input type="search" id="downloadUriOverride" placeholder="https://open.spotify.com/track/..." required/>
+            <button onclick="panelSafeguard('/download/override', { uri: document.getElementById('downloadUriOverride').value })">OK</button>
+        </td>
+    <tr>
+        <th>Czyszczenie cache</th>
+        <td>
+            <input type="search" id="cacheID" placeholder="5" required/>
+            <button onclick="performAction('/status/query/playlist/songs', { id: document.getElementById('cacheID').value, nocache: true })">OK</button>
+        </td>
+    </tr>
+        <th>Czyszczenie cache - wszystko</th>
+        <td>
+            <button onclick="performAction('/status/query/playlist/songs', { cacheclean: true })">tu</button>
+        </td>
+    </tr>
+    <tr>
+        <th>Szuffle (VLC)</th>
+        <td>
+            <label>
+                <input type="radio" name="shuffle" value="on" id="shuffleOn" onchange="performAction('/action/vlcSzuffle', { state: 'true' })">
+                ON
+            </label>
+            <label>
+                <input type="radio" name="shuffle" value="off" id="shuffleOff" onchange="performAction('/action/vlcSzuffle', { state: 'false' })">
+                OFF
+            </label>
+        </td>
+    </tr>
+    <tr>
+        <th colspan="2"><hr /></th>
+    </tr>
+    <tr>
+        <th>Wzmacniacz</th>
+        <td>
+            <button onclick="panelSafeguard('/power/wzmak', { action: 'on' })">ON</button>
+            <button onclick="performAction('/power/wzmak', { action: 'off' })">OFF</button>
+        </td>
+    </tr>
+    <tr>
+        <th>Mixer</th>
+        <td>
+            <button onclick="performAction('/power/mixer', { action: 'on' })">ON</button>
+            <button onclick="performAction('/power/mixer', { action: 'off' })">OFF</button>
+        </td>
+    </tr>
+    <tr>
+        <th>Statystyki</th>
+        <td>
+            <button onclick="window.location.href='/power/stats'">tutaj</button>
+        </td>
+    </tr>
+</table>
+<iframe name="res" class="res" id="res" height="230px"></iframe>
+<script src="../js/admin.js"></script>
+<script src="../js/counter.js"></script>

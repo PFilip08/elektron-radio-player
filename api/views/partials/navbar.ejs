@@ -1,0 +1,17 @@
+<!-- partials/navbar.ejs -->
+<%
+const links = [
+    {href: '/admin', icon: '/images/admin.gif', text: 'admin'},
+    {href: '/stats', icon: '/images/stats.gif', text: 'stats'},
+    {href: '/dash', icon: '/images/cd.gif', text: 'cd', w: 'width=100px'},
+    {href: '/votes', icon: '/images/votesong.gif', text: 'vote'}
+];%>
+<br/>
+<br/>
+<nav class="navbar">
+        <% for (var i = 0; i < links.length; i++) { %>
+                <a href="<%= links[i].href %>">
+                    <img src="<%= links[i].icon %>" <%= links[i].w %> alt="<%= links[i].text %>"/>
+                </a>
+        <% } %>
+</nav>

@@ -11,6 +11,7 @@ import * as os from "node:os";
 import {DebugSaveToFile} from '../modules/DebugMode.js';
 import {previousData} from "../modules/ApiConnector.js";
 import colors from 'colors';
+import expressLayouts from 'express-ejs-layouts';
 const app = express();
 const port = process.env.PORT || 8080;
 
@@ -19,25 +20,44 @@ export const __dirname = path.dirname(__filename);
 
 app.use(express.static(__dirname+'/public'));
 app.use(express.json());
+app.use(expressLayouts);
+app.set('view engine', 'ejs');
+app.set('views', __dirname+'/views/');
+app.set('layout', __dirname+'/views/layouts/layout');
 
 app.get('/', (req, res) => {
   res.status(200).send('Ok');
 })
 
 app.get('/admin', function(req, res){
-  res.sendFile(__dirname+'/public/panel.html');
+  res.render('adminpanel', {
+    title: 'Admin Panel',
+    welcome: 'Witaj na panelu zarządzania elektron-radio-playerem!',
+    layout: 'layouts/admin_layout'
+  });
 });
 
 app.get('/stats', function(req, res){
-  res.sendFile(__dirname+'/public/cpureportpage.html');
+  res.render('stats', {
+    title: 'Stats Panel',
+    welcome: 'Statystyki',
+  });
 });
 
 app.get('/dash', function(req, res){
-  res.sendFile(__dirname+'/public/musicpanel.html');
+  res.render('musicpanel', {
+    title: 'Music Panel',
+    welcome: 'Mjuzik panel',
+    guest: false,
+  });
 });
 
 app.get('/dash2', function(req, res){
-  res.sendFile(__dirname+'/public/guestpanel.html');
+  res.render('musicpanel', {
+    title: 'Music Panel',
+    welcome: 'Mjuzik panel',
+    guest: true,
+  });
 });
 
 app.get('/stats/api', function(req, res){
