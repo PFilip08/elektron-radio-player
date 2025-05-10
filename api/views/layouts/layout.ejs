@@ -12,7 +12,7 @@
         <%- include('../partials/header') %>
         <div class="center main">
             <%- body %>
-            <% if (!locals.guest) { %>
+            <% if (locals.navbar !== false) { %>
             <%- include('../partials/navbar.ejs') -%>
             <% } %>
             <br/>

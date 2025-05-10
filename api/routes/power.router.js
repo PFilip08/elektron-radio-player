@@ -9,7 +9,7 @@ powerRouter.get('/stats', (req, res) => {
     res.render('powerstats', {
         title: 'Power Stats Panel',
         welcome: 'Statystyki prundu',
-        guest: true,
+        navbar: false,
     });
 });
 

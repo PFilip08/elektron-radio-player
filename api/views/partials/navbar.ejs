@@ -10,6 +10,7 @@ const links = [
 <br/>
 <nav class="navbar">
         <% for (var i = 0; i < links.length; i++) { %>
+        <% if (links[i].href === locals.currentPath) continue; %>
                 <a href="<%= links[i].href %>">
                     <img src="<%= links[i].icon %>" <%= links[i].w %> alt="<%= links[i].text %>"/>
                 </a>

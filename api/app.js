@@ -25,6 +25,11 @@ app.set('view engine', 'ejs');
 app.set('views', __dirname+'/views/');
 app.set('layout', __dirname+'/views/layouts/layout');
 
+app.use((req, res, next) => {
+  res.locals.currentPath = req.path;
+  next();
+});
+
 app.get('/', (req, res) => {
   res.status(200).send('Ok');
 })
@@ -57,6 +62,7 @@ app.get('/dash2', function(req, res){
     title: 'Music Panel',
     welcome: 'Mjuzik panel',
     guest: true,
+    navbar: false,
   });
 });
 
