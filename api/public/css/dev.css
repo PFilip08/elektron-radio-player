@@ -1,0 +1,8 @@
+table, th, td {
+    border: 1px outset black;
+    margin: 0 !important;
+}
+
+#tasksTable {
+    background-color: #4b1295;
+}

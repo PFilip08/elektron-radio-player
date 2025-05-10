@@ -1,0 +1,80 @@
+<!-- dev/schedulepanel.ejs -->
+<div>
+    <% if (tasks && tasks.length > 0) { %>
+    <div>
+        <label for="searchInput">Wyszukaj zadanie:</label>
+        <input type="text" id="searchInput" onkeyup="filterTasks()" placeholder="Wpisz nazwę zadania...">
+
+        <label for="commandFilter">Wyszukaj po komendzie:</label>
+        <input type="text" id="commandFilter" onkeyup="filterTasks()" placeholder="Wpisz komendę...">
+
+        <label for="dateFilter">Filtruj według daty:</label>
+        <input type="date" id="dateFilter" onchange="filterTasks()">
+    </div>
+    <table id="tasksTable">
+      <thead>
+        <tr>
+          <th onclick="sortTable(0)">Nazwa zadania</th>
+          <th onclick="sortTable(1)">Data</th>
+          <th onclick="sortTable(2)">Godzina</th>
+          <th>Komenda</th>
+          <th>Zmienne</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% tasks.forEach(task => { %>
+          <tr>
+            <td><%= task.name %></td>
+            <td><%= task.date %></td>
+            <td><%= task.time %></td>
+            <td><%= task.command %></td>
+            <td>
+              <pre><%= JSON.stringify(task.variables, null, 2) %></pre>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+    <% } else { %>
+    <p>Brak zaplanowanych zadań.</p>
+    <% } %>
+</div>
+
+<script>
+  function sortTable(columnIndex) {
+    const table = document.getElementById("tasksTable");
+    const rows = Array.from(table.rows).slice(1); // Pomijamy nagłówki
+    const sortedRows = rows.sort((a, b) => {
+      const cellA = a.cells[columnIndex].innerText;
+      const cellB = b.cells[columnIndex].innerText;
+      return cellA.localeCompare(cellB, undefined, { numeric: true });
+    });
+    const tbody = table.tBodies[0];
+    tbody.innerHTML = "";
+    sortedRows.forEach(row => tbody.appendChild(row));
+  }
+
+  function filterTasks() {
+    const searchInput = document.getElementById("searchInput").value.toLowerCase();
+    const commandFilter = document.getElementById("commandFilter").value.toLowerCase();
+    const dateFilter = document.getElementById("dateFilter").value;
+    const table = document.getElementById("tasksTable");
+    const rows = Array.from(table.rows).slice(1); // Pomijamy nagłówki
+
+    rows.forEach(row => {
+      const taskName = row.cells[0].innerText.toLowerCase();
+      const taskCommand = row.cells[3].innerText.toLowerCase();
+      const taskDate = row.cells[1].innerText;
+
+      const matchesSearch = taskName.includes(searchInput);
+      const matchesCommand = taskCommand.includes(commandFilter);
+      const matchesDate = !dateFilter || taskDate === dateFilter;
+
+      if (matchesSearch && matchesCommand && matchesDate) {
+        row.style.display = "";
+      } else {
+        row.style.display = "none";
+      }
+    });
+  }
+</script>

@@ -25,10 +25,11 @@ function scheduleMusicTask(time, id) {
         return;
     }
     logger('verbose', `ID playlisty: ${id.id}`, 'scheduleMusicTask');
-    schedule.scheduleJob(time, function () {
+    const job = schedule.scheduleJob(time, function () {
         logger('log', 'Granie playlisty nr: '+id.id,'scheduleMusicTask');
         playPlaylist(id.id);
     });
+    job.jobData = { id: id.id };
 }
 
 function scheduleKillTask(time) {
@@ -52,6 +53,7 @@ function scheduleVotes(timeStart, timeEnd, id) {
         if (await checkIfVLCisRunning() && await checkIfVLConVotes()) {
             await playPlayer();
         } else playPlaylist(id);
+        job.jobData = { id: id.id };
     });
     schedule.scheduleJob(timeEnd, function () {
         try {
@@ -59,6 +61,7 @@ function scheduleVotes(timeStart, timeEnd, id) {
         } catch (e) {
             killPlayer();
         }
+        job.jobData = { id: id.id };
     });
 }
 
@@ -215,4 +218,19 @@ async function massSchedule() {
     taskNumber();
 }
 
-export { scheduleMusicTask, scheduleKillTask, massSchedule };
+// dzięki copilot :>
+function getScheduledTasks() {
+    return Object.keys(schedule.scheduledJobs).map(jobName => {
+        const job = schedule.scheduledJobs[jobName];
+        const jobData = job.jobData || {};
+        return {
+            name: jobName,
+            date: job.nextInvocation().toISOString().split('T')[0],
+            time: job.nextInvocation().toISOString().split('T')[1].split('.')[0],
+            command: job.job.toString(),
+            variables: jobData,
+        };
+    });
+}
+
+export { scheduleMusicTask, scheduleKillTask, massSchedule, getScheduledTasks };

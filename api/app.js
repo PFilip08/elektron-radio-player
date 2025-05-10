@@ -12,6 +12,7 @@ import {DebugSaveToFile} from '../modules/DebugMode.js';
 import {previousData} from "../modules/ApiConnector.js";
 import colors from 'colors';
 import expressLayouts from 'express-ejs-layouts';
+import devRouter from "./routes/dev.router.js";
 const app = express();
 const port = process.env.PORT || 8080;
 
@@ -125,6 +126,7 @@ app.use('/action', actionsRouter);
 app.use('/status', statusRouter);
 app.use('/power', powerRouter);
 app.use('/votes', votesRouter);
+app.use('/dev', devRouter);
 
 export default function () {
   app.listen(port, () => {
