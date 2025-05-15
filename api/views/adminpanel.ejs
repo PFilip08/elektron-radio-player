@@ -39,6 +39,8 @@
             <input type="search" id="downloadUriOverride" placeholder="https://open.spotify.com/track/..." required/>
             <button onclick="panelSafeguard('/download/override', { uri: document.getElementById('downloadUriOverride').value })">OK</button>
         </td>
+    </tr>
+    <tr></tr>
     <tr>
         <th>Czyszczenie cache</th>
         <td>
@@ -46,6 +48,7 @@
             <button onclick="performAction('/status/query/playlist/songs', { id: document.getElementById('cacheID').value, nocache: true })">OK</button>
         </td>
     </tr>
+    <tr>
         <th>Czyszczenie cache - wszystko</th>
         <td>
             <button onclick="performAction('/status/query/playlist/songs', { cacheclean: true })">tu</button>
