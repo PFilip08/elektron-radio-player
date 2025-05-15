@@ -1,0 +1,45 @@
+<!-- dev/overridepanel.ejs -->
+<table class="override">
+    <tr>
+        <th>Akcje</th>
+        <th></th>
+    </tr>
+    <tr>
+        <th>Czyszczenie tasków</th>
+        <td>
+            <button onclick="performAction('/dev/action/cleanTasks')">OK</button>
+        </td>
+    </tr>
+    <tr>
+        <th>Reset tasków</th>
+        <td>
+            <button onclick="performAction('/dev/action/resetTasks')">OK</button>
+        </td>
+    </tr>
+    <tr>
+        <th>Manualny task</th>
+        <td>
+            <input type="search" id="addTask" placeholder="taboret" required/>
+            <button onclick="performAction('/dev/action/addTask', { id: document.getElementById('addTask').value })">OK</button>
+        </td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <th colspan="2"><hr /></th>
+    </tr>
+    <tr>
+        <th>devapi</th>
+        <td>
+            <button onclick="performAction('/dev/api', { action: 'on' })">ON</button>
+            <button onclick="performAction('/dev/api', { action: 'off' })">OFF</button>
+            <button onclick="window.location.href='/dev/api'">tutaj</button>
+        </td>
+    </tr>
+    <tr>
+        <th>Restart</th>
+        <td>
+            <button onclick="performAction('/dev/action/restart', { action: 'off' })">OFF</button>
+        </td>
+    </tr>
+</table>
+<%- include('../partials/res.ejs') %>

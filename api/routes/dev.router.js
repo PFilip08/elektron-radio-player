@@ -18,5 +18,12 @@ devRouter.get('/schedules', (req, res) => {
         tasks: tasks,
     });
 });
+devRouter.get('/override', (req, res) => {
+    res.render('dev/overridepanel', {
+        title: 'Override Panel',
+        welcome: 'Override Panel',
+        layout: 'layouts/dev_layout',
+    });
+});
 
 export default devRouter;

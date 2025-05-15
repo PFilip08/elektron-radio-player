@@ -6,3 +6,7 @@ table, th, td {
 #tasksTable {
     background-color: #4b1295;
 }
+
+.override, .override th, .override td {
+    border: none;
+}
