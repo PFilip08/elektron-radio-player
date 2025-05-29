@@ -101,4 +101,12 @@
           }
       });
   }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const dateFilter = document.getElementById('dateFilter');
+    if (dateFilter) {
+        dateFilter.value = new Date().toLocaleDateString('sv-SE');
+      filterTasks();
+    }
+  });
 </script>

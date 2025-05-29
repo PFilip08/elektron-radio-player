@@ -8,8 +8,13 @@
             <label for="commandFilter">Wyszukaj po komendzie:</label>
             <input type="text" id="commandFilter" onkeyup="filterTasks()" placeholder="Wpisz komendę...">
 
-            <label for="dateFilter">Filtruj według daty:</label>
-            <input type="date" id="dateFilter" onchange="filterTasks()">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <label for="dateFilter">Filtruj według daty:</label>
+                <input type="date" id="dateFilter" onchange="filterTasks()">
+                <button onclick="selectToday()">Dziś</button>
+                <button onclick="selectTomorrow()">Jutro</button>
+                <button onclick="clearDateFilter()">Wszystkie</button>
+            </div>
         </div>
         <table id="tasksTable">
             <thead>
@@ -39,3 +44,25 @@
         <p>Brak zaplanowanych zadań.</p>
     <% } %>
 </div>
+
+<script>
+    function selectToday() {
+        const dateFilter = document.getElementById('dateFilter');
+        dateFilter.value = new Date().toLocaleDateString('sv-SE');
+        filterTasks();
+    }
+
+    function selectTomorrow() {
+        const dateFilter = document.getElementById('dateFilter');
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        dateFilter.value = tomorrow.toLocaleDateString('sv-SE');
+        filterTasks();
+    }
+
+    function clearDateFilter() {
+        const dateFilter = document.getElementById('dateFilter');
+        dateFilter.value = '';
+        filterTasks();
+    }
+</script>
