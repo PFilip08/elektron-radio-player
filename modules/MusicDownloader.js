@@ -10,7 +10,7 @@ import axios from "axios";
 import {exec} from "child_process";
 import YTDlpWrap from 'yt-dlp-core';
 
-async function downloader(url, votes) {
+async function downloader(url, votes, path) {
     const urlParts = url.split('?')[0].split("/");
     const type = urlParts[3];
     logger('verbose', `Wynik splita: ${urlParts}`, 'downloader');
@@ -19,16 +19,16 @@ async function downloader(url, votes) {
     switch (type) {
         case 'track':
             logger('log', 'Wykryto piosenkę', 'downloader');
-            return downloadSong(url, votes);
+            return downloadSong(url, votes, path);
         case 'album':
             logger('log', 'Wykryto playlistę', 'downloader');
-            return downloadAlbum(url);
+            return downloadAlbum(url, path);
         case 'playlist':
             logger('log', 'Wykryto playlistę', 'downloader');
-            return downloadPlaylist(url);
+            return downloadPlaylist(url, path);
         case 'watch':
             logger('log', 'Wykryto link YT', 'downloader');
-            return downloadYT(url, votes);
+            return downloadYT(url, votes, path);
         default:
             return handleDefaultCase(url, votes);
     }
@@ -50,13 +50,14 @@ function handleDefaultCase(url, votes) {
     return 'Nie wykryto typu';
 }
 
-async function downloadSong(url, votes) {
+async function downloadSong(url, votes, path2) {
     const spotify = new Spotify({
         clientId: process.env.SPOTIFY_CLIENT_ID,
         clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
     });
 
     try {
+        const path = path2 || `./mp3/onDemand/`;
         const data = await spotify.getTrack(url);
         const file = sterylizator(data.artists.join('-') + '_' + data.name);
         logger('log', `Pobieram: ${data.name + ' by: ' + data.artists.join(', ')}`, 'downloadSong');
@@ -87,10 +88,10 @@ async function downloadSong(url, votes) {
             })
             return logger('log', 'Pobrano :>', 'downloadSong');
         }
-        if (fs.existsSync(`./mp3/onDemand/${file}.mp3`)) return logger('warn', `Plik istnieje!`, 'downloadSong');
+        if (fs.existsSync(`${path}${file}.mp3`)) return logger('warn', `Plik istnieje!`, 'downloadSong');
         const song = await spotify.downloadTrack(url);
-        fs.writeFileSync(`./mp3/onDemand/${file}.mp3`, song);
-        await new Promise((resolve, reject) => exec(`mp3gain -r -c ./mp3/onDemand/${file}.mp3`, (error, stdout) => (logger('verbose', `\n${stdout}`, 'downloadSong'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadSong', 'mp3gain_output', stdout), logger('verbose', `Zapisano do debug/`, 'downloadSong')), error ? (logger('error', `Błąd podczas próby normalizacji dźwięku przy użyciu mp3gain: ${error.message}`, 'downloadSong'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadSong', 'mp3gain_error', error), logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadSong')), reject(error)) : resolve(stdout))));
+        fs.writeFileSync(`${path}${file}.mp3`, song);
+        await new Promise((resolve, reject) => exec(`mp3gain -r -c ${path}${file}.mp3`, (error, stdout) => (logger('verbose', `\n${stdout}`, 'downloadSong'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadSong', 'mp3gain_output', stdout), logger('verbose', `Zapisano do debug/`, 'downloadSong')), error ? (logger('error', `Błąd podczas próby normalizacji dźwięku przy użyciu mp3gain: ${error.message}`, 'downloadSong'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadSong', 'mp3gain_error', error), logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadSong')), reject(error)) : resolve(stdout))));
         return logger('log', 'Pobrano :>', 'downloadSong');
     } catch (e) {
         logger('error', "Błąd w trakcie wykonywania funkcji downloadSong", 'downloadSong');
@@ -102,13 +103,14 @@ async function downloadSong(url, votes) {
     }
 }
 
-async function downloadPlaylist(url) {
+async function downloadPlaylist(url, path2) {
     const spotify = new Spotify({
         clientId: process.env.SPOTIFY_CLIENT_ID,
         clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
     });
 
     try {
+        const path = path2 || `./mp3/onDemand/`;
         const data = await spotify.getPlaylist(url);
         for (let i in data.tracks) {
             let song = await getTrackInfo(data.tracks[i]);
@@ -118,16 +120,16 @@ async function downloadPlaylist(url) {
         for (let i in playlist) {
             let song = await getTrackInfo(data.tracks[i]);
             const dir = sterylizator(data.name);
-            if (!fs.existsSync(`./mp3/onDemand/${dir}`)) {
-                fs.mkdirSync(`./mp3/onDemand/${dir}`);
+            if (!fs.existsSync(`${path}${dir}`)) {
+                fs.mkdirSync(`${path}${dir}`);
             }
             const file = sterylizator(song.artists.join('-') + '_' + song.name);
-            if (fs.existsSync(`./mp3/onDemand/${dir}/${file}.mp3`)) {
+            if (fs.existsSync(`${path}${dir}/${file}.mp3`)) {
                 logger('warn', `${file}.mp3 - Plik istnieje!`, 'downloadPlaylist');
                 continue;
             }
-            fs.writeFileSync(`./mp3/onDemand/${dir}/${file}.mp3`, playlist[i]);
-            await new Promise((resolve, reject) => exec(`mp3gain -r -c ./mp3/onDemand/${dir}/${file}.mp3`, (error, stdout) => (logger('verbose', `\n${stdout}`, 'downloadPlaylist'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadPlaylist', 'mp3gain_output', stdout), logger('verbose', `Zapisano do debug/`, 'downloadPlaylist')), error ? (logger('error', `Błąd podczas próby normalizacji dźwięku przy użyciu mp3gain: ${error.message}`, 'downloadPlaylist'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadPlaylist', 'mp3gain_error', error), logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadPlaylist')), reject(error)) : resolve(stdout))));
+            fs.writeFileSync(`${path}${dir}/${file}.mp3`, playlist[i]);
+            await new Promise((resolve, reject) => exec(`mp3gain -r -c ${path}${dir}/${file}.mp3`, (error, stdout) => (logger('verbose', `\n${stdout}`, 'downloadPlaylist'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadPlaylist', 'mp3gain_output', stdout), logger('verbose', `Zapisano do debug/`, 'downloadPlaylist')), error ? (logger('error', `Błąd podczas próby normalizacji dźwięku przy użyciu mp3gain: ${error.message}`, 'downloadPlaylist'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadPlaylist', 'mp3gain_error', error), logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadPlaylist')), reject(error)) : resolve(stdout))));
         }
     } catch (e) {
         logger('error', "Błąd w trakcie wykonywania funkcji downloadPlaylist", 'downloadPlaylist');
@@ -139,17 +141,18 @@ async function downloadPlaylist(url) {
     }
 }
 
-async function downloadAlbum(url) {
+async function downloadAlbum(url, path2) {
     const spotify = new Spotify({
         clientId: process.env.SPOTIFY_CLIENT_ID,
         clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
     });
 
     try {
+        const path = path2 || `./mp3/onDemand/`;
         const data = await spotify.getAlbum(url);
         const dir = sterylizator(data.name);
-        if (!fs.existsSync(`./mp3/onDemand/${dir}`)) {
-            fs.mkdirSync(`./mp3/onDemand/${dir}`);
+        if (!fs.existsSync(`${path}${dir}`)) {
+            fs.mkdirSync(`${path}${dir}`);
         }
         for (let i in data.tracks) {
             let song = await getTrackInfo(data.tracks[i]);
@@ -159,12 +162,12 @@ async function downloadAlbum(url) {
         for (let i in album) {
             let song = await getTrackInfo(data.tracks[i]);
             const file = sterylizator(song.artists.join('-') + '_' + song.name);
-            if (fs.existsSync(`./mp3/onDemand/${dir}/${file}.mp3`)) {
+            if (fs.existsSync(`${path}${dir}/${file}.mp3`)) {
                 logger('warn', `${file}.mp3 - Plik istnieje!`, 'downloadAlbum');
                 continue;
             }
-            fs.writeFileSync(`./mp3/onDemand/${dir}/${file}.mp3`, album[i]);
-            await new Promise((resolve, reject) => exec(`mp3gain -r -c ./mp3/onDemand/${dir}/${file}.mp3`, (error, stdout) => (logger('verbose', `\n${stdout}`, 'downloadAlbum'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadAlbum', 'mp3gain_output', stdout), logger('verbose', `Zapisano do debug/`, 'downloadAlbum')), error ? (logger('error', `Błąd podczas próby normalizacji dźwięku przy użyciu mp3gain: ${error.message}`, 'downloadAlbum'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadAlbum', 'mp3gain_error', error), logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadAlbum')), reject(error)) : resolve(stdout))));
+            fs.writeFileSync(`${path}${dir}/${file}.mp3`, album[i]);
+            await new Promise((resolve, reject) => exec(`mp3gain -r -c ${path}${dir}/${file}.mp3`, (error, stdout) => (logger('verbose', `\n${stdout}`, 'downloadAlbum'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadAlbum', 'mp3gain_output', stdout), logger('verbose', `Zapisano do debug/`, 'downloadAlbum')), error ? (logger('error', `Błąd podczas próby normalizacji dźwięku przy użyciu mp3gain: ${error.message}`, 'downloadAlbum'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadAlbum', 'mp3gain_error', error), logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadAlbum')), reject(error)) : resolve(stdout))));
         }
     } catch (e) {
         logger('error', "Błąd w trakcie wykonywania funkcji downloadAlbum", 'downloadAlbum');
@@ -214,8 +217,9 @@ async function getTrackInfo(url) {
         }
     }
 }
-async function downloadYT(url, votes) {
+async function downloadYT(url, votes, path2) {
     try {
+        const path = path2 || `./mp3/onDemand/`;
         const ytdlpDown = new YTDlpWrap();
         const song = await ytdlpDown.getBasicInfo(url);
         const description = song.videoDetails.description.toLowerCase();
@@ -236,14 +240,14 @@ async function downloadYT(url, votes) {
         }
 
         const file = sterylizator(song.videoDetails.author.name+' - '+song.videoDetails.title);
-        let filePath = `./mp3/onDemand/${file}.mp3`;
+        let filePath = `${path}${file}.mp3`;
         if (votes) filePath = `./mp3/7/${file}.mp3`;
         if (fs.existsSync(filePath)) return logger('warn', `Plik istnieje!`, 'downloadYT');
         
         let stream = ytdlpDown.execStream([url, '-f', 'ba', '-x']);
 
         const tempFilePath = path.resolve(`${os.tmpdir()}/${file}.webm`);
-        let outputFilePath = path.resolve(`./mp3/onDemand/${file}.mp3`);
+        let outputFilePath = path.resolve(`${path}${file}.mp3`);
         if (votes) outputFilePath = path.resolve(`./mp3/7/${file}.mp3`);
         // console.log(votes, outputFilePath, filePath);
         
@@ -373,4 +377,21 @@ async function autoRemoveFiles() {
     });
 }
 
-export { downloader, downloadPlaylist, downloadAlbum, getTrackInfo, autoRemoveFiles, downloadYT };
+async function removeFiles(path) {
+    if (path.length < 6 && /\/[1-7](\/|$)/.test(path)) return 'dupa';
+    fs.readdir(path, (err, files) => {
+        if (err) return logger('error '+err,'removeFiles');
+        if (files.length === 0) return logger('task','Brak plików do usunięcia.','removeFiles');
+        for (let i in files) {
+            if (fs.lstatSync(path+files[i]).isDirectory()) {
+                logger('task', `Usunięto folder "${files[i]}" wraz z zawartością`, 'removeFiles');
+                fs.rmSync(path+files[i], { recursive: true, force: true })
+                continue;
+            }
+            fs.unlinkSync(path.join('./mp3/onDemand', files[i]));
+            logger('task', `Usunięto ${files[i]}`, 'removeFiles');
+        }
+    });
+}
+
+export { downloader, downloadPlaylist, downloadAlbum, getTrackInfo, autoRemoveFiles, downloadYT, removeFiles };

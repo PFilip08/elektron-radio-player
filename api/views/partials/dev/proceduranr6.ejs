@@ -1,0 +1,22 @@
+<!-- partials/dev/proceduranr6.ejs -->
+<div id="proceduranr6" style="display: none; margin-top: 20px;">
+    <table class="proceduranr6">
+        <tr>
+            <th>Akcje</th>
+            <th></th>
+        </tr>
+        <tr>
+            <th>Pobieranie muzyki - 6</th>
+            <td>
+                <input type="search" id="downloadUri6" placeholder="https://open.spotify.com/track/..." required/>
+                <button onclick="performAction('/download', { uri: document.getElementById('downloadUri6').value, path:'6' })">OK</button>
+            </td>
+        </tr>
+        <tr>
+            <th>Czyszczenie playlisty</th>
+            <td>
+                <button onclick="performAction('/action/delFiles', { path:'6' })">OK</button>
+            </td>
+        </tr>
+    </table>
+</div>

@@ -1,28 +1,10 @@
 <!-- dev/overridepanel.ejs -->
-<table class="override">
+<table class="override clean">
     <tr>
         <th>Akcje</th>
         <th></th>
     </tr>
-    <tr>
-        <th>Czyszczenie tasków</th>
-        <td>
-            <button onclick="performAction('/dev/action/cleanTasks')">OK</button>
-        </td>
-    </tr>
-    <tr>
-        <th>Reset tasków</th>
-        <td>
-            <button onclick="performAction('/dev/action/resetTasks')">OK</button>
-        </td>
-    </tr>
-    <tr>
-        <th>Manualny task</th>
-        <td>
-            <input type="search" id="addTask" placeholder="taboret" required/>
-            <button onclick="performAction('/dev/action/addTask', { id: document.getElementById('addTask').value })">OK</button>
-        </td>
-    </tr>
+
     <tr></tr>
     <tr>
         <th colspan="2"><hr /></th>

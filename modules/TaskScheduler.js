@@ -233,4 +233,4 @@ function getScheduledTasks() {
     });
 }
 
-export { scheduleMusicTask, scheduleKillTask, massSchedule, getScheduledTasks };
+export { scheduleMusicTask, scheduleKillTask, massSchedule, getScheduledTasks, taskNumber };

@@ -7,6 +7,14 @@ table, th, td {
     background-color: #4b1295;
 }
 
-.override, .override th, .override td {
+.clean, .clean th, .clean td {
     border: none;
+}
+
+.schedule {
+    background-color: rgba(54, 54, 54, 0.74);
+}
+
+.proceduranr6 {
+    background-color: #209323;
 }

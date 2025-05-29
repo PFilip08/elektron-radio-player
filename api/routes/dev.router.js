@@ -1,5 +1,6 @@
 import {Router} from 'express';
 import {getScheduledTasks} from "../../modules/TaskScheduler.js";
+import {cleanTasks, resetTasks} from "../controllers/dev.controller.js";
 
 const devRouter = Router();
 devRouter.get('/', (req, res) => {
@@ -25,5 +26,8 @@ devRouter.get('/override', (req, res) => {
         layout: 'layouts/dev_layout',
     });
 });
+
+devRouter.get('/schedules/resetTasks', resetTasks);
+devRouter.get('/schedules/cleanTasks', cleanTasks);
 
 export default devRouter;

@@ -1,80 +1,104 @@
 <!-- dev/schedulepanel.ejs -->
 <div>
-    <% if (tasks && tasks.length > 0) { %>
-    <div>
-        <label for="searchInput">Wyszukaj zadanie:</label>
-        <input type="text" id="searchInput" onkeyup="filterTasks()" placeholder="Wpisz nazwę zadania...">
-
-        <label for="commandFilter">Wyszukaj po komendzie:</label>
-        <input type="text" id="commandFilter" onkeyup="filterTasks()" placeholder="Wpisz komendę...">
-
-        <label for="dateFilter">Filtruj według daty:</label>
-        <input type="date" id="dateFilter" onchange="filterTasks()">
-    </div>
-    <table id="tasksTable">
-      <thead>
+    <table class="schedule">
         <tr>
-          <th onclick="sortTable(0)">Nazwa zadania</th>
-          <th onclick="sortTable(1)">Data</th>
-          <th onclick="sortTable(2)">Godzina</th>
-          <th>Komenda</th>
-          <th>Zmienne</th>
+            <th>Akcje</th>
+            <th></th>
         </tr>
-      </thead>
-      <tbody>
-        <% tasks.forEach(task => { %>
-          <tr>
-            <td><%= task.name %></td>
-            <td><%= task.date %></td>
-            <td><%= task.time %></td>
-            <td><%= task.command %></td>
+        <tr>
+            <th>Zaplanowane zadania</th>
             <td>
-              <pre><%= JSON.stringify(task.variables, null, 2) %></pre>
+                <button id="togglePanelBtn" onclick="togglePanel()">tu</button>
             </td>
-          </tr>
-        <% }); %>
-      </tbody>
+        </tr>
+        <tr>
+            <th>massSchedule clean</th>
+            <td>
+                <button onclick="performAction('/dev/schedules/cleanTasks')">OK</button>
+            </td>
+        </tr>
+        <tr>
+            <th>massSchedule reset</th>
+            <td>
+                <button onclick="performAction('/dev/schedules/resetTasks')">OK</button>
+            </td>
+        </tr>
+        <tr>
+            <th>Manualny task</th>
+            <td>
+                <input type="search" id="addTask" placeholder="taboret" required/>
+                <button onclick="performAction('/dev/schedules/addTask', { id: document.getElementById('addTask').value })">OK</button>
+            </td>
+        </tr>
+        <tr>
+            <th>Procedura nr 6</th>
+            <td>
+                <button onclick="togglePanel6()">
+                    <img src="/images/six.gif" alt="6" width="100px" height="50px"/>
+                </button>
+            </td>
     </table>
-    <% } else { %>
-    <p>Brak zaplanowanych zadań.</p>
-    <% } %>
+    <%- include('../partials/res.ejs') %>
+    <%- include('../partials/dev/proceduranr6.ejs') -%>
+    <%- include('../partials/dev/schedulePanelContent.ejs') -%>
 </div>
 
 <script>
+  function togglePanel() {
+    const panel = document.getElementById('schedulePanelContent');
+    const btn = document.getElementById('togglePanelBtn');
+    if (panel.style.display === 'none') {
+      panel.style.display = '';
+      btn.innerText = 'Zwiń panel';
+    } else {
+      panel.style.display = 'none';
+      btn.innerText = 'Rozwiń panel';
+    }
+  }
+
+  function togglePanel6() {
+      const panel = document.getElementById('proceduranr6');
+      if (panel.style.display === 'none') {
+          panel.style.display = '';
+      } else {
+          panel.style.display = 'none';
+      }
+  }
+
   function sortTable(columnIndex) {
-    const table = document.getElementById("tasksTable");
-    const rows = Array.from(table.rows).slice(1); // Pomijamy nagłówki
-    const sortedRows = rows.sort((a, b) => {
-      const cellA = a.cells[columnIndex].innerText;
-      const cellB = b.cells[columnIndex].innerText;
-      return cellA.localeCompare(cellB, undefined, { numeric: true });
-    });
-    const tbody = table.tBodies[0];
-    tbody.innerHTML = "";
-    sortedRows.forEach(row => tbody.appendChild(row));
+      const table = document.getElementById("tasksTable");
+      const rows = Array.from(table.rows).slice(1); // Pomijamy nagłówki
+      const sortedRows = rows.sort((a, b) => {
+          const cellA = a.cells[columnIndex].innerText;
+          const cellB = b.cells[columnIndex].innerText;
+          return cellA.localeCompare(cellB, undefined, { numeric: true });
+      });
+      const tbody = table.tBodies[0];
+      tbody.innerHTML = "";
+      sortedRows.forEach(row => tbody.appendChild(row));
   }
 
   function filterTasks() {
-    const searchInput = document.getElementById("searchInput").value.toLowerCase();
-    const commandFilter = document.getElementById("commandFilter").value.toLowerCase();
-    const dateFilter = document.getElementById("dateFilter").value;
-    const table = document.getElementById("tasksTable");
-    const rows = Array.from(table.rows).slice(1); // Pomijamy nagłówki
+      const searchInput = document.getElementById("searchInput").value.toLowerCase();
+      const commandFilter = document.getElementById("commandFilter").value.toLowerCase();
+      const dateFilter = document.getElementById("dateFilter").value;
+      const table = document.getElementById("tasksTable");
+      const rows = Array.from(table.rows).slice(1); // Pomijamy nagłówki
 
-    rows.forEach(row => {
-      const taskName = row.cells[0].innerText.toLowerCase();
-      const taskCommand = row.cells[3].innerText.toLowerCase();
-      const taskDate = row.cells[1].innerText;
+      rows.forEach(row => {
+          const taskName = row.cells[0].innerText.toLowerCase();
+          const taskCommand = row.cells[3].innerText.toLowerCase();
+          const taskDate = row.cells[1].innerText;
 
-      const matchesSearch = taskName.includes(searchInput);
-      const matchesCommand = taskCommand.includes(commandFilter);
-      const matchesDate = !dateFilter || taskDate === dateFilter;
+          const matchesSearch = taskName.includes(searchInput);
+          const matchesCommand = taskCommand.includes(commandFilter);
+          const matchesDate = !dateFilter || taskDate === dateFilter;
 
-      if (matchesSearch && matchesCommand && matchesDate) {
-        row.style.display = "";
-      } else {
-        row.style.display = "none";
-      }
-    });
+          if (matchesSearch && matchesCommand && matchesDate) {
+              row.style.display = "";
+          } else {
+              row.style.display = "none";
+          }
+      });
   }
 </script>

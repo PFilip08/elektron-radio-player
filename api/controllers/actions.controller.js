@@ -2,6 +2,7 @@ import {DebugSaveToFile} from "../../modules/DebugMode.js";
 import {logger} from "../../modules/Logger.js";
 import {killPlayer, killPlayerForce, playMusic, playPlaylist} from "../../modules/MusicPlayer.js";
 import {pathSecurityChecker} from "../../modules/Other.js";
+import {removeFiles} from "../../modules/MusicDownloader.js";
 import VLC from "vlc-client";
 
 export let szuffle = 'true';
@@ -145,5 +146,19 @@ export async function vlcSzuffle(req, res) {
             DebugSaveToFile('LocalAPI', 'vlcSzuffle', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - vlcSzuffle');
         }
+    }
+}
+
+export async function delFiles(req, res) {
+    try {
+        const path = `./mp3/${req.query.path}/`;
+        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - delFiles');
+        if (!path) {
+            return res.status(400).send('Nie podano ścieżki do pliku!');
+        }
+        await removeFiles(path);
+        return res.status(200).send('usunło chyba');
+    } catch (e) {
+
     }
 }

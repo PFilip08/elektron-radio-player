@@ -10,10 +10,12 @@ import {DebugSaveToFile} from "../../modules/DebugMode.js";
 export async function downloadSong(req, res) {
     try {
         const uri = req.query.uri;
+        let path = undefined;
+        if (req.query.path) path = `./mp3/${req.query.path}/`;
         logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - downloadSong');
         if (!uri) return res.status(400).send('Nie podano linku!');
-        await downloader(uri);
-        if (await downloader(uri) === 'Nie wykryto typu') return res.status(500).send('Nie można wykryć typu linku Spotify!');
+        await downloader(uri, false, path);
+        if (await downloader(uri, false, path) === 'Nie wykryto typu') return res.status(500).send('Nie można wykryć typu linku Spotify!');
         return res.status(201).send('gut');
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby pobrania pliku', 'LocalAPI - downloadSong');
