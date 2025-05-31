@@ -65,6 +65,22 @@ function scheduleVotes(timeStart, timeEnd, id) {
     });
 }
 
+async function downloadVotes() {
+    logger('verbose', 'Pobieranie danych z getVotesData', 'massSchedule - downloadVotes');
+    const data = await getVotesData();
+    if (data === 'brak') {emptyVotes = true; return logger('log', 'Brak danych!!!', 'massSchedule - downloadVotes')}
+    for (let i in data) {
+        await downloader(data[i].uSongs.url, true);
+    }
+}
+
+async function scheduleMinorTasks() {
+    logger('verbose', 'Planowanie zadania automatycznego usuwania plików...', 'scheduleMinorTasks');
+    schedule.scheduleJob('0 5 * * 1-5', autoRemoveFiles);
+    logger('verbose', 'Planowanie zadania automatycznej aktualizacji głosów...', 'scheduleMinorTasks');
+    schedule.scheduleJob('50 6 * * 1-5', downloadVotes);
+}
+
 async function checkScheduleTime(timeEnd, timeStart, rule, breakNumber) {
     let timeEndArray = timeEnd.split(':');
     let timeStartArray = timeStart.split(':');
@@ -97,10 +113,7 @@ async function massSchedule() {
     logger('verbose', 'Rozpoczęto masowe planowanie zadań...', 'massSchedule');
     logger('verbose', 'Zatrzymywanie wszystkich zadań', 'massSchedule');
     await schedule.gracefulShutdown();
-    logger('verbose', 'Planowanie zadania automatycznego usuwania plików...', 'massSchedule');
-    schedule.scheduleJob('0 5 * * 1-5', autoRemoveFiles);
-    logger('verbose', 'Planowanie zadania automatycznej aktualizacji głosów...', 'massSchedule');
-    schedule.scheduleJob('50 6 * * 1-5', downloadVotes);
+    await scheduleMinorTasks();
     logger('verbose', 'Pobieranie danych przy użyciu getApiData', 'massSchedule');
     const data = await getApiData();
     logger('verbose', 'Sprawdzanie czy isOn jest ustawione na false', 'massSchedule');
@@ -116,14 +129,6 @@ async function massSchedule() {
     // pobieranie
     downloaded = false;
     emptyVotes = false;
-    async function downloadVotes() {
-        logger('verbose', 'Pobieranie danych z getVotesData', 'massSchedule');
-        const data = await getVotesData();
-        if (data === 'brak') {emptyVotes = true; return logger('log', 'Brak danych!!!', 'massSchedule - downloadVotes')}
-        for (let i in data) {
-            await downloader(data[i].uSongs.url, true);
-        }
-    }
     logger('verbose', 'Sprawdzanie czy głosowanie jest włączone, czy jest internet oraz czy już nie pobrano głosów...', 'massSchedule');
     if (currentPlaylist === 7 && !messageCounter && !downloaded) {
         logger('verbose', 'Głosowanie jest włączone, jest internet i nie pobrano głosów', 'massSchedule');
@@ -239,4 +244,4 @@ function getScheduledTasks() {
     });
 }
 
-export { scheduleMusicTask, scheduleKillTask, massSchedule, getScheduledTasks, taskNumber };
+export { scheduleMusicTask, scheduleKillTask, massSchedule, getScheduledTasks, taskNumber, scheduleMinorTasks };

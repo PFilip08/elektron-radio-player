@@ -26,8 +26,7 @@
         <tr>
             <th>Manualny task</th>
             <td>
-                <input type="search" id="addTask" placeholder="taboret" required/>
-                <button onclick="performAction('/dev/schedules/addTask', { id: document.getElementById('addTask').value })">OK</button>
+                <button onclick="window.location.href='/dev/schedules/addTask'">tu</button>
             </td>
         </tr>
         <tr>
@@ -67,7 +66,7 @@
 
   function sortTable(columnIndex) {
       const table = document.getElementById("tasksTable");
-      const rows = Array.from(table.rows).slice(1); // Pomijamy nagłówki
+      const rows = Array.from(table.rows).slice(1);
       const sortedRows = rows.sort((a, b) => {
           const cellA = a.cells[columnIndex].innerText;
           const cellB = b.cells[columnIndex].innerText;
@@ -83,7 +82,7 @@
       const commandFilter = document.getElementById("commandFilter").value.toLowerCase();
       const dateFilter = document.getElementById("dateFilter").value;
       const table = document.getElementById("tasksTable");
-      const rows = Array.from(table.rows).slice(1); // Pomijamy nagłówki
+      const rows = Array.from(table.rows).slice(1);
 
       rows.forEach(row => {
           const taskName = row.cells[0].innerText.toLowerCase();

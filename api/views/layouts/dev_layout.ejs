@@ -4,27 +4,29 @@
     <head>
         <meta charset="UTF-8">
         <title><%= title %> - localapi - dev edition</title>
-        <link rel="stylesheet" href="../css/style.css">
-        <link rel="stylesheet" href="../css/dev.css">
+        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="/css/dev.css">
     </head>
     <body>
         <div class="center">
             <h1><%= welcome %></h1>
             <h2><span class="skew">localapi - dev edition</span></h2>
-            <img src="../images/construction.gif" alt="konstrukcja"/>
+            <img src="/images/construction.gif" alt="konstrukcja"/>
             <h1 style="color: red;">DO NOT RELEASE THIS TOOL TO CUSTOMER!</h1>
         </div>
         <div class="center main">
             <%- body %>
-            <%- include('../partials/navbar_dev.ejs') -%>
+            <% if (locals.navbar !== false) { %>
+                <%- include('../partials/navbar.ejs') -%>
+            <% } %>
             <br/>
             <br/>
-            <img src="../images/ie_exploder.gif" alt="norton"/>
-            <img src="../images/norton.gif" alt="norton"/>
-            <img src="../images/linux_powered.gif" alt="norton"/>
+            <img src="/images/ie_exploder.gif" alt="ie_exploder"/>
+            <img src="/images/norton.gif" alt="norton"/>
+            <img src="/images/linux_powered.gif" alt="linux_powered"/>
         </div>
-        <script src="../js/lib.js"></script>
-        <script src="../js/dev.js"></script>
+        <script src="/js/lib.js"></script>
+        <script src="/js/dev.js"></script>
 
     </body>
 </html>
