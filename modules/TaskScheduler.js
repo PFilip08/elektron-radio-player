@@ -16,7 +16,7 @@ function taskNumber() {
     return logger('task', `Liczba zadań: ${n}`, 'taskNumber');
 }
 
-function scheduleMusicTask(time, id) {
+function scheduleMusicTask(time, id, i) {
     logger('verbose', `Zadanie zaplanowane na ${time}`, 'scheduleMusicTask');
     logger('verbose', 'Sprawdzanie czy playlista nie jest ustawione na 0', 'scheduleMusicTask');
     if (id.id == 0) {
@@ -25,19 +25,19 @@ function scheduleMusicTask(time, id) {
         return;
     }
     logger('verbose', `ID playlisty: ${id.id}`, 'scheduleMusicTask');
-    const job = schedule.scheduleJob(time, function () {
+    const job = schedule.scheduleJob(`playPlaylist - ${new Date().toLocaleString()}, ${i[0]}/${i[1]}`, time, function () {
         logger('log', 'Granie playlisty nr: '+id.id,'scheduleMusicTask');
         playPlaylist(id.id);
     });
     job.jobData = { id: id.id };
 }
 
-function scheduleKillTask(time) {
+function scheduleKillTask(time, i) {
     logger('verbose', `Zadanie ubicia Pleyera zaplanowane na ${time}`, 'scheduleKillTask');
-    schedule.scheduleJob(time, killPlayer);
+    schedule.scheduleJob(`killPlayer - ${new Date().toLocaleString()}, ${i[0]}/${i[1]}`, time, killPlayer);
 }
 
-function scheduleVotes(timeStart, timeEnd, id) {
+function scheduleVotes(timeStart, timeEnd, id, i) {
     logger('verbose', `Zadanie zaplanowane na ${timeStart}`, 'scheduleVotes');
     logger('verbose', `Zadanie zapałzowaia (lub ubicia) Pleyera zaplanowane na ${timeEnd}`, 'scheduleVotes');
     logger('verbose', `ID playlisty: ${id} (powinno być 7)`, 'scheduleVotes');
@@ -47,7 +47,7 @@ function scheduleVotes(timeStart, timeEnd, id) {
         logger('error', `${id}, a nie siódma playlista!!! Głosowanie skopane!!!`, 'scheduleVotes');
         return;
     }
-    schedule.scheduleJob(timeStart, async function () {
+    schedule.scheduleJob(`playPlayer - ${new Date().toLocaleString()}, ${i[0]}/${i[1]}`, timeStart, async function () {
         logger('log', 'Granie playlisty nr: '+id,'scheduleVotes');
         // console.log(await checkIfVLCisRunning(), await checkIfVLConVotes());
         if (await checkIfVLCisRunning() && await checkIfVLConVotes()) {
@@ -55,7 +55,7 @@ function scheduleVotes(timeStart, timeEnd, id) {
         } else playPlaylist(id);
         job.jobData = { id: id.id };
     });
-    schedule.scheduleJob(timeEnd, function () {
+    schedule.scheduleJob(`pausePlayer - ${new Date().toLocaleString()}, ${i[0]}/${i[1]}`, timeEnd, function () {
         try {
             pausePlayer();
         } catch (e) {
@@ -76,9 +76,9 @@ async function downloadVotes() {
 
 async function scheduleMinorTasks() {
     logger('verbose', 'Planowanie zadania automatycznego usuwania plików...', 'scheduleMinorTasks');
-    schedule.scheduleJob('0 5 * * 1-5', autoRemoveFiles);
+    schedule.scheduleJob(`autoRemoveFiles - ${new Date().toLocaleString()}`, '0 5 * * 1-5', autoRemoveFiles);
     logger('verbose', 'Planowanie zadania automatycznej aktualizacji głosów...', 'scheduleMinorTasks');
-    schedule.scheduleJob('50 6 * * 1-5', downloadVotes);
+    schedule.scheduleJob(`downloadVotes - ${new Date().toLocaleString()}`, '50 6 * * 1-5', downloadVotes);
 }
 
 async function checkScheduleTime(timeEnd, timeStart, rule, breakNumber) {
@@ -168,7 +168,7 @@ async function massSchedule() {
             }
             if (time[mappedDays[l]][i].playlist === 0) {
                 logger('verbose', 'Znaleziono playlistę 0, planowanie tylko ubijania plejera. Kontynuowanie wykonywania pętli...', 'massSchedule');
-                scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`);
+                scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, [l, i]);
                 continue;
             }
             if (!checkedSchedules.has(scheduleKey)) {
@@ -183,8 +183,8 @@ async function massSchedule() {
             if ((messageCounter && time[mappedDays[l]][i].playlist === undefined && currentPlaylist === 7) || emptyVotes) { // gdy nie ma neta i gdy puste głosy
                 logger('verbose', colors.yellow('Wykryto brak internetu lub pusty response z funkcji getVotesData! Losowanie playlist statycznych...'), 'massSchedule');
                 const id = Math.floor(Math.random() * 5) + 1; // rosyjska ruletka od 1 do 5
-                scheduleMusicTask(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, {id});
-                scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`);
+                scheduleMusicTask(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, {id}, [l, i]);
+                scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, [l, i]);
                 // console.log("Taboret losował: ", id);
                 continue;
             }
@@ -194,7 +194,7 @@ async function massSchedule() {
                 await downloadVotes();
             }
             if (currentPlaylist === 7) { // gdy główna na 7
-                scheduleVotes(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, `${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, id);
+                scheduleVotes(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, `${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, id, [l, i]);
                 continue;
             }
             if (time[mappedDays[l]][i].OnDemand !== undefined) {
@@ -202,22 +202,22 @@ async function massSchedule() {
                 logger('log', 'ONDEMAND OMAJGAH!!!1!111!!1!1!!!', 'massSchedule');
                 await downloader(time[mappedDays[l]][i].OnDemand);
                 const trackInfo = await getTrackInfo(time[mappedDays[l]][i].OnDemand);
-                schedule.scheduleJob(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, function () {
+                schedule.scheduleJob(`playOnDemand - ${new Date().toLocaleString()}, ${l}/${i}`, `${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, function () {
                     playOnDemand(sterylizator(trackInfo.artists.join('-')+'_'+trackInfo.name));
                     logger('log', `On Demand: ${trackInfo.name+ ' by '+ trackInfo.artists.join(' ')}`,'massSchedule');
                 });
-                scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`);
+                scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, [l, i]);
                 continue;
             }
 
             logger('verbose', 'Planowanie zadań...', 'massSchedule');
             if (id === 7) { // gdy pojedyncza na 7
                 logger('verbose', 'Znaleziono playlistę 7! Uruchamianie planowania dla niej zadania...', 'massSchedule');
-                scheduleVotes(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, `${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, id);
+                scheduleVotes(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, `${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, id, [l, i]);
                 continue;
             }
-            scheduleMusicTask(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, {id});
-            scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`);
+            scheduleMusicTask(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, {id}, [l, i]);
+            scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, [l, i]);
         }
     }
     taskNumber();
