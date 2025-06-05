@@ -3,6 +3,7 @@ import {DebugSaveToFile} from "../../modules/DebugMode.js";
 import {massSchedule, taskNumber} from "../../modules/TaskScheduler.js";
 import schedule from "node-schedule";
 import {killPlayer, playMusic, playPlaylist} from "../../modules/MusicPlayer.js";
+import {POST} from "../../modules/POST.js";
 
 export async function resetTasks(req, res) {
     try {
@@ -102,6 +103,20 @@ export async function addTask(req, res) {
         if (global.debugmode === true) {
             DebugSaveToFile('LocalAPI', 'addTask', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI-dev - addTask');
+        }
+    }
+}
+
+export async function restartEverything(req, res) {
+    try {
+        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI-dev - restartEverything');
+        res.status(202).send('Restarting...');
+        process.exit(0);
+    } catch (e) {
+        logger('verbose', 'Wystąpił błąd podczas próby restartu wszystkiego', 'LocalAPI-dev - restartEverything');
+        if (global.debugmode === true) {
+            DebugSaveToFile('LocalAPI', 'restartEverything', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI-dev - restartEverything');
         }
     }
 }
