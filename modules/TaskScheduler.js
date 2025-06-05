@@ -109,7 +109,10 @@ async function checkScheduleTime(timeEnd, timeStart, rule, breakNumber) {
 }
 
 let downloaded = false, emptyVotes = false;
+let blockmassSchedule = false;
 async function massSchedule() {
+    if (blockmassSchedule) return logger('error', 'Jakieś grzyby i w ogóle magia, taski się chciały duplikować!!1!11', 'massSchedule - block');
+    blockmassSchedule = true;
     logger('verbose', 'Rozpoczęto masowe planowanie zadań...', 'massSchedule');
     logger('verbose', 'Zatrzymywanie wszystkich zadań', 'massSchedule');
     await schedule.gracefulShutdown();
@@ -221,6 +224,7 @@ async function massSchedule() {
         }
     }
     taskNumber();
+    blockmassSchedule = false;
 }
 
 // dzięki copilot :>
