@@ -90,7 +90,7 @@ div button:hover {
 }
 
 .addTask input, .addTask select {
-    width: 150px;
+    width: 170px;
     padding: 2px 6px;
     border-radius: 2px;
     border: 1px solid #003c74;

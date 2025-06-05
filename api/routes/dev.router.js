@@ -40,6 +40,6 @@ devRouter.get('/override', (req, res) => {
 devRouter.get('/schedules/resetTasks', resetTasks);
 devRouter.get('/schedules/cleanTasks', cleanTasks);
 devRouter.use(bodyParser.urlencoded({ extended: true })).post('/schedules/addTask', addTask);
-// devRouter.post('/schedules/addTask', addTask);
+
 
 export default devRouter;
