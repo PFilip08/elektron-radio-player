@@ -14,7 +14,6 @@ export async function downloadSong(req, res) {
         if (req.query.path) path = `./mp3/${req.query.path}/`;
         logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - downloadSong');
         if (!uri) return res.status(400).send('Nie podano linku!');
-        await downloader(uri, false, path);
         if (await downloader(uri, false, path) === 'Nie wykryto typu') return res.status(500).send('Nie można wykryć typu linku Spotify!');
         return res.status(201).send('gut');
     } catch (e) {
@@ -46,10 +45,11 @@ export async function downloadAndPlay(req, res) {
         const startTime = new Date(Date.now() + 1000);
         const killTime = new Date(Date.now() + 500);
         scheduleKillTask(killTime);
-        schedule.scheduleJob(startTime, function () {
+        const job = schedule.scheduleJob(`playOnDemand - ${new Date().toLocaleString()}`, startTime, function () {
             playOnDemand(filename);
             logger('log', `On Demand: ${trackInfo.name}`,'massSchedule');
         });
+        job.jobData = { filename: filename };
         return res.status(201).send('gut, 1s opóźnienia');
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby odtworzenia pliku', 'LocalAPI - downloadAndPlay');
