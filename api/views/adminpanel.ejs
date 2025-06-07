@@ -30,7 +30,7 @@
         <th>Pobieranie muzyki</th>
         <td>
             <input type="search" id="downloadUri" placeholder="https://open.spotify.com/track/..." required/>
-            <button onclick="panelSafeguard('/download', { uri: document.getElementById('downloadUri').value })">OK</button>
+            <button onclick="performAction('/download', { uri: document.getElementById('downloadUri').value })">OK</button>
         </td>
     </tr>
     <tr>
