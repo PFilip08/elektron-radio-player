@@ -41,6 +41,9 @@ devRouter.get('/schedules/resetTasks', resetTasks);
 devRouter.get('/schedules/cleanTasks', cleanTasks);
 devRouter.use(bodyParser.urlencoded({ extended: true })).post('/schedules/addTask', addTask);
 devRouter.get('/action/restart', restartEverything);
+devRouter.get('/api', (req, res) => {
+    res.status(500).send('funkcja w budowie (kiedyś coś będzie tutaj)');
+});
 
 
 export default devRouter;
