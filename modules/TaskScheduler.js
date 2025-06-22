@@ -34,7 +34,9 @@ function scheduleMusicTask(time, id, i) {
 
 function scheduleKillTask(time, i) {
     logger('verbose', `Zadanie ubicia Pleyera zaplanowane na ${time}`, 'scheduleKillTask');
-    schedule.scheduleJob(`killPlayer - ${new Date().toLocaleString()}, ${i[0]}/${i[1]}`, time, killPlayer);
+    let dzien = 'onDemand';
+    if (i) dzien = `${i[0]}/${i[1]}`;
+    schedule.scheduleJob(`killPlayer - ${new Date().toLocaleString()}, ${dzien}`, time, killPlayer);
 }
 
 function scheduleVotes(timeStart, timeEnd, id, i) {
