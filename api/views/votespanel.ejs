@@ -39,7 +39,7 @@
             </td>
             <td class="center">
                 <input type="date" id="dateInput" placeholder="1970-01-01" maxlength="10" min="2024-11-08" required/>
-                <button onclick="performAction('/votes/downloadVotes', { date: document.getElementById('dateInput').value })">OK</button>
+                <button onclick="performAction('/votes/downloadVotes', { date: document.getElementById('dateInput').value }); setTimeout(fetchVotes, 6500);">OK</button>
             </td>
         </tr>
         <tr>
@@ -48,7 +48,7 @@
             </td>
             <td class="center">
                 <input type="search" id="downloadUri" placeholder="https://open.spotify.com/track/..." required/>
-                <button onclick="performAction('/votes/add', { uri: document.getElementById('downloadUri').value })">OK</button>
+                <button onclick="performAction('/votes/add', { uri: document.getElementById('downloadUri').value }); setTimeout(fetchVotes, 6500);">OK</button>
             </td>
         </tr>
         <tr>
@@ -70,8 +70,8 @@
     </table>
 </div>
 <br/>
-<p>Info: przy reset lub usuń trza zapisz, aby zapisało</p>
-<p>Info²: przy pobieraniu na dzień trza odświeżyć stronę po "ok"</p>
+<p>Info: przy reset lub usuń trza zapisz, aby zapisało playlistę</p>
+<p>Info²: przy pobieraniu na dzień i dodawaniu wpisu trza poczekać 6,5s po "ok"</p>
 <br/>
 <iframe name="res" class="res" id="res"></iframe>
 <script src="../js/votes.js"></script>
