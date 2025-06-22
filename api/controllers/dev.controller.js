@@ -5,7 +5,6 @@ import schedule from "node-schedule";
 import {killPlayer, playMusic, playPlaylist} from "../../modules/MusicPlayer.js";
 import {downloadYT} from "../../modules/MusicDownloader.js";
 import * as fs from "fs";
-import {pathSecurityChecker} from "../../modules/Other.js";
 
 export async function resetTasks(req, res) {
     try {
