@@ -214,7 +214,7 @@ async function getTrackInfo(url) {
         }
     }
 }
-async function downloadYT(url, votes, path2) {
+async function downloadYT(url, votes, path2, override) {
     try {
         let Path = path2 || `./mp3/onDemand/`;
         if (votes) Path = './mp3/7';
@@ -223,19 +223,21 @@ async function downloadYT(url, votes, path2) {
         const description = song.videoDetails.description.toLowerCase();
         const title = song.videoDetails.title.toLowerCase();
         const musicKeywords = ['official music video', 'lyrics', 'audio', 'album', 'song', 'spotify', 'tidal', 'muzyka', 'muzy', 'muza', 'płytę', 'feat', 'remastered', 'vevo', 'mix', 'nightcore', 'hardstyle'];
-        if (song.videoDetails.category !== 'Music') {
-            logger('log', `KATEGORIA ENTERTAINMENT!`, 'downloadYT');
-            if (musicKeywords.some(keyword => title.includes(keyword) || description.includes(keyword))) {
-                if (song.videoDetails.lengthSeconds > 600) {
-                    logger('warn', `To jest film, nie piosenka, bo jest zbyt długa!`, 'downloadYT');
-                    return 'Nie można pobrać bo to jest film';
+        if (!override) {
+            if (song.videoDetails.category !== 'Music') {
+                logger('log', `KATEGORIA ENTERTAINMENT!`, 'downloadYT');
+                if (musicKeywords.some(keyword => title.includes(keyword) || description.includes(keyword))) {
+                    if (song.videoDetails.lengthSeconds > 600) {
+                        logger('warn', `To jest film, nie piosenka, bo jest zbyt długa!`, 'downloadYT');
+                        return 'Nie można pobrać bo to jest film';
+                    }
+                    logger('log', `Wykryto, że to piosenka z kategorii Entertainment!`, 'downloadYT');
+                } else {
+                    logger('warn', `Nie wykryto słów kluczowych aby rozpoznać, czy jest to piosenka!`, 'downloadYT');
+                    return 'Nie można pobrać bo nie wykryto słów kluczowych w opisie';
                 }
-                logger('log', `Wykryto, że to piosenka z kategorii Entertainment!`, 'downloadYT');
-            } else {
-                logger('warn', `Nie wykryto słów kluczowych aby rozpoznać, czy jest to piosenka!`, 'downloadYT');
-                return 'Nie można pobrać bo nie wykryto słów kluczowych w opisie';
             }
-        }
+        } else logger('log', `Pomijanie regexa wykrywania!`, 'downloadYT');
 
         const file = sterylizator(song.videoDetails.author.name+' - '+song.videoDetails.title);
         const filePath = `${Path}${file}.mp3`;

@@ -4,7 +4,15 @@
         <th>Akcje</th>
         <th></th>
     </tr>
-
+    <tr>
+        <th>downloadYT (override)</th>
+        <td>
+            <input type="search" id="downloadYTOverrideUrl" placeholder="https://www.youtube.com/watch?v=..." required/>
+            <br/>
+            <input type="search" id="downloadYTOverridePath" placeholder="./mp3/7/" style="width: 100px;"/>
+            <button onclick="performAction('/dev/action/downloadYToverride', { url: document.getElementById('downloadYTOverrideUrl').value, path: document.getElementById('downloadYTOverridePath').value })">OK</button>
+        </td>
+    </tr>
     <tr></tr>
     <tr>
         <th colspan="2"><hr /></th>

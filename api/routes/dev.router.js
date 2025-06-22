@@ -1,6 +1,6 @@
 import {Router} from 'express';
 import {getScheduledTasks} from "../../modules/TaskScheduler.js";
-import {addTask, cleanTasks, resetTasks, restartEverything} from "../controllers/dev.controller.js";
+import {addTask, cleanTasks, downloadYToverride, resetTasks, restartEverything} from "../controllers/dev.controller.js";
 import * as bodyParser from "express";
 
 const devRouter = Router();
@@ -41,6 +41,7 @@ devRouter.get('/schedules/resetTasks', resetTasks);
 devRouter.get('/schedules/cleanTasks', cleanTasks);
 devRouter.use(bodyParser.urlencoded({ extended: true })).post('/schedules/addTask', addTask);
 devRouter.get('/action/restart', restartEverything);
+devRouter.get('/action/downloadYToverride', downloadYToverride);
 devRouter.get('/api', (req, res) => {
     res.status(500).send('funkcja w budowie (kiedyś coś będzie tutaj)');
 });

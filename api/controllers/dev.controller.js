@@ -3,7 +3,9 @@ import {DebugSaveToFile} from "../../modules/DebugMode.js";
 import {massSchedule, taskNumber} from "../../modules/TaskScheduler.js";
 import schedule from "node-schedule";
 import {killPlayer, playMusic, playPlaylist} from "../../modules/MusicPlayer.js";
-import {POST} from "../../modules/POST.js";
+import {downloadYT} from "../../modules/MusicDownloader.js";
+import * as fs from "fs";
+import {pathSecurityChecker} from "../../modules/Other.js";
 
 export async function resetTasks(req, res) {
     try {
@@ -118,5 +120,26 @@ export async function restartEverything(req, res) {
             DebugSaveToFile('LocalAPI', 'restartEverything', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI-dev - restartEverything');
         }
+    }
+}
+
+export async function downloadYToverride(req, res) {
+    try {
+        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI-dev - downloadYToverride');
+        const url = req.query.url;
+        let path = req.query.path || './mp3/onDemand/';
+        if (!url) return res.status(400).send('Nie podano URL!');
+        if (path.length < 6 || !path.startsWith('./mp3/')) return res.status(400).send('Niepoprawna ścieżka!');
+        if (!path.endsWith('/')) path = path+'/';
+        if(!fs.existsSync(path)) fs.mkdirSync(path);
+        await downloadYT(url, false, path, true);
+        return res.status(201).send(`gut, ${path}`);
+    } catch (e) {
+        logger('verbose', 'Wystąpił błąd podczas próby pobrania override z yt!!', 'LocalAPI-dev - downloadYToverride');
+        if (global.debugmode === true) {
+            DebugSaveToFile('LocalAPI', 'downloadYToverride', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI-dev - downloadYToverride');
+        }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów');
     }
 }
