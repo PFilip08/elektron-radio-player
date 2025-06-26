@@ -6,6 +6,7 @@ import {logger} from "./Logger.js";
 import {checkIfVLCisRunning, checkIfVLConVotes, sterylizator} from "./Other.js";
 import colors from 'colors';
 import {getVotesData} from "./VotesConnector.js";
+import { Mutex } from 'async-mutex';
 
 function taskNumber() {
     let n = 0;
@@ -111,122 +112,126 @@ async function checkScheduleTime(timeEnd, timeStart, rule, breakNumber) {
 }
 
 let downloaded = false, emptyVotes = false;
-let blockmassSchedule = false;
+let blockmassSchedule = new Mutex();
+//let blockmassSchedule = false;
 async function massSchedule() {
-    if (blockmassSchedule) return logger('error', 'Jakieś grzyby i w ogóle magia, taski się chciały duplikować!!1!11', 'massSchedule - block');
-    blockmassSchedule = true;
-    logger('verbose', 'Rozpoczęto masowe planowanie zadań...', 'massSchedule');
-    logger('verbose', 'Zatrzymywanie wszystkich zadań', 'massSchedule');
-    await schedule.gracefulShutdown();
-    await scheduleMinorTasks();
-    logger('verbose', 'Pobieranie danych przy użyciu getApiData', 'massSchedule');
-    const data = await getApiData();
-    logger('verbose', 'Sprawdzanie czy isOn jest ustawione na false', 'massSchedule');
-    if (!data.isOn) {
-        logger('verbose', `Zwrócono ${JSON.stringify(data)}}`, 'massSchedule');
-        taskNumber();
-        return logger('error','Brakuje danych!!!', 'massSchedule');
-    }
-    const time = data.timeRules.rules;
-    const day = data.timeRules.applyRule;
-    const currentPlaylist = data.currentPlaylistId;
-
-    // pobieranie
-    downloaded = false;
-    emptyVotes = false;
-    logger('verbose', 'Sprawdzanie czy głosowanie jest włączone, czy jest internet oraz czy już nie pobrano głosów...', 'massSchedule');
-    if (currentPlaylist === 7 && !messageCounter && !downloaded) {
-        logger('verbose', 'Głosowanie jest włączone, jest internet i nie pobrano głosów', 'massSchedule');
-        downloaded = true;
-        logger('verbose', 'Dzwonienie do funkcji downloadVotes...', 'massSchedule');
-        await downloadVotes();
-    }
-
-    const dayMapping = {
-        Mon: 1,
-        Tue: 2,
-        Wed: 3,
-        Thu: 4,
-        Fri: 5,
-        Sat: 6,
-        Sun: 7
-    };
-
-    const mappedDays = {};
-    logger('verbose', 'Mapowanie dni...', 'massSchedule');
-    for (const i in day) {
-        if (day.hasOwnProperty(i)) {
-            const mappedDay = dayMapping[i];
-            mappedDays[mappedDay] = day[i];
+    await blockmassSchedule.runExclusive(async () => {
+        //console.log('[STACKTRACE] massSchedule() wywołana z:\n' + new Error().stack);
+        //if (blockmassSchedule) return logger('error', 'Jakieś grzyby i w ogóle magia, taski się chciały duplikować!!1!11', 'massSchedule - block');
+        //blockmassSchedule = true;
+        logger('verbose', 'Rozpoczęto masowe planowanie zadań...', 'massSchedule');
+        logger('verbose', 'Zatrzymywanie wszystkich zadań', 'massSchedule');
+        await schedule.gracefulShutdown();
+        await scheduleMinorTasks();
+        logger('verbose', 'Pobieranie danych przy użyciu getApiData', 'massSchedule');
+        const data = await getApiData();
+        logger('verbose', 'Sprawdzanie czy isOn jest ustawione na false', 'massSchedule');
+        if (!data.isOn) {
+            logger('verbose', `Zwrócono ${JSON.stringify(data)}}`, 'massSchedule');
+            taskNumber();
+            return logger('error','Brakuje danych!!!', 'massSchedule');
         }
-    }
-    logger('verbose','Uruchamianie pętli do ustawiania zadań...','massSchedule');
-    const checkedSchedules = new Set();
-    for (let l in mappedDays) {
-        if (mappedDays[l] === 0) continue;
-        for (let i in time[mappedDays[l]]) {
-            const scheduleKey = `${time[mappedDays[l]][i].start}-${time[mappedDays[l]][i].end}`;
-            let id = currentPlaylist;
-            if (time[mappedDays[l]][i].playlist !== undefined && currentPlaylist !== 7 ) {
-                logger('verbose', `Znaleziono playlistę!`, 'massSchedule');
-                id = time[mappedDays[l]][i].playlist;
+        const time = data.timeRules.rules;
+        const day = data.timeRules.applyRule;
+        const currentPlaylist = data.currentPlaylistId;
+
+        // pobieranie
+        downloaded = false;
+        emptyVotes = false;
+        logger('verbose', 'Sprawdzanie czy głosowanie jest włączone, czy jest internet oraz czy już nie pobrano głosów...', 'massSchedule');
+        if (currentPlaylist === 7 && !messageCounter && !downloaded) {
+            logger('verbose', 'Głosowanie jest włączone, jest internet i nie pobrano głosów', 'massSchedule');
+            downloaded = true;
+            logger('verbose', 'Dzwonienie do funkcji downloadVotes...', 'massSchedule');
+            await downloadVotes();
+        }
+
+        const dayMapping = {
+            Mon: 1,
+            Tue: 2,
+            Wed: 3,
+            Thu: 4,
+            Fri: 5,
+            Sat: 6,
+            Sun: 7
+        };
+
+        const mappedDays = {};
+        logger('verbose', 'Mapowanie dni...', 'massSchedule');
+        for (const i in day) {
+            if (day.hasOwnProperty(i)) {
+                const mappedDay = dayMapping[i];
+                mappedDays[mappedDay] = day[i];
             }
-            if (time[mappedDays[l]][i].playlist === 0) {
-                logger('verbose', 'Znaleziono playlistę 0, planowanie tylko ubijania plejera. Kontynuowanie wykonywania pętli...', 'massSchedule');
-                scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, [l, i]);
-                continue;
-            }
-            if (!checkedSchedules.has(scheduleKey)) {
-                logger('verbose', `Sprawdzanie zapisu czasu ${scheduleKey}`, 'massSchedule');
-                checkedSchedules.add(scheduleKey);
-                const isValidTime = await checkScheduleTime(time[mappedDays[l]][i].end, time[mappedDays[l]][i].start, mappedDays[l], i);
-                if (!isValidTime) {
-                    logger('error', 'Odrzucono nieprawidłowy zapis czasu!!!', 'massSchedule');
+        }
+        logger('verbose','Uruchamianie pętli do ustawiania zadań...','massSchedule');
+        const checkedSchedules = new Set();
+        for (let l in mappedDays) {
+            if (mappedDays[l] === 0) continue;
+            for (let i in time[mappedDays[l]]) {
+                const scheduleKey = `${time[mappedDays[l]][i].start}-${time[mappedDays[l]][i].end}`;
+                let id = currentPlaylist;
+                if (time[mappedDays[l]][i].playlist !== undefined && currentPlaylist !== 7 ) {
+                    logger('verbose', `Znaleziono playlistę!`, 'massSchedule');
+                    id = time[mappedDays[l]][i].playlist;
+                }
+                if (time[mappedDays[l]][i].playlist === 0) {
+                    logger('verbose', 'Znaleziono playlistę 0, planowanie tylko ubijania plejera. Kontynuowanie wykonywania pętli...', 'massSchedule');
+                    scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, [l, i]);
                     continue;
                 }
-            }
-            if ((messageCounter && time[mappedDays[l]][i].playlist === undefined && currentPlaylist === 7) || emptyVotes) { // gdy nie ma neta i gdy puste głosy
-                logger('verbose', colors.yellow('Wykryto brak internetu lub pusty response z funkcji getVotesData! Losowanie playlist statycznych...'), 'massSchedule');
-                const id = Math.floor(Math.random() * 5) + 1; // rosyjska ruletka od 1 do 5
+                if (!checkedSchedules.has(scheduleKey)) {
+                    logger('verbose', `Sprawdzanie zapisu czasu ${scheduleKey}`, 'massSchedule');
+                    checkedSchedules.add(scheduleKey);
+                    const isValidTime = await checkScheduleTime(time[mappedDays[l]][i].end, time[mappedDays[l]][i].start, mappedDays[l], i);
+                    if (!isValidTime) {
+                        logger('error', 'Odrzucono nieprawidłowy zapis czasu!!!', 'massSchedule');
+                        continue;
+                    }
+                }
+                if ((messageCounter && time[mappedDays[l]][i].playlist === undefined && currentPlaylist === 7) || emptyVotes) { // gdy nie ma neta i gdy puste głosy
+                    logger('verbose', colors.yellow('Wykryto brak internetu lub pusty response z funkcji getVotesData! Losowanie playlist statycznych...'), 'massSchedule');
+                    const id = Math.floor(Math.random() * 5) + 1; // rosyjska ruletka od 1 do 5
+                    scheduleMusicTask(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, {id}, [l, i]);
+                    scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, [l, i]);
+                    // console.log("Taboret losował: ", id);
+                    continue;
+                }
+                if (currentPlaylist !== 7 && !messageCounter && time[mappedDays[l]][i].playlist === 7 && !downloaded) {
+                    logger('verbose', 'Znaleziono playlistę 7! Uruchamianie pobierania piosenek z głosowania', 'massSchedule');
+                    downloaded = true;
+                    await downloadVotes();
+                }
+                if (currentPlaylist === 7) { // gdy główna na 7
+                    scheduleVotes(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, `${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, id, [l, i]);
+                    continue;
+                }
+                if (time[mappedDays[l]][i].OnDemand !== undefined) {
+                    logger('verbose', 'Znaleziono OnDemand!!!', 'massSchedule');
+                    logger('log', 'ONDEMAND OMAJGAH!!!1!111!!1!1!!!', 'massSchedule');
+                    await downloader(time[mappedDays[l]][i].OnDemand);
+                    const trackInfo = await getTrackInfo(time[mappedDays[l]][i].OnDemand);
+                    schedule.scheduleJob(`playOnDemand - ${new Date().toLocaleString()}, ${l}/${i}`, `${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, function () {
+                        playOnDemand(sterylizator(trackInfo.artists.join('-')+'_'+trackInfo.name));
+                        logger('log', `On Demand: ${trackInfo.name+ ' by '+ trackInfo.artists.join(' ')}`,'massSchedule');
+                    });
+                    scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, [l, i]);
+                    continue;
+                }
+
+                logger('verbose', 'Planowanie zadań...', 'massSchedule');
+                if (id === 7) { // gdy pojedyncza na 7
+                    logger('verbose', 'Znaleziono playlistę 7! Uruchamianie planowania dla niej zadania...', 'massSchedule');
+                    scheduleVotes(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, `${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, id, [l, i]);
+                    continue;
+                }
                 scheduleMusicTask(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, {id}, [l, i]);
                 scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, [l, i]);
-                // console.log("Taboret losował: ", id);
-                continue;
             }
-            if (currentPlaylist !== 7 && !messageCounter && time[mappedDays[l]][i].playlist === 7 && !downloaded) {
-                logger('verbose', 'Znaleziono playlistę 7! Uruchamianie pobierania piosenek z głosowania', 'massSchedule');
-                downloaded = true;
-                await downloadVotes();
-            }
-            if (currentPlaylist === 7) { // gdy główna na 7
-                scheduleVotes(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, `${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, id, [l, i]);
-                continue;
-            }
-            if (time[mappedDays[l]][i].OnDemand !== undefined) {
-                logger('verbose', 'Znaleziono OnDemand!!!', 'massSchedule');
-                logger('log', 'ONDEMAND OMAJGAH!!!1!111!!1!1!!!', 'massSchedule');
-                await downloader(time[mappedDays[l]][i].OnDemand);
-                const trackInfo = await getTrackInfo(time[mappedDays[l]][i].OnDemand);
-                schedule.scheduleJob(`playOnDemand - ${new Date().toLocaleString()}, ${l}/${i}`, `${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, function () {
-                    playOnDemand(sterylizator(trackInfo.artists.join('-')+'_'+trackInfo.name));
-                    logger('log', `On Demand: ${trackInfo.name+ ' by '+ trackInfo.artists.join(' ')}`,'massSchedule');
-                });
-                scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, [l, i]);
-                continue;
-            }
-
-            logger('verbose', 'Planowanie zadań...', 'massSchedule');
-            if (id === 7) { // gdy pojedyncza na 7
-                logger('verbose', 'Znaleziono playlistę 7! Uruchamianie planowania dla niej zadania...', 'massSchedule');
-                scheduleVotes(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, `${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, id, [l, i]);
-                continue;
-            }
-            scheduleMusicTask(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, {id}, [l, i]);
-            scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, [l, i]);
         }
-    }
-    taskNumber();
-    blockmassSchedule = false;
+        taskNumber();
+        //blockmassSchedule = false;
+    });
 }
 
 // dzięki copilot :>
