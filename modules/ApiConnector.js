@@ -156,6 +156,9 @@ function scheduleUpdate() {
         logger('verbose',` - Po pracy radiowęzła: ${intervalOffAir / 1000} sekund`,'scheduleUpdate');
         logger('verbose',` - Weekend: ${intervalWeekend / 1000} sekund`,'scheduleUpdate');
         logger('verbose',` - Wakacje: ${intervalVacation / 1000} sekund`,'scheduleUpdate');
+        setInterval(() => {
+            scheduleUpdate();
+        }, 1000);
         debugIntervalBlock = false;
     }
     const date = new Date();

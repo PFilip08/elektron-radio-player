@@ -33,9 +33,7 @@ async function POST() {
     await massSchedule();
     logger('task', 'Aktywowanie automatycznych aktualizacji z API', 'POST');
     await checkUpdate();
-    setInterval(() => {
-        scheduleUpdate();
-    }, 1000);
+    scheduleUpdate();
     logger('ready', 'Git');
 }
 
