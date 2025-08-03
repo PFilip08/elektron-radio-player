@@ -142,3 +142,27 @@ export async function downloadYToverride(req, res) {
         return res.status(500).send('Błąd; Skontaktuj się z działem taboretów');
     }
 }
+
+export async function removeTask(req, res) {
+    try {
+        const taskName = req.query.name;
+        if (!taskName) return res.status(400).send('Brak nazwy zadania!');
+        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')} - usuwanie zadania: ${taskName}`, 'LocalAPI-dev - removeTask');
+        const job = schedule.scheduledJobs[taskName];
+        if (!job) return res.status(404).send('Nie znaleziono zadania o nazwie: ' + taskName);
+
+        job.cancel();
+        delete schedule.scheduledJobs[taskName];
+        taskNumber();
+
+        logger('log', 'Zadanie "' + taskName + '" zostało usunięte!', 'LocalAPI-dev - removeTask')
+        return res.status(200).send('Zadanie "' + taskName + '" zostało usunięte!');
+    } catch (e) {
+        logger('verbose', 'Błąd podczas usuwania zadania', 'LocalAPI-dev - removeTask');
+        if (global.debugmode === true) {
+            DebugSaveToFile('LocalAPI', 'removeTask', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI-dev - removeTask');
+        }
+        return res.status(500).send('Błąd podczas usuwania zadania');
+    }
+}

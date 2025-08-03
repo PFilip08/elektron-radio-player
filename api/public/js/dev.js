@@ -14,3 +14,12 @@ function performAction(url, params = {}) {
             alert('Wystąpił błąd podczas wykonywania akcji.\nSkontaktuj się z Działem Taboretów.');
         });
 }
+
+function removeTask(taskName) {
+    if (confirm('Czy na pewno chcesz usunąć zadanie: ' + taskName + '?')) {
+        performAction('/dev/schedules/removeTask', { name: taskName });
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+    }
+}

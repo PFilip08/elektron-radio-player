@@ -24,6 +24,7 @@
                 <th onclick="sortTable(2)">Godzina</th>
                 <th>Komenda</th>
                 <th>Zmienne</th>
+                <th>Akcje</th>
             </tr>
             </thead>
             <tbody>
@@ -35,6 +36,9 @@
                     <td><%= task.command %></td>
                     <td>
                         <pre><%= JSON.stringify(task.variables, null, 2) %></pre>
+                    </td>
+                    <td>
+                        <button onclick="removeTask('<%= task.name %>')">Usuń</button>
                     </td>
                 </tr>
             <% }); %>
