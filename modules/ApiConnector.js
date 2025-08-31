@@ -21,6 +21,17 @@ const api = axios.create({
 });
 
 async function getApiData() {
+    // redirect na devapi
+    if (global.devAPIEnabled) {
+        logger('log', 'DevAPI włączone - używanie local DevAPI', 'getApiData');
+        try {
+            const mockResponse = await api.get(`http://localhost:${process.env.PORT || 8080}/dev/api/timeTables`);
+            return mockResponse.data.timeTable[0];
+        } catch (e) {
+            logger('error', 'DevAPI włączone, ale nie działa. Spadanie spowrotem na API filsza', 'getApiData');
+        }
+    }
+
     return await api.get(url)
         .then(res => {
             if (!messageCounter) {

@@ -143,3 +143,146 @@ div button:hover {
     margin: 0 auto 12px;
     text-align: center;
 }
+
+/* Style z devapi.ejs */
+.counter {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 10px 15px;
+    margin: 0 auto 15px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    font-size: 14px;
+    width: 300px;
+}
+
+table {
+    background-color: #17191a;
+    color: white;
+    border: 1px outset black;
+}
+
+#devapi-status.enabled {
+    background: rgba(144, 238, 144, 0.9);
+    color: #2d5016;
+}
+
+#devapi-status.disabled {
+    background: rgba(255, 255, 204, 0.9);
+    color: #856404;
+}
+
+.controls-row {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.devapi-controls {
+    width: 540px;
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 30px;
+    background-color: #d322b9; /* męski kolor, ponieważ to sekcja z kontrolkami */
+}
+
+.iframe-section {
+    display: inline-block;
+    vertical-align: top;
+    width: 300px;
+}
+
+.tables-row {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.timetables-config {
+    width: 520px;
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 30px;
+    background-color: #247d9f;
+}
+
+.votes-config {
+    width: 450px;
+    display: inline-block;
+    vertical-align: top;
+    background-color: #3225e6;
+}
+
+.time-rule-entry, .vote-entry {
+    margin: 5px 0;
+    padding: 5px;
+    border: 1px solid #ccc;
+    background: #f9f9f9;
+}
+
+.time-rule-entry input, .vote-entry input {
+    margin: 2px;
+    padding: 2px;
+}
+
+#timeRulesContainer, #votesContainer {
+    max-height: 350px;
+    min-width: 300px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 5px;
+    margin: 5px 0;
+    background: blue; /* Tło niebieskie dla lepszego kontrastu */
+}
+
+.btn-on {
+    background: #90EE90;
+    color: #006400;
+}
+
+.btn-off {
+    background: #FFB6C1;
+    color: #8B0000;
+}
+
+.btn-status {
+    background: #87CEEB;
+    color: #191970;
+}
+
+.btn-reschedule {
+    background: #DDA0DD;
+    color: #2E0854;
+}
+
+.rule-start, .rule-end {
+    width: 80px;
+}
+
+.song-id {
+    width: 50px;
+}
+
+.song-name, .song-url {
+    width: 150px;
+}
+
+.song-votes {
+    width: 60px;
+}
+
+.song-date {
+    width: 120px;
+}
+
+label {
+    margin-right: 15px;
+    font-size: 11px;
+}
+
+.center {
+    margin: 0 auto;
+    text-align: center;
+}
+
+.main {
+    width: 95%;
+    margin: 0 auto;
+}

@@ -1,6 +1,6 @@
 import {Router} from 'express';
 import {getScheduledTasks} from "../../modules/TaskScheduler.js";
-import {addTask, cleanTasks, downloadYToverride, resetTasks, restartEverything, removeTask} from "../controllers/dev.controller.js";
+import {addTask, cleanTasks, downloadYToverride, resetTasks, restartEverything, removeTask, devAPI, devAPITimeTables, devAPIVotes} from "../controllers/dev.controller.js";
 import * as bodyParser from "express";
 
 const devRouter = Router();
@@ -43,9 +43,12 @@ devRouter.get('/schedules/removeTask', removeTask);
 devRouter.use(bodyParser.urlencoded({ extended: true })).post('/schedules/addTask', addTask);
 devRouter.get('/action/restart', restartEverything);
 devRouter.get('/action/downloadYToverride', downloadYToverride);
-devRouter.get('/api', (req, res) => {
-    res.status(500).send('funkcja w budowie (kiedyś coś będzie tutaj)');
-});
+
+devRouter.get('/api', devAPI);
+devRouter.get('/api/timeTables', devAPITimeTables);
+devRouter.post('/api/timeTables', bodyParser.json(), devAPITimeTables);
+devRouter.get('/api/votes', devAPIVotes);
+devRouter.post('/api/votes', bodyParser.json(), devAPIVotes);
 
 
 export default devRouter;

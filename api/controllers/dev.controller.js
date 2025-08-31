@@ -166,3 +166,180 @@ export async function removeTask(req, res) {
         return res.status(500).send('Błąd podczas usuwania zadania');
     }
 }
+
+export async function devAPI(req, res) {
+    try {
+        const action = req.query.action;
+
+        logger('log', `DevAPI request: ${action} from ${req.hostname}`, 'LocalAPI-dev - devAPI');
+
+        if (!action) {
+            const currentMockData = global.devAPIMockData || {
+                timeTables: {
+                    isOn: true,
+                    currentPlaylistId: 1,
+                    timeRules: {
+                        rules: {
+                            "1": [
+                                {"end": "07:10", "start": "07:07"},
+                                {"end": "08:00", "start": "07:55"},
+                                {"end": "08:50", "start": "08:45"},
+                                {"end": "09:45", "start": "09:35"},
+                                {"end": "10:35", "start": "10:30"},
+                                {"end": "11:40", "start": "11:20"},
+                                {"end": "12:30", "start": "12:25"},
+                                {"end": "13:20", "start": "13:15"},
+                                {"end": "14:10", "start": "14:05"},
+                                {"end": "15:00", "start": "14:55"},
+                                {"end": "15:50", "start": "15:45"}
+                            ]
+                        },
+                        applyRule: {
+                            "Fri": 1, "Mon": 1, "Sat": 0, "Sun": 0, "Thu": 1, "Tue": 1, "Wed": 1
+                        }
+                    }
+                },
+                votes: [
+                    {
+                        id: 1,
+                        votes: 25,
+                        created_at: new Date().toLocaleDateString('en-CA'),
+                        uSongs: {
+                            url: "https://music.youtube.com/watch?v=c3Pd7nH7Y40",
+                            title: "DevAPI - L'amour Toujours"
+                        }
+                    },
+                    {
+                        id: 2,
+                        votes: 17,
+                        created_at: new Date().toLocaleDateString('en-CA'),
+                        uSongs: {
+                            url: "https://music.youtube.com/watch?v=dQw4w9WgXcQ",
+                            title: "DevAPI - Rickus Astleyus"
+                        }
+                    }
+                ]
+            };
+
+            return res.render('dev/devapi', {
+                title: 'DevAPI Panel',
+                welcome: 'DevAPI Configuration',
+                layout: 'layouts/dev_layout',
+                devAPIEnabled: global.devAPIEnabled || false,
+                mockData: currentMockData
+            });
+        }
+
+        switch (action) {
+            case 'on':
+                global.devAPIEnabled = true;
+                await massSchedule();
+                logger('log', 'DevAPI włączono i zreschedulowano taski', 'LocalAPI-dev - devAPI');
+                return res.json({
+                    success: true,
+                    message: 'DevAPI włączone - używanie mock danych i zreschedulowanie tasków',
+                    devAPIEnabled: true
+                });
+
+            case 'off':
+                global.devAPIEnabled = false;
+                await massSchedule();
+                logger('log', 'DevAPI wyłączono i zreschedulowano taski', 'LocalAPI-dev - devAPI');
+                return res.json({
+                    success: true,
+                    message: 'DevAPI wyłączone - używanie main API i zreschedulowanie tasków',
+                    devAPIEnabled: false
+                });
+
+            case 'status':
+                return res.json({
+                    success: true,
+                    devAPIEnabled: global.devAPIEnabled || false,
+                    overrideTarget: 'partyvote.ciac.me',
+                    mockData: global.devAPIMockData || {}
+                });
+
+            case 'reschedule':
+                if (global.devAPIEnabled) {
+                    await massSchedule();
+                    logger('log', 'Taski zreschedulowane z DevAPI data', 'LocalAPI-dev - devAPI');
+                    return res.json({ success: true, message: 'Taski zreschedulowane z DevAPI data' });
+                } else {
+                    return res.json({ success: false, message: 'zaś DevAPI wyłączone' });
+                }
+
+            default:
+                return res.status(400).json({
+                    error: 'Niestety to nie koncert życzeń',
+                    availableActions: ['on', 'off', 'status', 'reschedule']
+                });
+        }
+    } catch (e) {
+        logger('verbose', 'Error w devAPI', 'LocalAPI-dev - devAPI');
+        if (global.debugmode === true) {
+            DebugSaveToFile('LocalAPI', 'devAPI', 'catched_error', e);
+        }
+        return res.status(500).json({ error: 'Taboretowy error serwera', message: e.message });
+    }
+}
+
+export async function devAPITimeTables(req, res) {
+    try {
+        if (req.method === 'GET') {
+            // Return current timeTables data
+            const mockTimeTables = global.devAPIMockData?.timeTables || {
+                isOn: true,
+                currentPlaylistId: 1,
+                timeRules: {
+                    rules: { "1": [] },
+                    applyRule: { "Fri": 1, "Mon": 1, "Sat": 0, "Sun": 0, "Thu": 1, "Tue": 1, "Wed": 1 }
+                }
+            };
+
+            return res.json({
+                timeTable: [mockTimeTables],
+                lastUpdated: new Date().toISOString()
+            });
+        }
+
+        if (req.method === 'POST') {
+            if (!global.devAPIMockData) global.devAPIMockData = {};
+            // Zamiana currentPlaylistId na obiekt {id: ...} jeśli jest liczbą
+            // if (typeof req.body.currentPlaylistId === 'number') {
+            //     req.body.currentPlaylistId = { id: req.body.currentPlaylistId };
+            // }
+            global.devAPIMockData.timeTables = req.body;
+            // console.log(global.devAPIMockData.timeTables)
+            logger('log', 'Zaktualizowano dane DevAPI TimeTables', 'LocalAPI-dev - devAPITimeTables');
+
+            if (global.devAPIEnabled) {
+                await massSchedule();
+                logger('log', 'Zaktualizowano dane TimeTables i zreschedulowano taski', 'LocalAPI-dev - devAPITimeTables');
+            }
+
+            return res.json({ success: true, message: 'Zaktualizowano dane TimeTables i zreschedulowano taski' });
+        }
+    } catch (e) {
+        logger('verbose', 'Błąd w devAPITimeTables', 'LocalAPI-dev - devAPITimeTables');
+        return res.status(500).json({ error: 'Taboretowy error serwera', message: e.message });
+    }
+}
+
+export async function devAPIVotes(req, res) {
+    try {
+        if (req.method === 'GET') {
+            const mockVotes = global.devAPIMockData?.votes || [];
+            return res.json({ playlist: mockVotes });
+        }
+
+        if (req.method === 'POST') {
+            if (!global.devAPIMockData) global.devAPIMockData = {};
+            global.devAPIMockData.votes = req.body;
+            logger('log', 'Zaktualizowano dane DevAPI Votes', 'LocalAPI-dev - devAPIVotes');
+            return res.json({ success: true, message: 'Zaktualizowano dane Votes' });
+        }
+    } catch (e) {
+        logger('verbose', 'Błąd w devAPIVotes', 'LocalAPI-dev - devAPIVotes');
+        return res.status(500).json({ error: 'Taboretowy error serwera', message: e.message });
+    }
+}

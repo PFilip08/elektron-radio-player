@@ -86,7 +86,11 @@ export async function saveVotes(req, res) {
         const data = await getVotesData();
         if (data === 'brak') return logger('log', 'Brak danych!!!', 'saveVotes');
         for (let i in data) {
-            await downloader(data[i].uSongs.url, true);
+            if (data[i].uSongs && data[i].uSongs.url) {
+                await downloader(data[i].uSongs.url, true);
+            } else {
+                logger('warn', `Brak uSongs lub url dla głosu: ${JSON.stringify(data[i])}`, 'saveVotes');
+            }
         }
         logger('log', 'Zapisano', 'saveVotes');
         return res.status(200).send('ok');

@@ -17,6 +17,18 @@ const api = axios.create({
 });
 
 async function getVotesData(force, data) {
+    // redirect na devapi
+    if (global.devAPIEnabled) {
+        logger('log', 'DevAPI włączone - używanie local DevAPI', 'getVotesData');
+        try {
+            const mockResponse = await api.get(`http://localhost:${process.env.PORT || 8080}/dev/api/votes`);
+            return mockResponse.data.playlist;
+        } catch (e) {
+            logger('error', 'DevAPI włączone, ale nie działa. Spadanie spowrotem na API filsza', 'getVotesData');
+            // Fall back to real API if DevAPI fails
+        }
+    }
+    
     logger('verbose', 'Sprawdzanie czy jest internet...', 'getVotesData');
     if (messageCounter) return logger('warn', 'Brak neta, pomijanie…', 'getVotesData');
     let date = new Date(); // dzisiaj
