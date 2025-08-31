@@ -50,22 +50,23 @@ function scheduleVotes(timeStart, timeEnd, id, i) {
         logger('error', `${id}, a nie siódma playlista!!! Głosowanie skopane!!!`, 'scheduleVotes');
         return;
     }
-    schedule.scheduleJob(`playPlayer - ${new Date().toLocaleString()}, ${i[0]}/${i[1]}`, timeStart, async function () {
+    const jobPlay = schedule.scheduleJob(`playPlayer - ${new Date().toLocaleString()}, ${i[0]}/${i[1]}`, timeStart, async function () {
         logger('log', 'Granie playlisty nr: '+id,'scheduleVotes');
         // console.log(await checkIfVLCisRunning(), await checkIfVLConVotes());
         if (await checkIfVLCisRunning() && await checkIfVLConVotes()) {
             await playPlayer();
         } else playPlaylist(id);
-        job.jobData = { id: id.id };
     });
-    schedule.scheduleJob(`pausePlayer - ${new Date().toLocaleString()}, ${i[0]}/${i[1]}`, timeEnd, function () {
+    jobPlay.jobData = { id };
+    
+    const jobPause = schedule.scheduleJob(`pausePlayer - ${new Date().toLocaleString()}, ${i[0]}/${i[1]}`, timeEnd, function () {
         try {
             pausePlayer();
         } catch (e) {
             killPlayer();
         }
-        job.jobData = { id: id.id };
     });
+    jobPause.jobData = { id };
 }
 
 async function downloadVotes() {
