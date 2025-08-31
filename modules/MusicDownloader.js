@@ -217,7 +217,7 @@ async function getTrackInfo(url) {
 async function downloadYT(url, votes, path2, override) {
     try {
         let Path = path2 || `./mp3/onDemand/`;
-        if (votes) Path = './mp3/7';
+        if (votes) Path = './mp3/7/';
         const ytdlpDown = new YTDlpWrap();
         const song = await ytdlpDown.getBasicInfo(url);
         const description = song.videoDetails.description.toLowerCase();
