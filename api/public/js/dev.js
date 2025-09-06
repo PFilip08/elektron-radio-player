@@ -1,3 +1,4 @@
+let overrideTarget = null;
 function performAction(url, params = {}) {
     const queryString = new URLSearchParams(params).toString();
     const iframe = document.getElementById('res');
@@ -39,7 +40,7 @@ function toggleDevAPI(state) {
     fetch(`/dev/api?action=${state}`)
         .then(response => response.json())
         .then(data => {
-            updateStatusIndicator(data.devAPIEnabled);
+            updateStatusIndicator(data.devAPIEnabled, null, overrideTarget);
             showMessage(data.message);
         })
         .catch(error => {
@@ -52,8 +53,10 @@ function checkDevAPIStatus() {
     fetch('/dev/api?action=status')
         .then(response => response.json())
         .then(data => {
-            updateStatusIndicator(data.devAPIEnabled);
-            showMessage('DevAPI Status: ' + (data.devAPIEnabled ? 'ENABLED' : 'DISABLED'));
+            console.log('DevAPI toggled:', data);
+            overrideTarget = data.overrideTarget;
+            updateStatusIndicator(data.devAPIEnabled, null, data.overrideTarget);
+            showMessage('DevAPI Status: ' + (data.devAPIEnabled ? 'WŁĄCZONE' : 'WYŁĄCZONE'));
         })
         .catch(error => {
             console.error('Error sprawdzania statusu:', error);
@@ -73,7 +76,7 @@ function rescheduleTasksNow() {
         });
 }
 
-function updateStatusIndicator(enabled, errorMsg = null) {
+function updateStatusIndicator(enabled, errorMsg = null, overrideTarget = null) {
     const indicator = document.getElementById('status-indicator');
     const container = document.getElementById('devapi-status');
 
@@ -84,10 +87,10 @@ function updateStatusIndicator(enabled, errorMsg = null) {
     }
 
     if (enabled) {
-        indicator.textContent = 'ENABLED - Overriding partyvote.ciac.me';
+        indicator.textContent = `WŁĄCZONE - Overriding ${ overrideTarget }`;
         container.className = 'devapi-status enabled';
     } else {
-        indicator.textContent = 'DISABLED - Using partyvote.ciac.me';
+        indicator.textContent = `WYŁĄCZONE - Używanie ${ overrideTarget || 'partyvote.ciac.me' }`;
         container.className = 'devapi-status disabled';
     }
 }

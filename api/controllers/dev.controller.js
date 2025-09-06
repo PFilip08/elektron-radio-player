@@ -226,7 +226,8 @@ export async function devAPI(req, res) {
                 welcome: 'DevAPI Configuration',
                 layout: 'layouts/dev_layout',
                 devAPIEnabled: global.devAPIEnabled || false,
-                mockData: currentMockData
+                mockData: currentMockData,
+                overrideTarget: process.env.URI || 'partyvote.ciac.me'
             });
         }
 
@@ -255,7 +256,7 @@ export async function devAPI(req, res) {
                 return res.json({
                     success: true,
                     devAPIEnabled: global.devAPIEnabled || false,
-                    overrideTarget: 'partyvote.ciac.me',
+                    overrideTarget: process.env.URI || 'partyvote.ciac.me',
                     mockData: global.devAPIMockData || {}
                 });
 

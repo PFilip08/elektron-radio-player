@@ -1,12 +1,6 @@
 <!-- dev/devapi.ejs -->
 <div class="center counter" id="devapi-status">
-    <strong>DevAPI Status: <span id="status-indicator">
-        <% if (devAPIEnabled) { %>
-            ENABLED - Overriding partyvote.ciac.me
-        <% } else { %>
-            DISABLED - Using partyvote.ciac.me
-        <% } %>
-    </span></strong>
+    <strong>DevAPI Status: <span id="status-indicator"></span></strong>
 </div>
 
 <div class="center main">
@@ -16,7 +10,7 @@
                 <th colspan="2">DevAPI Controls</th>
             </tr>
             <tr>
-                <th>DevAPI Toggle</th>
+                <th>DevAPI Przełącznik</th>
                 <td>
                     <button onclick="toggleDevAPI('on')" class="devapi-btn btn-on">ON</button>
                     <button onclick="toggleDevAPI('off')" class="devapi-btn btn-off">OFF</button>
@@ -25,8 +19,8 @@
                 </td>
             </tr>
             <tr>
-                <th>Override Target</th>
-                <td><strong>partyvote.ciac.me</strong> - Will use local DevAPI endpoints when ON</td>
+                <th>Override celu API</th>
+                <td><strong><%= overrideTarget || 'partyvote.ciac.me' %></strong> - Będzie używać lokalnego DevAPI, gdy jest WŁĄCZONY</td>
             </tr>
             <tr>
                 <th colspan="2"><hr /></th>
@@ -40,17 +34,17 @@
     <div class="tables-row">
         <table class="timetables-config">
             <tr>
-                <th colspan="2">TimeTables Configuration</th>
+                <th colspan="2">Konfiguracja Timetable</th>
             </tr>
             <tr>
-                <th>System Status</th>
+                <th>Status Systemu</th>
                 <td>
                     <label><input type="radio" name="isOn" value="true" <%= mockData.timeTables && mockData.timeTables.isOn ? 'checked' : '' %>> ON</label>
                     <label><input type="radio" name="isOn" value="false" <%= mockData.timeTables && !mockData.timeTables.isOn ? 'checked' : '' %>> OFF</label>
                 </td>
             </tr>
             <tr>
-                <th>Current Playlist</th>
+                <th>Aktualna Playlista</th>
                 <td>
                     <select id="currentPlaylistId">
                         <option value="1" <%= mockData.timeTables && mockData.timeTables.currentPlaylistId == 1 ? 'selected' : '' %>>Playlista 1 (Klasyczna)</option>
@@ -65,7 +59,7 @@
                 </td>
             </tr>
             <tr>
-                <th>Days Application</th>
+                <th>Przypisane dni</th>
                 <td>
                     <label><input type="checkbox" name="day" value="Mon" <%= mockData.timeTables && mockData.timeTables.timeRules.applyRule.Mon ? 'checked' : '' %>> Mon</label>
                     <label><input type="checkbox" name="day" value="Tue" <%= mockData.timeTables && mockData.timeTables.timeRules.applyRule.Tue ? 'checked' : '' %>> Tue</label>
@@ -77,7 +71,7 @@
                 </td>
             </tr>
             <tr>
-                <th>Break Times</th>
+                <th>Czasy przerw</th>
                 <td>
                     <div id="timeRulesContainer">
                         <% if (mockData.timeTables && mockData.timeTables.timeRules && mockData.timeTables.timeRules.rules["1"]) { %>
@@ -85,21 +79,21 @@
                             <div class="time-rule-entry">
                                 <input type="time" value="<%= rule.start %>" class="rule-start">
                                 <input type="time" value="<%= rule.end %>" class="rule-end">
-                                <button onclick="removeTimeRule(this)">Remove</button>
+                                <button onclick="removeTimeRule(this)">Usuń</button>
                             </div>
                             <% }) %>
                         <% } %>
                     </div>
-                    <button onclick="addTimeRule()">Add Break Time</button>
+                    <button onclick="addTimeRule()">Dodaj czas przerwy</button>
                 </td>
             </tr>
             <tr>
-                <th>Actions</th>
+                <th>Akcje</th>
                 <td>
-                    <button onclick="updateTimeTables()">Update TimeTables</button>
-                    <button onclick="loadTimeTablesPreset('school')">School Schedule</button>
-                    <button onclick="loadTimeTablesPreset('weekend')">Weekend Mode</button>
-                    <button onclick="loadTimeTablesPreset('off')">System Off</button>
+                    <button onclick="updateTimeTables()">Zaktualizuj TimeTables</button>
+                    <button onclick="loadTimeTablesPreset('school')">Plan Lekcji</button>
+                    <button onclick="loadTimeTablesPreset('weekend')">Tryb Weekendowy</button>
+                    <button onclick="loadTimeTablesPreset('off')">System Wyłączony</button>
                 </td>
             </tr>
             <tr>
@@ -109,10 +103,10 @@
 
         <table class="votes-config">
             <tr>
-                <th colspan="2">Votes Configuration</th>
+                <th colspan="2">Konfiguracja Głosów</th>
             </tr>
             <tr>
-                <th>Songs List</th>
+                <th>Lista Utworów</th>
                 <td>
                     <div id="votesContainer">
                         <% if (mockData && mockData.votes) { %>
@@ -123,21 +117,21 @@
                                 <input type="text" value="<%= song.uSongs && song.uSongs.url ? song.uSongs.url : '' %>" class="song-url" placeholder="Filename/URL">
                                 <input type="number" value="<%= song.votes %>" class="song-votes" placeholder="Votes" min="0">
                                 <input type="date" value="<%= song.created_at %>" class="song-date">
-                                <button onclick="removeVoteEntry(this)">Remove</button>
+                                <button onclick="removeVoteEntry(this)">Usuń</button>
                             </div>
                             <% }) %>
                         <% } %>
                     </div>
-                    <button onclick="addVoteEntry()">Add Song</button>
+                    <button onclick="addVoteEntry()">Dodaj Utwór</button>
                 </td>
             </tr>
             <tr>
-                <th>Actions</th>
+                <th>Akcje</th>
                 <td>
-                    <button onclick="updateVotes()">Update Votes</button>
-                    <button onclick="loadVotesPreset('popular')">Popular Songs</button>
-                    <button onclick="loadVotesPreset('test')">Test Data</button>
-                    <button onclick="loadVotesPreset('empty')">Clear All</button>
+                    <button onclick="updateVotes()">Zaktualizuj Głosy</button>
+                    <button onclick="loadVotesPreset('popular')">Popularne Utwory</button>
+                    <button onclick="loadVotesPreset('test')">Dane Testowe</button>
+                    <button onclick="loadVotesPreset('empty')">Wyczyść Wszystko</button>
                 </td>
             </tr>
         </table>
