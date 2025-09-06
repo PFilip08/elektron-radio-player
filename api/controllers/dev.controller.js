@@ -14,7 +14,7 @@ export async function resetTasks(req, res) {
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby resetu massSchedulera', 'LocalAPI-dev - resetTasks');
         if (global.debugmode === true) {
-            DebugSaveToFile('LocalAPI', 'resetTasks', 'catched_error', e);
+            DebugSaveToFile('LocalAPI-dev', 'resetTasks', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI-dev - resetTasks');
         }
     }
@@ -29,7 +29,7 @@ export async function cleanTasks(req, res) {
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby czyszczenia massSchedulera', 'LocalAPI-dev - cleanTasks');
         if (global.debugmode === true) {
-            DebugSaveToFile('LocalAPI', 'cleanTasks', 'catched_error', e);
+            DebugSaveToFile('LocalAPI-dev', 'cleanTasks', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI-dev - cleanTasks');
         }
     }
@@ -102,7 +102,7 @@ export async function addTask(req, res) {
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby dodania taskadania', 'LocalAPI-dev - addTask');
         if (global.debugmode === true) {
-            DebugSaveToFile('LocalAPI', 'addTask', 'catched_error', e);
+            DebugSaveToFile('LocalAPI-dev', 'addTask', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI-dev - addTask');
         }
     }
@@ -111,12 +111,12 @@ export async function addTask(req, res) {
 export async function restartEverything(req, res) {
     try {
         logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI-dev - restartEverything');
-        res.status(202).send('Restarting...');
+        res.status(202).send('Kopanie wszystkiego...');
         process.exit(0);
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby restartu wszystkiego', 'LocalAPI-dev - restartEverything');
         if (global.debugmode === true) {
-            DebugSaveToFile('LocalAPI', 'restartEverything', 'catched_error', e);
+            DebugSaveToFile('LocalAPI-dev', 'restartEverything', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI-dev - restartEverything');
         }
     }
@@ -136,7 +136,7 @@ export async function downloadYToverride(req, res) {
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby pobrania override z yt!!', 'LocalAPI-dev - downloadYToverride');
         if (global.debugmode === true) {
-            DebugSaveToFile('LocalAPI', 'downloadYToverride', 'catched_error', e);
+            DebugSaveToFile('LocalAPI-dev', 'downloadYToverride', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI-dev - downloadYToverride');
         }
         return res.status(500).send('Błąd; Skontaktuj się z działem taboretów');
@@ -160,7 +160,7 @@ export async function removeTask(req, res) {
     } catch (e) {
         logger('verbose', 'Błąd podczas usuwania zadania', 'LocalAPI-dev - removeTask');
         if (global.debugmode === true) {
-            DebugSaveToFile('LocalAPI', 'removeTask', 'catched_error', e);
+            DebugSaveToFile('LocalAPI-dev', 'removeTask', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI-dev - removeTask');
         }
         return res.status(500).send('Błąd podczas usuwania zadania');
@@ -171,7 +171,7 @@ export async function devAPI(req, res) {
     try {
         const action = req.query.action;
 
-        logger('log', `DevAPI request: ${action} from ${req.hostname}`, 'LocalAPI-dev - devAPI');
+        logger('log', `DevAPI request: ${action} od ${req.hostname}`, 'LocalAPI-dev - devAPI');
 
         if (!action) {
             const currentMockData = global.devAPIMockData || {
@@ -278,7 +278,8 @@ export async function devAPI(req, res) {
     } catch (e) {
         logger('verbose', 'Error w devAPI', 'LocalAPI-dev - devAPI');
         if (global.debugmode === true) {
-            DebugSaveToFile('LocalAPI', 'devAPI', 'catched_error', e);
+            DebugSaveToFile('LocalAPI-dev', 'devAPI', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI-dev - devAPI');
         }
         return res.status(500).json({ error: 'Taboretowy error serwera', message: e.message });
     }
@@ -322,6 +323,10 @@ export async function devAPITimeTables(req, res) {
         }
     } catch (e) {
         logger('verbose', 'Błąd w devAPITimeTables', 'LocalAPI-dev - devAPITimeTables');
+        if (global.debugmode === true) {
+            DebugSaveToFile('LocalAPI-dev', 'devAPITimeTables', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI-dev - devAPITimeTables');
+        }
         return res.status(500).json({ error: 'Taboretowy error serwera', message: e.message });
     }
 }
@@ -341,6 +346,10 @@ export async function devAPIVotes(req, res) {
         }
     } catch (e) {
         logger('verbose', 'Błąd w devAPIVotes', 'LocalAPI-dev - devAPIVotes');
+        if (global.debugmode === true) {
+            DebugSaveToFile('LocalAPI-dev', 'devAPIVotes', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI-dev - devAPIVotes');
+        }
         return res.status(500).json({ error: 'Taboretowy error serwera', message: e.message });
     }
 }
