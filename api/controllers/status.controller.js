@@ -1,6 +1,7 @@
 import {DebugSaveToFile} from "../../modules/DebugMode.js";
 import {logger} from "../../modules/Logger.js";
 import {getPlaylistName, playlistSongQuery, playlistListQuery, getPlayingSong} from "../../modules/MusicPlayer.js";
+import { messageCounter, previousData } from "../../modules/ApiConnector.js";
 import { pathSecurityChecker } from "../../modules/Other.js";
 
 const playlistCache = new Map();
@@ -120,3 +121,22 @@ export async function queryPlaylistList(req, res) {
         }
     }
 }
+
+export async function queryRecoveryModeStatus(req, res) {
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+
+    const interval = setInterval(() => {
+        const payload = {
+            status: messageCounter,
+            staticPlaylist: previousData.static,
+            previousDataPlaylistUse: previousData !== null
+        };
+        res.write(`data: ${JSON.stringify(payload)}\n\n`);
+    }, 1000);
+
+    req.on("close", () => {
+        clearInterval(interval);
+    });
+};

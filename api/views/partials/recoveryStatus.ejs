@@ -1,0 +1,24 @@
+<!-- partials/recoveryStatus.ejs -->
+<div class="center blink" style="color: red; font-size: xx-large;" id="recoveryModeState"></div>
+<script>
+    const recoveryModeState = document.getElementById("recoveryModeState");
+    const evtSource = new EventSource("/status/query/recoveryMode");
+    console.log(recoveryModeState);
+    evtSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        console.log(data);
+        if (data.status == true) {
+            recoveryModeState.style.display = "block";
+            if (data.previousDataPlaylistUse) {
+                recoveryModeState.innerHTML = "TRYB RECOVERY AKTYWNY!<br> (używanie poprzednio zdobytej playlisty!)";
+            } else if (!data.staticPlaylist) {
+                recoveryModeState.innerHTML = "TRYB RECOVERY AKTYWNY!<br> (używanie statycznego zapisu playlist!)";
+            } else {
+                recoveryModeState.innerHTML = "TRYB RECOVERY AKTYWNY!<br> (NIEZNANE!)";
+            }
+        } else {
+            recoveryModeState.style.display = "none";
+            recoveryModeState.innerHTML = "";
+        }
+    };
+</script>
