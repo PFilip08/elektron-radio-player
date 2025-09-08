@@ -3,10 +3,8 @@
 <script>
     const recoveryModeState = document.getElementById("recoveryModeState");
     const evtSource = new EventSource("/status/query/recoveryMode");
-    console.log(recoveryModeState);
     evtSource.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        console.log(data);
         if (data.status == true) {
             recoveryModeState.style.display = "block";
             if (data.previousDataPlaylistUse) {
