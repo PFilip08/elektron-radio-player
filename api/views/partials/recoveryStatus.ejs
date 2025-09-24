@@ -4,19 +4,25 @@
     const recoveryModeState = document.getElementById("recoveryModeState");
     const evtSource = new EventSource("/status/query/recoveryMode");
     evtSource.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        if (data.status == true) {
-            recoveryModeState.style.display = "block";
-            if (data.previousDataPlaylistUse) {
-                recoveryModeState.innerHTML = "TRYB RECOVERY AKTYWNY!<br> (używanie poprzednio zdobytej playlisty!)";
-            } else if (!data.staticPlaylist) {
-                recoveryModeState.innerHTML = "TRYB RECOVERY AKTYWNY!<br> (używanie statycznego zapisu playlist!)";
+        try {
+            const data = JSON.parse(event.data);
+            if (data.status == true) {
+                recoveryModeState.style.display = "block";
+                if (data.previousDataPlaylistUse) {
+                    recoveryModeState.innerHTML = "TRYB RECOVERY AKTYWNY!<br> (używanie poprzednio zdobytej playlisty!)";
+                } else if (!data.staticPlaylist) {
+                    recoveryModeState.innerHTML = "TRYB RECOVERY AKTYWNY!<br> (używanie statycznego zapisu playlist!)";
+                } else {
+                    recoveryModeState.innerHTML = "TRYB RECOVERY AKTYWNY!<br> (NIEZNANE!)";
+                }
             } else {
-                recoveryModeState.innerHTML = "TRYB RECOVERY AKTYWNY!<br> (NIEZNANE!)";
+                recoveryModeState.style.display = "none";
+                recoveryModeState.innerHTML = "";
             }
-        } else {
-            recoveryModeState.style.display = "none";
-            recoveryModeState.innerHTML = "";
+        } catch (e) {
+            console.error("Błąd podczas przetwarzania danych statusu trybu recovery:", e);
+            console.error("Stacktrace:", e.stack);
+            console.trace();
         }
     };
 </script>

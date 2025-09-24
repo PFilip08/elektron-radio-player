@@ -123,20 +123,29 @@ export async function queryPlaylistList(req, res) {
 }
 
 export async function queryRecoveryModeStatus(req, res) {
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Connection", "keep-alive");
+    try {
+        res.setHeader("Content-Type", "text/event-stream");
+        res.setHeader("Cache-Control", "no-cache");
+        res.setHeader("Connection", "keep-alive");
 
-    const interval = setInterval(() => {
-        const payload = {
-            status: messageCounter,
-            staticPlaylist: previousData.static,
-            previousDataPlaylistUse: previousData !== null
-        };
-        res.write(`data: ${JSON.stringify(payload)}\n\n`);
-    }, 1000);
+        const interval = setInterval(() => {
+            const payload = {
+                status: messageCounter,
+                staticPlaylist: previousData.static,
+                previousDataPlaylistUse: previousData !== null
+            };
+            res.write(`data: ${JSON.stringify(payload)}\n\n`);
+        }, 1200);
 
-    req.on("close", () => {
-        clearInterval(interval);
-    });
+        req.on("close", () => {
+            clearInterval(interval);
+        });
+    } catch (e) {
+        logger('error', 'Wystąpił błąd podczas próby sprawdzenia statusu trybu recovery!', 'LocalAPI - queryRecoveryModeStatus');
+        logger('error', e.stack, 'LocalAPI - queryRecoveryModeStatus');
+        if (global.debugmode === true) {
+            DebugSaveToFile('LocalAPI', 'query/recovery/status', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - queryRecoveryModeStatus');
+        }
+    }
 };
