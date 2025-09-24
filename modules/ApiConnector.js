@@ -1,8 +1,8 @@
 import axios from 'axios';
 import {Agent} from "node:https";
 import {massSchedule} from "./TaskScheduler.js";
+import {yellow} from 'colorette';
 import {logger, findChanges, logChanges } from "./Logger.js";
-import colors from 'colors';
 import {DebugSaveToFile} from "./DebugMode.js";
 const url = process.env.URI+'/api/timeTables';
 let previousData = null;
@@ -37,7 +37,7 @@ async function getApiData() {
             if (!messageCounter) {
                 logger('verbose','Sprawdzanie czy blokada jest włączona...','getApiData');
                 if (res.data.timeTable[0].isOn === false) {
-                    logger('verbose',colors.yellow('isOn jest przełączone na false!!!'),'getApiData');
+                    logger('verbose',yellow('isOn jest przełączone na false!!!'),'getApiData');
                     if (!messageStartupBlocker) {
                         logger('verbose','Sprawdzanie czy blokada jest włączona przy starcie automatu...','getApiData');
                         messageStartupBlocker = true;

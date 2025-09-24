@@ -1,5 +1,4 @@
-import {bold, gray, magenta, cyan, bgWhiteBright, black, bgYellowBright, bgRedBright, whiteBright, bgCyanBright, bgGreenBright, bgBlackBright, blueBright} from 'colorette';
-import colors from 'colors';
+import {yellow, red, bold, gray, magenta, cyan, bgWhiteBright, black, bgYellowBright, bgRedBright, whiteBright, bgCyanBright, bgGreenBright, bgBlackBright, blueBright} from 'colorette';
 import {DebugSaveToFile} from './DebugMode.js';
 
 function logger(type, content, name) {
@@ -59,11 +58,11 @@ function logChanges(changes) {
         const { key, oldValue, newValue } = change;
         let message = `Zmiana w ${key}: `;
         if (key.includes('static')) {
-          logger('verbose',colors.yellow('Wykryto przejście z trybu recovery który używał danych statycznych do trybu normalnego. Nie ma potrzeby aby porównywać tych danych!'), 'logChanges');
+          logger('verbose',yellow('Wykryto przejście z trybu recovery który używał danych statycznych do trybu normalnego. Nie ma potrzeby aby porównywać tych danych!'), 'logChanges');
           throw new Error('Wykryto przejście z trybu recovery który używał danych statycznych do trybu normalnego. Nie ma potrzeby aby porównywać tych danych!');
         }
         if (key.includes('isOn')) {
-          logger('verbose',colors.yellow('Wykryto zmianę klucza "isOn". Nie ma potrzeby aby porównywać tych danych!'), 'logChanges');
+          logger('verbose',yellow('Wykryto zmianę klucza "isOn". Nie ma potrzeby aby porównywać tych danych!'), 'logChanges');
           throw new Error('Wykryto zmianę klucza "isOn". Nie ma potrzeby aby porównywać tych danych!');
         }
         if (key.includes('start') || key.includes('end')) {
@@ -147,12 +146,12 @@ function logChanges(changes) {
         }
         if (!key.includes('id') && !key.includes('created_at') === true) {
           if (oldValue !== undefined || newValue !== undefined) {
-              logger('debug', colors.yellow(message), 'logChanges');
+              logger('debug', yellow(message), 'logChanges');
           }
         }
       });
     } catch (error) {
-      logger('verbose', colors.red(`Wystąpił błąd podczas logowania zmian: ${error}`), 'logChanges');
+      logger('verbose', red(`Wystąpił błąd podczas logowania zmian: ${error}`), 'logChanges');
       if (global.debugmode === true) {
         DebugSaveToFile('Logger', 'logChanges', 'catched_error', error);
         logger('verbose', `Stacktrace został zrzucony do debug/`, 'logChanges');

@@ -4,9 +4,9 @@ import {getApiData, messageCounter} from "./ApiConnector.js";
 import {autoRemoveFiles, downloader, getTrackInfo} from "./MusicDownloader.js";
 import {logger} from "./Logger.js";
 import {checkIfVLCisRunning, checkIfVLConVotes, sterylizator} from "./Other.js";
-import colors from 'colors';
 import {getVotesData} from "./VotesConnector.js";
 import { Mutex } from 'async-mutex';
+import {yellow} from 'colorette';
 
 function taskNumber() {
     let n = 0;
@@ -21,7 +21,7 @@ function scheduleMusicTask(time, id, i) {
     logger('verbose', `Zadanie zaplanowane na ${time}`, 'scheduleMusicTask');
     logger('verbose', 'Sprawdzanie czy playlista nie jest ustawione na 0', 'scheduleMusicTask');
     if (id.id == 0) {
-        logger('verbose', colors.yellow("Wykryto playlistę zero!!! Co nie powinno mieć miejsca!"), 'scheduleMusicTask');
+        logger('verbose', yellow("Wykryto playlistę zero!!! Co nie powinno mieć miejsca!"), 'scheduleMusicTask');
         logger('error', 'Playlista zero nie może być odtwarzana!!! A została przekazana do funkcji', 'scheduleMusicTask');
         return;
     }
@@ -46,7 +46,7 @@ function scheduleVotes(timeStart, timeEnd, id, i) {
     logger('verbose', `ID playlisty: ${id} (powinno być 7)`, 'scheduleVotes');
     logger('verbose', 'Sprawdzanie czy playlista nie jest ustawiona na inną playlistę niż 7', 'scheduleVotes');
     if (id !== 7) {
-        logger('verbose', colors.yellow("Wykryto playlistę inną niż 7!!! Co nie powinno mieć miejsca!"), 'scheduleVotes');
+        logger('verbose', yellow("Wykryto playlistę inną niż 7!!! Co nie powinno mieć miejsca!"), 'scheduleVotes');
         logger('error', `${id}, a nie siódma playlista!!! Głosowanie skopane!!!`, 'scheduleVotes');
         return;
     }
@@ -92,18 +92,18 @@ async function checkScheduleTime(timeEnd, timeStart, rule, breakNumber) {
     logger('verbose', `Sprawdzanie zasady ${rule} i przerwy ${breakNumberInt}`, 'checkScheduleTime');
     breakNumber = (breakNumber + 1);
     if (timeEndArray[0] < timeStartArray[0]) {
-        logger('verbose', colors.yellow('WYKRYTO RÓŻNICĘ W GODZINIE!!!'), 'checkScheduleTime');
+        logger('verbose', yellow('WYKRYTO RÓŻNICĘ W GODZINIE!!!'), 'checkScheduleTime');
         logger('error', `Dla zasady ${rule} i przerwy ${breakNumberInt}, czas zakończenia (${timeEnd} aka "end" w JSONie) jest wcześniejszy niż czas rozpoczęcia (${timeStart}), różnica wynosi ${(timeStartArray[0] - timeEndArray[0])} godziny.`, 'checkScheduleTime');
         return false;
     }
     if (timeEndArray[0] === timeStartArray[0]) {
         if (timeEndArray[1] < timeStartArray[1]) {
-            logger('verbose', colors.yellow('WYKRYTO RÓŻNICĘ W MINUTACH!!!'), 'checkScheduleTime');
+            logger('verbose', yellow('WYKRYTO RÓŻNICĘ W MINUTACH!!!'), 'checkScheduleTime');
             logger('error', `Dla zasady ${rule} i przerwy ${breakNumberInt}, czas zakończenia (${timeEnd} aka "end" w JSONie) jest wcześniejszy niż czas rozpoczęcia (${timeStart} aka "start" w JSONie), różnica wynosi ${(timeStartArray[1] - timeEndArray[1])} minut.`, 'checkScheduleTime');
             return false;
         }
         else if (timeEndArray[1] === timeStartArray[1]) {
-            logger('verbose', colors.yellow('WYKRYTO BEZ SENSU ZAPIS!!!'), 'checkScheduleTime');
+            logger('verbose', yellow('WYKRYTO BEZ SENSU ZAPIS!!!'), 'checkScheduleTime');
             logger('error', `Dla zasady ${rule} i przerwy ${breakNumberInt}, czas zakończenia (${timeEnd} aka "end" w JSONie) jest taki sam jak czas rozpoczęcia (${timeStart} aka "start" w JSONie).`, 'checkScheduleTime');
             return false;
         }
@@ -191,7 +191,7 @@ async function massSchedule() {
                     }
                 }
                 if ((messageCounter && time[mappedDays[l]][i].playlist === undefined && currentPlaylist === 7) || emptyVotes) { // gdy nie ma neta i gdy puste głosy
-                    logger('verbose', colors.yellow('Wykryto brak internetu lub pusty response z funkcji getVotesData! Losowanie playlist statycznych...'), 'massSchedule');
+                    logger('verbose', yellow('Wykryto brak internetu lub pusty response z funkcji getVotesData! Losowanie playlist statycznych...'), 'massSchedule');
                     const id = Math.floor(Math.random() * 5) + 1; // rosyjska ruletka od 1 do 5
                     scheduleMusicTask(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, {id}, [l, i]);
                     scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, [l, i]);

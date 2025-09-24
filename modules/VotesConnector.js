@@ -4,7 +4,7 @@ import fs from "fs";
 import {logger} from "./Logger.js";
 import {messageCounter} from "./ApiConnector.js";
 import { DebugSaveToFile } from "./DebugMode.js";
-import colors from "colors";
+import {yellow} from 'colorette';
 
 const url = process.env.URI+'/api/playlist?hostId=1&date=';
 export const votesPath = './mp3/Votes.json';
@@ -57,7 +57,7 @@ async function getVotesData(force, data) {
     if (!res.data.playlist) return;
     logger('verbose', `Sprawdzanie czy JSON z API nie jest pusty...`, 'getVotesData');
     if (res.data.playlist.length === 0) {
-        logger('verbose', colors.yellow('JSON z API jest pusty!'), 'getVotesData');
+        logger('verbose', yellow('JSON z API jest pusty!'), 'getVotesData');
         logger('log', 'Brak danych.', 'getVotesData');
         return 'brak';
     }
