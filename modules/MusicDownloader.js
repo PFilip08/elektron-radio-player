@@ -3,7 +3,7 @@ import Ffmpeg from 'fluent-ffmpeg'
 import * as fs from "fs";
 import {logger} from "./Logger.js";
 import * as path from "path";
-import {sterylizator} from "./Other.js";
+import {sterylizator, truncate} from "./Other.js";
 import {DebugSaveToFile} from "./DebugMode.js";
 import os from "os";
 import axios from "axios";
@@ -60,7 +60,7 @@ async function downloadSong(url, votes, path2) {
     try {
         let path = path2 || `./mp3/onDemand/`;
         const data = await spotify.getTrack(url);
-        const file = sterylizator(data.artists.join('-') + '_' + data.name);
+        const file = truncate(sterylizator(data.artists.join('-') + '_' + data.name), 200);
         logger('log', `Pobieram: ${data.name + ' by: ' + data.artists.join(', ')}`, 'downloadSong');
         logger('verbose', 'Sprawdzanie czy nie pobieram z głosów...', 'downloadSong');
         if (votes) {path = `./mp3/7/`; logger('verbose', 'Pobieranie z głosowania!', 'downloadSong');}
@@ -106,7 +106,7 @@ async function downloadPlaylist(url, path2) {
             if (!fs.existsSync(`${path}${dir}`)) {
                 fs.mkdirSync(`${path}${dir}`);
             }
-            const file = sterylizator(song.artists.join('-') + '_' + song.name);
+            const file = truncate(sterylizator(song.artists.join('-') + '_' + song.name), 200);
             if (fs.existsSync(`${path}${dir}/${file}.mp3`)) {
                 logger('warn', `${file}.mp3 - Plik istnieje!`, 'downloadPlaylist');
                 continue;
@@ -151,7 +151,7 @@ async function downloadAlbum(url, path2) {
         const album = await spotify.downloadAlbum(url);
         for (let i in album) {
             let song = await getTrackInfo(data.tracks[i]);
-            const file = sterylizator(song.artists.join('-') + '_' + song.name);
+            const file = truncate(sterylizator(song.artists.join('-') + '_' + song.name), 200);
             if (fs.existsSync(`${path}${dir}/${file}.mp3`)) {
                 logger('warn', `${file}.mp3 - Plik istnieje!`, 'downloadAlbum');
                 continue;
@@ -239,7 +239,7 @@ async function downloadYT(url, votes, path2, override) {
             }
         } else logger('log', `Pomijanie regexa wykrywania!`, 'downloadYT');
 
-        const file = sterylizator(song.videoDetails.author.name+' - '+song.videoDetails.title);
+        const file = truncate(sterylizator(song.videoDetails.author.name+' - '+song.videoDetails.title), 200);
         const filePath = `${Path}${file}.mp3`;
         if (fs.existsSync(filePath)) return logger('warn', `Plik istnieje!`, 'downloadYT');
         if(checkIfFileExistsInArchive(`${file}.mp3`)) {

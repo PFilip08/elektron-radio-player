@@ -154,6 +154,11 @@ async function checkIfVLConVotes() {
 
 function uint8ArrayToBase64(uint8Array) {
     return Buffer.from(uint8Array).toString('base64');
-}  
+}
 
-export { sterylizator, pathSecurityChecker, killVLCatStartup, checkIfVLCisRunning, checkIfVLConVotes, uint8ArrayToBase64 };
+function truncate(str, n){
+    logger('warn', `Ucinanie "${str}" na długość ${n}.`, 'truncate');
+    return (str.length > n) ? str.slice(0, n-1) : str;
+}
+
+export { sterylizator, pathSecurityChecker, killVLCatStartup, checkIfVLCisRunning, checkIfVLConVotes, uint8ArrayToBase64, truncate };
