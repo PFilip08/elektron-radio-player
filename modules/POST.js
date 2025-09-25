@@ -14,12 +14,12 @@ async function POST() {
     logger('POST', '------------------------------');
     await DebugStarter();
     logger('verbose', `Wykryto system: ${process.platform}`, 'POST');
-    // if (process.platform === "win32") {
-    //     logger('verbose', 'System Windows nie jest obsługiwany', 'POST');
-    //     logger('error', 'okna niedozwolone');
-    //     logger('verbose', 'Wywalanie procesu z kodem 2', 'POST');
-    //     return process.exit(2);
-    // }
+    if (process.platform === "win32") {
+        logger('verbose', 'System Windows nie jest obsługiwany', 'POST');
+        logger('error', 'okna niedozwolone');
+        logger('verbose', 'Wywalanie procesu z kodem 2', 'POST');
+        return process.exit(2);
+    }
     if (process.env.WWW || false) {
         logger('task', 'Aktywowanie lokalnego API', 'POST');
         www();
