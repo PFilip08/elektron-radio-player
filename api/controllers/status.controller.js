@@ -131,7 +131,7 @@ export async function queryRecoveryModeStatus(req, res) {
         const interval = setInterval(() => {
             const payload = {
                 status: messageCounter,
-                staticPlaylist: previousData.static,
+                staticPlaylist: previousData ? previousData.static : null,
                 previousDataPlaylistUse: previousData !== null
             };
             res.write(`data: ${JSON.stringify(payload)}\n\n`);
