@@ -157,7 +157,7 @@ function uint8ArrayToBase64(uint8Array) {
 }
 
 function truncate(str, n){
-    logger('warn', `Ucinanie "${str}" na długość ${n}.`, 'truncate');
+    if (str.length > n) logger('warn', `Ucinanie "${str}" na długość ${n}.`, 'truncate');
     return (str.length > n) ? str.slice(0, n-1) : str;
 }
 
