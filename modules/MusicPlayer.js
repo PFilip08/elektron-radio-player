@@ -123,15 +123,16 @@ function playMusic(filename) {
     logger('task','--------Play Music--------', 'playMusic');
 }
 
-function playOnDemand(filename) {
+function playOnDemand(filename, file) {
     logger('verbose', `Odtwarzanie muzyki na żądanie o nazwie: ${filename}`, 'playOnDemand');
     logger('verbose', `Sprawdzanie czy plik istnieje...`, 'playOnDemand');
-    if(!fs.existsSync(`./mp3/onDemand/${filename}`) && !fs.existsSync(`./mp3/onDemand/${filename}.mp3`)) return logger('error','Brak pliku!!', 'playOnDemand');
+    const filepath = file || './mp3/onDemand/'
+    if(!fs.existsSync(`${filepath}${filename}`) && !fs.existsSync(`${filepath}${filename}.mp3`)) return logger('error','Brak pliku!!', 'playOnDemand');
     logger('verbose', `Plik istnieje! Granie pliku muzycznego...`, 'playOnDemand');
-    let buffer = path.resolve(`./mp3/onDemand/${filename}.mp3`);
+    let buffer = path.resolve(`${filepath}${filename}.mp3`);
     logger('verbose', `Sprawdzanie czy plik jest folderem...`, 'playOnDemand');
     try {
-        if (fs.lstatSync(`./mp3/onDemand/${filename}`).isDirectory()) buffer = path.resolve(`./mp3/onDemand/${filename}`); logger('verbose', `Plik jest folderem`, 'playOnDemand');
+        if (fs.lstatSync(`${filepath}${filename}`).isDirectory()) buffer = path.resolve(`${filepath}${filename}`); logger('verbose', `Plik jest folderem`, 'playOnDemand');
     } catch (e) {
         logger('verbose', `Plik nie jest folderem`, 'playOnDemand');
         if (global.debugmode === true) {

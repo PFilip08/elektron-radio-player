@@ -10,7 +10,9 @@
             <input type="search" id="downloadYTOverrideUrl" placeholder="https://www.youtube.com/watch?v=..." required/>
             <br/>
             <input type="search" id="downloadYTOverridePath" placeholder="./mp3/7/" style="width: 100px;"/>
-            <button onclick="performAction('/dev/action/downloadYToverride', { url: document.getElementById('downloadYTOverrideUrl').value, path: document.getElementById('downloadYTOverridePath').value })">OK</button>
+            <button onclick="performAction('/dev/action/downloadYToverride', { url: document.getElementById('downloadYTOverrideUrl').value, path: document.getElementById('downloadYTOverridePath').value, override: document.getElementById('downloadYTOverrideOverride').checked })">OK</button>
+            <br/>
+            <input type="checkbox" id="downloadYTOverrideOverride"/> <label for="downloadYTOverrideOverride">Override</label>
         </td>
     </tr>
     <tr></tr>
@@ -28,7 +30,7 @@
     <tr>
         <th>Restart</th>
         <td>
-            <button onclick="performAction('/dev/action/restart', { action: 'off' })">OFF</button>
+            <button onclick="performAction('/dev/action/restart', { action: 'off' })">RESTART</button>
         </td>
     </tr>
 </table>

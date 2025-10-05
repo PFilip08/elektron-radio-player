@@ -1,9 +1,9 @@
 import {logger} from "../../modules/Logger.js";
 import {DebugSaveToFile} from "../../modules/DebugMode.js";
-import {massSchedule, taskNumber} from "../../modules/TaskScheduler.js";
+import {massSchedule, scheduleKillTask, taskNumber} from "../../modules/TaskScheduler.js";
 import schedule from "node-schedule";
-import {killPlayer, playMusic, playPlaylist} from "../../modules/MusicPlayer.js";
-import {downloadYT} from "../../modules/MusicDownloader.js";
+import {killPlayer, playMusic, playOnDemand, playPlaylist} from "../../modules/MusicPlayer.js";
+import {downloadYT, getYTInfo} from "../../modules/MusicDownloader.js";
 import * as fs from "fs";
 
 export async function resetTasks(req, res) {
@@ -126,11 +126,25 @@ export async function downloadYToverride(req, res) {
     try {
         logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI-dev - downloadYToverride');
         const url = req.query.url;
+        const override = req.query.override;
         let path = req.query.path || './mp3/onDemand/';
         if (!url) return res.status(400).send('Nie podano URL!');
         if (path.length < 6 || !path.startsWith('./mp3/')) return res.status(400).send('Niepoprawna ścieżka!');
         if (!path.endsWith('/')) path = path+'/';
         if(!fs.existsSync(path)) fs.mkdirSync(path);
+        if (override==='true') {
+            const song = await getYTInfo(url);
+            const filename = song.file ;
+            const startTime = new Date(Date.now() + 1000);
+            const killTime = new Date(Date.now() + 500);
+            scheduleKillTask(killTime);
+            const job = schedule.scheduleJob(`playOnDemand - ${new Date().toLocaleString()}`, startTime, function () {
+                playOnDemand(filename, path);
+                logger('log', `On Demand: ${song.title}`,'LocalAPI-dev - downloadYToverride');
+            });
+            job.jobData = { filename: filename, filepath: path, override: override };
+            return res.status(201).send(`gut, override, ${path}`);
+        }
         await downloadYT(url, false, path, true);
         return res.status(201).send(`gut, ${path}`);
     } catch (e) {

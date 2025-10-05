@@ -214,14 +214,26 @@ async function getTrackInfo(url) {
         }
     }
 }
+
+async function getYTInfo(url) {
+    if (!url) return 'Brak URL!!11';
+    const ytdlpDown = new YTDlpWrap();
+    const song = await ytdlpDown.getBasicInfo(url);
+    const description = song.videoDetails.description.toLowerCase();
+    const title = song.videoDetails.title.toLowerCase();
+    const file = truncate(sterylizator(song.videoDetails.author.name+' - '+song.videoDetails.title), 200);
+    return {song, description, title, file};
+}
+
 async function downloadYT(url, votes, path2, override) {
     try {
         let Path = path2 || `./mp3/onDemand/`;
         if (votes) Path = './mp3/7/';
         const ytdlpDown = new YTDlpWrap();
-        const song = await ytdlpDown.getBasicInfo(url);
-        const description = song.videoDetails.description.toLowerCase();
-        const title = song.videoDetails.title.toLowerCase();
+        const info = await getYTInfo(url);
+        const song = info.song;
+        const description = info.description;
+        const title = info.title;
         const musicKeywords = ['official music video', 'lyrics', 'audio', 'album', 'song', 'spotify', 'tidal', 'muzyka', 'muzy', 'muza', 'płytę', 'feat', 'remastered', 'vevo', 'mix', 'nightcore', 'hardstyle'];
         if (!override) {
             if (song.videoDetails.category !== 'Music') {
@@ -239,7 +251,7 @@ async function downloadYT(url, votes, path2, override) {
             }
         } else logger('log', `Pomijanie regexa wykrywania!`, 'downloadYT');
 
-        const file = truncate(sterylizator(song.videoDetails.author.name+' - '+song.videoDetails.title), 200);
+        const file = info.file;
         const filePath = `${Path}${file}.mp3`;
         if (fs.existsSync(filePath)) return logger('warn', `Plik istnieje!`, 'downloadYT');
         if(checkIfFileExistsInArchive(`${file}.mp3`)) {
@@ -398,4 +410,4 @@ async function removeFiles(path) {
     });
 }
 
-export { downloader, downloadPlaylist, downloadAlbum, getTrackInfo, autoRemoveFiles, downloadYT, removeFiles };
+export { downloader, downloadPlaylist, downloadAlbum, getTrackInfo, autoRemoveFiles, downloadYT, removeFiles, getYTInfo };
