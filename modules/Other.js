@@ -7,6 +7,30 @@ import fs from "fs";
 import VLC from "vlc-client";
 import {yellow} from 'colorette';
 
+function sterylizatorIP(input) {
+    let sterilised = '';
+    logger('verbose', `Sterylizacja IP: ${input}`, 'sterylizatorIP');
+    if (global.debugmode === true) {
+        DebugSaveToFile('Other', 'sterylizatorIP', 'source', input);
+        logger('verbose', 'Tekst źródłowy zapisany do debug/', 'sterylizatorIP');
+    }
+    try {
+        sterilised = input.replace(/[^0-9.]/g, "");
+    } catch (e) {
+        logger('error', `Wystąpił błąd podczas sterylizacji IP: ${e}`, 'sterylizatorIP');
+        if (global.debugmode === true) {
+            DebugSaveToFile('Other', 'sterylizatorIP', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'sterylizatorIP');
+        }
+        sterilised = '';
+    }
+    if (global.debugmode === true) {
+        DebugSaveToFile('Other', 'sterylizatorIP', 'result', sterilised);
+        logger('verbose', `Zwrócono wynik sterylizacji do debug/`, 'sterylizatorIP');
+    }
+    return sterilised;
+}
+
 function sterylizator(input) {
     let sterilised = '';
     logger('verbose', `Sterylizacja tekstu: ${input}`, 'sterylizator');
@@ -161,4 +185,4 @@ function truncate(str, n){
     return (str.length > n) ? str.slice(0, n-1) : str;
 }
 
-export { sterylizator, pathSecurityChecker, killVLCatStartup, checkIfVLCisRunning, checkIfVLConVotes, uint8ArrayToBase64, truncate };
+export { sterylizator, pathSecurityChecker, killVLCatStartup, checkIfVLCisRunning, checkIfVLConVotes, uint8ArrayToBase64, truncate, sterylizatorIP };
