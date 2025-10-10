@@ -8,10 +8,10 @@
             const data = JSON.parse(event.data);
             if (data.status == true) {
                 recoveryModeState.style.display = "block";
-                if (data.previousDataPlaylistUse) {
+                if (data.staticPlaylist) {
+                    recoveryModeState.innerHTML = "TRYB RECOVERY AKTYWNY!<br> (używanie statycznego zapisu playlist!)"
+                } else if (data.previousDataPlaylistUse) {
                     recoveryModeState.innerHTML = "TRYB RECOVERY AKTYWNY!<br> (używanie poprzednio zdobytej playlisty!)";
-                } else if (!data.staticPlaylist) {
-                    recoveryModeState.innerHTML = "TRYB RECOVERY AKTYWNY!<br> (używanie statycznego zapisu playlist!)";
                 } else {
                     recoveryModeState.innerHTML = "TRYB RECOVERY AKTYWNY!<br> (NIEZNANE!)";
                 }
