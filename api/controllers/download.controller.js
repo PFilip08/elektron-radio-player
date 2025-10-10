@@ -12,7 +12,7 @@ export async function downloadSong(req, res) {
         const uri = req.query.uri;
         let path = undefined;
         if (req.query.path) path = `./mp3/${req.query.path}/`;
-        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - downloadSong');
+        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - downloadSong');
         if (!uri) return res.status(400).send('Nie podano linku!');
         if (await downloader(uri, false, path) === 'Nie wykryto typu') return res.status(500).send('Nie można wykryć typu linku Spotify!');
         return res.status(201).send('gut');
@@ -32,7 +32,7 @@ export async function downloadAndPlay(req, res) {
         const uri = req.query.uri;
         const downloadStatus = await downloader(uri);
         // const time = req.query.time;
-        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - downloadAndPlay');
+        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - downloadAndPlay');
         if (!uri) return res.status(400).send('Nie podano linku!');
         if (downloadStatus === 'Nie wykryto typu') return res.status(500).send('Nie można wykryć typu linku Spotify!');
         if (downloadStatus === 'Nie można pobrać bo to jest film') return res.status(500).send('Nie można pobrać z YT bo to jest film a nie muzyka!');

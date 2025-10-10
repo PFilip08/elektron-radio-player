@@ -34,7 +34,7 @@ export async function queryPlaylist(req, res) {
         }
         let secuCheck = pathSecurityChecker(id);
         if (secuCheck.includes('_ATTEMPT')) {
-            logger('warn', `Próba odtworzenia pliku z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${req.hostname}`, 'LocalAPI - queryPlaylist');
+            logger('warn', `Próba odtworzenia pliku z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - queryPlaylist');
             return res.status(403).send('Niebezpieczna ścieżka!');
         }
         if (playlistCache.has(id) && !playlistName.includes('onDemand') && force !== 'true') {
@@ -69,7 +69,7 @@ export async function queryPlaylist(req, res) {
 
 export async function queryPlayingMusic(req, res) {
     try {
-        logger('verbose', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlayingMusic');
+        logger('verbose', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlayingMusic');
         const [ isPlaying, songName, playedTime, toPlayTime ] = await getPlayingSong();
         return res.status(201).json(
             {
@@ -92,7 +92,7 @@ export async function queryPlayingMusic(req, res) {
 
 export async function queryPlaylistList(req, res) {
     try {
-        logger('verbose', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlaylistList');
+        logger('verbose', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlaylistList');
         const playlistListFromFiles = await playlistListQuery()
         let playlistListNames = {};
         playlistListFromFiles.forEach((playlistID, index) => {

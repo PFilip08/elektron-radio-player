@@ -8,7 +8,7 @@ import * as fs from "fs";
 
 export async function resetTasks(req, res) {
     try {
-        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI-dev - resetTasks');
+        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI-dev - resetTasks');
         await massSchedule();
         return res.status(202).send('resetd');
     } catch (e) {
@@ -22,7 +22,7 @@ export async function resetTasks(req, res) {
 
 export async function cleanTasks(req, res) {
     try {
-        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI-dev - cleanTasks');
+        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI-dev - cleanTasks');
         await schedule.gracefulShutdown();
         taskNumber();
         return res.status(202).send('cleaned');
@@ -50,7 +50,7 @@ export async function addTask(req, res) {
             return res.status(400).send('Nieprawidłowy JSON w polu taskData!');
         }
 
-        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI-dev - addTask');
+        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI-dev - addTask');
 
         if (!taskName || !taskType || !taskDate) {
             logger('warn', 'Nie podano wszystkich wymaganych pól!', 'LocalAPI-dev - addTask');
@@ -110,7 +110,7 @@ export async function addTask(req, res) {
 
 export async function restartEverything(req, res) {
     try {
-        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI-dev - restartEverything');
+        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI-dev - restartEverything');
         res.status(202).send('Kopanie wszystkiego...');
         process.exit(0);
     } catch (e) {
@@ -124,7 +124,7 @@ export async function restartEverything(req, res) {
 
 export async function downloadYToverride(req, res) {
     try {
-        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI-dev - downloadYToverride');
+        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI-dev - downloadYToverride');
         const url = req.query.url;
         const override = req.query.override;
         let path = req.query.path || './mp3/onDemand/';
@@ -161,7 +161,7 @@ export async function removeTask(req, res) {
     try {
         const taskName = req.query.name;
         if (!taskName) return res.status(400).send('Brak nazwy zadania!');
-        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')} - usuwanie zadania: ${taskName}`, 'LocalAPI-dev - removeTask');
+        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')} - usuwanie zadania: ${taskName}`, 'LocalAPI-dev - removeTask');
         const job = schedule.scheduledJobs[taskName];
         if (!job) return res.status(404).send('Nie znaleziono zadania o nazwie: ' + taskName);
 
@@ -185,7 +185,7 @@ export async function devAPI(req, res) {
     try {
         const action = req.query.action;
 
-        logger('log', `DevAPI request: ${action} od ${req.hostname}`, 'LocalAPI-dev - devAPI');
+        logger('log', `DevAPI request: ${action} od ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI-dev - devAPI');
 
         if (!action) {
             const currentMockData = global.devAPIMockData || {

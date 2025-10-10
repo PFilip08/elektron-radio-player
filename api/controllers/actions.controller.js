@@ -1,7 +1,7 @@
 import {DebugSaveToFile} from "../../modules/DebugMode.js";
 import {logger} from "../../modules/Logger.js";
 import {killPlayer, killPlayerForce, playMusic, playPlaylist} from "../../modules/MusicPlayer.js";
-import {pathSecurityChecker} from "../../modules/Other.js";
+import {pathSecurityChecker, sterylizatorIP} from "../../modules/Other.js";
 import {removeFiles} from "../../modules/MusicDownloader.js";
 import VLC from "vlc-client";
 
@@ -11,7 +11,7 @@ export let szuffle = 'true';
 export async function kill(req, res) {
     try {
         const force = req.query.force;
-        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - killPlayer');
+        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - killPlayer');
         if (force !== undefined) {
             killPlayerForce();
             return res.status(201).send('force gut');
@@ -31,13 +31,13 @@ export async function kill(req, res) {
 export async function pMusic(req, res) {
     try {
         const file = req.query.file;
-        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - pMusic');
+        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - pMusic');
         if (!file) {
             return res.status(400).send('Nie podano nazwy pliku!');
         }
         let secuCheck = pathSecurityChecker(file);
         if (secuCheck.includes('_ATTEMPT')) {
-            logger('warn', `Próba odtworzenia pliku z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${req.hostname}`, 'LocalAPI - pMusic');
+            logger('warn', `Próba odtworzenia pliku z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - pMusic');
             return res.status(403).send('Niebezpieczna ścieżka!');
         }
         playMusic(file);
@@ -55,13 +55,13 @@ export async function pMusic(req, res) {
 export async function pPlaylist(req, res) {
     try {
         const id = req.query.id;
-        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - pPlaylist');
+        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - pPlaylist');
         if (!id) {
             return res.status(400).send('Nie podano numeru playlisty!');
         }
         let secuCheck = pathSecurityChecker(id);
         if (secuCheck.includes('_ATTEMPT')) {
-            logger('warn', `Próba odtworzenia playlisty z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${req.hostname}`, 'LocalAPI - pPlaylist');
+            logger('warn', `Próba odtworzenia playlisty z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - pPlaylist');
             return res.status(403).send('Niebezpieczna ścieżka!');
         }
         playPlaylist(id);
@@ -82,7 +82,7 @@ export async function vlcPlay(req, res) {
             port: Number(process.env.VLC_PORT) || 4212,
             password: process.env.VLC_PASSWORD
         });
-        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - vlcPlay');
+        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - vlcPlay');
         await vlc.togglePlay();
         return res.status(201).send('gut');
     } catch (e) {
@@ -101,7 +101,7 @@ export async function vlcNext(req, res) {
             port: Number(process.env.VLC_PORT) || 4212,
             password: process.env.VLC_PASSWORD
         });
-        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - vlcNext');
+        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - vlcNext');
         await vlc.next();
         return res.status(201).send('gut');
     } catch (e) {
@@ -120,7 +120,7 @@ export async function vlcPrevious(req, res) {
             port: Number(process.env.VLC_PORT) || 4212,
             password: process.env.VLC_PASSWORD
         });
-        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - vlcPrevious');
+        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - vlcPrevious');
         await vlc.previous();
         return res.status(201).send('gut');
     } catch (e) {
@@ -135,7 +135,7 @@ export async function vlcPrevious(req, res) {
 export async function vlcSzuffle(req, res) {
     try {
         const state = req.query.state;
-        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - vlcSzuffle');
+        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - vlcSzuffle');
         if (state === 'check') return res.status(200).send(szuffle);
         if (!state) return res.status(400).send('Nie podano stanu!');
         szuffle=state;
@@ -152,7 +152,7 @@ export async function vlcSzuffle(req, res) {
 export async function delFiles(req, res) {
     try {
         const path = `./mp3/${req.query.path}/`;
-        logger('log', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - delFiles');
+        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - delFiles');
         if (!path) {
             return res.status(400).send('Nie podano ścieżki do pliku!');
         }
