@@ -393,18 +393,18 @@ async function autoRemoveFiles() {
     });
 }
 
-async function removeFiles(path) {
-    if (path.length < 6 && /\/[1-7](\/|$)/.test(path)) return 'dupa';
-    fs.readdir(path, (err, files) => {
+async function removeFiles(pathDir) {
+    if (pathDir.length < 6 && /\/[1-7](\/|$)/.test(pathDir)) return 'dupa';
+    fs.readdir(pathDir, (err, files) => {
         if (err) return logger('error '+err,'removeFiles');
         if (files.length === 0) return logger('task','Brak plików do usunięcia.','removeFiles');
         for (let i in files) {
-            if (fs.lstatSync(path+files[i]).isDirectory()) {
+            if (fs.lstatSync(pathDir+files[i]).isDirectory()) {
                 logger('task', `Usunięto folder "${files[i]}" wraz z zawartością`, 'removeFiles');
-                fs.rmSync(path+files[i], { recursive: true, force: true })
+                fs.rmSync(pathDir+files[i], { recursive: true, force: true })
                 continue;
             }
-            fs.unlinkSync(path.join('./mp3/onDemand', files[i]));
+            fs.unlinkSync(path.join(pathDir, files[i]));
             logger('task', `Usunięto ${files[i]}`, 'removeFiles');
         }
     });
