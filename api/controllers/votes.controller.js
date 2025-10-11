@@ -4,7 +4,7 @@ import fs from "fs";
 import {getVotesData, votesPath} from "../../modules/VotesConnector.js";
 import {downloader, getTrackInfo} from "../../modules/MusicDownloader.js";
 import path from "path";
-import {checkIfVLConVotes} from "../../modules/Other.js";
+import {checkIfVLConVotes, sterylizatorIP } from "../../modules/Other.js";
 import {killPlayerForce} from "../../modules/MusicPlayer.js";
 
 export async function getVotes(req, res) {

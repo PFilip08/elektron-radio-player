@@ -4,6 +4,7 @@ import {logger} from "../../modules/Logger.js";
 import {DebugSaveToFile} from "../../modules/DebugMode.js";
 import axios from "axios";
 import * as http from "node:http";
+import {sterylizatorIP} from "../../modules/Other.js";
 
 const wzmakURI = `http://${process.env.WZMAK}/cm?cmnd=`;
 const mixerURI = `http://${process.env.MIXER}/cm?cmnd=`;

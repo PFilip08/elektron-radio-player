@@ -4,6 +4,7 @@ import {massSchedule, scheduleKillTask, taskNumber} from "../../modules/TaskSche
 import schedule from "node-schedule";
 import {killPlayer, playMusic, playOnDemand, playPlaylist} from "../../modules/MusicPlayer.js";
 import {downloadYT, getYTInfo} from "../../modules/MusicDownloader.js";
+import {sterylizatorIP} from "../../modules/Other.js";
 import * as fs from "fs";
 
 export async function resetTasks(req, res) {

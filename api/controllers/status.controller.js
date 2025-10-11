@@ -2,7 +2,7 @@ import {DebugSaveToFile} from "../../modules/DebugMode.js";
 import {logger} from "../../modules/Logger.js";
 import {getPlaylistName, playlistSongQuery, playlistListQuery, getPlayingSong} from "../../modules/MusicPlayer.js";
 import { messageCounter, previousData } from "../../modules/ApiConnector.js";
-import { pathSecurityChecker } from "../../modules/Other.js";
+import { pathSecurityChecker, sterylizatorIP } from "../../modules/Other.js";
 
 const playlistCache = new Map();
 export async function queryPlaylist(req, res) {
