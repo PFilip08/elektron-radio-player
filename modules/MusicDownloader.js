@@ -234,10 +234,15 @@ async function downloadYT(url, votes, path2, override) {
         const song = info.song;
         const description = info.description;
         const title = info.title;
-        const musicKeywords = ['official music video', 'lyrics', 'audio', 'album', 'song', 'spotify', 'tidal', 'muzyka', 'muzy', 'muza', 'płytę', 'feat', 'remastered', 'vevo', 'mix', 'nightcore', 'hardstyle'];
+        const musicKeywords = ['official music video', 'lyrics', 'audio', 'album', 'song', 'spotify', 'tidal', 'muzyka', 'muzy', 'muza', 'płytę', 'feat', 'remastered', 'vevo', 'mix', 'nightcore', 'hardstyle', 'sony music entertainment', 'bmg rights management'];
+        console.log(song.videoDetails);
         if (!override) {
             if (song.videoDetails.category !== 'Music') {
-                logger('log', `KATEGORIA ENTERTAINMENT!`, 'downloadYT');
+                if (song.videoDetails.category === 'Entertainment') {
+                    logger('log', `KATEGORIA ENTERTAINMENT!`, 'downloadYT');
+                } else if (song.videoDetails.category === undefined) {
+                    logger('warn', `KATEGORIA CHUJ WIE CO (undefined)`, 'downloadYT');
+                }
                 if (musicKeywords.some(keyword => title.includes(keyword) || description.includes(keyword))) {
                     if (song.videoDetails.lengthSeconds > 600) {
                         logger('warn', `To jest film, nie piosenka, bo jest zbyt długa!`, 'downloadYT');
