@@ -1,6 +1,7 @@
 import {Router} from "express";
 import {logger} from "../../modules/Logger.js";
 import {yellow, red} from 'colorette';
+import {sterylizatorIP} from "../../modules/Other.js";
 
 const secRouter = Router();
 secRouter.post('/confident', async function (req, res) {
