@@ -234,7 +234,7 @@ async function downloadYT(url, votes, path2, override) {
         const song = info.song;
         const description = info.description;
         const title = info.title;
-        const musicKeywords = ['official music video', 'lyrics', 'audio', 'album', 'song', 'spotify', 'tidal', 'muzyka', 'muzy', 'muza', 'płytę', 'feat', 'remastered', 'vevo', 'mix', 'nightcore', 'hardstyle', 'sony music entertainment', 'bmg rights management'];
+        const musicKeywords = ['official music video', 'lyrics', 'audio', 'album', 'song', 'spotify', 'tidal', 'muzyka', 'muzy', 'muza', 'płytę', 'feat', 'remastered', 'vevo', 'mix', 'nightcore', 'hardstyle', 'sony music entertainment', 'bmg rights management', 'warner music group company'];
         console.log(song.videoDetails);
         if (!override) {
             if (song.videoDetails.category !== 'Music') {
