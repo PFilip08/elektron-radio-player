@@ -124,8 +124,9 @@ function logChanges(changes) {
           if (oldValue === undefined){
             if (!newValue.playlist) {
               message += `Zasada o numerze ${key.split('.').pop()} została dodana i wprowadza takie godziny: ${newValue.start} - ${newValue.end}`;
+            } else {
+              message += `Zasada o numerze ${key.split('.').pop()} została dodana i wprowadza takie godziny: ${newValue.start} - ${newValue.end} z playlistą: ${newValue.playlist}`;
             }
-            message += `Zasada o numerze ${key.split('.').pop()} została dodana i wprowadza takie godziny: ${newValue.start} - ${newValue.end} z playlistą: ${newValue.playlist}`;
           } else if (newValue === undefined) {
             message += `Zasada o numerze ${key.split('.').pop()} została usunięta`;
           } else {
