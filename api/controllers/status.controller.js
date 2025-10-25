@@ -124,22 +124,32 @@ export async function queryPlaylistList(req, res) {
 
 export async function queryRecoveryModeStatus(req, res) {
     try {
-        res.setHeader("Content-Type", "text/event-stream");
-        res.setHeader("Cache-Control", "no-cache");
-        res.setHeader("Connection", "keep-alive");
+        if (!req.query.normal) {
+            res.setHeader("Content-Type", "text/event-stream");
+            res.setHeader("Cache-Control", "no-cache");
+            res.setHeader("Connection", "keep-alive");
 
-        const interval = setInterval(() => {
+
+            const interval = setInterval(() => {
+                const payload = {
+                    status: messageCounter,
+                    staticPlaylist: previousData ? previousData.static : null,
+                    previousDataPlaylistUse: previousData !== null
+                };
+                res.write(`data: ${JSON.stringify(payload)}\n\n`);
+            }, 1200);
+
+            req.on("close", () => {
+                clearInterval(interval);
+            });
+        } else {
             const payload = {
                 status: messageCounter,
                 staticPlaylist: previousData ? previousData.static : null,
                 previousDataPlaylistUse: previousData !== null
             };
-            res.write(`data: ${JSON.stringify(payload)}\n\n`);
-        }, 1200);
-
-        req.on("close", () => {
-            clearInterval(interval);
-        });
+            return res.status(201).json(payload);
+        }
     } catch (e) {
         logger('error', 'Wystąpił błąd podczas próby sprawdzenia statusu trybu recovery!', 'LocalAPI - queryRecoveryModeStatus');
         logger('error', e.stack, 'LocalAPI - queryRecoveryModeStatus');
