@@ -186,7 +186,9 @@ export async function devAPI(req, res) {
     try {
         const action = req.query.action;
 
-        logger('log', `DevAPI request: ${action} od ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI-dev - devAPI');
+        if (action != 'status') {
+            logger('log', `DevAPI request: ${action} od ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI-dev - devAPI');
+        }
 
         if (!action) {
             const currentMockData = global.devAPIMockData || {
