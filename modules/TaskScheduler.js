@@ -256,4 +256,4 @@ function getScheduledTasks() {
     });
 }
 
-export { scheduleMusicTask, scheduleKillTask, massSchedule, getScheduledTasks, taskNumber, scheduleMinorTasks };
+export { scheduleMusicTask, scheduleKillTask, massSchedule, getScheduledTasks, taskNumber, scheduleMinorTasks, emptyVotes, downloaded };
