@@ -261,6 +261,7 @@ async function downloadYT(url, votes, path2, override) {
 
         const file = info.file;
         const filePath = `${Path}${file}.mp3`;
+        logger('log', `Pobieram: ${info.song.videoDetails.title + ' by: ' +info.song.videoDetails.author.name}`, 'downloadYT');
         if (fs.existsSync(filePath)) return logger('warn', `Plik istnieje!`, 'downloadYT');
         if(checkIfFileExistsInArchive(`${file}.mp3`)) {
             logger('warn', `Plik istnieje w archiwum!`, 'downloadYT');
