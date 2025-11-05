@@ -11,11 +11,16 @@ import {sterylizatorIP} from "../../modules/Other.js";
 export async function downloadSong(req, res) {
     try {
         const uri = req.query.uri;
+        const downloadStatus = await downloader(uri);
         let path = undefined;
         if (req.query.path) path = `./mp3/${req.query.path}/`;
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - downloadSong');
         if (!uri) return res.status(400).send('Nie podano linku!');
-        if (await downloader(uri, false, path) === 'Nie wykryto typu') return res.status(500).send('Nie można wykryć typu linku Spotify!');
+        //if (await downloader(uri, false, path) === 'Nie wykryto typu') return res.status(500).send('Nie można wykryć typu linku Spotify!');
+        if (downloadStatus === 'Nie wykryto typu') return res.status(500).send('Nie można wykryć typu linku Spotify!');
+        if (downloadStatus === 'Nie można pobrać bo to jest film') return res.status(500).send('Nie można pobrać z YT bo to jest film a nie muzyka!');
+        if (downloadStatus === 'Nie można pobrać bo nie wykryto słów kluczowych w opisie') return res.status(500).send('Nie można pobrać z YT bo nie wykryto słów kluczowych w opisie!');
+        if (downloadStatus.includes('Nie można pobrać bo nie jest to kategoria Music/Entertainment!')) return res.status(500).send(downloadStatus);
         return res.status(201).send('gut');
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby pobrania pliku', 'LocalAPI - downloadSong');
@@ -38,7 +43,7 @@ export async function downloadAndPlay(req, res) {
         if (downloadStatus === 'Nie wykryto typu') return res.status(500).send('Nie można wykryć typu linku Spotify!');
         if (downloadStatus === 'Nie można pobrać bo to jest film') return res.status(500).send('Nie można pobrać z YT bo to jest film a nie muzyka!');
         if (downloadStatus === 'Nie można pobrać bo nie wykryto słów kluczowych w opisie') return res.status(500).send('Nie można pobrać z YT bo nie wykryto słów kluczowych w opisie!');
-        // await downloader(uri);
+        if (downloadStatus.includes('Nie można pobrać bo nie jest to kategoria Music/Entertainment!')) return res.status(500).send(downloadStatus);
         const trackInfo = await getTrackInfo(uri);
         const urlParts = uri.split('?')[0].split("/");
         let filename = sterylizator(trackInfo.name);
