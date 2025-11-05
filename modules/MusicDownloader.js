@@ -235,13 +235,16 @@ async function downloadYT(url, votes, path2, override) {
         const description = info.description;
         const title = info.title;
         const musicKeywords = ['official music video', 'lyrics', 'audio', 'album', 'song', 'spotify', 'tidal', 'muzyka', 'muzy', 'muza', 'płytę', 'feat', 'remastered', 'vevo', 'mix', 'nightcore', 'hardstyle', 'sony music entertainment', 'bmg rights management', 'warner music group company'];
-        console.log(song.videoDetails);
         if (!override) {
-            if (song.videoDetails.category !== 'Music') {
-                if (song.videoDetails.category === 'Entertainment') {
+            if (song.videoDetails.category[0] !== 'Music') {
+                if (song.videoDetails.category[0] === 'Entertainment') {
                     logger('log', `KATEGORIA ENTERTAINMENT!`, 'downloadYT');
-                } else if (song.videoDetails.category === undefined) {
+                } else if (song.videoDetails.category[0] === undefined) {
                     logger('warn', `KATEGORIA CHUJ WIE CO (undefined)`, 'downloadYT');
+                }
+                if (song.videoDetails.category[0] !== 'Entertainment') {
+                    logger('warn', `Nie jest to kategoria Music ani Entertainment! Wykryto: ${song.videoDetails.category[0]}`, 'downloadYT');
+                    return `Nie można pobrać bo nie jest to kategoria Music/Entertainment! Tylko: ${song.videoDetails.category[0]} jedyne co możesz zrobić to poprosić szanownego Pana admina aby dodał do tego wyjątek.`;
                 }
                 if (musicKeywords.some(keyword => title.includes(keyword) || description.includes(keyword))) {
                     if (song.videoDetails.lengthSeconds > 600) {
