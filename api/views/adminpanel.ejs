@@ -58,6 +58,13 @@
         </td>
     </tr>
     <tr>
+        <th>Normalizacja playlisty</th>
+        <td>
+            <input type="search" id="normalizeID" placeholder="5" required/>
+            <button onclick="performAction('/action/normalize', { playlist: document.getElementById('normalizeID').value })">OK</button>
+        </td>
+    </tr>
+    <tr>
         <th>Szuffle (VLC)</th>
         <td>
             <label>

@@ -4,6 +4,8 @@ import {killPlayer, killPlayerForce, playMusic, playPlaylist} from "../../module
 import {pathSecurityChecker, sterylizatorIP} from "../../modules/Other.js";
 import {removeFiles} from "../../modules/MusicDownloader.js";
 import VLC from "vlc-client";
+import {exec} from "child_process";
+import * as fs from "fs";
 
 export let szuffle = 'true';
 
@@ -159,6 +161,50 @@ export async function delFiles(req, res) {
         await removeFiles(path);
         return res.status(200).send('usunło chyba');
     } catch (e) {
+        logger('verbose', 'Wystąpił błąd podczas próby usuwania plików', 'LocalAPI - delFiles');
+        if (global.debugmode === true) {
+            DebugSaveToFile('LocalAPI', 'delFiles', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - delFiles');
+        }
+    }
+}
 
+export async function normalize(req, res) {
+    try {
+        const playlist = req.query.playlist;
+        const pathDir = './mp3/';
+        const fullPath = pathDir+playlist;
+        console.log(fullPath);
+        if (fullPath.includes('../')) return res.status(511).send('a dzie masło roota?!?!1');
+        // console.log(fs.existsSync(fullPath), fs.lstatSync(fullPath).isDirectory());
+        if (!fs.existsSync(fullPath) || !fs.lstatSync(fullPath).isDirectory()) return res.status(406).send('playlista nie istnieje lub to nie playlista!!');
+        // console.log('dupa2');
+        const dupa = await new Promise((resolve, reject) => {
+            // console.log('dupa3');
+            exec(`mp3gain -r -c ${fullPath}/*`, (error, stdout, stderr) => {
+                logger('verbose', "\n"+ stdout, 'LocalAPI - normalize');
+                if (global.debugmode === true) {
+                    DebugSaveToFile('LocalAPI', 'normalize', 'mp3gain_output', stdout);
+                    logger('verbose', `Zapisano do debug/`, 'LocalAPI - normalize');
+                }
+                if (error) {
+                    logger('error', `Błąd podczas próby normalizacji dźwięku przy użyciu mp3gain: ${error.message}`, 'LocalAPI - normalize');
+                    if (global.debugmode === true) {
+                        DebugSaveToFile('LocalAPI', 'normalize', 'mp3gain_error', error);
+                        logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - normalize');
+                    }
+                    reject(error);
+                    return res.status(400).send('error/brakplikuf!!');
+                }
+                resolve(stdout);
+            });
+        });
+        return res.status(200).send(dupa);
+    } catch (e) {
+        logger('verbose', 'Wystąpił błąd podczas próby normalizacji!', 'LocalAPI - normalize');
+        if (global.debugmode === true) {
+            DebugSaveToFile('LocalAPI', 'normalize', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - normalize');
+        }
     }
 }
