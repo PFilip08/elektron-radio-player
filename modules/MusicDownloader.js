@@ -22,7 +22,7 @@ async function downloader(url, votes, path) {
             logger('log', 'Wykryto piosenkę', 'downloader');
             return downloadSong(url, votes, path);
         case 'album':
-            logger('log', 'Wykryto playlistę', 'downloader');
+            logger('log', 'Wykryto album', 'downloader');
             return downloadAlbum(url, path);
         case 'playlist':
             logger('log', 'Wykryto playlistę', 'downloader');
@@ -75,7 +75,8 @@ async function downloadSong(url, votes, path2) {
         logger('verbose', 'Normalizacja dźwięku przy użyciu mp3gain...', 'downloadSong');
         await new Promise((resolve, reject) => exec(`mp3gain -r -c ${path}${file}.mp3`, (error, stdout) => (logger('verbose', `\n${stdout}`, 'downloadSong'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadSong', 'mp3gain_output', stdout), logger('verbose', `Zapisano do debug/`, 'downloadSong')), error ? (logger('error', `Błąd podczas próby normalizacji dźwięku przy użyciu mp3gain: ${error.message}`, 'downloadSong'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadSong', 'mp3gain_error', error), logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadSong')), reject(error)) : resolve(stdout))));
         copyToArchive(`${path}${file}.mp3`);
-        return logger('log', 'Pobrano :>', 'downloadSong');
+        logger('log', 'Pobrano :>', 'downloadSong');
+        return "Pobrano! OwO";
     } catch (e) {
         logger('error', "Błąd w trakcie wykonywania funkcji downloadSong", 'downloadSong');
         logger('error', e, 'downloadSong');
@@ -121,6 +122,8 @@ async function downloadPlaylist(url, path2) {
             await new Promise((resolve, reject) => exec(`mp3gain -r -c ${path}${dir}/${file}.mp3`, (error, stdout) => (logger('verbose', `\n${stdout}`, 'downloadPlaylist'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadPlaylist', 'mp3gain_output', stdout), logger('verbose', `Zapisano do debug/`, 'downloadPlaylist')), error ? (logger('error', `Błąd podczas próby normalizacji dźwięku przy użyciu mp3gain: ${error.message}`, 'downloadPlaylist'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadPlaylist', 'mp3gain_error', error), logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadPlaylist')), reject(error)) : resolve(stdout))));
             copyToArchive(`${path}${dir}/${file}.mp3`);
         }
+        logger('log', 'Pobrano :>', 'downloadPlaylist');
+        return "Pobrano! OwO";
     } catch (e) {
         logger('error', "Błąd w trakcie wykonywania funkcji downloadPlaylist", 'downloadPlaylist');
         logger('error', e, 'downloadPlaylist');
@@ -166,6 +169,8 @@ async function downloadAlbum(url, path2) {
             await new Promise((resolve, reject) => exec(`mp3gain -r -c ${path}${dir}/${file}.mp3`, (error, stdout) => (logger('verbose', `\n${stdout}`, 'downloadAlbum'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadAlbum', 'mp3gain_output', stdout), logger('verbose', `Zapisano do debug/`, 'downloadAlbum')), error ? (logger('error', `Błąd podczas próby normalizacji dźwięku przy użyciu mp3gain: ${error.message}`, 'downloadAlbum'), global.debugmode && (DebugSaveToFile('MusicDownloader', 'downloadAlbum', 'mp3gain_error', error), logger('verbose', `Stacktrace został zrzucony do debug/`, 'downloadAlbum')), reject(error)) : resolve(stdout))));
             copyToArchive(`${path}${dir}/${file}.mp3`);
         }
+        logger('log', 'Pobrano :>', 'downloadAlbum');
+        return "Pobrano! OwO";
     } catch (e) {
         logger('error', "Błąd w trakcie wykonywania funkcji downloadAlbum", 'downloadAlbum');
         logger('error', e, 'downloadAlbum');
@@ -362,7 +367,8 @@ async function downloadYT(url, votes, path2, override) {
             });
         });
         copyToArchive(filePath);
-        return logger('log', 'Pobrano :>', 'downloadYT');
+        logger('log', 'Pobrano :>', 'downloadYT');
+        return "Pobrano! OwO"
 
     } catch (e) {
         logger('error', "Błąd w trakcie wykonywania funkcji downloadYT", 'downloadYT');
