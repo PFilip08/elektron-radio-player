@@ -16,19 +16,15 @@ export async function downloadSong(req, res) {
         if (req.query.path) path = `./mp3/${req.query.path}/`;
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - downloadSong');
         if (!uri) return res.status(400).send('Nie podano linku!');
-        //if (await downloader(uri, false, path) === 'Nie wykryto typu') return res.status(500).send('Nie można wykryć typu linku Spotify!');
-        if (downloadStatus === 'Nie wykryto typu') return res.status(500).send('Nie można wykryć typu linku Spotify!');
-        if (downloadStatus === 'Nie można pobrać bo to jest film') return res.status(500).send('Nie można pobrać z YT bo to jest film a nie muzyka!');
-        if (downloadStatus === 'Nie można pobrać bo nie wykryto słów kluczowych w opisie') return res.status(500).send('Nie można pobrać z YT bo nie wykryto słów kluczowych w opisie!');
-        if (downloadStatus.includes('Nie można pobrać bo nie jest to kategoria Music/Entertainment!')) return res.status(500).send(downloadStatus);
-        return res.status(201).send('gut');
+        if (!downloadStatus.includes('Pobrano')) return res.status(500).send(downloadStatus);
+        return res.status(201).send('gut; '+downloadStatus);
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby pobrania pliku', 'LocalAPI - downloadSong');
         if (global.debugmode === true) {
             DebugSaveToFile('LocalAPI', 'download', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - downloadSong');
         }
-        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów');
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }
 
@@ -39,12 +35,10 @@ export async function downloadAndPlay(req, res) {
         const downloadStatus = await downloader(uri);
         // const time = req.query.time;
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - downloadAndPlay');
-        //TODO: Ogarnąć to jakoś ładniej może kodami błedów? Coś takiego: YT_NOT_DETECTED_DESCRIPTION_KEYWORDS lub krócej?
+        //ogarnięte
+        // console.log(downloadStatus);
         if (!uri) return res.status(400).send('Nie podano linku!');
-        if (downloadStatus === 'Nie wykryto typu') return res.status(500).send('Nie można wykryć typu linku Spotify!');
-        if (downloadStatus === 'Nie można pobrać bo to jest film') return res.status(500).send('Nie można pobrać z YT bo to jest film a nie muzyka!');
-        if (downloadStatus === 'Nie można pobrać bo nie wykryto słów kluczowych w opisie') return res.status(500).send('Nie można pobrać z YT bo nie wykryto słów kluczowych w opisie!');
-        if (downloadStatus.includes('Nie można pobrać bo nie jest to kategoria Music/Entertainment!')) return res.status(500).send(downloadStatus);
+        if (!downloadStatus.includes('Pobrano')) return res.status(500).send(downloadStatus);
         const trackInfo = await getTrackInfo(uri);
         const urlParts = uri.split('?')[0].split("/");
         let filename = sterylizator(trackInfo.name);
@@ -57,13 +51,13 @@ export async function downloadAndPlay(req, res) {
             logger('log', `On Demand: ${trackInfo.name}`,'massSchedule');
         });
         job.jobData = { filename: filename };
-        return res.status(201).send('gut, 1s opóźnienia');
+        return res.status(201).send('gut, 1s opóźnienia; '+downloadStatus);
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby odtworzenia pliku', 'LocalAPI - downloadAndPlay');
         if (global.debugmode === true) {
             DebugSaveToFile('LocalAPI', 'download/override', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - downloadAndPlay');
         }
-        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów');
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }

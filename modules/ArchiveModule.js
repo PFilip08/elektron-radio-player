@@ -47,7 +47,8 @@ function copyFromArchive(file, destPath) {
     const srcPath = `${archdir}/${file}`;
     if (!fs.existsSync(srcPath)) return logger('error', `Plik ${file} nie istnieje w archiwum.`, 'ArchiveModule - copyFromArchive');
     fs.copyFileSync(srcPath, destPath);
-    return logger('log', `Skopiowano plik ${file} z archiwum do ${destPath}.`, 'ArchiveModule - copyFromArchive');
+    logger('log', `Skopiowano plik ${file} z archiwum do ${destPath}.`, 'ArchiveModule - copyFromArchive');
+    return `Skopiowano/Pobrano plik ${file} z archiwum do ${destPath}.`;
 }
 
 function checkIfFileExistsInArchive(file) {

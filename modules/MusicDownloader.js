@@ -42,13 +42,12 @@ function handleDefaultCase(url, votes) {
         url='https://open.spotify.com/track/5Wrl4uc9SjC8ZnAimiMtys'; // No przekorny los, bo przeciekło
         return downloadSong(url, votes);
     }
-    // logger('warn', 'Nie wykryto typu linku Spotify!', 'downloader');
     logger('warn', 'Nie wykryto typu linku!', 'handleDefaultCase');
     if (global.debugmode === true) {
         DebugSaveToFile('MusicDownloader', 'handleDefaultCase', 'catched_link', url);
         logger('verbose', `Zapisano link do debug/`, 'handleDefaultCase');
     }
-    return 'Nie wykryto typu';
+    return 'Nie wykryto typu linku!';
 }
 
 async function downloadSong(url, votes, path2) {
@@ -267,7 +266,7 @@ async function downloadYT(url, votes, path2, override) {
         const file = info.file;
         const filePath = `${Path}${file}.mp3`;
         logger('log', `Pobieram: ${info.song.videoDetails.title + ' by: ' +info.song.videoDetails.author.name}`, 'downloadYT');
-        if (fs.existsSync(filePath)) return logger('warn', `Plik istnieje!`, 'downloadYT');
+        if (fs.existsSync(filePath)) {logger('warn', `Plik istnieje!`, 'downloadYT');return 'Pobrano- znaczy, plik istnieje';}
         if(checkIfFileExistsInArchive(`${file}.mp3`)) {
             logger('warn', `Plik istnieje w archiwum!`, 'downloadYT');
             logger('log', 'Pobieranie z archiwum :>', 'downloadYT');
