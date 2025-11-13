@@ -36,7 +36,7 @@ export async function wzmakPower(req, res) {
             DebugSaveToFile('LocalAPI', 'wzmakPower', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - wzmakPower');
         }
-        return res.status(500).send('Błąd komunikacji z wtyczką');
+        return res.status(500).send('Błąd komunikacji z wtyczką; '+e);
     }
 }
 
@@ -59,6 +59,6 @@ export async function mixerPower(req, res) {
             DebugSaveToFile('LocalAPI', 'mixerPower', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - mixerPower');
         }
-        return res.status(500).send('Błąd komunikacji z wtyczką');
+        return res.status(500).send('Błąd komunikacji z wtyczką; '+e);
     }
 }

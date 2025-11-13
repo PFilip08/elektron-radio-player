@@ -26,6 +26,7 @@ export async function kill(req, res) {
             DebugSaveToFile('LocalAPI', 'kill', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - killPlayer');
         }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }
 
@@ -50,6 +51,7 @@ export async function pMusic(req, res) {
             DebugSaveToFile('LocalAPI', 'play', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - pMusic');
         }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }
 
@@ -74,6 +76,7 @@ export async function pPlaylist(req, res) {
             DebugSaveToFile('LocalAPI', 'playPlaylist', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - pPlaylist');
         }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }
 
@@ -93,6 +96,7 @@ export async function vlcPlay(req, res) {
             DebugSaveToFile('LocalAPI', 'vlcPlay', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - vlcPlay');
         }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }
 
@@ -112,6 +116,7 @@ export async function vlcNext(req, res) {
             DebugSaveToFile('LocalAPI', 'vlcNext', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - vlcNext');
         }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }
 
@@ -131,6 +136,7 @@ export async function vlcPrevious(req, res) {
             DebugSaveToFile('LocalAPI', 'vlcPrevious', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - vlcPrevious');
         }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }
 
@@ -148,6 +154,7 @@ export async function vlcSzuffle(req, res) {
             DebugSaveToFile('LocalAPI', 'vlcSzuffle', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - vlcSzuffle');
         }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }
 
@@ -166,6 +173,7 @@ export async function delFiles(req, res) {
             DebugSaveToFile('LocalAPI', 'delFiles', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - delFiles');
         }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }
 
@@ -206,5 +214,6 @@ export async function normalize(req, res) {
             DebugSaveToFile('LocalAPI', 'normalize', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - normalize');
         }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }

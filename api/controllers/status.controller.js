@@ -63,7 +63,7 @@ export async function queryPlaylist(req, res) {
             DebugSaveToFile('LocalAPI', 'query/playlist/songs', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - queryPlaylist');
         }
-        return res.status(500).send('Nie znaleziono playlisty o podanym ID!');
+        return res.status(500).send('Nie znaleziono playlisty o podanym ID!; '+e);
     }
 }
 
@@ -87,6 +87,7 @@ export async function queryPlayingMusic(req, res) {
             DebugSaveToFile('LocalAPI', 'query/playing', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - queryPlayingMusic');
         }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }
 
@@ -119,6 +120,7 @@ export async function queryPlaylistList(req, res) {
             DebugSaveToFile('LocalAPI', 'query/playlist/list', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - queryPlaylistList');
         }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }
 
@@ -157,5 +159,6 @@ export async function queryRecoveryModeStatus(req, res) {
             DebugSaveToFile('LocalAPI', 'query/recovery/status', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - queryRecoveryModeStatus');
         }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 };

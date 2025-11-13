@@ -18,6 +18,7 @@ export async function resetTasks(req, res) {
             DebugSaveToFile('LocalAPI-dev', 'resetTasks', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI-dev - resetTasks');
         }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }
 
@@ -33,6 +34,7 @@ export async function cleanTasks(req, res) {
             DebugSaveToFile('LocalAPI-dev', 'cleanTasks', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI-dev - cleanTasks');
         }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }
 
@@ -106,6 +108,7 @@ export async function addTask(req, res) {
             DebugSaveToFile('LocalAPI-dev', 'addTask', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI-dev - addTask');
         }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }
 
@@ -120,6 +123,7 @@ export async function restartEverything(req, res) {
             DebugSaveToFile('LocalAPI-dev', 'restartEverything', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI-dev - restartEverything');
         }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }
 
@@ -154,7 +158,7 @@ export async function downloadYToverride(req, res) {
             DebugSaveToFile('LocalAPI-dev', 'downloadYToverride', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI-dev - downloadYToverride');
         }
-        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów');
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }
 
@@ -178,7 +182,7 @@ export async function removeTask(req, res) {
             DebugSaveToFile('LocalAPI-dev', 'removeTask', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI-dev - removeTask');
         }
-        return res.status(500).send('Błąd podczas usuwania zadania');
+        return res.status(500).send('Błąd podczas usuwania zadania; '+e);
     }
 }
 
