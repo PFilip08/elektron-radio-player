@@ -39,6 +39,7 @@ export async function downloadAndPlay(req, res) {
         const downloadStatus = await downloader(uri);
         // const time = req.query.time;
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - downloadAndPlay');
+        //TODO: Ogarnąć to jakoś ładniej może kodami błedów? Coś takiego: YT_NOT_DETECTED_DESCRIPTION_KEYWORDS lub krócej?
         if (!uri) return res.status(400).send('Nie podano linku!');
         if (downloadStatus === 'Nie wykryto typu') return res.status(500).send('Nie można wykryć typu linku Spotify!');
         if (downloadStatus === 'Nie można pobrać bo to jest film') return res.status(500).send('Nie można pobrać z YT bo to jest film a nie muzyka!');
