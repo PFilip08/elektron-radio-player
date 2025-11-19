@@ -63,7 +63,7 @@ async function downloadSong(url, votes, path2) {
         logger('log', `Pobieram: ${data.name + ' by: ' + data.artists.join(', ')}`, 'downloadSong');
         logger('verbose', 'Sprawdzanie czy nie pobieram z głosów...', 'downloadSong');
         if (votes) {path = `./mp3/7/`; logger('verbose', 'Pobieranie z głosowania!', 'downloadSong');}
-        if (fs.existsSync(`${path}${file}.mp3`)) return logger('warn', `Plik istnieje!`, 'downloadSong');
+        if (fs.existsSync(`${path}${file}.mp3`)) { logger('warn', 'Plik istnieje!', 'downloadSong'); return 'Pobrano! OwO - znaczy qwq, plik istnieje'; }
         if(checkIfFileExistsInArchive(`${file}.mp3`)) {
             logger('warn', `Plik istnieje w archiwum!`, 'downloadSong');
             logger('log', 'Pobieranie z archiwum :>', 'downloadSong');
@@ -266,7 +266,7 @@ async function downloadYT(url, votes, path2, override) {
         const file = info.file;
         const filePath = `${Path}${file}.mp3`;
         logger('log', `Pobieram: ${info.song.videoDetails.title + ' by: ' +info.song.videoDetails.author.name}`, 'downloadYT');
-        if (fs.existsSync(filePath)) {logger('warn', `Plik istnieje!`, 'downloadYT');return 'Pobrano- znaczy, plik istnieje';}
+        if (fs.existsSync(filePath)) {logger('warn', `Plik istnieje!`, 'downloadYT');return 'Pobrano! OwO - znaczy qwq, plik istnieje'; }
         if(checkIfFileExistsInArchive(`${file}.mp3`)) {
             logger('warn', `Plik istnieje w archiwum!`, 'downloadYT');
             logger('log', 'Pobieranie z archiwum :>', 'downloadYT');
