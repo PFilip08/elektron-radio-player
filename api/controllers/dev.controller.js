@@ -137,6 +137,7 @@ export async function downloadYToverride(req, res) {
         if (path.length < 6 || !path.startsWith('./mp3/')) return res.status(400).send('Niepoprawna ścieżka!');
         if (!path.endsWith('/')) path = path+'/';
         if(!fs.existsSync(path)) fs.mkdirSync(path);
+        await downloadYT(url, false, path, true);
         if (override==='true') {
             const song = await getYTInfo(url);
             const filename = song.file ;
@@ -150,7 +151,6 @@ export async function downloadYToverride(req, res) {
             job.jobData = { filename: filename, filepath: path, override: override };
             return res.status(201).send(`gut, override, ${path}`);
         }
-        await downloadYT(url, false, path, true);
         return res.status(201).send(`gut, ${path}`);
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby pobrania override z yt!!', 'LocalAPI-dev - downloadYToverride');
