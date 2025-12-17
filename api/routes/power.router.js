@@ -6,7 +6,11 @@ const powerRouter = Router();
 powerRouter.get('/wzmak', wzmakPower);
 powerRouter.get('/mixer', mixerPower);
 powerRouter.get('/stats', (req, res) => {
-    res.sendFile(__dirname+'/public/powerreportpage.html');
+    res.render('powerstats', {
+        title: 'Power Stats Panel',
+        welcome: 'Statystyki prundu',
+        navbar: false,
+    });
 });
 
 export default powerRouter;

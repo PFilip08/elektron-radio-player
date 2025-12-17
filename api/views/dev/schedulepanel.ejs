@@ -1,0 +1,111 @@
+<!-- dev/schedulepanel.ejs -->
+<div>
+    <table class="schedule">
+        <tr>
+            <th>Akcje</th>
+            <th></th>
+        </tr>
+        <tr>
+            <th>Zaplanowane zadania</th>
+            <td>
+                <button id="togglePanelBtn" onclick="togglePanel()">tu</button>
+            </td>
+        </tr>
+        <tr>
+            <th>massSchedule clean</th>
+            <td>
+                <button onclick="performAction('/dev/schedules/cleanTasks')">OK</button>
+            </td>
+        </tr>
+        <tr>
+            <th>massSchedule reset</th>
+            <td>
+                <button onclick="performAction('/dev/schedules/resetTasks')">OK</button>
+            </td>
+        </tr>
+        <tr>
+            <th>Manualny task</th>
+            <td>
+                <button onclick="window.location.href='/dev/schedules/addTask'">tu</button>
+            </td>
+        </tr>
+        <tr>
+            <th>Procedura nr 6</th>
+            <td>
+                <button onclick="togglePanel6()">
+                    <img src="/images/six.gif" alt="6" width="100px" height="50px"/>
+                </button>
+            </td>
+    </table>
+    <%- include('../partials/res.ejs') %>
+    <%- include('../partials/dev/proceduranr6.ejs') -%>
+    <%- include('../partials/dev/schedulePanelContent.ejs') -%>
+</div>
+
+<script>
+  function togglePanel() {
+    const panel = document.getElementById('schedulePanelContent');
+    const btn = document.getElementById('togglePanelBtn');
+    if (panel.style.display === 'none') {
+      panel.style.display = '';
+      btn.innerText = 'Zwiń panel';
+    } else {
+      panel.style.display = 'none';
+      btn.innerText = 'Rozwiń panel';
+    }
+  }
+
+  function togglePanel6() {
+      const panel = document.getElementById('proceduranr6');
+      if (panel.style.display === 'none') {
+          panel.style.display = '';
+      } else {
+          panel.style.display = 'none';
+      }
+  }
+
+  function sortTable(columnIndex) {
+      const table = document.getElementById("tasksTable");
+      const rows = Array.from(table.rows).slice(1);
+      const sortedRows = rows.sort((a, b) => {
+          const cellA = a.cells[columnIndex].innerText;
+          const cellB = b.cells[columnIndex].innerText;
+          return cellA.localeCompare(cellB, undefined, { numeric: true });
+      });
+      const tbody = table.tBodies[0];
+      tbody.innerHTML = "";
+      sortedRows.forEach(row => tbody.appendChild(row));
+  }
+
+  function filterTasks() {
+      const searchInput = document.getElementById("searchInput").value.toLowerCase();
+      const commandFilter = document.getElementById("commandFilter").value.toLowerCase();
+      const dateFilter = document.getElementById("dateFilter").value;
+      const table = document.getElementById("tasksTable");
+      const rows = Array.from(table.rows).slice(1);
+
+      rows.forEach(row => {
+          const taskName = row.cells[0].innerText.toLowerCase();
+          const taskCommand = row.cells[3].innerText.toLowerCase();
+          const taskDate = row.cells[1].innerText;
+
+          const matchesSearch = taskName.includes(searchInput);
+          const matchesCommand = taskCommand.includes(commandFilter);
+          const matchesDate = !dateFilter || taskDate === dateFilter;
+
+          if (matchesSearch && matchesCommand && matchesDate) {
+              row.style.display = "";
+          } else {
+              row.style.display = "none";
+          }
+      });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const dateFilter = document.getElementById('dateFilter');
+    if (dateFilter) {
+        dateFilter.value = new Date().toLocaleDateString('sv-SE');
+      filterTasks();
+    }
+  });
+</script>

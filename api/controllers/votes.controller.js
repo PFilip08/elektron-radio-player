@@ -4,7 +4,7 @@ import fs from "fs";
 import {getVotesData, votesPath} from "../../modules/VotesConnector.js";
 import {downloader, getTrackInfo} from "../../modules/MusicDownloader.js";
 import path from "path";
-import {checkIfVLConVotes} from "../../modules/Other.js";
+import {checkIfVLConVotes, sterylizatorIP } from "../../modules/Other.js";
 import {killPlayerForce} from "../../modules/MusicPlayer.js";
 
 export async function getVotes(req, res) {
@@ -18,6 +18,7 @@ export async function getVotes(req, res) {
             DebugSaveToFile('LocalAPI', 'getVotes', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - getVotes');
         }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }
 
@@ -41,7 +42,7 @@ export async function delVotes(req, res) {
             DebugSaveToFile('LocalAPI', 'delVotes', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - delVotes');
         }
-        return res.status(500).send('Błąd serwera podczas usuwania głosu');
+        return res.status(500).send('Błąd serwera podczas usuwania głosu; '+e);
     }
 }
 
@@ -56,6 +57,7 @@ export async function resetVotes(req, res) {
             DebugSaveToFile('LocalAPI', 'resetVotes', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - resetVotes');
         }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }
 
@@ -86,7 +88,11 @@ export async function saveVotes(req, res) {
         const data = await getVotesData();
         if (data === 'brak') return logger('log', 'Brak danych!!!', 'saveVotes');
         for (let i in data) {
-            await downloader(data[i].uSongs.url, true);
+            if (data[i].uSongs && data[i].uSongs.url) {
+                await downloader(data[i].uSongs.url, true);
+            } else {
+                logger('warn', `Brak uSongs lub url dla głosu: ${JSON.stringify(data[i])}`, 'saveVotes');
+            }
         }
         logger('log', 'Zapisano', 'saveVotes');
         return res.status(200).send('ok');
@@ -96,6 +102,7 @@ export async function saveVotes(req, res) {
             DebugSaveToFile('LocalAPI', 'saveVotes', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - saveVotes');
         }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }
 
@@ -135,6 +142,7 @@ export async function downloadVotes(req, res) {
             DebugSaveToFile('LocalAPI', 'downloadVotes', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - downloadVotes');
         }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }
 
@@ -179,7 +187,7 @@ export async function addVotes(req, res) {
             DebugSaveToFile('LocalAPI', 'addVotes', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - addVotes');
         }
-        return res.status(500).send('Wystąpił błąd serwera');
+        return res.status(500).send('Wystąpił błąd serwera; '+e);
     }
 }
 
@@ -201,6 +209,7 @@ export async function download(req, res) {
             DebugSaveToFile('LocalAPI', 'download', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - download');
         }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }
 
@@ -231,5 +240,6 @@ export async function delmp3(req, res) {
             DebugSaveToFile('LocalAPI', 'delmp3', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - delmp3');
         }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }

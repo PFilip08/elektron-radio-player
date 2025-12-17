@@ -36,9 +36,9 @@ async function fetchVotes() {
             if (vote.uSongs.url) {
                 let type = getURIType(vote.uSongs.url);
                 if (type === 'spotify') {
-                    service = `<img src="../images/spotify.png" alt="spotify" width="24px" style="position: absolute; transform: translate(-50%, -50%);"/>`;
+                    service = `<a href="${vote.uSongs.url}" target="_blank"><img src="../images/spotify.png" alt="spotify" width="24px" style="position: absolute; transform: translate(-50%, -50%);"/></a>`;
                 } else if (type === 'yt') {
-                    service = `<img src="../images/yt.png" alt="youtube" width="26px" style="position: absolute; transform: translate(-50%, -50%);"/>`;
+                    service = `<a href="${vote.uSongs.url}" target="_blank"><img src="../images/yt.png" alt="youtube" width="26px" style="position: absolute; transform: translate(-50%, -50%);"/></a>`;
                 }
             }
 

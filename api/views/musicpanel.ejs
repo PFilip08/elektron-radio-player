@@ -1,0 +1,74 @@
+<!-- musicpanel.ejs -->
+<script src="../js/counter.js" async></script>
+<script src="../js/music.js" async></script>
+<div class="center counter" id="counter"></div>
+<%- include('./partials/recoveryStatus.ejs') %>
+<% if (!locals.guest) {%>
+    <a href="/dash2"><img src="/images/guest.png" alt="gość" width="50px" style="position: absolute; left: 0; bottom: 0;"/></a>
+<% } %>
+<div class="center main music">
+    <div class="current">
+        <div class="cover">
+            <img id="cover" src="../images/taboret.png">
+        </div>
+        <div class="details">
+            <div class="marqueeContainer">
+                <div class="marqueeContent">
+                    <span id="songName">Taboret</span>
+                </div>
+            </div>
+            <span class="artist">By <span id="songArtist">Zespół Taboretów</span></span>
+            <label style="display: block; margin-top: 8px;" for="duration">Długość: <span id="durationText"></span></label>
+            <progress id="duration" value="32" max="100"></progress>
+        </div>
+        <% if (!locals.guest) {%>
+            <%- include('./partials/musicpanel/mediacontrol') %>
+        <% } %>
+    </div>
+    <div class="row">
+        <div class="songlist">
+            <p>Aktualnie gra playlista nr: <span id="currentPlaylist">22</span></p>
+            <table id="songlist">
+                <tr>
+                    <th>Utwór</th>
+                    <th>Autor</th>
+                </tr>
+                <tr>
+                    <td>Taboret</td>
+                    <td>Zespół Taboretów</td>
+                </tr>
+            </table>
+        </div>
+        <div class="col">
+            <% if (!locals.guest) {%>
+                <%- include('./partials/musicpanel/panic') %>
+            <% } %>
+            <img src="/images/logo_zseis.gif" alt="kręciołek ckziu" class="kreciolek"/>
+        </div>
+        <div class="playlists">
+            <table id="playlists">
+                <tr>
+                    <th>ID Playlisty</th>
+                    <th>Nazwa playlisty</th>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>Ruskie techno</td>
+                </tr>
+                <tr>
+                    <td>22</td>
+                    <td>Taborety i kotlety</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>Playlista do krojenia kotleta</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<% if (!locals.guest) {%>
+    <%- include('./partials/res.ejs') %>
+    <br/>
+    <br/>
+<% } %>

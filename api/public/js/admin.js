@@ -15,6 +15,8 @@ function performAction(url, params = {}) {
         });
 }
 
+const ekonfidentUri = '/security/confident';
+
 function toggleSafeguard() {
     let safeguardOverride;
     if (localStorage.getItem("safeguardOverride") === null) {
@@ -40,7 +42,7 @@ async function panelSafeguard(endpoint, params = {}) {
                 safeguardWarn.appendChild(p);
                 button.innerHTML = `<button onclick="toggleSafeguard()">WŁĄCZ ZABEZPIECZENIE PANELU</button>`;
                 safeguardWarnButton.appendChild(button);
-                fetch('/stats/confident?type=safeguardd', { method: 'POST' });
+                fetch(`${ekonfidentUri}?type=safeguardd`, { method: 'POST' });
                 return;
             }
         }
@@ -51,7 +53,7 @@ async function panelSafeguard(endpoint, params = {}) {
         if (safeguardWarn.querySelector('p')) {
             safeguardWarn.removeChild(safeguardWarn.querySelector('p'));
             safeguardWarnButton.removeChild(safeguardWarnButton.querySelector('button'));
-            fetch('/stats/confident?type=safeguarde', { method: 'POST' });
+            fetch(`${ekonfidentUri}?type=safeguarde`, { method: 'POST' });
             return;
         }
     }
@@ -66,9 +68,9 @@ async function panelSafeguard(endpoint, params = {}) {
             "Anuluj",
         () => {
             performAction(endpoint, params)
-            fetch('/stats/confident?type=weekend', { method: 'POST' });
+            fetch(`${ekonfidentUri}?type=weekend`, { method: 'POST' });
         },
-        () => fetch('/stats/confident?type=weekenda', { method: 'POST' }),
+        () => fetch(`${ekonfidentUri}?type=weekenda`, { method: 'POST' }),
         );
         return;
     }
@@ -81,9 +83,9 @@ async function panelSafeguard(endpoint, params = {}) {
                 "Anuluj",
             () => {
                 performAction(endpoint, params)
-                fetch('/stats/confident?type=lesson', { method: 'POST' });
+                fetch(`${ekonfidentUri}?type=lesson`, { method: 'POST' });
             },
-            () => fetch('/stats/confident?type=lessona', { method: 'POST' }),
+            () => fetch(`${ekonfidentUri}?type=lessona`, { method: 'POST' }),
             );
             return;
         } 
@@ -92,7 +94,7 @@ async function panelSafeguard(endpoint, params = {}) {
                 `${warningText}\nPRÓBA PUSZCZENIA MUZYKI W RADIU PO GODZINACH PRACY RADIA!!!\n BLOKADA PANELU ZOSTAŁA ZAINICJOWANA!!!\nA PRÓBA ZOSTAŁA ZAREJESTROWANA!`,
                 "OK",
                 null,
-                () => fetch('/stats/confident?type=after', { method: 'POST' }),
+                () => fetch(`${ekonfidentUri}?type=after`, { method: 'POST' }),
                 null,
             );
             return;
@@ -108,7 +110,7 @@ async function panelSafeguard(endpoint, params = {}) {
             `${warningText}\nMOŻLIWE ZARZĄDZENIE ZAKAZUJĄCE PUSZCZANIA MUZYKI W RADIU!!!\n BLOKADA PANELU ZOSTAŁA ZAINICJOWANA!!!\nA PRÓBA ZOSTAŁA JUŻ ZAREJESTROWANA!`,
             "OK",
             null,
-            () => fetch('/stats/confident?type=hebel', { method: 'POST' }),
+            () => fetch(`${ekonfidentUri}?type=hebel`, { method: 'POST' }),
             null,
         );
         return;
@@ -118,7 +120,7 @@ async function panelSafeguard(endpoint, params = {}) {
             "Logika się zjebała. Trzeba zagonić dział taboretów do naprawy.",
             "OK",
             null,
-            () => fetch('/stats/confident?type=logicfail', { method: 'POST' }),
+            () => fetch(`${ekonfidentUri}?type=logicfail`, { method: 'POST' }),
             null,
             1,
         )

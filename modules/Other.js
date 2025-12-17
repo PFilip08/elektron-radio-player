@@ -1,11 +1,35 @@
 import {DebugSaveToFile} from "./DebugMode.js";
 import {logger} from "./Logger.js";
 import path from 'path';
-import colors from 'colors';
 import ps from "ps-node";
 import {exec} from "child_process";
 import fs from "fs";
 import VLC from "vlc-client";
+import {yellow} from 'colorette';
+
+function sterylizatorIP(input) {
+    let sterilised = '';
+    logger('verbose', `Sterylizacja IP: ${input}`, 'sterylizatorIP');
+    if (global.debugmode === true) {
+        DebugSaveToFile('Other', 'sterylizatorIP', 'source', input);
+        logger('verbose', 'Tekst źródłowy zapisany do debug/', 'sterylizatorIP');
+    }
+    try {
+        sterilised = input.replace(/[^0-9.]/g, "");
+    } catch (e) {
+        logger('error', `Wystąpił błąd podczas sterylizacji IP: ${e}`, 'sterylizatorIP');
+        if (global.debugmode === true) {
+            DebugSaveToFile('Other', 'sterylizatorIP', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'sterylizatorIP');
+        }
+        sterilised = '';
+    }
+    if (global.debugmode === true) {
+        DebugSaveToFile('Other', 'sterylizatorIP', 'result', sterilised);
+        logger('verbose', `Zwrócono wynik sterylizacji do debug/`, 'sterylizatorIP');
+    }
+    return sterilised;
+}
 
 function sterylizator(input) {
     let sterilised = '';
@@ -40,19 +64,19 @@ function pathSecurityChecker(filepath) {
     }
     logger('verbose', 'Sprawdzanie czy ścieżka nie zawiera NULL_BYTE', 'pathSecurityChecker');
     if (filepath.indexOf('\0') !== -1) {
-        logger('warn', colors.yellow(`Próba użycia NULL_BYTE w ścieżce!!!`), 'pathSecurityChecker');
+        logger('warn', yellow(`Próba użycia NULL_BYTE w ścieżce!!!`), 'pathSecurityChecker');
         return 'NULL_BYTE_ATTEMPT';
     }
     logger('verbose', 'Sprawdzanie czy ścieżka nie wiedzie do ucieczki z głównego folderu', 'pathSecurityChecker');
     const rootDirectory = path.resolve(process.cwd(), 'mp3');
     const filename = path.join(rootDirectory, filepath);
     if (filename.indexOf(rootDirectory) !== 0) {
-        logger('warn', colors.yellow(`Próba wyjścia poza katalog główny mp3!!!`), 'pathSecurityChecker');
+        logger('warn', yellow(`Próba wyjścia poza katalog główny mp3!!!`), 'pathSecurityChecker');
         return 'ROOT_EXIT_ATTEMPT';
     }
     logger('verbose', 'Sprawdzanie czy ścieżka nie zawiera dwukropków', 'pathSecurityChecker');
     if (!/^[a-zA-Z0-9/._-]+$/.test(filepath)) {
-        logger('warn', colors.yellow(`Próba wyjścia poza katalog główny przy użyciu dwukropków!!!`), 'pathSecurityChecker');
+        logger('warn', yellow(`Próba wyjścia poza katalog główny przy użyciu dwukropków!!!`), 'pathSecurityChecker');
         return 'ESCAPE_PATH_ATTEMPT';
     }
     return 'NONE'
@@ -154,6 +178,11 @@ async function checkIfVLConVotes() {
 
 function uint8ArrayToBase64(uint8Array) {
     return Buffer.from(uint8Array).toString('base64');
-}  
+}
 
-export { sterylizator, pathSecurityChecker, killVLCatStartup, checkIfVLCisRunning, checkIfVLConVotes, uint8ArrayToBase64 };
+function truncate(str, n){
+    if (str.length > n) logger('warn', `Ucinanie "${str}" na długość ${n}.`, 'truncate');
+    return (str.length > n) ? str.slice(0, n-1) : str;
+}
+
+export { sterylizator, pathSecurityChecker, killVLCatStartup, checkIfVLCisRunning, checkIfVLConVotes, uint8ArrayToBase64, truncate, sterylizatorIP };

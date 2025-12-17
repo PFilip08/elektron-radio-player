@@ -4,7 +4,7 @@ import fs from "fs";
 import {logger} from "./Logger.js";
 import {messageCounter} from "./ApiConnector.js";
 import { DebugSaveToFile } from "./DebugMode.js";
-import colors from "colors";
+import {yellow} from 'colorette';
 
 const url = process.env.URI+'/api/playlist?hostId=1&date=';
 export const votesPath = './mp3/Votes.json';
@@ -17,6 +17,18 @@ const api = axios.create({
 });
 
 async function getVotesData(force, data) {
+    // redirect na devapi
+    if (global.devAPIEnabled) {
+        logger('log', 'DevAPI włączone - używanie local DevAPI', 'getVotesData');
+        try {
+            const mockResponse = await api.get(`http://localhost:${process.env.PORT || 8080}/dev/api/votes`);
+            return mockResponse.data.playlist;
+        } catch (e) {
+            logger('error', 'DevAPI włączone, ale nie działa. Spadanie spowrotem na API filsza', 'getVotesData');
+            // Fall back to real API if DevAPI fails
+        }
+    }
+    
     logger('verbose', 'Sprawdzanie czy jest internet...', 'getVotesData');
     if (messageCounter) return logger('warn', 'Brak neta, pomijanie…', 'getVotesData');
     let date = new Date(); // dzisiaj
@@ -45,7 +57,7 @@ async function getVotesData(force, data) {
     if (!res.data.playlist) return;
     logger('verbose', `Sprawdzanie czy JSON z API nie jest pusty...`, 'getVotesData');
     if (res.data.playlist.length === 0) {
-        logger('verbose', colors.yellow('JSON z API jest pusty!'), 'getVotesData');
+        logger('verbose', yellow('JSON z API jest pusty!'), 'getVotesData');
         logger('log', 'Brak danych.', 'getVotesData');
         return 'brak';
     }

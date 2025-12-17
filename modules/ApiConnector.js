@@ -1,8 +1,8 @@
 import axios from 'axios';
 import {Agent} from "node:https";
 import {massSchedule} from "./TaskScheduler.js";
+import {yellow} from 'colorette';
 import {logger, findChanges, logChanges } from "./Logger.js";
-import colors from 'colors';
 import {DebugSaveToFile} from "./DebugMode.js";
 const url = process.env.URI+'/api/timeTables';
 let previousData = null;
@@ -21,12 +21,23 @@ const api = axios.create({
 });
 
 async function getApiData() {
+    // redirect na devapi
+    if (global.devAPIEnabled) {
+        logger('log', 'DevAPI włączone - używanie local DevAPI', 'getApiData');
+        try {
+            const mockResponse = await api.get(`http://localhost:${process.env.PORT || 8080}/dev/api/timeTables`);
+            return mockResponse.data.timeTable[0];
+        } catch (e) {
+            logger('error', 'DevAPI włączone, ale nie działa. Spadanie spowrotem na API filsza', 'getApiData');
+        }
+    }
+
     return await api.get(url)
         .then(res => {
             if (!messageCounter) {
                 logger('verbose','Sprawdzanie czy blokada jest włączona...','getApiData');
                 if (res.data.timeTable[0].isOn === false) {
-                    logger('verbose',colors.yellow('isOn jest przełączone na false!!!'),'getApiData');
+                    logger('verbose',yellow('isOn jest przełączone na false!!!'),'getApiData');
                     if (!messageStartupBlocker) {
                         logger('verbose','Sprawdzanie czy blokada jest włączona przy starcie automatu...','getApiData');
                         messageStartupBlocker = true;
@@ -156,6 +167,9 @@ function scheduleUpdate() {
         logger('verbose',` - Po pracy radiowęzła: ${intervalOffAir / 1000} sekund`,'scheduleUpdate');
         logger('verbose',` - Weekend: ${intervalWeekend / 1000} sekund`,'scheduleUpdate');
         logger('verbose',` - Wakacje: ${intervalVacation / 1000} sekund`,'scheduleUpdate');
+        setInterval(() => {
+            scheduleUpdate();
+        }, 1000);
         debugIntervalBlock = false;
     }
     const date = new Date();

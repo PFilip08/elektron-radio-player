@@ -1,6 +1,6 @@
 import {logger} from "./Logger.js";
-import colors from 'colors';
 import fs from "fs";
+import {yellow, red} from 'colorette';
 
 async function DebugStarter() {
     if (process.env.VERBOSE === "true") {
@@ -9,9 +9,9 @@ async function DebugStarter() {
         try {
             fs.mkdirSync('./debug', { recursive: true });
         } catch (e) {
-            logger('verbose', colors.red('Nie można utworzyć folderu debug'), 'DebugStarter');
+            logger('verbose', red('Nie można utworzyć folderu debug'), 'DebugStarter');
             console.log(e);
-            logger('verbose', colors.red('Wywalanie procesu z kodem 2'), 'DebugStarter');
+            logger('verbose', red('Wywalanie procesu z kodem 2'), 'DebugStarter');
             process.exit(2);
         }
     } else {
@@ -26,63 +26,63 @@ async function DebugStarter() {
     logger('verbose', `  - WWW: ${process.env.WWW}`, 'DebugStarter');
     logger('verbose', `  - KILL_AT_STARTUP: ${process.env.KILL_AT_STARTUP}`, 'DebugStarter');
     if (process.env.URI === undefined) {
-        logger('verbose', colors.red('Nie znaleziono zmiennej środowiskowej o nazwie URI! Player nie będzie bez tego funkcjonował!'), 'DebugStarter');
+        logger('verbose', red('Nie znaleziono zmiennej środowiskowej o nazwie URI! Player nie będzie bez tego funkcjonował!'), 'DebugStarter');
     }
     logger('verbose', `  - URI: ${process.env.URI}`, 'DebugStarter');
     if (process.env.SPOTIFY_CLIENT_ID === undefined) {
-        logger('verbose', colors.red('Nie znaleziono zmiennej środowiskowej o nazwie SPOTIFY_CLIENT_ID'), 'DebugStarter');
+        logger('verbose', red('Nie znaleziono zmiennej środowiskowej o nazwie SPOTIFY_CLIENT_ID'), 'DebugStarter');
     }
     if (process.env.SPOTIFY_CLIENT_SECRET === undefined) {
-        logger('verbose', colors.red('Nie znaleziono zmiennej środowiskowej o nazwie SPOTIFY_CLIENT_SECRET'), 'DebugStarter');
+        logger('verbose', red('Nie znaleziono zmiennej środowiskowej o nazwie SPOTIFY_CLIENT_SECRET'), 'DebugStarter');
     }
     if (process.env.VLC_PASSWORD === undefined) {
-        logger('verbose', colors.red('Nie znaleziono zmiennej środowiskowej o nazwie VLC_PASSWORD'), 'DebugStarter');
+        logger('verbose', red('Nie znaleziono zmiennej środowiskowej o nazwie VLC_PASSWORD'), 'DebugStarter');
     }
 }
 
 function DebugSaveToFile(moduleName, functionName, fileName, data) {
     let dataType = '';
     if (global.debugmode === false) {
-        logger('error', colors.red('DebugSaveToFile zostało wywołane, ale debugmode jest wyłączony'), 'DebugSaveToFile');
+        logger('error', red('DebugSaveToFile zostało wywołane, ale debugmode jest wyłączony'), 'DebugSaveToFile');
         throw new Error('DebugSaveToFile was called, but debugmode is off');
     }
     if (data === undefined) {
-        logger('verbose', colors.red(`Brak danych do zapisania. Wywołanie z funkcji ${functionName}`), 'DebugSaveToFile');
+        logger('verbose', red(`Brak danych do zapisania. Wywołanie z funkcji ${functionName}`), 'DebugSaveToFile');
         return;
     }
     if (data === null) {
-        logger('verbose', colors.red(`Brak danych do zapisania! Data jest NULL!!!. Wywołanie z funkcji ${functionName}`), 'DebugSaveToFile');
+        logger('verbose', red(`Brak danych do zapisania! Data jest NULL!!!. Wywołanie z funkcji ${functionName}`), 'DebugSaveToFile');
         return;
     }
     if (data === '') {
-        logger('verbose', colors.red(`Brak danych do zapisania! Pusty String!. Wywołanie z funkcji ${functionName}`), 'DebugSaveToFile');
+        logger('verbose', red(`Brak danych do zapisania! Pusty String!. Wywołanie z funkcji ${functionName}`), 'DebugSaveToFile');
         return;
     }
     if (data.stack) {
         dataType = 'STACK';
-        logger('verbose', colors.red(`Zapisywane dane to stacktrace errora z funkcji ${functionName}`), 'DebugSaveToFile');
+        logger('verbose', red(`Zapisywane dane to stacktrace errora z funkcji ${functionName}`), 'DebugSaveToFile');
     } else {
         try {
             try {
                 if (JSON.parse(JSON.stringify(data))) {
                     dataType = 'JSON';
-                    logger('verbose', colors.red(`Zapisywane dane to JSON z funkcji ${functionName}`), 'DebugSaveToFile');
+                    logger('verbose', red(`Zapisywane dane to JSON z funkcji ${functionName}`), 'DebugSaveToFile');
                 }
             } catch (e) {
                 if (removeCircularReferences(data)) {
                     dataType = 'ChińskiJSON';
-                    logger('verbose', colors.red(`Zapisywane dane to JSON z cyklami z funkcji ${functionName}`), 'DebugSaveToFile');
+                    logger('verbose', red(`Zapisywane dane to JSON z cyklami z funkcji ${functionName}`), 'DebugSaveToFile');
                 }
             }
         } catch (e) {
             console.log(e);
-            logger('verbose', colors.red('Zapisywane dane nie są JSONem'), 'DebugSaveToFile');
+            logger('verbose', red('Zapisywane dane nie są JSONem'), 'DebugSaveToFile');
         }
     }
     try {
         fs.mkdirSync(`./debug/${moduleName}/${functionName}/`, { recursive: true });
     } catch (e) {
-        logger('verbose', colors.red(`Nie można utworzyć folderu /debug/${moduleName}/${functionName}/`), 'DebugSaveToFile');
+        logger('verbose', red(`Nie można utworzyć folderu /debug/${moduleName}/${functionName}/`), 'DebugSaveToFile');
         console.log(e);
     }
     if (dataType === 'JSON') {
@@ -90,7 +90,7 @@ function DebugSaveToFile(moduleName, functionName, fileName, data) {
             try {
                 fs.appendFileSync(`./debug/${moduleName}/${functionName}/${fileName}.json`, JSON.stringify(data, null, 4) + '\n', 'utf8');
             } catch (e) {
-                logger('verbose', colors.red(`Nie można zapisać pliku ${fileName}.json`), 'DebugSaveToFile');
+                logger('verbose', red(`Nie można zapisać pliku ${fileName}.json`), 'DebugSaveToFile');
                 console.log(e);
             }
             return;
@@ -98,7 +98,7 @@ function DebugSaveToFile(moduleName, functionName, fileName, data) {
             try {
                 fs.writeFileSync(`debug/${moduleName}/${functionName}/${fileName}.json`, JSON.stringify(data, null, 4), 'utf8');
             } catch (e) {
-                logger('verbose', colors.red(`Nie można zapisać pliku ${fileName}.json`), 'DebugSaveToFile');
+                logger('verbose', red(`Nie można zapisać pliku ${fileName}.json`), 'DebugSaveToFile');
                 console.log(e);
             }
             return;
@@ -108,7 +108,7 @@ function DebugSaveToFile(moduleName, functionName, fileName, data) {
         try {
             fs.writeFileSync(`debug/${moduleName}/${functionName}/${fileName}.json`, JSON.stringify(removeCircularReferences(data), null, 4), 'utf8');
         } catch (e) {
-            logger('verbose', colors.red(`Nie można zapisać pliku ${fileName}.json`), 'DebugSaveToFile');
+            logger('verbose', red(`Nie można zapisać pliku ${fileName}.json`), 'DebugSaveToFile');
             console.log(e);
         }
         return
@@ -117,12 +117,12 @@ function DebugSaveToFile(moduleName, functionName, fileName, data) {
         try {
             fs.writeFileSync(`debug/${moduleName}/${functionName}/${fileName}.txt`, String(data.stack), 'utf8');
         } catch (e) {
-            logger('verbose', colors.red(`Nie można zapisać pliku ${fileName}.txt`), 'DebugSaveToFile');
+            logger('verbose', red(`Nie można zapisać pliku ${fileName}.txt`), 'DebugSaveToFile');
             console.log(e);
         }
     }
     else {
-        logger('verbose', colors.red(`Nie można rozpoznać typu danych do zapisania! Dane pochodzą z funkcji ${functionName}`), 'DebugSaveToFile');
+        logger('verbose', red(`Nie można rozpoznać typu danych do zapisania! Dane pochodzą z funkcji ${functionName}`), 'DebugSaveToFile');
         console.log(data);
         process.exit(1);
     }

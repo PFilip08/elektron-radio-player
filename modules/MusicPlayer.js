@@ -8,7 +8,7 @@ import VLC from 'vlc-client';
 import {uint8ArrayToBase64} from './Other.js';
 import {szuffle} from "../api/controllers/actions.controller.js";
 
-const vlc = `cvlc -I http --http-host 127.0.0.1 --http-port ${process.env.VLC_PORT || 4212} --http-password ${process.env.VLC_PASSWORD} --one-instance`;
+const vlc = `cvlc -I http --http-host 0.0.0.0 --http-port ${process.env.VLC_PORT || 4212} --http-password ${process.env.VLC_PASSWORD} --one-instance`;
 
 function getPlaylistName(id) {
     logger('verbose', `Pobieranie nazwy playlisty o ID: ${parseInt(id)}`, 'getPlaylistName');
@@ -96,7 +96,7 @@ async function playlistSongQuery(playlistID) {
 async function playlistListQuery() {
     try {
         const files = fs.readdirSync('./mp3', { recursive: true });
-        const folders = files.filter(file => fs.lstatSync(path.join('./mp3', file)).isDirectory() && file !== 'onDemand');
+        const folders = files.filter(file => fs.lstatSync(path.join('./mp3', file)).isDirectory() && file !== 'onDemand' && file !== 'Archive');
         logger('verbose', `Zwracanie listy folderów...`, 'playlistListQuery');
         return folders;
     } catch (err) {
@@ -123,15 +123,16 @@ function playMusic(filename) {
     logger('task','--------Play Music--------', 'playMusic');
 }
 
-function playOnDemand(filename) {
+function playOnDemand(filename, file) {
     logger('verbose', `Odtwarzanie muzyki na żądanie o nazwie: ${filename}`, 'playOnDemand');
     logger('verbose', `Sprawdzanie czy plik istnieje...`, 'playOnDemand');
-    if(!fs.existsSync(`./mp3/onDemand/${filename}`) && !fs.existsSync(`./mp3/onDemand/${filename}.mp3`)) return logger('error','Brak pliku!!', 'playOnDemand');
+    const filepath = file || './mp3/onDemand/'
+    if(!fs.existsSync(`${filepath}${filename}`) && !fs.existsSync(`${filepath}${filename}.mp3`)) return logger('error','Brak pliku!!', 'playOnDemand');
     logger('verbose', `Plik istnieje! Granie pliku muzycznego...`, 'playOnDemand');
-    let buffer = path.resolve(`./mp3/onDemand/${filename}.mp3`);
+    let buffer = path.resolve(`${filepath}${filename}.mp3`);
     logger('verbose', `Sprawdzanie czy plik jest folderem...`, 'playOnDemand');
     try {
-        if (fs.lstatSync(`./mp3/onDemand/${filename}`).isDirectory()) buffer = path.resolve(`./mp3/onDemand/${filename}`); logger('verbose', `Plik jest folderem`, 'playOnDemand');
+        if (fs.lstatSync(`${filepath}${filename}`).isDirectory()) buffer = path.resolve(`${filepath}${filename}`); logger('verbose', `Plik jest folderem`, 'playOnDemand');
     } catch (e) {
         logger('verbose', `Plik nie jest folderem`, 'playOnDemand');
         if (global.debugmode === true) {

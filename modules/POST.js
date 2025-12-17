@@ -4,6 +4,7 @@ import {checkUpdate, scheduleUpdate} from "./ApiConnector.js";
 import {default as www} from "../api/app.js";
 import {DebugStarter} from "./DebugMode.js";
 import {killVLCatStartup} from "./Other.js";
+import {initArchive} from "./ArchiveModule.js";
 
 async function POST() {
     logger('POST', '------------------------------');
@@ -26,13 +27,13 @@ async function POST() {
     if (process.env.KILL_AT_STARTUP === 'true') {
         killVLCatStartup();
     }
+    logger('task', 'Inicjalizacja modułu archiwum…', 'POST');
+    await initArchive();
     logger('task', 'Planowanie zadań…', 'POST');
     await massSchedule();
     logger('task', 'Aktywowanie automatycznych aktualizacji z API', 'POST');
     await checkUpdate();
-    setInterval(() => {
-        scheduleUpdate();
-    }, 1000);
+    scheduleUpdate();
     logger('ready', 'Git');
 }
 

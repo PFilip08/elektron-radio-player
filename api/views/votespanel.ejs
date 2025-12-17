@@ -1,0 +1,78 @@
+<!-- votespanel.ejs -->
+<script src="../js/votes.js" async></script>
+<script src="../js/admin.js" async></script>
+<h1>Lista Głosów</h1>
+<table id="votesTable" style="background: blue;">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Tytuł</th>
+        <th>Wykonawca</th>
+        <th>Czas trwania</th>
+        <th>Serwis</th>
+        <th>Akcja</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+    <tr>
+        <td colspan="4" class="center">
+            <button onclick="reset()">Reset</button>
+            <button onclick="save()">Zapisz</button>
+        </td>
+        <td colspan="2" class="center">
+            Data: <span id="date">h</span>
+        </td>
+    </tr>
+</table>
+<div>
+    <h2>Override!</h2>
+    <table id="" style="background: red;">
+        <thead>
+        <tr>
+            <th colspan="2">Akcja</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+        <tr>
+            <td class="center">
+                <span>Pobieranie na dzień:</span>
+            </td>
+            <td class="center">
+                <input type="date" id="dateInput" placeholder="1970-01-01" maxlength="10" min="2024-11-08" required/>
+                <button onclick="performAction('/votes/downloadVotes', { date: document.getElementById('dateInput').value }); setTimeout(fetchVotes, 6500);">OK</button>
+            </td>
+        </tr>
+        <tr>
+            <td class="center">
+                <span>Dodanie wpisu:</span>
+            </td>
+            <td class="center">
+                <input type="search" id="downloadUri" placeholder="https://open.spotify.com/track/..." required/>
+                <button onclick="performAction('/votes/add', { uri: document.getElementById('downloadUri').value }); setTimeout(fetchVotes, 6500);">OK</button>
+            </td>
+        </tr>
+        <tr>
+            <td class="center">
+                <span>Pobieranie - override:</span>
+            </td>
+            <td class="center">
+                <button onclick="performAction('/votes/download')">OK</button>
+            </td>
+        </tr>
+        <tr>
+            <td class="center">
+                <span>Usuwanie mp3:</span>
+            </td>
+            <td class="center">
+                <button onclick="performAction('/votes/delmp3')">OK</button>
+            </td>
+        </tr>
+    </table>
+</div>
+<br/>
+<p>Info: przy reset lub usuń trza zapisz, aby zapisało playlistę</p>
+<p>Info²: przy pobieraniu na dzień i dodawaniu wpisu trza poczekać 6,5s po "ok"</p>
+<br/>
+<iframe name="res" class="res" id="res"></iframe>

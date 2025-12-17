@@ -1,7 +1,8 @@
 import {DebugSaveToFile} from "../../modules/DebugMode.js";
 import {logger} from "../../modules/Logger.js";
 import {getPlaylistName, playlistSongQuery, playlistListQuery, getPlayingSong} from "../../modules/MusicPlayer.js";
-import { pathSecurityChecker } from "../../modules/Other.js";
+import { messageCounter, previousData } from "../../modules/ApiConnector.js";
+import { pathSecurityChecker, sterylizatorIP } from "../../modules/Other.js";
 
 const playlistCache = new Map();
 export async function queryPlaylist(req, res) {
@@ -33,7 +34,7 @@ export async function queryPlaylist(req, res) {
         }
         let secuCheck = pathSecurityChecker(id);
         if (secuCheck.includes('_ATTEMPT')) {
-            logger('warn', `Próba odtworzenia pliku z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${req.hostname}`, 'LocalAPI - queryPlaylist');
+            logger('warn', `Próba odtworzenia pliku z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - queryPlaylist');
             return res.status(403).send('Niebezpieczna ścieżka!');
         }
         if (playlistCache.has(id) && !playlistName.includes('onDemand') && force !== 'true') {
@@ -44,7 +45,7 @@ export async function queryPlaylist(req, res) {
         if (playlistName.includes('onDemand')) {
             playlistName = 'Playlista na żądanie - ' + playlistName.replace('onDemand/', '').replace(/_/g, ' ');
         }
-        if (playlistName !== id && playlistName !== 'nicość' || playlistName.includes('onDemand') || playlistName.includes('7')) {
+        if (playlistName !== id && playlistName !== 'nicość' || playlistName.includes('onDemand') || playlistName.includes('7') || playlistName.includes('Archive')) {
             const playlistSongsName = await playlistSongQuery(id);
             const playlistResponse = {
                 playlistName: playlistName,
@@ -62,13 +63,13 @@ export async function queryPlaylist(req, res) {
             DebugSaveToFile('LocalAPI', 'query/playlist/songs', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - queryPlaylist');
         }
-        return res.status(500).send('Nie znaleziono playlisty o podanym ID!');
+        return res.status(500).send('Nie znaleziono playlisty o podanym ID!; '+e);
     }
 }
 
 export async function queryPlayingMusic(req, res) {
     try {
-        logger('verbose', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlayingMusic');
+        logger('verbose', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlayingMusic');
         const [ isPlaying, songName, playedTime, toPlayTime ] = await getPlayingSong();
         return res.status(201).json(
             {
@@ -86,12 +87,13 @@ export async function queryPlayingMusic(req, res) {
             DebugSaveToFile('LocalAPI', 'query/playing', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - queryPlayingMusic');
         }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }
 
 export async function queryPlaylistList(req, res) {
     try {
-        logger('verbose', `Otrzymano request od ${req.hostname} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlaylistList');
+        logger('verbose', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - queryPlaylistList');
         const playlistListFromFiles = await playlistListQuery()
         let playlistListNames = {};
         playlistListFromFiles.forEach((playlistID, index) => {
@@ -118,5 +120,45 @@ export async function queryPlaylistList(req, res) {
             DebugSaveToFile('LocalAPI', 'query/playlist/list', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - queryPlaylistList');
         }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }
+
+export async function queryRecoveryModeStatus(req, res) {
+    try {
+        if (!req.query.normal) {
+            res.setHeader("Content-Type", "text/event-stream");
+            res.setHeader("Cache-Control", "no-cache");
+            res.setHeader("Connection", "keep-alive");
+
+
+            const interval = setInterval(() => {
+                const payload = {
+                    status: messageCounter,
+                    staticPlaylist: previousData ? previousData.static : null,
+                    previousDataPlaylistUse: previousData !== null
+                };
+                res.write(`data: ${JSON.stringify(payload)}\n\n`);
+            }, 1200);
+
+            req.on("close", () => {
+                clearInterval(interval);
+            });
+        } else {
+            const payload = {
+                status: messageCounter,
+                staticPlaylist: previousData ? previousData.static : null,
+                previousDataPlaylistUse: previousData !== null
+            };
+            return res.status(201).json(payload);
+        }
+    } catch (e) {
+        logger('error', 'Wystąpił błąd podczas próby sprawdzenia statusu trybu recovery!', 'LocalAPI - queryRecoveryModeStatus');
+        logger('error', e.stack, 'LocalAPI - queryRecoveryModeStatus');
+        if (global.debugmode === true) {
+            DebugSaveToFile('LocalAPI', 'query/recovery/status', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - queryRecoveryModeStatus');
+        }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
+    }
+};

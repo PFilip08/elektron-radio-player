@@ -1,0 +1,37 @@
+<!-- dev/addTask.ejs -->
+<% if (typeof status !== 'undefined' && status === 'added') { %>
+    <div class="info-message">
+        <h2>Zadanie zostało dodane!</h2>
+    </div>
+<% } %>
+<div class="addTask">
+    <h1>Dodaj zadanie</h1>
+    <form action="/dev/schedules/addTask" method="post">
+        <div class="addTask-row">
+            <label for="taskName">Nazwa zadania:</label>
+            <input type="text" id="taskName" name="taskName" required/>
+        </div>
+        <div class="addTask-row">
+            <label for="taskType">Typ zadania:</label>
+            <select id="taskType" name="taskType" required>
+                <option value="playMusic">Odtwórz piosenkę</option>
+                <option value="playPlaylist">Odtwórz playlistę</option>
+                <option value="killPlayer">Ubij playera</option>
+                <option value="inne">inne ({"com": 'dupa'})</option>
+            </select>
+        </div>
+
+        <div class="addTask-row">
+            <label for="taskDate">Data:</label>
+            <input type="datetime-local" id="taskDate" name="taskDate" required/>
+        </div>
+
+        <div class="addTask-row">
+            <label for="taskData">Dane zadania:</label>
+            <input type="text" id="taskData" name="taskData"/>
+        </div>
+
+        <button type="submit">Dodaj zadanie</button>
+    </form>
+</div>
+<a href="/dev/schedules"><img src="/images/back3.gif" alt="wstecz3.gif" style="margin-top: 20px;"/></a>

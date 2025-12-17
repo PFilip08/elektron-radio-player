@@ -1,0 +1,39 @@
+<!-- dev/overridepanel.ejs -->
+<table class="override clean">
+    <tr>
+        <th>Akcje</th>
+        <th></th>
+    </tr>
+    <tr>
+        <th>downloadYT (override)</th>
+        <td>
+            <input type="search" id="downloadYTOverrideUrl" placeholder="https://www.youtube.com/watch?v=..." required/>
+            <br/>
+            <input type="search" id="downloadYTOverridePath" placeholder="./mp3/7/" style="width: 100px;"/>
+            <button onclick="performAction('/dev/action/downloadYToverride', { url: document.getElementById('downloadYTOverrideUrl').value, path: document.getElementById('downloadYTOverridePath').value, override: document.getElementById('downloadYTOverrideOverride').checked })">OK</button>
+            <br/>
+            <input type="checkbox" id="downloadYTOverrideOverride"/> <label for="downloadYTOverrideOverride">Override</label>
+        </td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <th colspan="2"><hr /></th>
+    </tr>
+    <tr>
+        <th>devapi</th>
+        <td>
+            <button onclick="performAction('/dev/api', { action: 'on' })">ON</button>
+            <button onclick="performAction('/dev/api', { action: 'off' })">OFF</button>
+            <button onclick="window.location.href='/dev/api'">tutaj</button>
+        </td>
+    </tr>
+    <tr>
+        <th>Restart¹</th>
+        <td>
+            <button onclick="performAction('/dev/action/restart', { action: 'off' })">RESTART</button>
+        </td>
+    </tr>
+</table>
+<%- include('../partials/res.ejs') %>
+<p>Info¹: tylko z demonem to działa, np. pm2 lub jak autorestarty w pętli czy coś</p>
+<!--<p>Info²:</p>-->

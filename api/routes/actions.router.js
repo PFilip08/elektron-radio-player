@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import {kill, pMusic, pPlaylist, vlcNext, vlcPlay, vlcPrevious, vlcSzuffle} from "../controllers/actions.controller.js";
+import {delFiles, kill, normalize, pMusic, pPlaylist, vlcNext, vlcPlay, vlcPrevious, vlcSzuffle} from "../controllers/actions.controller.js";
 
 const actionsRouter = Router();
 actionsRouter.get('/kill', kill);
@@ -11,5 +11,7 @@ actionsRouter.get('/vlcNext', vlcNext);
 actionsRouter.get('/vlcPrevious', vlcPrevious);
 actionsRouter.get('/vlcSzuffle', vlcSzuffle);
 
+actionsRouter.get('/delFiles', delFiles);
+actionsRouter.get('/normalize', normalize);
 
 export default actionsRouter;

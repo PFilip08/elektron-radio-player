@@ -1,0 +1,288 @@
+table, th, td {
+    border: 1px outset black;
+    margin: 0 !important;
+}
+
+#tasksTable {
+    background-color: #4b1295;
+}
+
+.clean, .clean th, .clean td {
+    border: none;
+}
+
+.schedule {
+    background-color: rgba(54, 54, 54, 0.74);
+}
+
+.proceduranr6 {
+    background-color: #209323;
+}
+
+
+div button {
+    min-width: 75px;
+    min-height: 23px;
+    padding: 0 12px;
+    /*font-family: "Pixelated MS Sans Serif",Arial;*/
+    -webkit-font-smoothing: antialiased;
+    font-size: 11px;
+    box-sizing: border-box;
+    border: 1px solid #003c74;
+    background: linear-gradient(180deg,#fff,#ecebe5 86%,#d8d0c4);
+    box-shadow: none;
+    border-radius: 3px;
+    color: #222;
+}
+
+div button:focus {
+    outline: 1px dotted #000;
+    outline-offset: -4px;
+    box-shadow: inset -1px 1px #cee7ff,inset 1px 2px #98b8ea,inset -2px 2px #bcd4f6,inset 1px -1px #89ade4,inset 2px -2px #89ade4;
+}
+
+div button:active {
+    box-shadow: none;
+    background: linear-gradient(180deg,#cdcac3,#e3e3db 8%,#e5e5de 94%,#f2f2f1);
+}
+
+div button:hover {
+    box-shadow: inset -1px 1px #fff0cf,inset 1px 2px #fdd889,inset -2px 2px #fbc761,inset 2px -2px #e5a01a;
+}
+
+.addTask {
+    background: #ecebe5;
+    color: #222;
+    border: 1px solid #003c74;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 340px;
+    margin: 24px auto 0 auto;
+    padding: 10px 12px 4px 12px;
+    border-radius: 2px;
+    box-shadow: 2px 2px 0 #bdbdbd, 4px 4px 0 #d8d0c4;
+}
+
+.addTask h1 {
+    margin-bottom: 8px;
+    font-size: 1em;
+    letter-spacing: 0;
+    color: #003c74;
+    font-weight: bold;
+    text-shadow: 1px 1px 0 #fff;
+}
+
+.addTask-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.addTask label {
+    min-width: 90px;
+    margin-right: 8px;
+    text-align: left;
+    font-size: 16px;
+    color: #003c74;
+}
+
+.addTask input, .addTask select {
+    width: 170px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    border: 1px solid #003c74;
+    font-size: 12px;
+    color: #222;
+    background: #fff;
+    box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #bdbdbd;
+}
+
+/*.addTask input:focus,*/
+/*.addTask select:focus {*/
+/*    border: 1.5px solid #209323;*/
+/*    outline: none;*/
+/*    background: #f5faff;*/
+/*}*/
+
+/*.addTask button {*/
+/*    margin-top: 8px;*/
+/*    min-width: 75px;*/
+/*    min-height: 23px;*/
+/*    padding: 0 12px;*/
+/*    font-size: 11px;*/
+/*    border-radius: 2px;*/
+/*    border: 1px solid #003c74;*/
+/*    background: linear-gradient(180deg,#fff,#ecebe5 86%,#d8d0c4);*/
+/*    color: #222;*/
+/*    font-weight: bold;*/
+/*    box-shadow: none;*/
+/*    cursor: pointer;*/
+/*    transition: background 0.2s, color 0.2s;*/
+/*}*/
+
+/*.addTask button:hover {*/
+/*    background: #003c74;*/
+/*    color: #fff;*/
+/*}*/
+
+/*.addTask button:active {*/
+/*    background: linear-gradient(180deg,#cdcac3,#e3e3db 8%,#f2f2f1);*/
+/*}*/
+
+.info-message {
+    max-width: 640px;
+    /*max-height: 60px;*/
+    background: #e6ffe6;
+    color: #1a7a1a !important;
+    border: 1px solid #b6e2b6;
+    border-radius: 2px;
+    padding: 5px 7px;
+    margin: 0 auto 12px;
+    text-align: center;
+}
+
+/* Style z devapi.ejs */
+.counter {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 10px 15px;
+    margin: 0 auto 15px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    font-size: 14px;
+    width: 300px;
+}
+
+table {
+    background-color: #17191a;
+    color: white;
+    border: 1px outset black;
+}
+
+#devapi-status.enabled {
+    background: rgba(144, 238, 144, 0.9);
+    color: #2d5016;
+}
+
+#devapi-status.disabled {
+    background: rgba(255, 255, 204, 0.9);
+    color: #856404;
+}
+
+.controls-row {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.devapi-controls {
+    width: 540px;
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 30px;
+    background-color: #d322b9; /* męski kolor, ponieważ to sekcja z kontrolkami */
+}
+
+.iframe-section {
+    display: inline-block;
+    vertical-align: top;
+    width: 300px;
+}
+
+.tables-row {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.timetables-config {
+    width: 520px;
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 30px;
+    background-color: #247d9f;
+}
+
+.votes-config {
+    width: 450px;
+    display: inline-block;
+    vertical-align: top;
+    background-color: #3225e6;
+}
+
+.time-rule-entry, .vote-entry {
+    margin: 5px 0;
+    padding: 5px;
+    border: 1px solid #ccc;
+    background: #f9f9f9;
+}
+
+.time-rule-entry input, .vote-entry input {
+    margin: 2px;
+    padding: 2px;
+}
+
+#timeRulesContainer, #votesContainer {
+    max-height: 350px;
+    min-width: 300px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 5px;
+    margin: 5px 0;
+    background: blue; /* Tło niebieskie dla lepszego kontrastu */
+}
+
+.btn-on {
+    background: #90EE90;
+    color: #006400;
+}
+
+.btn-off {
+    background: #FFB6C1;
+    color: #8B0000;
+}
+
+.btn-status {
+    background: #87CEEB;
+    color: #191970;
+}
+
+.btn-reschedule {
+    background: #DDA0DD;
+    color: #2E0854;
+}
+
+.rule-start, .rule-end {
+    width: 80px;
+}
+
+.song-id {
+    width: 50px;
+}
+
+.song-name, .song-url {
+    width: 150px;
+}
+
+.song-votes {
+    width: 60px;
+}
+
+.song-date {
+    width: 120px;
+}
+
+label {
+    margin-right: 15px;
+    font-size: 11px;
+}
+
+.center {
+    margin: 0 auto;
+    text-align: center;
+}
+
+.main {
+    width: 95%;
+    margin: 0 auto;
+}
