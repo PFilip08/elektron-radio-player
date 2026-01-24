@@ -1,5 +1,5 @@
 import schedule from "node-schedule";
-import {killPlayer, pausePlayer, playOnDemand, playPlayer, playPlaylist} from "./MusicPlayer.js";
+import {killPlayer, killPlayerForce, pausePlayer, playOnDemand, playPlayer, playPlaylist} from "./MusicPlayer.js";
 import {getApiData, messageCounter} from "./ApiConnector.js";
 import {autoRemoveFiles, downloader, getTrackInfo} from "./MusicDownloader.js";
 import {logger} from "./Logger.js";
@@ -58,11 +58,12 @@ function scheduleVotes(timeStart, timeEnd, id, i) {
     });
     jobPlay.jobData = { id };
     
-    const jobPause = schedule.scheduleJob(`pausePlayer - ${new Date().toLocaleString()}, ${i[0]}/${i[1]}`, timeEnd, function () {
+    const jobPause = schedule.scheduleJob(`pausePlayer - ${new Date().toLocaleString()}, ${i[0]}/${i[1]}`, timeEnd, async function () {
         try {
-            pausePlayer();
+            await pausePlayer();
         } catch (e) {
-            killPlayer();
+            logger('error', `Błąd taska od pauzowania plejera: ${e}`, 'scheduleVotes - taskPausePlayer');
+            killPlayerForce();
         }
     });
     jobPause.jobData = { id };
