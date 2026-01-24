@@ -103,20 +103,26 @@ async function getApiData() {
             return res;
         });
 }
-
+let checkUpdateRunning = false;
 async function checkUpdate() {
     try {
         messageStartupBlocker = true;
+        if (checkUpdateRunning === true) {
+            logger('verbose','Funkcja checkUpdate jest już uruchomiona, wychodzenie z funkcji...','checkUpdate');
+            return;
+        }
+        checkUpdateRunning = true;
         const currentData = await getApiData();
         logger('verbose','Sprawdzanie czy dane są statyczne...','checkUpdate');
         if (currentData.static) {
             logger('verbose','Dane są statyczne, nie można ich porównać','checkUpdate');
             logger('verbose','Zwrócono dane statyczne','checkUpdate');
+            checkUpdateRunning = false;
             return;
         }
         logger('verbose','Sprawdzanie czy dane są różne...','checkUpdate');
         if (previousData && JSON.stringify(currentData) !== JSON.stringify(previousData)) {
-            logger('verbose','Dane róźnią się','checkUpdate');
+            logger('verbose','Dane różnią się','checkUpdate');
             logger('verbose','Planowanie zadań...','checkUpdate');
             logger('verbose','Czekanie na wykonanie funkcji massSchedule...','checkUpdate');
             await massSchedule();
@@ -129,6 +135,7 @@ async function checkUpdate() {
             logChanges(changes);
         }
         logger('verbose','Zapisywanie danych do zmiennej previousData...','checkUpdate');
+        checkUpdateRunning = false;
         previousData = currentData;
     } catch (error) {
         logger('error', '--------Check Update--------','checkUpdate');
@@ -138,6 +145,7 @@ async function checkUpdate() {
             logger('verbose',`Stacktrace zrzucono do pliku catched_error.txt`,'checkUpdate');
         }
         logger('error', '--------Check Update--------','checkUpdate');
+        checkUpdateRunning = false;
     }
 }
 
