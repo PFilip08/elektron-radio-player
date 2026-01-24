@@ -269,13 +269,14 @@ async function delayMassScheduleVLC() {
 // dzięki copilot :>
 function getScheduledTasks() {
     return Object.keys(schedule.scheduledJobs).map(jobName => {
+        let DSTDate = new Date();
         const job = schedule.scheduledJobs[jobName];
         const jobData = job.jobData || {};
 
-        // utc+2
+        // ~~utc+2~~ teraz automatyczne jest dostosowywanie do DST :3
         const nextInvocation = job.nextInvocation();
         if (!nextInvocation) return { name: jobName, date: '', time: '', command: job.job.toString(), variables: jobData };
-        const nextTimeWithOffset = new Date(nextInvocation.getTime() + 2 * 60 * 60 * 1000);
+        const nextTimeWithOffset = new Date(nextInvocation.getTime() + (DSTDate.getTimezoneOffset() / -60) * 60 * 60 * 1000);
 
         return {
             name: jobName,
