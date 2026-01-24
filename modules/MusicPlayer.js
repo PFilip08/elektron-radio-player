@@ -5,7 +5,7 @@ import {logger} from "./Logger.js";
 import {DebugSaveToFile} from './DebugMode.js';
 import {parseFile} from 'music-metadata';
 import VLC from 'vlc-client';
-import {uint8ArrayToBase64} from './Other.js';
+import {checkIfVLConVotes, uint8ArrayToBase64} from './Other.js';
 import {szuffle} from "../api/controllers/actions.controller.js";
 
 const vlc = `cvlc -I http --http-host 0.0.0.0 --http-port ${process.env.VLC_PORT || 4212} --http-password ${process.env.VLC_PASSWORD} --one-instance`;
@@ -182,6 +182,10 @@ function killPlayerForce() {
 async function pausePlayer() {
     try {
         logger('verbose', `Pauzowanie plajera...`, 'pausePlayer');
+        if (!(await checkIfVLConVotes())) {
+            logger('warn', 'VLC nie jest ustawione na playliste z votami, pomijanie pauzowania...', 'pausePlayer');
+            throw new Error('VLC nie jest ustawione na playliste z votami, pomijanie pauzowania...');
+        }
         const vlc = new VLC.Client({
             ip: '127.0.0.1',
             port: Number(process.env.VLC_PORT) || 4212,
