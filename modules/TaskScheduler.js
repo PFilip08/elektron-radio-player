@@ -1,5 +1,5 @@
 import schedule from "node-schedule";
-import {killPlayer, killPlayerForce, pausePlayer, playOnDemand, playPlayer, playPlaylist} from "./MusicPlayer.js";
+import {killPlayer, killPlayerForce, pausePlayer, playOnDemand, playPlayer, playPlaylist, getPlayingSong} from "./MusicPlayer.js";
 import {getApiData, messageCounter} from "./ApiConnector.js";
 import {autoRemoveFiles, downloader, getTrackInfo} from "./MusicDownloader.js";
 import {logger} from "./Logger.js";
@@ -112,9 +112,21 @@ async function checkScheduleTime(timeEnd, timeStart, rule, breakNumber) {
     return true;
 }
 
-let downloaded = false, emptyVotes = false;
+let downloaded = false, emptyVotes = false, massScheduleDelayed = false;
 let blockmassSchedule = new Mutex();
 async function massSchedule() {
+    if (massScheduleDelayed) {
+        logger('verbose', yellow(console.trace()), 'massSchedule');
+        logger('warn', 'massSchedule jest już odroczone, pomijanie ponownego uruchamiania...', 'massSchedule');
+        return;
+    }
+    if ((await getPlayingSong())[0] == true && !massScheduleDelayed) {
+        logger('verbose', yellow('WYKRYTO, ŻE VLC JEST URUCHOMIONE PODCZAS WYKONYWANIA MASSSCHEDULE!!!'), 'massSchedule');
+        logger('warn', 'VLC jest uruchomione podczas wykonywania massSchedule, co może powodować rzadki błąd typu Race Condition i nie ubicie muzyki!!! Odraczanie wykonania massschedule gdy VLC skończy puszczać muzykę', 'massSchedule');
+        massScheduleDelayed = true;
+        delayMassScheduleVLC();
+        return;
+    }
     await blockmassSchedule.runExclusive(async () => {
         logger('verbose', 'Rozpoczęto masowe planowanie zadań...', 'massSchedule');
         logger('verbose', 'Zatrzymywanie wszystkich zadań', 'massSchedule');
@@ -230,6 +242,30 @@ async function massSchedule() {
     });
 }
 
+let delayTimer = null;
+
+async function delayMassScheduleVLC() {
+    if (delayTimer) {
+        logger('warn', 'Funkcja delayMassScheduleVLC już działa, pomijanie ponownego uruchamiania...', 'delayMassScheduleVLC');
+        logger('verbose', yellow(console.trace()), 'delayMassScheduleVLC');
+        return;
+    }; // już działa
+
+    const tick = async () => {
+        const [isPlaying] = await getPlayingSong();
+        if (!isPlaying) {
+            logger('verbose', 'VLC przestało grać, uruchamianie massSchedule...', 'delayMassScheduleVLC');
+            massScheduleDelayed = false;
+            delayTimer = null;
+            await massSchedule();
+            return;
+        }
+        logger('verbose', 'VLC nadal gra, czekanie 1 sekundę przed ponownym sprawdzeniem...', 'delayMassScheduleVLC');
+        delayTimer = setTimeout(tick, 1000);
+    };
+    logger('verbose', 'Uruchamianie sprawdzania stanu VLC...', 'delayMassScheduleVLC');
+    delayTimer = setTimeout(tick, 1000);
+}
 // dzięki copilot :>
 function getScheduledTasks() {
     return Object.keys(schedule.scheduledJobs).map(jobName => {
