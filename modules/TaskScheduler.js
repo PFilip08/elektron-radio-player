@@ -1,5 +1,5 @@
 import schedule from "node-schedule";
-import {killPlayer, pausePlayer, playOnDemand, playPlayer, playPlaylist} from "./MusicPlayer.js";
+import {killPlayer, killPlayerForce, pausePlayer, playOnDemand, playPlayer, playPlaylist, getPlayingSong} from "./MusicPlayer.js";
 import {getApiData, messageCounter} from "./ApiConnector.js";
 import {autoRemoveFiles, downloader, getTrackInfo} from "./MusicDownloader.js";
 import {logger} from "./Logger.js";
@@ -52,18 +52,18 @@ function scheduleVotes(timeStart, timeEnd, id, i) {
     }
     const jobPlay = schedule.scheduleJob(`playPlayer - ${new Date().toLocaleString()}, ${i[0]}/${i[1]}`, timeStart, async function () {
         logger('log', 'Granie playlisty nr: '+id,'scheduleVotes');
-        // console.log(await checkIfVLCisRunning(), await checkIfVLConVotes());
         if (await checkIfVLCisRunning() && await checkIfVLConVotes()) {
             await playPlayer();
         } else playPlaylist(id);
     });
     jobPlay.jobData = { id };
     
-    const jobPause = schedule.scheduleJob(`pausePlayer - ${new Date().toLocaleString()}, ${i[0]}/${i[1]}`, timeEnd, function () {
+    const jobPause = schedule.scheduleJob(`pausePlayer - ${new Date().toLocaleString()}, ${i[0]}/${i[1]}`, timeEnd, async function () {
         try {
-            pausePlayer();
+            await pausePlayer();
         } catch (e) {
-            killPlayer();
+            logger('error', `Błąd taska od pauzowania plejera: ${e}`, 'scheduleVotes - taskPausePlayer');
+            killPlayerForce();
         }
     });
     jobPause.jobData = { id };
@@ -112,14 +112,22 @@ async function checkScheduleTime(timeEnd, timeStart, rule, breakNumber) {
     return true;
 }
 
-let downloaded = false, emptyVotes = false;
+let downloaded = false, emptyVotes = false, massScheduleDelayed = false;
 let blockmassSchedule = new Mutex();
-//let blockmassSchedule = false;
 async function massSchedule() {
+    if (massScheduleDelayed) {
+        logger('verbose', yellow(console.trace()), 'massSchedule');
+        logger('warn', 'massSchedule jest już odroczone, pomijanie ponownego uruchamiania...', 'massSchedule');
+        return;
+    }
+    if ((await getPlayingSong())[0] == true && !massScheduleDelayed) {
+        logger('verbose', yellow('WYKRYTO, ŻE VLC JEST URUCHOMIONE PODCZAS WYKONYWANIA MASSSCHEDULE!!!'), 'massSchedule');
+        logger('warn', 'VLC jest uruchomione podczas wykonywania massSchedule, co może powodować rzadki błąd typu Race Condition i nie ubicie muzyki!!! Odraczanie wykonania massschedule gdy VLC skończy puszczać muzykę', 'massSchedule');
+        massScheduleDelayed = true;
+        delayMassScheduleVLC();
+        return;
+    }
     await blockmassSchedule.runExclusive(async () => {
-        //console.log('[STACKTRACE] massSchedule() wywołana z:\n' + new Error().stack);
-        //if (blockmassSchedule) return logger('error', 'Jakieś grzyby i w ogóle magia, taski się chciały duplikować!!1!11', 'massSchedule - block');
-        //blockmassSchedule = true;
         logger('verbose', 'Rozpoczęto masowe planowanie zadań...', 'massSchedule');
         logger('verbose', 'Zatrzymywanie wszystkich zadań', 'massSchedule');
         await schedule.gracefulShutdown();
@@ -231,20 +239,44 @@ async function massSchedule() {
             }
         }
         taskNumber();
-        //blockmassSchedule = false;
     });
 }
 
+let delayTimer = null;
+
+async function delayMassScheduleVLC() {
+    if (delayTimer) {
+        logger('warn', 'Funkcja delayMassScheduleVLC już działa, pomijanie ponownego uruchamiania...', 'delayMassScheduleVLC');
+        logger('verbose', yellow(console.trace()), 'delayMassScheduleVLC');
+        return;
+    }; // już działa
+
+    const tick = async () => {
+        const [isPlaying] = await getPlayingSong();
+        if (!isPlaying) {
+            logger('verbose', 'VLC przestało grać, uruchamianie massSchedule...', 'delayMassScheduleVLC');
+            massScheduleDelayed = false;
+            delayTimer = null;
+            await massSchedule();
+            return;
+        }
+        logger('verbose', 'VLC nadal gra, czekanie 1 sekundę przed ponownym sprawdzeniem...', 'delayMassScheduleVLC');
+        delayTimer = setTimeout(tick, 1000);
+    };
+    logger('verbose', 'Uruchamianie sprawdzania stanu VLC...', 'delayMassScheduleVLC');
+    delayTimer = setTimeout(tick, 1000);
+}
 // dzięki copilot :>
 function getScheduledTasks() {
     return Object.keys(schedule.scheduledJobs).map(jobName => {
+        let DSTDate = new Date();
         const job = schedule.scheduledJobs[jobName];
         const jobData = job.jobData || {};
 
-        // utc+2
+        // ~~utc+2~~ teraz automatyczne jest dostosowywanie do DST :3
         const nextInvocation = job.nextInvocation();
         if (!nextInvocation) return { name: jobName, date: '', time: '', command: job.job.toString(), variables: jobData };
-        const nextTimeWithOffset = new Date(nextInvocation.getTime() + 2 * 60 * 60 * 1000);
+        const nextTimeWithOffset = new Date(nextInvocation.getTime() + (DSTDate.getTimezoneOffset() / -60) * 60 * 60 * 1000);
 
         return {
             name: jobName,
