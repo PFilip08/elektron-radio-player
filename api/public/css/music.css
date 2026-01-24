@@ -104,6 +104,7 @@
 .col {
     display: flex;
     flex-direction: column;
+    width: 300px;
 }
 
 .panic {
@@ -111,7 +112,7 @@
     background-size: contain;
     width: 200px;
     height: 100px;
-    margin: 30px 40px 0 40px;
+    margin: 30px 50px 0 50px;
     align-content: center;
     align-items: center;
 }
@@ -124,7 +125,7 @@
     width: 200px;
     height: 100px;
     display: block;
-    margin: 30px 40px 0 40px;
+    margin: 30px 50px 0 50px;
     animation: animate 4s linear infinite;
 }
 
