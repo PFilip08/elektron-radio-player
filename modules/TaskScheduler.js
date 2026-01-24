@@ -52,7 +52,6 @@ function scheduleVotes(timeStart, timeEnd, id, i) {
     }
     const jobPlay = schedule.scheduleJob(`playPlayer - ${new Date().toLocaleString()}, ${i[0]}/${i[1]}`, timeStart, async function () {
         logger('log', 'Granie playlisty nr: '+id,'scheduleVotes');
-        // console.log(await checkIfVLCisRunning(), await checkIfVLConVotes());
         if (await checkIfVLCisRunning() && await checkIfVLConVotes()) {
             await playPlayer();
         } else playPlaylist(id);
@@ -114,12 +113,8 @@ async function checkScheduleTime(timeEnd, timeStart, rule, breakNumber) {
 
 let downloaded = false, emptyVotes = false;
 let blockmassSchedule = new Mutex();
-//let blockmassSchedule = false;
 async function massSchedule() {
     await blockmassSchedule.runExclusive(async () => {
-        //console.log('[STACKTRACE] massSchedule() wywołana z:\n' + new Error().stack);
-        //if (blockmassSchedule) return logger('error', 'Jakieś grzyby i w ogóle magia, taski się chciały duplikować!!1!11', 'massSchedule - block');
-        //blockmassSchedule = true;
         logger('verbose', 'Rozpoczęto masowe planowanie zadań...', 'massSchedule');
         logger('verbose', 'Zatrzymywanie wszystkich zadań', 'massSchedule');
         await schedule.gracefulShutdown();
@@ -231,7 +226,6 @@ async function massSchedule() {
             }
         }
         taskNumber();
-        //blockmassSchedule = false;
     });
 }
 
