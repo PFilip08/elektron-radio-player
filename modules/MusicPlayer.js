@@ -197,6 +197,7 @@ async function pausePlayer() {
             DebugSaveToFile('MusicPlayer', 'pausePlayer', 'catched_error', e);
             logger('verbose',`Stacktrace został zrzucony do /debug`,'pausePlayer');
         }
+        throw e;
     }
 }
 
@@ -218,6 +219,7 @@ async function playPlayer() {
             DebugSaveToFile('MusicPlayer', 'playPlayer', 'catched_error', e);
             logger('verbose', `Stacktrace został zrzucony do /debug`, 'playPlayer');
         }
+        throw e;
     }
 }
 
