@@ -152,7 +152,7 @@ async function searchInArchive(query/*, options = {}*/) {
         return { metadataMatches: [], filenameMatches: [], all: [] };
     }
     logger('verbose', `Wyszukiwanie w archiwum: "${query}"`, 'searchInArchive');
-    let searchQuery;
+    let searchQuery = query.toLowerCase();
     //Stworzyłem to aby było ale w sumie po co?
     // if (caseSensitive) {
     //     searchQuery = query;
@@ -181,12 +181,12 @@ async function searchInArchive(query/*, options = {}*/) {
                 const artist = metadata.common.artist || '';
                 const album = metadata.common.album || '';
                 logger('verbose', `Metadane: ${title} - ${artist} (${album})`, 'searchInArchive');
-                let metadataText;
-                if (caseSensitive) {
-                    metadataText = `${title} ${artist} ${album}`;
-                } else {
-                    metadataText = `${title} ${artist} ${album}`.toLowerCase();
-                }
+                let metadataText = `${title} ${artist} ${album}`.toLowerCase();
+                // if (caseSensitive) {
+                //     metadataText = `${title} ${artist} ${album}`;
+                // } else {
+                //     metadataText = `${title} ${artist} ${album}`.toLowerCase();
+                // }
                 const resultObject = {
                     filename: filePath.split('/').pop(),
                     path: filePath,
@@ -206,7 +206,7 @@ async function searchInArchive(query/*, options = {}*/) {
                 }
                 logger('verbose', `Sprawdzanie dopasowania w nazwie pliku`, 'searchInArchive');
                 const filename = filePath.split('/').pop().replace(/\.mp3$/i, '');
-                const filenameText = caseSensitive ? filename : filename.toLowerCase();
+                const filenameText = /*caseSensitive ?*/ filename /*: filename.toLowerCase()*/;
                 if (filenameText.includes(searchQuery)) {
                     logger('verbose', `Znaleziono dopasowanie w nazwie pliku!`, 'searchInArchive');
                     matchedByFilename = true;
