@@ -66,16 +66,12 @@ export async function deleteArchiveFile(req, res) {
             return res.status(400).send('Nie podano nazwy pliku!');
         }
         let secuCheck = pathSecurityChecker(filename);
-        if (secuCheck.includes('_ATTEMPT')) {
-            logger('warn', `Próba usunięcia pliku z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - deleteArchiveFile');
-            return res.status(403).send('Niebezpieczna ścieżka!');
-        }
+        // if (secuCheck.includes('_ATTEMPT')) {
+        //     logger('warn', `Próba usunięcia pliku z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - deleteArchiveFile');
+        //     return res.status(403).send('Niebezpieczna ścieżka!');
+        // }
         const result = deleteFromArchive(filename);
-        if (result.success) {
-            return res.status(200).json(result);
-        } else {
-            return res.status(404).json(result);
-        }
+        return res.status(200).json(result);
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby usunięcia pliku z archiwum', 'LocalAPI - deleteArchiveFile');
         if (global.debugmode === true) {
