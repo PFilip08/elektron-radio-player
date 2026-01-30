@@ -1,0 +1,114 @@
+<!-- archivepanel.ejs -->
+<script src="../js/archive.js" async></script>
+<script src="../js/admin.js" async></script>
+<h1>Archiwum</h1>
+<br/>
+<div style="display: flex; justify-content: center; flex-wrap: wrap;">
+    <div id="anomaliesPanel">
+        <table style="background: purple;">
+            <thead>
+                <tr>
+                    <th colspan="2">Wykrywanie anomalii</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="center">
+                        <button onclick="filterNoMetadata()" style="background: #8b008b;">Pokaż piosenki bez metadanych</button>
+                    </td>
+                    <td class="center">
+                        <button onclick="filterCJKCharacters()" style="background: #9932cc;">Pokaż piosenki z chińskimi/japońskimi znakami</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="center">
+                        <button onclick="filterNoDuration()" style="background: #8b008b;">Pokaż piosenki bez czasu</button>
+                    </td>
+                    <td class="center">
+                        <button onclick="resetFilters()" style="background: #666;">Resetuj filtry</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div id="filterInfo" style="text-align: center; margin-top: 10px; font-size: 1em; color: #ff69b4;"></div>
+    </div>
+        <div id="locationPanel">
+        <table style="background: darkblue;">
+            <thead>
+            <tr>
+                <th colspan="2">Filtrowanie po lokalizacji</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td class="center">
+                    <button onclick="filterRootFiles()" style="background: #1e90ff;">Pokaż pliki z katalogu głównego</button>
+                </td>
+                <td class="center">
+                    <button onclick="filterSubfolderFiles()" style="background: #4169e1;">Pokaż pliki z podfolderów</button>
+                </td>
+            </tr>
+            <tr>
+                <td class="center" colspan="2">
+                    <button onclick="resetFilters()" style="background: #666;">Resetuj filtry</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div id="locationInfo" style="text-align: center; margin-top: 10px; font-size: 1em; color: #87ceeb;"></div>
+    </div>
+</div>
+<br/>
+<div>
+    <div>
+        <table style="background: green;">
+            <thead>
+                <tr>
+                    <th colspan="3">Wyszukaj utwór w archiwum</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="center">
+                        <span>Tytuł lub wykonawca:</span>
+                    </td>
+                    <td class="center">
+                        <input type="search" id="searchFile" placeholder="np. Taboret, Akcent..." required/>
+                        <button onclick="searchFile()">Szukaj</button>
+                    </td>
+                    <td class="center">
+                        <button onclick="resetSearch()" style="background: #666;">Wyczyść</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div id="searchInfo" style="text-align: center; margin-top: 10px; font-size: 1.1em; color: #0f0;"></div>
+    </div>
+    <div style="margin-bottom: 10px; text-align: center;">
+        <span>Strona: <span id="pageInfo">1 / 1</span></span>
+        <span style="margin-left: 20px;">Łącznie utworów: <span id="totalSongs">0</span></span>
+    </div>
+    <table id="archiveTable" style="background: blue;">
+        <thead>
+            <tr>
+                <th>Lp.</th>
+                <th>Tytuł</th>
+                <th>Wykonawca</th>
+                <th>Czas trwania</th>
+                <th>Plik</th>
+                <th>Akcja</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+            <tr>
+                <td colspan="6" class="center">
+                    <button onclick="prevPage()" id="prevBtn">Poprzednia</button>
+                    <button onclick="fetchArchive()">Odśwież</button>
+                    <button onclick="nextPage()" id="nextBtn">Następna</button>
+                </td>
+            </tr>
+    </table>
+</div>
+<br/>
+<iframe name="res" class="res" id="res"></iframe>
