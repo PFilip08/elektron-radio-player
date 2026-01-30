@@ -7,6 +7,7 @@ import powerRouter from "./routes/power.router.js";
 import votesRouter from "./routes/votes.router.js";
 import devRouter from "./routes/dev.router.js";
 import secRouter from "./routes/security.router.js";
+import archiveRouter from './routes/archive.router.js';
 import * as path from "node:path";
 import {fileURLToPath} from 'url';
 import * as os from "node:os";
@@ -39,6 +40,14 @@ app.get('/admin', function(req, res){
   res.render('adminpanel', {
     title: 'Admin Panel',
     welcome: 'Witaj na panelu zarządzania elektron-radio-playerem!',
+    layout: 'layouts/admin_layout'
+  });
+});
+
+app.get('/archive', function(req, res){
+  res.render('archivepanel', {
+    title: 'Archive Panel',
+    welcome: 'Panel archiwum muzyki',
     layout: 'layouts/admin_layout'
   });
 });
@@ -92,6 +101,7 @@ app.use('/status', statusRouter);
 app.use('/power', powerRouter);
 app.use('/votes', votesRouter);
 app.use('/dev', devRouter);
+app.use('/archive', archiveRouter);
 
 export default function () {
   app.listen(port, () => {
