@@ -302,10 +302,6 @@ function copyFromArchiveToSix(subfolderName, clearFolder = false) {
         logger('error', `Podkatalog ${subfolderName} nie istnieje w archiwum`, 'copyFromArchiveToSix');
         throw new Error(`Podkatalog ${subfolderName} nie istnieje w archiwum`);
     }
-    if (!fs.existsSync(targetDir)) {
-        logger('warn', 'Folder playlisty 6 nie istnieje, tworzenie...', 'copyFromArchiveToSix');
-        fs.mkdirSync(targetDir, { recursive: true });
-    }
     const existingFiles = fs.readdirSync(targetDir).filter(f => path.extname(f).toLowerCase() === '.mp3');
     const hasExistingFiles = existingFiles.length > 0;
     if (hasExistingFiles && !clearFolder) {

@@ -138,6 +138,9 @@ export async function copyPlaylist(req, res) {
         }
         
         const result = await copyPlaylistToArchive(playlistId);
+        if (result.includes('jest pusta')) {
+            return res.status(400).send(result);
+        }
         return res.status(200).json(result);
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas kopiowania playlisty do archiwum', 'LocalAPI - copyPlaylist');

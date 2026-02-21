@@ -3,6 +3,72 @@
 <script src="../js/admin.js" async></script>
 <h1>Archiwum</h1>
 <br/>
+
+<!-- Nowa sekcja: Przerzut playlist do 6 -->
+<div style="display: flex; justify-content: center; flex-wrap: wrap; margin-bottom: 20px;">
+    <div id="transferPanel">
+        <table style="background: darkred;">
+            <thead>
+                <tr>
+                    <th colspan="2">Kopiowanie z archiwum do playlisty 6</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="center">
+                        <select id="archiveFolderSelect" style="min-width: 250px; padding: 5px;">
+                            <option value="">-- Wybierz podkatalog archiwum --</option>
+                        </select>
+                    </td>
+                    <td class="center">
+                        <button onclick="loadArchiveFolders()" style="background: #A52A2A; margin-right: 5px;">Odśwież listę</button>
+                        <button onclick="initiateCopyFromArchive()" style="background: #8B0000; font-weight: bold;">
+                            Kopiuj do playlisty 6
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Nowa sekcja: Kopiowanie playlist do archiwum -->
+<div style="display: flex; justify-content: center; flex-wrap: wrap; margin-bottom: 20px;">
+    <div id="copyPlaylistPanel">
+        <table style="background: darkgreen;">
+            <thead>
+                <tr>
+                    <th colspan="3">Kopiowanie playlist do archiwum</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="center">
+                        <button onclick="copyPlaylistToArchive(1)" style="background: #006400;">Klasyczna (1)</button>
+                    </td>
+                    <td class="center">
+                        <button onclick="copyPlaylistToArchive(2)" style="background: #228B22;">POP (2)</button>
+                    </td>
+                    <td class="center">
+                        <button onclick="copyPlaylistToArchive(3)" style="background: #32CD32;">RAP (3)</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="center">
+                        <button onclick="copyPlaylistToArchive(4)" style="background: #006400;">ROCK (4)</button>
+                    </td>
+                    <td class="center">
+                        <button onclick="copyPlaylistToArchive(5)" style="background: #228B22;">Soundtracki (5)</button>
+                    </td>
+                    <td class="center">
+                        <button onclick="copyPlaylistToArchive(6)" style="background: #32CD32;">Specjalna (6)</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <div style="display: flex; justify-content: center; flex-wrap: wrap;">
     <div id="anomaliesPanel">
         <table style="background: purple;">
@@ -111,4 +177,5 @@
     </table>
 </div>
 <br/>
+
 <iframe name="res" class="res" id="res"></iframe>

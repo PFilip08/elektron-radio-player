@@ -238,12 +238,10 @@ async function deleteArchiveFile(filename) {
         
         if (response.ok) {
             showInIframe(`Pomyślnie usunięto plik: <strong>${filename}</strong>`);
-            // Usuń z lokalnej tablicy allSongs
             allSongs = allSongs.filter(song => {
                 const songFilename = song.filePath ? song.filePath.split('/').pop() : song.filename;
                 return songFilename !== filename;
             });
-            // Jeśli aktywne wyszukiwanie lub filtr, usuń też z filteredSongs i searchResults
             if (isSearchActive || isFilterActive) {
                 filteredSongs = filteredSongs.filter(song => {
                     const songFilename = song.filePath ? song.filePath.split('/').pop() : song.filename;
@@ -256,13 +254,11 @@ async function deleteArchiveFile(filename) {
                     });
                 }
             }
-            // Sprawdź czy aktualna strona nie jest pusta
             const displaySongs = (isSearchActive || isFilterActive) ? filteredSongs : allSongs;
             const totalPages = Math.ceil(displaySongs.length / songsPerPage);
             if (currentPage > totalPages && totalPages > 0) {
                 currentPage = totalPages;
             }
-            // Odśwież wyświetlanie bez pobierania z serwera
             displayPage();
         } else {
             showInIframe(`Błąd podczas usuwania: ${result.error}`, true);
@@ -346,25 +342,131 @@ async function searchFile() {
         isSearchActive = true;
         isFilterActive = false;
         currentPage = 1;
-        const searchInfo = document.getElementById('searchInfo');
         if (!allResults || allResults.length === 0) {
-            searchInfo.innerHTML = 'Nie znaleziono utworów pasujących do zapytania :<';
-            searchInfo.style.color = 'yellow';
             showInIframe(`Nie znaleziono utworów dla zapytania: <strong>${searchQuery}</strong>`, true);
         } else {
             const metaCount = results.metadataMatches?.length || 0;
             const fileCount = results.filenameMatches?.length || 0;
-            searchInfo.innerHTML = `Znaleziono: <strong>${allResults.length}</strong> utworów dla "${searchQuery}" <span style="font-size: 0.9em;">(metadane: ${metaCount}, nazwa pliku: ${fileCount})</span>`;
-            searchInfo.style.color = '#0f0';
             showInIframe(`Znaleziono <strong>${allResults.length}</strong> utworów dla: <strong>${searchQuery}</strong><br><small>Metadane: ${metaCount}, Nazwa pliku: ${fileCount}</small>`);
         }
         displayPage();
     } catch (error) {
         console.error('Błąd podczas wyszukiwania:', error);
-        const searchInfo = document.getElementById('searchInfo');
-        searchInfo.innerHTML = 'Błąd podczas wyszukiwania utworów!';
-        searchInfo.style.color = 'red';
         showInIframe('Błąd podczas wyszukiwania utworów!', true);
     }
 }
-window.onload = fetchArchive;
+let copyData = null;
+
+async function loadArchiveFolders() {
+    const select = document.getElementById('archiveFolderSelect');
+    try {
+        const response = await fetch('/archive/getArchiveFolders');
+        const folders = await response.json();
+        select.innerHTML = '<option value="">-- Wybierz podkatalog archiwum --</option>';
+        if (folders.length === 0) {
+            showInIframe('Brak podkatalogów w archiwum!', true);
+            return;
+        }
+        folders.forEach(folder => {
+            const option = document.createElement('option');
+            option.value = folder.name;
+            option.textContent = `${folder.name} (${folder.mp3Count} plików)`;
+            select.appendChild(option);
+        });    
+    } catch (error) {
+        console.error('Błąd podczas ładowania podkatalogów:', error);
+        showInIframe('Błąd podczas ładowania podkatalogów!', true);
+    }
+}
+
+async function initiateCopyFromArchive() {
+    const select = document.getElementById('archiveFolderSelect');
+    const subfolderName = select.value;
+    if (!subfolderName) {
+        showInIframe('Wybierz podkatalog archiwum!', true);
+        return;
+    }
+    try {
+        const checkResponse = await fetch('/archive/copyFromArchive', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ subfolderName: subfolderName, clearFolder: false })
+        });
+        if (!checkResponse.ok) {
+            throw new Error(`HTTP ${checkResponse.status}: ${await checkResponse.text()}`);
+        }
+        const checkResult = await checkResponse.json();
+        if (checkResult.needsConfirmation) {
+            const confirmed = confirm(
+                `Folder playlisty 6 zawiera ${checkResult.existingFilesCount} plików.\n\n` +
+                `Czy chcesz usunąć te pliki i zastąpić je plikami z archiwum?`
+            );
+            if (!confirmed) {
+                showInIframe('Kopiowanie anulowane', false);
+                return;
+            }
+            showInIframe('Czyszczenie folderu 6 i kopiowanie plików z archiwum...', false);
+            const copyResponse = await fetch('/archive/copyFromArchive', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ subfolderName: subfolderName, clearFolder: true })
+            });
+            if (!copyResponse.ok) {
+                throw new Error(`HTTP ${copyResponse.status}: ${await copyResponse.text()}`);
+            }
+            const copyResult = await copyResponse.json();
+            showInIframe(
+                `Folder 6 wyczyszczony i wypełniony plikami z archiwum!<br>` +
+                `Skopiowano: ${copyResult.copiedFiles}/${copyResult.totalFiles}`,
+                copyResult.errors.length > 0
+            );
+        } else {
+            showInIframe(
+                `Kopiowanie zakończone!<br>` +
+                `Skopiowano: ${checkResult.copiedFiles}/${checkResult.totalFiles}`,
+                checkResult.errors.length > 0
+            );
+        }
+    } catch (error) {
+        console.error('Błąd podczas kopiowania:', error);
+        showInIframe('Błąd podczas kopiowania!', true);
+    }
+}
+
+async function copyPlaylistToArchive(playlistId) {
+    const playlistNames = {
+        1: 'Klasyczna',
+        2: 'POP',
+        3: 'RAP',
+        4: 'ROCK',
+        5: 'Soundtracki',
+        6: 'Specjalna'
+    };
+    showInIframe(`Przenoszenie playlisty ${playlistNames[playlistId]}...`, false);
+    try {
+        const response = await fetch('/archive/copyPlaylist', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ playlistId: playlistId })
+        });
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText);
+        }
+        const result = await response.json();
+        showInIframe(
+            `Playlista ${playlistNames[playlistId]} przeniesiona!<br>` +
+            `Folder: ${result.folderName}<br>` +
+            `Pliki: ${result.copiedFiles}/${result.totalFiles}`,
+            result.errors.length > 0
+        );
+    } catch (error) {
+        console.error('Błąd podczas przenoszenia playlisty:', error);
+        showInIframe(`Błąd podczas przenoszenia playlisty: ${error.message}`, true);
+    }
+}
+
+window.onload = () => {
+    fetchArchive();
+    loadArchiveFolders();
+};
