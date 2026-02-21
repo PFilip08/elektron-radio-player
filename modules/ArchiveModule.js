@@ -3,6 +3,8 @@ import {logger} from "./Logger.js";
 import { parseFile } from "music-metadata";
 import * as path from "node:path";
 import { yellow } from "colorette";
+import { getPlaylistName } from "./MusicPlayer.js";
+import { DebugSaveToFile } from './DebugMode.js';
 
 const archdir = process.env.ARCHIVE_DIR || './mp3/Archive';
 
@@ -267,4 +269,132 @@ function deleteFromArchive(filename) {
     }
 }
 
-export { initArchive, copyToArchive, copyFromArchive, checkIfFileExistsInArchive, searchInArchive, getAllMp3FilesInArchive, archiveSongsQuery, deleteFromArchive };
+function getArchiveSubfolders() {
+    logger('verbose', 'Pobieranie listy podkatalogów archiwum', 'getArchiveSubfolders');
+    if (!fs.existsSync(archdir)) {
+        logger('warn', 'Katalog archiwum nie istnieje', 'getArchiveSubfolders');
+        return [];
+    }
+    const items = fs.readdirSync(archdir);
+    const subfolders = [];
+    for (const item of items) {
+        const itemPath = path.join(archdir, item);
+        const stat = fs.statSync(itemPath);
+        if (stat.isDirectory()) {
+            const files = fs.readdirSync(itemPath);
+            const mp3Count = files.filter(f => path.extname(f).toLowerCase() === '.mp3').length;
+            subfolders.push({
+                name: item,
+                path: itemPath,
+                mp3Count: mp3Count
+            });
+        }
+    }
+    logger('verbose', `Znaleziono ${subfolders.length} podkatalogów w archiwum`, 'getArchiveSubfolders');
+    return subfolders;
+}
+
+function copyFromArchiveToSix(subfolderName, clearFolder = false) {
+    logger('verbose', `Kopiowanie z archiwum/${subfolderName} do playlisty 6`, 'copyFromArchiveToSix');
+    const sourceDir = path.join(archdir, subfolderName);
+    const targetDir = './mp3/6';
+    if (!fs.existsSync(sourceDir)) {
+        logger('error', `Podkatalog ${subfolderName} nie istnieje w archiwum`, 'copyFromArchiveToSix');
+        throw new Error(`Podkatalog ${subfolderName} nie istnieje w archiwum`);
+    }
+    if (!fs.existsSync(targetDir)) {
+        logger('warn', 'Folder playlisty 6 nie istnieje, tworzenie...', 'copyFromArchiveToSix');
+        fs.mkdirSync(targetDir, { recursive: true });
+    }
+    const existingFiles = fs.readdirSync(targetDir).filter(f => path.extname(f).toLowerCase() === '.mp3');
+    const hasExistingFiles = existingFiles.length > 0;
+    if (hasExistingFiles && !clearFolder) {
+        logger('verbose', `Folder 6 zawiera ${existingFiles.length} plików`, 'copyFromArchiveToSix');
+        return {
+            needsConfirmation: true,
+            existingFilesCount: existingFiles.length
+        };
+    }
+    if (clearFolder && hasExistingFiles) {
+        logger('verbose', `Usuwanie ${existingFiles.length} plików z folderu 6`, 'copyFromArchiveToSix');
+        existingFiles.forEach(file => {
+            const filePath = path.join(targetDir, file);
+            fs.unlinkSync(filePath);
+        });
+        logger('log', `Wyczyszczono folder playlisty 6 (${existingFiles.length} plików)`, 'copyFromArchiveToSix');
+    }
+    const files = fs.readdirSync(sourceDir);
+    const mp3Files = files.filter(file => path.extname(file).toLowerCase() === '.mp3');
+    logger('verbose', `Kopiowanie ${mp3Files.length} plików MP3`, 'copyFromArchiveToSix');
+    let copiedCount = 0;
+    let errors = [];
+    mp3Files.forEach(file => {
+        try {
+            const sourcePath = path.join(sourceDir, file);
+            const targetPath = path.join(targetDir, file);
+            fs.copyFileSync(sourcePath, targetPath);
+            copiedCount++;
+        } catch (err) {
+            logger('error', `Błąd podczas kopiowania ${file}: ${err.message}`, 'copyFromArchiveToSix');
+            errors.push({ file, error: err.message });
+        }
+    });
+    logger('log', `Skopiowano z archiwum do playlisty 6: ${copiedCount}/${mp3Files.length} plików`, 'copyFromArchiveToSix');
+    return {
+        needsConfirmation: false,
+        totalFiles: mp3Files.length,
+        copiedFiles: copiedCount,
+        errors: errors
+    };
+}
+
+async function copyPlaylistToArchive(playlistId) {
+    logger('verbose', `Kopiowanie playlisty ${playlistId} do archiwum`, 'copyPlaylistToArchive');
+    const sourceDir = `./mp3/${playlistId}`;
+    if (!fs.existsSync(sourceDir)) {
+        logger('error', `Folder playlisty ${playlistId} nie istnieje`, 'copyPlaylistToArchive');
+        throw new Error(`Folder playlisty ${playlistId} nie istnieje`);
+    }
+    let playlistName = getPlaylistName(playlistId);
+    const files = fs.readdirSync(sourceDir);
+    const mp3Files = files.filter(file => path.extname(file).toLowerCase() === '.mp3');
+    if (mp3Files.length === 0) {
+        logger('warn', `Playlista ${playlistId} jest pusta, brak plików do przeniesienia`, 'copyPlaylistToArchive');
+        return `Playlista ${playlistId} jest pusta, brak plików do przeniesienia`;
+    }
+    // YYYY-MM-DD-HH-MM-NR-NAZWA
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const dateTimeStr = `${year}-${month}-${day}-${hours}-${minutes}`;
+    const folderName = `${dateTimeStr}-${playlistId}-${playlistName}`;
+    const targetDir = path.join(archdir, folderName);
+    logger('verbose', `Tworzenie folderu: ${targetDir}`, 'copyPlaylistToArchive');
+    fs.mkdirSync(targetDir, { recursive: true });
+    logger('verbose', `Kopiowanie ${mp3Files.length} plików MP3`, 'copyPlaylistToArchive');
+    let copiedCount = 0;
+    let errors = [];
+    mp3Files.forEach(file => {
+        try {
+            const sourcePath = path.join(sourceDir, file);
+            const targetPath = path.join(targetDir, file);
+            fs.renameSync(sourcePath, targetPath);
+            copiedCount++;
+        } catch (err) {
+            logger('error', `Błąd podczas przenoszenia ${file}: ${err.message}`, 'copyPlaylistToArchive');
+            errors.push({ file, error: err.message });
+        }
+    });
+    logger('log', `Przeniesiono playlistę ${playlistId} do archiwum: ${copiedCount}/${mp3Files.length} plików`, 'copyPlaylistToArchive');
+    return {
+        folderName: folderName,
+        totalFiles: mp3Files.length,
+        copiedFiles: copiedCount,
+        errors: errors
+    };
+}
+
+export { initArchive, copyToArchive, copyFromArchive, checkIfFileExistsInArchive, searchInArchive, getAllMp3FilesInArchive, archiveSongsQuery, deleteFromArchive, getArchiveSubfolders, copyFromArchiveToSix, copyPlaylistToArchive, archdir };
