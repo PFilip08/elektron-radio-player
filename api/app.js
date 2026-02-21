@@ -48,7 +48,6 @@ app.get('/archive', function(req, res){
   res.render('archivepanel', {
     title: 'Archive Panel',
     welcome: 'Panel archiwum muzyki',
-    layout: 'layouts/admin_layout'
   });
 });
 
