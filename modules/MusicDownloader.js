@@ -238,18 +238,20 @@ async function downloadYT(url, votes, path2, override) {
         const song = info.song;
         const description = info.description;
         const title = info.title;
-        const musicKeywords = ['official music video', 'lyrics', 'audio', 'album', 'song', 'spotify', 'tidal', 'muzyka', 'muzy', 'muza', 'płytę', 'feat', 'remastered', 'vevo', 'mix', 'nightcore', 'hardstyle', 'sony music entertainment', 'bmg rights management', 'warner music group company'];
+        const musicKeywords = ['official music video', 'lyrics', 'audio', 'album', 'song', 'spotify', 'tidal', 'muzyka', 'muzy', 'muza', 'płytę', 'feat', 'remastered', 'vevo', 'mix', 'nightcore', 'hardstyle', 'sony music entertainment', 'bmg rights management', 'warner music group company', 'piosenka', 'piosenek'];
         if (!override) {
             if (song.videoDetails.category[0] !== 'Music') {
                 if (song.videoDetails.category[0] === 'Entertainment') {
                     logger('log', `KATEGORIA ENTERTAINMENT!`, 'downloadYT');
+                } else if (song.videoDetails.category[0] === 'Gaming') {
+                    logger('log', `KATEGORIA GEJMING!`, 'downloadYT');
                 } else if (song.videoDetails.category[0] === undefined) {
                     logger('warn', `KATEGORIA CHUJ WIE CO (undefined)`, 'downloadYT');
                 }
-                if (song.videoDetails.category[0] !== 'Entertainment') {
-                    logger('warn', `Nie jest to kategoria Music ani Entertainment! Wykryto: ${song.videoDetails.category[0]}`, 'downloadYT');
-                    return `Nie można pobrać bo nie jest to kategoria Music/Entertainment! Tylko: ${song.videoDetails.category[0]} jedyne co możesz zrobić to poprosić szanownego Pana admina aby dodał do tego wyjątek.`;
-                }
+                // if (song.videoDetails.category[0] !== 'Entertainment') {
+                //     logger('warn', `Nie jest to kategoria Music ani Entertainment! Wykryto: ${song.videoDetails.category[0]}`, 'downloadYT');
+                //     //return `Nie można pobrać bo nie jest to kategoria Music/Entertainment! Tylko: ${song.videoDetails.category[0]} jedyne co możesz zrobić to poprosić szanownego Pana admina aby dodał do tego wyjątek.`;
+                // }
                 if (musicKeywords.some(keyword => title.includes(keyword) || description.includes(keyword))) {
                     if (song.videoDetails.lengthSeconds > 600) {
                         logger('warn', `To jest film, nie piosenka, bo jest zbyt długa!`, 'downloadYT');
@@ -272,8 +274,8 @@ async function downloadYT(url, votes, path2, override) {
             logger('log', 'Pobieranie z archiwum :>', 'downloadYT');
             return copyFromArchive(`${file}.mp3`, filePath);
         }
-        
-        let stream = ytdlpDown.execStream([url, '-f', 'ba', '-x']);
+        //No playlist po to bo jak ktoś wrzuci link do filmu z yt z dodatkiem query list to ytdlp domyślnym zachowaniem pobierze całą playlistę... Jaki idiota to programował?
+        let stream = ytdlpDown.execStream([url, '-f', 'ba', '-x', '--no-playlist']);
 
         const tempFilePath = path.resolve(`${os.tmpdir()}/${file}.webm`);
         const outputFilePath = path.resolve(`${Path}${file}.mp3`);
