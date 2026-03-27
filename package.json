@@ -6,22 +6,22 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --ignore debug/ --ignore mp3/ index.js"
+    "start": "nodemon --ignore debug/ --ignore mp3/ --ignore data/ index.js"
   },
   "author": "PFilip",
   "license": "ISC",
   "dependencies": {
-    "@zaptyp/spotifydl-core": "^0.4.1",
+    "@zaptyp/spotifydl-core": "^0.4.3",
     "async-mutex": "^0.5.0",
-    "axios": "^1.13.4",
+    "axios": "^1.14.0",
     "colorette": "^2.0.20",
-    "dotenv": "^17.2.3",
-    "ejs": "^4.0.1",
+    "dotenv": "^17.3.1",
+    "ejs": "^5.0.1",
     "express": "^5.2.1",
     "express-ejs-layouts": "^2.5.1",
-    "music-metadata": "^11.11.1",
+    "music-metadata": "^11.12.3",
     "node-schedule": "^2.1.1",
-    "nodemon": "^3.1.11",
+    "nodemon": "^3.1.14",
     "ps-node": "^0.1.6",
     "vlc-client": "^1.1.1"
   },
@@ -30,7 +30,7 @@
       "psl": "https://github.com/lupomontero/psl"
     },
     "yt-search": {
-      "jsonpath-plus": "^10.3.0"
+      "jsonpath-plus": "^10.4.0"
     }
   }
 }
