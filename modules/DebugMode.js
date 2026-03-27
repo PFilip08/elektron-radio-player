@@ -3,7 +3,7 @@ import fs from "fs";
 import {yellow, red} from 'colorette';
 
 async function DebugStarter() {
-    if (process.env.VERBOSE === "true") {
+    if (process.env.VERBOSE === "true" || process.env.VERBOSE_SILENT === "true") {
         logger('verbose', 'WŁĄCZONO TRYB DEBUGOWANIA!!!', 'DebugStarter');
         global.debugmode = true;
         try {
@@ -24,6 +24,7 @@ async function DebugStarter() {
     try {
         logger('verbose', 'Następujące ustawienia są załadowane:', 'DebugStarter');
         logger('verbose', `  - VERBOSE: ${process.env.VERBOSE || 'Jak Ty tu wogóle doszedłeś?'}`, 'DebugStarter');
+        logger('verbose', `  - VERBOSE_SILENT: ${process.env.VERBOSE_SILENT || 'nie ustawiono'}`, 'DebugStarter');
         logger('verbose', `  - WWW: ${process.env.WWW || 'nie ustawiono'}`, 'DebugStarter');
         logger('verbose', `  - KILL_AT_STARTUP: ${process.env.KILL_AT_STARTUP || 'nie ustawiono'}`, 'DebugStarter');
         logger('verbose', `  - PORT (Local API): ${process.env.PORT || 'nie ustawiono'}`, 'DebugStarter');
