@@ -128,25 +128,24 @@ async function panelSafeguard(endpoint, params = {}) {
     }
 }
 
-if(document.getElementById('shuffleOn')) {
-    document.addEventListener("DOMContentLoaded", function () {
-        panelSafeguard()
-        fetch('/action/vlcSzuffle?state=check', {method: 'GET'})
-            .then(response => response.text())
-            .then(data => {
-                const shuffleOn = document.getElementById('shuffleOn');
-                const shuffleOff = document.getElementById('shuffleOff');
-                if (data === 'true') {
-                    shuffleOn.checked = true;
-                } else {
-                    shuffleOff.checked = true;
-                }
-            })
-            .catch(error => {
-                console.error('Błąd odczytu statusu:', error);
-            });
-    });
-}
+
+document.addEventListener("DOMContentLoaded", function () {
+    panelSafeguard()
+    fetch('/action/vlcSzuffle?state=check', {method: 'GET'})
+        .then(response => response.text())
+        .then(data => {
+            const shuffleOn = document.getElementById('shuffleOn');
+            const shuffleOff = document.getElementById('shuffleOff');
+            if (data === 'true') {
+                shuffleOn.checked = true;
+            } else {
+                shuffleOff.checked = true;
+            }
+        })
+        .catch(error => {
+            console.error('Błąd odczytu statusu:', error);
+        });
+});
 
 async function showCustomAlert(message, btn1Text, btn2Text, btn1Callback, btn2Callback, timeout = 5) {
     let overlay = document.createElement("div");
