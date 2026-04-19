@@ -128,6 +128,7 @@ async function massSchedule() {
         return;
     }
     await blockmassSchedule.runExclusive(async () => {
+        console.log("Pobrano głosy: " + downloaded + " Puste: " + emptyVotes)
         logger('verbose', 'Rozpoczęto masowe planowanie zadań...', 'massSchedule');
         logger('verbose', 'Zatrzymywanie wszystkich zadań', 'massSchedule');
         await schedule.gracefulShutdown();
@@ -184,6 +185,8 @@ async function massSchedule() {
                     logger('verbose', `Znaleziono playlistę!`, 'massSchedule');
                     id = time[mappedDays[l]][i].playlist;
                 }
+                logger('verbose', 'Planowanie zadań...', 'massSchedule');
+                console.log("Pobrano głosy 2: " + downloaded + " Puste 2: " + emptyVotes)
                 if (time[mappedDays[l]][i].playlist === 0) {
                     logger('verbose', 'Znaleziono playlistę 0, planowanie tylko ubijania plejera. Kontynuowanie wykonywania pętli...', 'massSchedule');
                     scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, [l, i]);
@@ -211,7 +214,9 @@ async function massSchedule() {
                     downloaded = true;
                     await downloadVotes();
                 }
+                console.log("Pobrano głosy 3: " + downloaded + " Puste 3: " + emptyVotes)
                 if (currentPlaylist === 7) { // gdy główna na 7
+                    logger('verbose', 'Główna playlista na 7! Planowanie dla głosów...')
                     scheduleVotes(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, `${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, id, [l, i]);
                     continue;
                 }
@@ -227,8 +232,6 @@ async function massSchedule() {
                     scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, [l, i]);
                     continue;
                 }
-
-                logger('verbose', 'Planowanie zadań...', 'massSchedule');
                 if (id === 7) { // gdy pojedyncza na 7
                     logger('verbose', 'Znaleziono playlistę 7! Uruchamianie planowania dla niej zadania...', 'massSchedule');
                     scheduleVotes(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, `${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, id, [l, i]);
