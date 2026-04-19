@@ -5,6 +5,7 @@ import schedule from "node-schedule";
 import {killPlayer, playMusic, playOnDemand, playPlaylist} from "../../modules/MusicPlayer.js";
 import {downloadYT, getYTInfo} from "../../modules/MusicDownloader.js";
 import {sterylizatorIP} from "../../modules/Other.js";
+import {clearGetApiDataBlock} from "../../modules/ApiConnector.js";
 import * as fs from "fs";
 
 export async function resetTasks(req, res) {
@@ -372,5 +373,25 @@ export async function devAPIVotes(req, res) {
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI-dev - devAPIVotes');
         }
         return res.status(500).json({ error: 'Taboretowy error serwera', message: e.message });
+    }
+}
+
+export async function devOverrideRecoveryLock(req, res) {
+    try {
+        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI-dev - devOverrideRecoveryLock');
+        let result = clearGetApiDataBlock();
+        if (result) {
+            logger('log', 'Blokada getApiData została zdjęta przez devApi', 'LocalAPI-dev - devOverrideRecoveryLock');
+            return res.status(201).send('Zresetowano blokadę trybu recovery dla getApiData');
+        } else {
+            return res.status(201).send('Funkcja getApiData nie była zablokowana, więc nie można było zdjąć blokady');
+        }
+    } catch (e) {
+        logger('verbose', 'Błąd w devOverrideRecoveryLock', 'LocalAPI-dev - devOverrideRecoveryLock');
+        if (global.debugmode === true) {
+            DebugSaveToFile('LocalAPI-dev', 'devOverrideRecoveryLock', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI-dev - devOverrideRecoveryLock');
+        }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }
