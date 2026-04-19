@@ -53,8 +53,10 @@ async function getPlayingSong() {
         })();
         return await Promise.race([vlcOperation, timeout]);
     } catch (e) {
-        if (global.debugmode === true) {
+        if (!e.message.includes("ECONNREFUSED")) {
             logger('error', `Wystąpił błąd podczas próby pobrania aktualnie granej piosenki!`, 'getPlayingSong');
+        }
+        if (global.debugmode === true) {
             DebugSaveToFile('MusicPlayer', 'getPlayingSong', 'catched_error', e);
             logger('verbose',`Stacktrace został zrzucony do /debug`,'getPlayingSong');
         }
