@@ -10,6 +10,15 @@ let messageCounter = false;
 let messageStartupBlocker = false;
 let debugIntervalBlock = true;
 let updateInterval, oldInterval;
+let recoveryModeInterval = null;
+let recoveryBlockTimeout = null;
+let recoveryBlocked = false;
+let recoveryModeCounter = 0;
+let recoveryModeWindowStart = null;
+const recoveryModeLimit = 3;
+const recoveryModeWindow = 60000;
+const recoveryModeTick = 1000;
+const recoveryBlockDelay = 300000;
 
 const api = axios.create({
     httpsAgent: new Agent({
@@ -31,7 +40,7 @@ async function getApiData() {
             logger('error', 'DevAPI włączone, ale nie działa. Spadanie spowrotem na API filsza', 'getApiData');
         }
     }
-
+if (!recoveryBlocked) {
     return await api.get(url)
         .then(res => {
             if (!messageCounter) {
@@ -46,9 +55,12 @@ async function getApiData() {
                 }
             }
             if (messageCounter) {
+                logger('verbose',"Sprawdzanie czy response z serwera jest poprawny...",'getApiData');
+                res.data.timeTable[0];
                 logger('verbose','Wychodzenie z trybu recovery...','getApiData');
                 logger('log','Przywrócono połączenie z internetem','getApiData');
                 logger('log','Używanie danych z API','getApiData');
+                stopRecoveryModeInterval();
                 if (res.data.timeTable[0].currentPlaylistId === 7 && previousData?.static !== true) {
                     // to powstało tu dlatego, że po przywróceniu połączenia z internetem losowe playlisty zostawały, a nie z głosów (7)
                     logger('log', 'Wykryto nieaktualne zadania, wykonywanie funkcji massSchedule()','getApiData');
@@ -68,6 +80,8 @@ async function getApiData() {
             return res.data.timeTable[0];
         })
         .catch((error)=>{
+            console.log(error);
+            recoveryModeCounter += 1;
             logger('verbose','Wchodzenie w tryb recovery...','getApiData');
             logger('verbose',`Złapano błąd: ${error}`,'getApiData');
             if (global.debugmode === true) {
@@ -75,6 +89,9 @@ async function getApiData() {
                 logger('verbose',`Pełen stackrace zrzucono do pliku recovery_reason.json!`,'getApiData');
             }
             if (!messageCounter) logger('warn','Tryb RECOVERY AKTYWNY!!!','getApiData');
+            if (recoveryModeWindowStart === null) {
+                startRecoveryModeInterval();
+            }
             let res = {"static":true,"isOn":true,"currentPlaylistId":1,"timeRules":{"rules":{"1":[{"end":"07:10","start":"07:07"},{"end":"08:00","start":"07:55"},{"end":"08:50","start":"08:45"},{"end":"09:45","start":"09:35"},{"end":"10:35","start":"10:30"},{"end":"11:40","start":"11:20"},{"end":"12:30","start":"12:25"},{"end":"13:20","start":"13:15"},{"end":"14:10","start":"14:05"},{"end":"15:00","start":"14:55"},{"end":"15:50","start":"15:45"}]},"applyRule":{"Fri":1,"Mon":1,"Sat":0,"Sun":0,"Thu":1,"Tue":1,"Wed":1}}};
             if (previousData !== null) {
                 res = previousData;
@@ -102,6 +119,82 @@ async function getApiData() {
             if (!messageCounter) messageCounter = true;
             return res;
         });
+    } else {
+        logger('error',yellow('Funkcja GetApiData jest zablokowana!'),'getApiData');
+        return previousData;
+    }
+}
+
+function clearGetApiDataBlock() {
+    if (!recoveryBlocked) {
+        logger('verbose','Funkcja GetApiData nie jest zablokowana, wychodzenie z funkcji...','clearGetApiDataBlock');
+        return false;
+    }
+    recoveryBlocked = false;
+    recoveryBlockTimeout = null;
+    logger('log','Zdjęto blokadę z GetApiData','clearGetApiDataBlock');
+    return true;
+}
+
+function blockGetApiData() {
+    logger('verbose','Blokowanie funkcji GetApiData...','blockGetApiData');
+    recoveryBlocked = true;
+    stopRecoveryModeInterval();
+    if (recoveryBlockTimeout) {
+        clearTimeout(recoveryBlockTimeout);
+        logger('debug','Wykryto aktywne odroczenie, restart timera blokady','blockGetApiData');
+    }
+    recoveryBlockTimeout = setTimeout(() => {
+        clearGetApiDataBlock()
+        logger('log','Zdjęto blokadę z GetApiData po 5 minutach','blockGetApiData');
+    }, recoveryBlockDelay);
+    logger('warn','Funkcja GetApiData została odroczona na 5 minut','blockGetApiData');
+}
+
+async function monitorRecoveryMode() {
+    if (recoveryModeWindowStart === null) recoveryModeWindowStart = Date.now();
+    if (recoveryModeCounter > recoveryModeLimit) {
+        logger('warn',yellow(`Przekroczono limit uruchomień trybu recovery: ${recoveryModeCounter}/${recoveryModeLimit} w oknie ${recoveryModeWindow / 1000} sekund`),'monitorRecoveryMode');
+        logger('warn',yellow('Zatrzymywanie funkcji checkUpdate i odraczanie funkcji ApiConnector...'),'monitorRecoveryMode');
+        blockGetApiData();
+        console.log("O jezus maria zdarzyła się awaria!")
+        recoveryModeCounter = 0;
+        recoveryModeWindowStart = null;
+        return;
+    }
+    const now = Date.now();
+    if (now - recoveryModeWindowStart >= recoveryModeWindow) {
+        logger('debug','W oknie 60 sekund nie przekroczono limitu, licznik wyzerowany','monitorRecoveryMode');
+        recoveryModeCounter = 0;
+        recoveryModeWindowStart = null;
+    }
+}
+
+async function startRecoveryModeInterval() {
+    if (recoveryModeInterval) {
+        logger('debug','Interwał monitorowania recoveryModeCounter już działa','startRecoveryModeInterval');
+        return;
+    }
+    recoveryModeCounter = 0;
+    recoveryModeWindowStart = Date.now();
+    logger('debug',`Uruchamianie monitorowania recoveryModeCounter co ${recoveryModeTick / 1000} sekund (okno ${recoveryModeWindow / 1000} sekund)`,'startRecoveryModeInterval');
+    recoveryModeInterval = setInterval(() => {
+        monitorRecoveryMode().catch((error) => {
+            logger('debug',`Błąd monitorowania recovery: ${error}`,'startRecoveryModeInterval');
+        });
+    }, recoveryModeTick);
+}
+
+async function stopRecoveryModeInterval() {
+    if (!recoveryModeInterval) {
+        logger('debug','Interwał monitorowania recoveryModeCounter już jest zatrzymany','stopRecoveryModeInterval');
+        return;
+    }
+    clearInterval(recoveryModeInterval);
+    recoveryModeInterval = null;
+    recoveryModeCounter = 0;
+    recoveryModeWindowStart = null;
+    logger('debug','Zatrzymano monitorowanie recoveryModeCounter','stopRecoveryModeInterval');
 }
 let checkUpdateRunning = false;
 async function checkUpdate() {
@@ -201,4 +294,4 @@ function scheduleUpdate() {
     }
 }
 
-export { getApiData, checkUpdate, scheduleUpdate, messageCounter, previousData };
+export { getApiData, checkUpdate, scheduleUpdate, clearGetApiDataBlock, messageCounter, previousData };
