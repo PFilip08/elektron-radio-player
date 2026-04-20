@@ -201,7 +201,8 @@ async function massSchedule() {
                         continue;
                     }
                 }
-                if ((messageCounter && time[mappedDays[l]][i].playlist === undefined && currentPlaylist === 7) || emptyVotes) { // gdy nie ma neta i gdy puste głosy
+                // console.log(!global.devAPIEnabled, messageCounter, time[mappedDays[l]][i].playlist === undefined, currentPlaylist === 7, emptyVotes);
+                if ((!global.devAPIEnabled && messageCounter && time[mappedDays[l]][i].playlist === undefined && currentPlaylist === 7) || emptyVotes) { // gdy nie ma neta i gdy puste głosy
                     logger('verbose', yellow('Wykryto brak internetu lub pusty response z funkcji getVotesData! Losowanie playlist statycznych...'), 'massSchedule');
                     const id = Math.floor(Math.random() * 5) + 1; // rosyjska ruletka od 1 do 5
                     scheduleMusicTask(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, {id}, [l, i]);
@@ -209,9 +210,11 @@ async function massSchedule() {
                     // console.log("Taboret losował: ", id);
                     continue;
                 }
+                // console.log(currentPlaylist !== 7, !messageCounter, time[mappedDays[l]][i].playlist === 7, !downloaded)
                 if (currentPlaylist !== 7 && !messageCounter && time[mappedDays[l]][i].playlist === 7 && !downloaded) {
                     logger('verbose', 'Znaleziono playlistę 7! Uruchamianie pobierania piosenek z głosowania', 'massSchedule');
                     downloaded = true;
+                    // console.log('głosy pozdrawiam');
                     await downloadVotes();
                 }
                 console.log("Pobrano głosy 3: " + downloaded + " Puste 3: " + emptyVotes)
