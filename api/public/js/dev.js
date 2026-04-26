@@ -1,8 +1,12 @@
 let overrideTarget = null;
 function performAction(url, params = {}) {
+    let metoda = 'POST';
     const queryString = new URLSearchParams(params).toString();
     const iframe = document.getElementById('res');
-    fetch(`${url}?${queryString}`, { method: 'GET' })
+    if (url.startsWith('/dev/api')) {
+        metoda = 'GET';
+    }
+    fetch(`${url}?${queryString}`, { method: metoda })
         .then(response => response.text())
         .then(data => {
             console.log('Akcja wykonana:', data);
