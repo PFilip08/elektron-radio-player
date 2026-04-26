@@ -195,7 +195,7 @@ function addTimeRule() {
     entry.innerHTML = `
         <input type="time" class="rule-start" placeholder="Start">
         <input type="time" class="rule-end" placeholder="End">
-        <button onclick="removeTimeRule(this)">Remove</button>
+        <button onclick="removeTimeRule(this)">Usuń</button>
     `;
     container.appendChild(entry);
 }
@@ -215,7 +215,7 @@ function addVoteEntry() {
         <input type="text" class="song-url" placeholder="Plik/URL">
         <input type="number" value="0" class="song-votes" placeholder="Votes" min="0">
         <input type="date" value="${new Date().toLocaleDateString('en-CA')}" class="song-date">
-        <button onclick="removeVoteEntry(this)">Remove</button>
+        <button onclick="removeVoteEntry(this)">Usuń</button>
     `;
     container.appendChild(entry);
 }
