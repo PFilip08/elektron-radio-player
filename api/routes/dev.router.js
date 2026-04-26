@@ -46,7 +46,7 @@ devRouter.post('/action/downloadYToverride', downloadYToverride);
 devRouter.post('/action/resetRecoveryLock', devOverrideRecoveryLock);
 
 devRouter.get('/api', devAPI);
-devRouter.post('/api/timeTables', devAPITimeTables);
+devRouter.get('/api/timeTables', devAPITimeTables);
 devRouter.post('/api/timeTables', bodyParser.json(), devAPITimeTables);
 devRouter.post('/api/votes', devAPIVotes);
 devRouter.post('/api/votes', bodyParser.json(), devAPIVotes);
