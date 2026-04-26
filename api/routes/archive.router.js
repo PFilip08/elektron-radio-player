@@ -3,11 +3,11 @@ import {searchArchive, listArchive, queryArchive, deleteArchiveFile, getArchiveF
 
 const archiveRouter = Router();
 
-archiveRouter.get('/searchArchive', searchArchive);
-archiveRouter.get('/listArchive', listArchive);
-archiveRouter.get('/archiveSongsQuery', queryArchive);
+archiveRouter.post('/searchArchive', searchArchive);
+archiveRouter.post('/listArchive', listArchive);
+archiveRouter.post('/archiveSongsQuery', queryArchive);
 archiveRouter.delete('/deleteArchive', deleteArchiveFile);
-archiveRouter.get('/getArchiveFolders', getArchiveFolders);
+archiveRouter.post('/getArchiveFolders', getArchiveFolders);
 archiveRouter.post('/copyFromArchive', checkCopyFromArchive);
 archiveRouter.post('/copyPlaylist', copyPlaylist);
 

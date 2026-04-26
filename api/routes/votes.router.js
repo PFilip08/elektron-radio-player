@@ -4,8 +4,8 @@ import {getVotes, delVotes, resetVotes, saveVotes, downloadVotes, addVotes, down
 import { emptyVotes, downloaded } from '../../modules/TaskScheduler.js';
 
 const votesRouter = Router();
-votesRouter.get('/get', getVotes);
-votesRouter.get('/status', (req, res) => {
+votesRouter.post('/get', getVotes);
+votesRouter.post('/status', (req, res) => {
     const payload = {
         downloaded: downloaded,
         emptyVotes: emptyVotes
@@ -13,12 +13,12 @@ votesRouter.get('/status', (req, res) => {
     res.json(payload);
 });
 votesRouter.delete('/del/:id', delVotes);
-votesRouter.get('/add', addVotes);
-votesRouter.get('/reset', resetVotes);
-votesRouter.get('/save', saveVotes);
-votesRouter.get('/downloadVotes', downloadVotes);
-votesRouter.get('/download', download);
-votesRouter.get('/delmp3', delmp3);
+votesRouter.post('/add', addVotes);
+votesRouter.post('/reset', resetVotes);
+votesRouter.post('/save', saveVotes);
+votesRouter.post('/downloadVotes', downloadVotes);
+votesRouter.post('/download', download);
+votesRouter.post('/delmp3', delmp3);
 votesRouter.get('/', (req, res) => {
     res.render('votespanel', {
         title: 'Votes panel',

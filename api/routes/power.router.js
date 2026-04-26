@@ -3,8 +3,8 @@ import {mixerPower, wzmakPower} from "../controllers/power.controller.js";
 import {__dirname} from '../app.js';
 
 const powerRouter = Router();
-powerRouter.get('/wzmak', wzmakPower);
-powerRouter.get('/mixer', mixerPower);
+powerRouter.post('/wzmak', wzmakPower);
+powerRouter.post('/mixer', mixerPower);
 powerRouter.get('/stats', (req, res) => {
     res.render('powerstats', {
         title: 'Power Stats Panel',

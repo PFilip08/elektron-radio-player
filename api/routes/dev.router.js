@@ -37,18 +37,18 @@ devRouter.get('/override', (req, res) => {
     });
 });
 
-devRouter.get('/schedules/resetTasks', resetTasks);
-devRouter.get('/schedules/cleanTasks', cleanTasks);
-devRouter.get('/schedules/removeTask', removeTask);
+devRouter.post('/schedules/resetTasks', resetTasks);
+devRouter.post('/schedules/cleanTasks', cleanTasks);
+devRouter.post('/schedules/removeTask', removeTask);
 devRouter.use(bodyParser.urlencoded({ extended: true })).post('/schedules/addTask', addTask);
-devRouter.get('/action/restart', restartEverything);
-devRouter.get('/action/downloadYToverride', downloadYToverride);
-devRouter.get('/action/resetRecoveryLock', devOverrideRecoveryLock);
+devRouter.post('/action/restart', restartEverything);
+devRouter.post('/action/downloadYToverride', downloadYToverride);
+devRouter.post('/action/resetRecoveryLock', devOverrideRecoveryLock);
 
 devRouter.get('/api', devAPI);
-devRouter.get('/api/timeTables', devAPITimeTables);
+devRouter.post('/api/timeTables', devAPITimeTables);
 devRouter.post('/api/timeTables', bodyParser.json(), devAPITimeTables);
-devRouter.get('/api/votes', devAPIVotes);
+devRouter.post('/api/votes', devAPIVotes);
 devRouter.post('/api/votes', bodyParser.json(), devAPIVotes);
 
 
