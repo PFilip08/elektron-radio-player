@@ -2,8 +2,8 @@ async function getData() {
     const wzmakUri = "/power/wzmak?action=status";
     const mixerUri = "/power/mixer?action=status";
 
-    const wzmakFetch = await fetch(wzmakUri);
-    const mixerFetch = await fetch(mixerUri);
+    const wzmakFetch = await fetch(wzmakUri, {method: "POST"});
+    const mixerFetch = await fetch(mixerUri, {method: "POST"});
     const wzmakData = await wzmakFetch.json();
     const mixerData = await mixerFetch.json();
 

@@ -4,7 +4,7 @@ let cachedData = null;
 async function getCounterData() {
     try {
         if (!cachedData) {
-            const res = await fetch('/stats/data');
+            const res = await fetch('/stats/data', {method: "POST"});
             cachedData = await res.json();
         }
         return cachedData;

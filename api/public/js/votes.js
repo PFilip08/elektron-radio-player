@@ -15,7 +15,7 @@ function getURIType(url) {
 
 async function fetchVotes() {
     try {
-        const response = await fetch('/votes/get');
+        const response = await fetch('/votes/get', {method: "POST"});
         const votes = await response.json();
 
         const tableBody = document.querySelector('#votesTable tbody');
@@ -74,7 +74,7 @@ async function delVote(voteId) {
 
 async function save() {
     try {
-        const response = await fetch(`/votes/save`);
+        const response = await fetch(`/votes/save`, {method: "POST"});
         await fetchVotes();
         if (response.ok) return 'git';
     } catch (error) {
@@ -84,7 +84,7 @@ async function save() {
 
 async function reset() {
     try {
-        const response = await fetch(`/votes/reset`);
+        const response = await fetch(`/votes/reset`, {method: "POST"});
         await fetchVotes();
         if (response.ok) return 'git';
     } catch (error) {

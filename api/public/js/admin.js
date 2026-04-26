@@ -1,7 +1,7 @@
 function performAction(url, params = {}) {
     const queryString = new URLSearchParams(params).toString();
     const iframe = document.getElementById('res');
-    fetch(`${url}?${queryString}`, { method: 'GET' })
+    fetch(`${url}?${queryString}`, { method: 'POST' })
         .then(response => response.text())
         .then(data => {
             console.log('Akcja wykonana:', data);
@@ -131,7 +131,7 @@ async function panelSafeguard(endpoint, params = {}) {
 
 document.addEventListener("DOMContentLoaded", function () {
     panelSafeguard()
-    fetch('/action/vlcSzuffle?state=check', {method: 'GET'})
+    fetch('/action/vlcSzuffle?state=check', {method: 'POST'})
         .then(response => response.text())
         .then(data => {
             const shuffleOn = document.getElementById('shuffleOn');

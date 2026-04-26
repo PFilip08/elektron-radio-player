@@ -1,6 +1,6 @@
 async function getData() {
     const uri = "/stats/api";
-    const response = await fetch(uri);
+    const response = await fetch(uri, {method: "POST"});
 
     return await response.json();
 }
