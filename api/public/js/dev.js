@@ -289,11 +289,11 @@ function loadVotesPreset(preset) {
     switch(preset) {
         case 'popular':
             const popularSongs = [
-                {id: 1, title: 'Popular Hit Song 1', url: '7Popular_Hit_1.mp3', votes: 450},
-                {id: 2, title: 'Popular Hit Song 2', url: '7Popular_Hit_2.mp3', votes: 350},
-                {id: 3, title: 'Popular Hit Song 3', url: '7Popular_Hit_3.mp3', votes: 300},
-                {id: 4, title: 'Popular Hit Song 4', url: '7Popular_Hit_4.mp3', votes: 250},
-                {id: 5, title: 'Popular Hit Song 5', url: '7Popular_Hit_5.mp3', votes: 150}
+                {id: 1, title: 'Popular Hit Song 1', url: '7/Popular_Hit_1.mp3', votes: 450},
+                {id: 2, title: 'Popular Hit Song 2', url: '7/Popular_Hit_2.mp3', votes: 350},
+                {id: 3, title: 'Popular Hit Song 3', url: '7/Popular_Hit_3.mp3', votes: 300},
+                {id: 4, title: 'Popular Hit Song 4', url: '7/Popular_Hit_4.mp3', votes: 250},
+                {id: 5, title: 'Popular Hit Song 5', url: '7/Popular_Hit_5.mp3', votes: 150}
             ];
 
             popularSongs.forEach(song => {
