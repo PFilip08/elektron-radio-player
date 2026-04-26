@@ -7,6 +7,7 @@ import {checkIfVLCisRunning, checkIfVLConVotes, sterylizator} from "./Other.js";
 import {getVotesData} from "./VotesConnector.js";
 import { Mutex } from 'async-mutex';
 import {yellow} from 'colorette';
+import { playlistCache } from "../api/controllers/status.controller.js";
 
 function taskNumber() {
     let n = 0;
@@ -72,6 +73,7 @@ function scheduleVotes(timeStart, timeEnd, id, i) {
 async function downloadVotes() {
     logger('verbose', 'Pobieranie danych z getVotesData', 'massSchedule - downloadVotes');
     const data = await getVotesData();
+    playlistCache.delete(7); // usuwanie cache dla playlisty 7, bo głosy się zmieniły
     if (data === 'brak') {emptyVotes = true; return logger('log', 'Brak danych!!!', 'massSchedule - downloadVotes')}
     for (let i in data) {
         await downloader(data[i].uSongs.url, true);

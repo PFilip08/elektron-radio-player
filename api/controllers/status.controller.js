@@ -4,7 +4,7 @@ import {getPlaylistName, playlistSongQuery, playlistListQuery, getPlayingSong} f
 import { messageCounter, previousData } from "../../modules/ApiConnector.js";
 import { pathSecurityChecker, sterylizatorIP } from "../../modules/Other.js";
 
-const playlistCache = new Map();
+export const playlistCache = new Map();
 export async function queryPlaylist(req, res) {
     let timestamp= new Date(Date.now()).toLocaleString('pl', {
         year: 'numeric',
