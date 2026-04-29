@@ -13,8 +13,8 @@
   - [POST.js](https://github.com/PFilip08/elektron-radio-player/tree/master/docs/Dokumentacja%20Funkcji/POST.js.md)
   - [TaskScheduler.js](https://github.com/PFilip08/elektron-radio-player/tree/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md)
 
-[!CAUTION]
-Dokumentacja od API NIEAKTUALNA!!! Może kiedyś ktoś ją zaaktualizuje
+> [!CAUTION]
+> Dokumentacja od API NIEAKTUALNA!!! Może kiedyś ktoś ją zaaktualizuje
 - [Dokumentacja API Lokalnego](https://github.com/PFilip08/elektron-radio-player/tree/master/docs/Dokumentacja%20API%20Lokalnego)
   - [`Endpointy /download`](https://github.com/PFilip08/elektron-radio-player/tree/master/docs/Dokumentacja%20API%20Lokalnego/download.md)
   - [`Endpointy /action`](https://github.com/PFilip08/elektron-radio-player/tree/master/docs/Dokumentacja%20API%20Lokalnego/action.md)
