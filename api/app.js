@@ -89,7 +89,7 @@ app.post('/stats/api', function(req, res){
   res.status(200).send(data);
 });
 
-app.post('/stats/data', async function (req, res) {
+app.get('/stats/data', async function (req, res) {
   res.status(200).send(previousData);
 });
 
