@@ -75,7 +75,7 @@ app.get('/dash2', function(req, res){
   });
 });
 
-app.post('/stats/api', function(req, res){
+app.get('/stats/api', function(req, res){
   const cpu = os.cpus();
   const totalmem = os.totalmem();
   const freemem = os.freemem();
