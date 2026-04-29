@@ -11,11 +11,11 @@ const urlPlaying = '/status/query/playing';
 const urlPlaylists = '/status/query/playlist/list';
 async function getData() {
 
-    const playing = await fetch(urlPlaying, {method: "POST"});
+    const playing = await fetch(urlPlaying);
     let playlists;
 
     if (!cachedPlaylists) {
-        const playlists = await fetch(urlPlaylists, {method: "POST"});
+        const playlists = await fetch(urlPlaylists);
         cachedPlaylists = await playlists.json();
     }
     playlists = cachedPlaylists;
@@ -29,14 +29,14 @@ async function getData() {
 }
 
 async function checkPlaylistsUpdate() {
-    const playlists = await fetch(urlPlaylists, {method: "POST"});
+    const playlists = await fetch(urlPlaylists);
     cachedPlaylists = await playlists.json();
     console.log('Playlists updated');
 }
 
 async function getSongs(playlista){
     const urlSongs = '/status/query/playlist/songs?id='+playlista;
-    const songs = await fetch(urlSongs, {method: "POST"});
+    const songs = await fetch(urlSongs);
     return await songs.json();
 }
 

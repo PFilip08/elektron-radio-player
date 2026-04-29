@@ -131,7 +131,7 @@ async function panelSafeguard(endpoint, params = {}) {
 
 document.addEventListener("DOMContentLoaded", function () {
     panelSafeguard()
-    fetch('/action/vlcSzuffle?state=check', {method: 'POST'})
+    fetch('/action/vlcSzuffle?state=check')
         .then(response => response.text())
         .then(data => {
             const shuffleOn = document.getElementById('shuffleOn');

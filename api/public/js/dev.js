@@ -5,6 +5,8 @@ function performAction(url, params = {}) {
     const iframe = document.getElementById('res');
     if (url.startsWith('/dev/api')) {
         metoda = 'GET';
+    } else if (url.startsWith('/dev/schedules/removeTask')) {
+        metoda = 'DELETE';
     }
     fetch(`${url}?${queryString}`, { method: metoda })
         .then(response => response.text())

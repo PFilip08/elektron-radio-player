@@ -15,7 +15,7 @@ function getURIType(url) {
 
 async function fetchVotes() {
     try {
-        const response = await fetch('/votes/get', {method: "POST"});
+        const response = await fetch('/votes/get');
         const votes = await response.json();
 
         const tableBody = document.querySelector('#votesTable tbody');
