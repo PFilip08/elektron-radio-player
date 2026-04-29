@@ -4,26 +4,27 @@ import {getVotes, delVotes, resetVotes, saveVotes, downloadVotes, addVotes, down
 import { emptyVotes, downloaded } from '../../modules/TaskScheduler.js';
 
 const votesRouter = Router();
-votesRouter.post('/get', getVotes);
-votesRouter.post('/status', (req, res) => {
-    const payload = {
-        downloaded: downloaded,
-        emptyVotes: emptyVotes
-    }
-    res.json(payload);
-});
-votesRouter.delete('/del/:id', delVotes);
-votesRouter.post('/add', addVotes);
-votesRouter.post('/reset', resetVotes);
-votesRouter.post('/save', saveVotes);
-votesRouter.post('/downloadVotes', downloadVotes);
-votesRouter.post('/download', download);
-votesRouter.post('/delmp3', delmp3);
 votesRouter.get('/', (req, res) => {
     res.render('votespanel', {
         title: 'Votes panel',
         welcome: 'Votes panel',
     });
 });
+votesRouter.get('/status', (req, res) => {
+    const payload = {
+        downloaded: downloaded,
+        emptyVotes: emptyVotes
+    }
+    res.json(payload);
+});
+
+votesRouter.get('/get', getVotes);
+votesRouter.delete('/del/:id', delVotes);
+votesRouter.post('/add', addVotes);
+votesRouter.post('/reset', resetVotes);
+votesRouter.post('/save', saveVotes);
+votesRouter.post('/downloadVotes', downloadVotes);
+votesRouter.post('/download', download);
+votesRouter.delete('/delmp3', delmp3);
 
 export default votesRouter;

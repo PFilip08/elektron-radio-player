@@ -4,10 +4,10 @@ import {searchArchive, listArchive, queryArchive, deleteArchiveFile, getArchiveF
 const archiveRouter = Router();
 
 archiveRouter.post('/searchArchive', searchArchive);
-archiveRouter.post('/listArchive', listArchive);
-archiveRouter.post('/archiveSongsQuery', queryArchive);
+archiveRouter.get('/listArchive', listArchive);
+archiveRouter.get('/archiveSongsQuery', queryArchive);
 archiveRouter.delete('/deleteArchive', deleteArchiveFile);
-archiveRouter.post('/getArchiveFolders', getArchiveFolders);
+archiveRouter.get('/getArchiveFolders', getArchiveFolders);
 archiveRouter.post('/copyFromArchive', checkCopyFromArchive);
 archiveRouter.post('/copyPlaylist', copyPlaylist);
 

@@ -39,7 +39,7 @@ devRouter.get('/override', (req, res) => {
 
 devRouter.post('/schedules/resetTasks', resetTasks);
 devRouter.post('/schedules/cleanTasks', cleanTasks);
-devRouter.post('/schedules/removeTask', removeTask);
+devRouter.delete('/schedules/removeTask', removeTask);
 devRouter.use(bodyParser.urlencoded({ extended: true })).post('/schedules/addTask', addTask);
 devRouter.post('/action/restart', restartEverything);
 devRouter.post('/action/downloadYToverride', downloadYToverride);
@@ -48,7 +48,7 @@ devRouter.post('/action/resetRecoveryLock', devOverrideRecoveryLock);
 devRouter.get('/api', devAPI);
 devRouter.get('/api/timeTables', devAPITimeTables);
 devRouter.post('/api/timeTables', bodyParser.json(), devAPITimeTables);
-devRouter.post('/api/votes', devAPIVotes);
+devRouter.get('/api/votes', devAPIVotes);
 devRouter.post('/api/votes', bodyParser.json(), devAPIVotes);
 
 
