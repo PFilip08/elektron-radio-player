@@ -146,7 +146,7 @@ export async function vlcSzuffle(req, res) {
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - vlcSzuffle');
         if (req.method === 'GET') {
             if (state === 'check') return res.status(200).send(szuffle);
-        } else {
+        } else if (req.method !== 'POST') {
             return res.status(405).send('Nie ta metoda!');
         }
         if (!state) return res.status(400).send('Nie podano stanu!');
