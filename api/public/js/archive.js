@@ -435,7 +435,7 @@ async function initiateCopyFromArchive() {
     }
 }
 
-async function copyPlaylistToArchive(playlistId) {
+async function movePlaylistToArchive(playlistId) {
     const playlistNames = {
         1: 'Klasyczna',
         2: 'POP',
@@ -446,7 +446,7 @@ async function copyPlaylistToArchive(playlistId) {
     };
     showInIframe(`Przenoszenie playlisty ${playlistNames[playlistId]}...`, false);
     try {
-        const response = await fetch('/archive/copyPlaylist', {
+        const response = await fetch('/archive/movePlaylist', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ playlistId: playlistId })

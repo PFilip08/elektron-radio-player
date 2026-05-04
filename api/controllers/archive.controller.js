@@ -3,7 +3,7 @@ import {sterylizatorIP} from "../../modules/Other.js";
 import {pathSecurityChecker} from "../../modules/Other.js";
 import {DebugSaveToFile} from "../../modules/DebugMode.js";
 import {getPlaylistName} from "../../modules/MusicPlayer.js";
-import {searchInArchive, getAllMp3FilesInArchive, archiveSongsQuery, deleteFromArchive, getArchiveSubfolders, copyFromArchiveToSix, copyPlaylistToArchive, archdir} from "../../modules/ArchiveModule.js";
+import {searchInArchive, getAllMp3FilesInArchive, archiveSongsQuery, deleteFromArchive, getArchiveSubfolders, copyFromArchiveToSix, movePlaylistToArchive, archdir} from "../../modules/ArchiveModule.js";
 
 export async function searchArchive(req, res) {
     try {
@@ -118,13 +118,13 @@ export async function checkCopyFromArchive(req, res) {
     }
 }
 
-export async function copyPlaylist(req, res) {
+export async function movePlaylist(req, res) {
     try {
-        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - copyPlaylist');
+        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - movePlaylist');
         const playlistId = parseInt(req.body.playlistId);
         let secuCheck = pathSecurityChecker(playlistId.toString(), archdir);
         if (secuCheck.includes('_ATTEMPT')) {
-            logger('warn', `Próba kopiowania playlisty do archiwum z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - copyPlaylist');
+            logger('warn', `Próba przenoszenia playlisty do archiwum z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - movePlaylist');
             return res.status(403).send('Niebezpieczna ścieżka!');
         }
         
@@ -132,16 +132,16 @@ export async function copyPlaylist(req, res) {
             return res.status(400).send('Nieprawidłowy ID playlisty!');
         }
         
-        const result = await copyPlaylistToArchive(playlistId);
+        const result = await movePlaylistToArchive(playlistId);
         if (typeof result === 'string') {
             return res.status(400).send(result);
         }
         return res.status(200).json(result);
     } catch (e) {
-        logger('verbose', 'Wystąpił błąd podczas kopiowania playlisty do archiwum', 'LocalAPI - copyPlaylist');
+        logger('verbose', 'Wystąpił błąd podczas przenoszenia playlisty do archiwum', 'LocalAPI - movePlaylist');
         if (global.debugmode === true) {
-            DebugSaveToFile('LocalAPI', 'copyPlaylist', 'catched_error', e);
-            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - copyPlaylist');
+            DebugSaveToFile('LocalAPI', 'movePlaylist', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - movePlaylist');
         }
         return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e.message);
     }

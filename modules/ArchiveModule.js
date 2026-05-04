@@ -344,18 +344,18 @@ function copyFromArchiveToSix(subfolderName, clearFolder = false) {
     };
 }
 
-async function copyPlaylistToArchive(playlistId) {
-    logger('verbose', `Kopiowanie playlisty ${playlistId} do archiwum`, 'copyPlaylistToArchive');
+async function movePlaylistToArchive(playlistId) {
+    logger('verbose', `Przenoszenie playlisty ${playlistId} do archiwum`, 'movePlaylistToArchive');
     const sourceDir = `./mp3/${playlistId}`;
     if (!fs.existsSync(sourceDir)) {
-        logger('error', `Folder playlisty ${playlistId} nie istnieje`, 'copyPlaylistToArchive');
+        logger('error', `Folder playlisty ${playlistId} nie istnieje`, 'movePlaylistToArchive');
         throw new Error(`Folder playlisty ${playlistId} nie istnieje`);
     }
     let playlistName = getPlaylistName(playlistId);
     const files = fs.readdirSync(sourceDir);
     const mp3Files = files.filter(file => path.extname(file).toLowerCase() === '.mp3');
     if (mp3Files.length === 0) {
-        logger('warn', `Playlista ${playlistId} jest pusta, brak plików do przeniesienia`, 'copyPlaylistToArchive');
+        logger('warn', `Playlista ${playlistId} jest pusta, brak plików do przeniesienia`, 'movePlaylistToArchive');
         return `Playlista ${playlistId} jest pusta, brak plików do przeniesienia`;
     }
     // YYYY-MM-DD-HH-MM-NR-NAZWA
@@ -368,9 +368,9 @@ async function copyPlaylistToArchive(playlistId) {
     const dateTimeStr = `${year}-${month}-${day}-${hours}-${minutes}`;
     const folderName = `${dateTimeStr}-${playlistId}-${playlistName}`;
     const targetDir = path.join(archdir, folderName);
-    logger('verbose', `Tworzenie folderu: ${targetDir}`, 'copyPlaylistToArchive');
+    logger('verbose', `Tworzenie folderu: ${targetDir}`, 'movePlaylistToArchive');
     fs.mkdirSync(targetDir, { recursive: true });
-    logger('verbose', `Kopiowanie ${mp3Files.length} plików MP3`, 'copyPlaylistToArchive');
+    logger('verbose', `Przenoszenie ${mp3Files.length} plików MP3`, 'movePlaylistToArchive');
     let copiedCount = 0;
     let errors = [];
     mp3Files.forEach(file => {
@@ -380,11 +380,11 @@ async function copyPlaylistToArchive(playlistId) {
             fs.renameSync(sourcePath, targetPath);
             copiedCount++;
         } catch (err) {
-            logger('error', `Błąd podczas przenoszenia ${file}: ${err.message}`, 'copyPlaylistToArchive');
+            logger('error', `Błąd podczas przenoszenia ${file}: ${err.message}`, 'movePlaylistToArchive');
             errors.push({ file, error: err.message });
         }
     });
-    logger('log', `Przeniesiono playlistę ${playlistId} do archiwum: ${copiedCount}/${mp3Files.length} plików`, 'copyPlaylistToArchive');
+    logger('log', `Przeniesiono playlistę ${playlistId} do archiwum: ${copiedCount}/${mp3Files.length} plików`, 'movePlaylistToArchive');
     return {
         folderName: folderName,
         totalFiles: mp3Files.length,
@@ -393,4 +393,4 @@ async function copyPlaylistToArchive(playlistId) {
     };
 }
 
-export { initArchive, copyToArchive, copyFromArchive, checkIfFileExistsInArchive, searchInArchive, getAllMp3FilesInArchive, archiveSongsQuery, deleteFromArchive, getArchiveSubfolders, copyFromArchiveToSix, copyPlaylistToArchive, archdir };
+export { initArchive, copyToArchive, copyFromArchive, checkIfFileExistsInArchive, searchInArchive, getAllMp3FilesInArchive, archiveSongsQuery, deleteFromArchive, getArchiveSubfolders, copyFromArchiveToSix, movePlaylistToArchive, archdir };
