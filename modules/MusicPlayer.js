@@ -28,10 +28,10 @@ function getPlaylistName(id) {
 async function getPlayingSong() {
     try {
         const timeout = new Promise((_, reject) => 
-            setTimeout(() => reject(
-                logger('verbose', 'Czas wykonania funkcji przekroczony!', 'getPlayingSong'),
-                new Error('Czas wykonania funkcji przekroczony')
-            ), 4000)
+            setTimeout(() => {
+                logger('verbose', 'Czas wykonania funkcji przekroczony!', 'getPlayingSong');
+                reject(new Error('Czas wykonania funkcji przekroczony'));
+            }, 4000)
         );
         const vlcOperation = (async () => {
             const vlc = new VLC.Client({
@@ -53,7 +53,7 @@ async function getPlayingSong() {
         })();
         return await Promise.race([vlcOperation, timeout]);
     } catch (e) {
-        if (!e.message.includes("ECONNREFUSED")) {
+        if (!e?.message?.includes("ECONNREFUSED")) {
             logger('error', `Wystąpił błąd podczas próby pobrania aktualnie granej piosenki!`, 'getPlayingSong');
         }
         if (global.debugmode === true) {
