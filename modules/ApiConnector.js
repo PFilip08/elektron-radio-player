@@ -80,8 +80,6 @@ if (!recoveryBlocked) {
             return res.data.timeTable[0];
         })
         .catch((error)=>{
-            console.log(error);
-            recoveryModeCounter += 1;
             logger('verbose','Wchodzenie w tryb recovery...','getApiData');
             logger('verbose',`Złapano błąd: ${error}`,'getApiData');
             if (global.debugmode === true) {
@@ -92,6 +90,7 @@ if (!recoveryBlocked) {
             if (recoveryModeWindowStart === null) {
                 startRecoveryModeInterval();
             }
+            recoveryModeCounter += 1;
             let res = {"static":true,"isOn":true,"currentPlaylistId":1,"timeRules":{"rules":{"1":[{"end":"07:10","start":"07:07"},{"end":"08:00","start":"07:55"},{"end":"08:50","start":"08:45"},{"end":"09:45","start":"09:35"},{"end":"10:35","start":"10:30"},{"end":"11:40","start":"11:20"},{"end":"12:30","start":"12:25"},{"end":"13:20","start":"13:15"},{"end":"14:10","start":"14:05"},{"end":"15:00","start":"14:55"},{"end":"15:50","start":"15:45"}]},"applyRule":{"Fri":1,"Mon":1,"Sat":0,"Sun":0,"Thu":1,"Tue":1,"Wed":1}}};
             if (previousData !== null) {
                 res = previousData;
