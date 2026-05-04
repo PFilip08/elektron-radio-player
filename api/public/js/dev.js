@@ -275,6 +275,34 @@ function loadTimeTablesPreset(preset) {
             document.getElementById('timeRulesContainer').innerHTML = '';
             showMessage(`Załadowano preset: ${preset} - Weekend z standardowymi playlistami`);
             break;
+        case 'fromPreviousData':
+            fetch('/stats/data')
+                .then(response => response.json())
+                .then(data => {
+                    document.querySelector('input[name="isOn"][value="true"]').checked = true;
+                    document.getElementById('currentPlaylistId').value = data.currentPlaylistId || '1';
+
+                    ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].forEach(day => {
+                        document.querySelector(`input[name="day"][value="${day}"]`).checked = data.timeRules.applyRule[day] === 1;
+                    });
+
+                    document.getElementById('timeRulesContainer').innerHTML = '';
+                    if (data.timeRules.rules && data.timeRules.rules["1"]) {
+                        data.timeRules.rules["1"].forEach(rule => {
+                            addTimeRule();
+                            const entries = document.querySelectorAll('.time-rule-entry');
+                            const lastEntry = entries[entries.length - 1];
+                            lastEntry.querySelector('.rule-start').value = rule.start;
+                            lastEntry.querySelector('.rule-end').value = rule.end;
+                        });
+                    }
+                    showMessage(`Załadowano preset: ${preset} - Dane z poprzedniej konfiguracji DevAPI`);
+                })
+                .catch(error => {
+                    console.error('Error loading previous data:', error);
+                    showMessage('Error loading previous data: ' + error.message);
+                });
+            break;
         case 'off':
             document.querySelector('input[name="isOn"][value="false"]').checked = true;
             document.querySelectorAll('input[name="day"]').forEach(cb => cb.checked = false);
@@ -327,7 +355,27 @@ function loadVotesPreset(preset) {
             });
             showMessage(`Załadowano preset: ${preset} - Testowe songi z ytmusic`);
             break;
-
+        case 'fromFile':
+            fetch('/votes/get')
+                .then(response => response.json())
+                .then(votes => {
+                    votes.forEach(vote => {
+                        addVoteEntry();
+                        const entries = document.querySelectorAll('.vote-entry');
+                        const lastEntry = entries[entries.length - 1];
+                        lastEntry.querySelector('.song-id').value = vote.id;
+                        lastEntry.querySelector('.song-name').value = vote.uSongs.title || '';
+                        lastEntry.querySelector('.song-url').value = vote.uSongs.url || '';
+                        lastEntry.querySelector('.song-votes').value = vote.votes || 0;
+                        lastEntry.querySelector('.song-date').value = vote.created_at ? new Date(vote.created_at).toLocaleDateString('en-CA') : new Date().toLocaleDateString('en-CA');
+                    });
+                    showMessage(`Załadowano preset: ${preset} - Dane z aktualnego pliku votes.json`);
+                })
+                .catch(error => {
+                    console.error('Error loading votes from file:', error);
+                    showMessage('Error loading votes from file: ' + error.message);
+                });
+            break;
         case 'empty':
             showMessage(`Załadowano preset: ${preset} - Reset wszystkich songów`);
             break;
