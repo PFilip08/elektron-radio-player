@@ -73,7 +73,7 @@ function scheduleVotes(timeStart, timeEnd, id, i) {
 async function downloadVotes() {
     logger('verbose', 'Pobieranie danych z getVotesData', 'massSchedule - downloadVotes');
     const data = await getVotesData();
-    playlistCache.delete(7); // usuwanie cache dla playlisty 7, bo głosy się zmieniły
+    playlistCache.delete("7"); // usuwanie cache dla playlisty 7, bo głosy się zmieniły
     if (data === 'brak') {emptyVotes = true; return logger('log', 'Brak danych!!!', 'massSchedule - downloadVotes')}
     for (let i in data) {
         await downloader(data[i].uSongs.url, true);
