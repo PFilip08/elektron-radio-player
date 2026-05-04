@@ -1,6 +1,6 @@
 import {logger} from "../../modules/Logger.js";
 import {DebugSaveToFile} from "../../modules/DebugMode.js";
-import {downloadVotes, massSchedule, scheduleKillTask, taskNumber} from "../../modules/TaskScheduler.js";
+import {downloadVotes, massSchedule, scheduleKillTask, taskNumber, scheduleMinorTasks} from "../../modules/TaskScheduler.js";
 import schedule from "node-schedule";
 import {killPlayer, playMusic, playOnDemand, playPlaylist} from "../../modules/MusicPlayer.js";
 import {autoRemoveFiles, downloadYT, getYTInfo} from "../../modules/MusicDownloader.js";
