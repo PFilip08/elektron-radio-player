@@ -1,7 +1,6 @@
 <!-- partials/musicpanel/panic.ejs -->
 <div class="panic">
-    <form method="post" action="/action/kill">
-        <input type="hidden" name="force"/>
+    <form method="post" action="/action/kill?force=true">
         <input type="submit" formtarget="res" value="Awaryjny stop"/>
     </form>
 </div>
