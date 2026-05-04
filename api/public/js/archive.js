@@ -334,7 +334,9 @@ async function searchFile() {
         return;
     }
     try {
-        const response = await fetch(`/archive/searchArchive?file=${encodeURIComponent(searchQuery)}`);
+        const response = await fetch(`/archive/searchArchive?file=${encodeURIComponent(searchQuery)}`, {
+            method: 'POST'
+        });
         const results = await response.json();
         const allResults = results.all || results;
         searchResults = allResults;
@@ -455,7 +457,7 @@ async function copyPlaylistToArchive(playlistId) {
         }
         const result = await response.json();
         showInIframe(
-            `Playlista ${playlistNames[playlistId]} przeniesiona!<br>` +
+            `Playlista o nazwie ${playlistNames[playlistId]} przeniesiona!<br>` +
             `Folder: ${result.folderName}<br>` +
             `Pliki: ${result.copiedFiles}/${result.totalFiles}`,
             result.errors.length > 0
