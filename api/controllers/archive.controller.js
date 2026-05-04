@@ -133,7 +133,7 @@ export async function copyPlaylist(req, res) {
         }
         
         const result = await copyPlaylistToArchive(playlistId);
-        if (result.includes('jest pusta')) {
+        if (typeof result === 'string') {
             return res.status(400).send(result);
         }
         return res.status(200).json(result);
