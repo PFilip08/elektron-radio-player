@@ -12,11 +12,6 @@ export async function searchArchive(req, res) {
         if (!file) {
             return res.status(400).send('Nie podano nazwy pliku!');
         }
-        let secuCheck = pathSecurityChecker(file, archdir);
-        if (secuCheck.includes('_ATTEMPT')) {
-            logger('warn', `Próba wyszukania pliku po za archiwum! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - searchArchive');
-            return res.status(403).send('Niebezpieczna ścieżka!');
-        }
         const query = await searchInArchive(file);
         return res.status(200).send(query);
     } catch (e) {
