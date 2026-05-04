@@ -1,9 +1,9 @@
 import {logger} from "../../modules/Logger.js";
 import {DebugSaveToFile} from "../../modules/DebugMode.js";
-import {massSchedule, scheduleKillTask, taskNumber} from "../../modules/TaskScheduler.js";
+import {downloadVotes, massSchedule, scheduleKillTask, taskNumber} from "../../modules/TaskScheduler.js";
 import schedule from "node-schedule";
 import {killPlayer, playMusic, playOnDemand, playPlaylist} from "../../modules/MusicPlayer.js";
-import {downloadYT, getYTInfo} from "../../modules/MusicDownloader.js";
+import {autoRemoveFiles, downloadYT, getYTInfo} from "../../modules/MusicDownloader.js";
 import {sterylizatorIP} from "../../modules/Other.js";
 import {clearGetApiDataBlock} from "../../modules/ApiConnector.js";
 import * as fs from "fs";
@@ -91,11 +91,26 @@ export async function addTask(req, res) {
                 });
                 break;
             case 'inne':
-                return res.status(400).send('Nie zaimplementowano tego typu w tej wersji API!!1!11!!!');
-                // const jobInne = schedule.scheduleJob(taskName, taskDate, function () {
-                //     logger('log', 'Wykonywanie innego zadania', 'LocalAPI-dev - addTask');
-                //     // tutaj coś kiedyś będzie
-                // });
+                //return res.status(400).send('Nie zaimplementowano tego typu w tej wersji API!!1!11!!!');
+                const jobInne = schedule.scheduleJob(taskName, taskDate, function () {
+                    logger('log', `Wykonywanie innego zadania ${taskData.action}`, 'LocalAPI-dev - addTask');
+                    switch (taskData.action) {
+                        case 'autoRemoveFiles':
+                            autoRemoveFiles();
+                            break;
+                        case 'downloadVotes':
+                            downloadVotes();
+                            break;
+                        case 'miscTask':
+                            scheduleMinorTasks();
+                            break;
+                        default:
+                            logger('warn', `Nieznana akcja dla typu "inne": ${taskData.action}`, 'LocalAPI-dev - addTask');
+                            break;
+                    }
+                    // tutaj coś kiedyś będzie (EDIT: Czyli po Filipowsku nigdy)
+                });
+                break;
             default:
                 logger('warn', `Nieznany typ zadania: ${taskType}`, 'LocalAPI-dev - addTask');
                 return res.status(400).send('Nieznany typ zadania!');
