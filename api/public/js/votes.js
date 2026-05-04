@@ -4,13 +4,12 @@ const spotifyRegex = /^(?:https?:\/\/)?(?:www\.)?(?:open\.spotify\.com|spotify\.
 const youtubeRegex = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|music\.youtube\.com|youtu\.be)\/.+$/;
 
 function getURIType(url) {
-    switch (url) {
-        case spotifyRegex.test(url):
-            return "spotify";
-        case youtubeRegex.test(url):
-            return "yt";
-        default:
-            return "ni ma";
+    if (spotifyRegex.test(url)) {
+        return "spotify";
+    } else if (youtubeRegex.test(url)) {
+        return "yt";
+    } else {
+        return "ni ma";
     }
 }
 
