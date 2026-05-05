@@ -214,16 +214,9 @@ async function getTrackInfo(url) {
         case 'playlist':
             logger('log', 'Wykryto playlistę', 'getTrackInfo');
             return await spotify.getPlaylist(url);
-        case 'track':
+        default:
             logger('log', 'Wykryto piosenkę', 'getTrackInfo');
             return await spotify.getTrack(url);
-        default:
-            logger('warn', 'Nie wykryto typu linku!', 'getTrackInfo');
-            if (global.debugmode === true) {
-                DebugSaveToFile('MusicDownloader', 'getTrackInfo', 'catched_link', url);
-                logger('verbose', `Zapisano link do debug/`, 'getTrackInfo');
-            }
-            return 'Nie wykryto typu linku!';
     }
     } catch (e) {
         logger('error', "Błąd w trakcie wykonywania funkcji getTrackInfo", 'getTrackInfo');
