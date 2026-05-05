@@ -19,16 +19,14 @@ export async function queryPlaylist(req, res) {
         const force = req.query.nocache;
         const forceall = req.query.cacheclean;
         let playlistName = getPlaylistName(id);
-        if (req.method === 'POST') {
-            if (forceall === 'true') {
-                if (!playlistCache.size) {
-                    logger('verbose', `Cache playlist jest pusty!`, 'LocalAPI - queryPlaylist');
-                    return res.status(400).send('Cache playlist jest pusty!');
-                }
-                logger('verbose', `Wyczyszczono cache playlist!`, 'LocalAPI - queryPlaylist');
-                playlistCache.clear();
-                return res.status(200).send('Wyczyszczono cache playlist!');
+        if (req.method === 'POST' && forceall === 'true') {
+            if (!playlistCache.size) {
+                logger('verbose', `Cache playlist jest pusty!`, 'LocalAPI - queryPlaylist');
+                return res.status(400).send('Cache playlist jest pusty!');
             }
+            logger('verbose', `Wyczyszczono cache playlist!`, 'LocalAPI - queryPlaylist');
+            playlistCache.clear();
+            return res.status(200).send('Wyczyszczono cache playlist!');
         }
         if (!id) {
             return res.status(400).send('Nie podano nazwy lub ID playlisty!');
