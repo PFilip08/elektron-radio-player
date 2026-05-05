@@ -36,6 +36,15 @@ app.get('/', (req, res) => {
   res.status(200).send('Ok');
 })
 
+
+app.get('/admin', function(req, res){
+  res.render('adminpanel', {
+    title: 'Admin Panel',
+    welcome: 'Witaj na panelu zarządzania elektron-radio-playerem!',
+    layout: 'layouts/admin_layout'
+  });
+});
+
 app.get('/stats', function(req, res){
   res.render('stats', {
     title: 'Stats Panel',
