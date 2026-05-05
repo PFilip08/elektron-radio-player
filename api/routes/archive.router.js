@@ -3,6 +3,12 @@ import {searchArchive, listArchive, queryArchive, deleteArchiveFile, getArchiveF
 
 const archiveRouter = Router();
 
+archiveRouter.get('/', function(req, res){
+  res.render('archivepanel', {
+    title: 'Archive Panel',
+    welcome: 'Panel archiwum muzyki',
+  });
+});
 archiveRouter.post('/searchArchive', searchArchive);
 archiveRouter.get('/listArchive', listArchive);
 archiveRouter.get('/archiveSongsQuery', queryArchive);
