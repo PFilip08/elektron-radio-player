@@ -101,6 +101,7 @@ async function downloadPlaylist(url, path2) {
                 logger('error', 'Spotify sie zesrało i nie pobierzesz playlisty której nie jesteś autorem ani nie jesteś współwłaścicielem :<', 'downloadPlaylist');
                 return 'Spotify sie zesrało i nie pobierzesz playlisty której nie jesteś autorem ani nie jesteś współwłaścicielem :<';
             }
+            throw e;
         }
         for (let i in data.tracks) {
             let song = await getTrackInfo(data.tracks[i]);
