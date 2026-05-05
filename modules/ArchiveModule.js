@@ -377,7 +377,9 @@ async function movePlaylistToArchive(playlistId) {
         try {
             const sourcePath = path.join(sourceDir, file);
             const targetPath = path.join(targetDir, file);
-            fs.renameSync(sourcePath, targetPath);
+            //fs.renameSync(sourcePath, targetPath);
+            fs.copyFileSync(sourcePath, targetPath);
+            fs.unlinkSync(sourcePath);
             copiedCount++;
         } catch (err) {
             logger('error', `Błąd podczas przenoszenia ${file}: ${err.message}`, 'movePlaylistToArchive');
