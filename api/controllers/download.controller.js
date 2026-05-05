@@ -14,7 +14,7 @@ export async function downloadSong(req, res) {
         let path = undefined;
         if (req.query.path) {
             path = `./mp3/${req.query.path}/`;
-            let secuCheck = pathSecurityChecker(req.query.path);
+            const secuCheck = pathSecurityChecker(req.query.path);
             if (secuCheck.includes('_ATTEMPT')) {
                 logger('warn', `Próba pobrania pliku z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - downloadSong');
                 return res.status(403).send('Niebezpieczna ścieżka!');

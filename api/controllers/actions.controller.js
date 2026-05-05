@@ -38,7 +38,7 @@ export async function pMusic(req, res) {
         if (!file) {
             return res.status(400).send('Nie podano nazwy pliku!');
         }
-        let secuCheck = pathSecurityChecker(file);
+        const secuCheck = pathSecurityChecker(file);
         if (secuCheck.includes('_ATTEMPT')) {
             logger('warn', `Próba odtworzenia pliku z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - pMusic');
             return res.status(403).send('Niebezpieczna ścieżka!');
@@ -63,7 +63,7 @@ export async function pPlaylist(req, res) {
         if (!id) {
             return res.status(400).send('Nie podano numeru playlisty!');
         }
-        let secuCheck = pathSecurityChecker(id);
+        const secuCheck = pathSecurityChecker(id);
         if (secuCheck.includes('_ATTEMPT')) {
             logger('warn', `Próba odtworzenia playlisty z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - pPlaylist');
             return res.status(403).send('Niebezpieczna ścieżka!');

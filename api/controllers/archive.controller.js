@@ -61,7 +61,7 @@ export async function deleteArchiveFile(req, res) {
         if (!filename) {
             return res.status(400).send('Nie podano nazwy pliku!');
         }
-        let secuCheck = pathSecurityChecker(filename, archdir);
+        const secuCheck = pathSecurityChecker(filename, archdir);
         if (secuCheck.includes('_ATTEMPT')) {
             logger('warn', `Próba usunięcia pliku z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - deleteArchiveFile');
             return res.status(403).send('Niebezpieczna ścieżka!');
@@ -125,7 +125,7 @@ export async function movePlaylist(req, res) {
     try {
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - movePlaylist');
         const playlistId = parseInt(req.body.playlistId);
-        let secuCheck = pathSecurityChecker(playlistId.toString(), archdir);
+        const secuCheck = pathSecurityChecker(playlistId.toString(), archdir);
         if (secuCheck.includes('_ATTEMPT')) {
             logger('warn', `Próba przenoszenia playlisty do archiwum z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - movePlaylist');
             return res.status(403).send('Niebezpieczna ścieżka!');

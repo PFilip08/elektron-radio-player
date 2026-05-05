@@ -31,7 +31,7 @@ export async function queryPlaylist(req, res) {
         if (!id) {
             return res.status(400).send('Nie podano nazwy lub ID playlisty!');
         }
-        let secuCheck = pathSecurityChecker(id);
+        const secuCheck = pathSecurityChecker(id);
         if (secuCheck.includes('_ATTEMPT')) {
             logger('warn', `Próba odtworzenia pliku z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - queryPlaylist');
             return res.status(403).send('Niebezpieczna ścieżka!');
