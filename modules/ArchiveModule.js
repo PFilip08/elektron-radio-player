@@ -208,7 +208,7 @@ async function searchInArchive(query/*, options = {}*/) {
                 }
                 logger('verbose', `Sprawdzanie dopasowania w nazwie pliku`, 'searchInArchive');
                 const filename = filePath.split('/').pop().replace(/\.mp3$/i, '');
-                const filenameText = /*caseSensitive ?*/ filename /*: filename.toLowerCase()*/;
+                const filenameText = /*caseSensitive ?*/ filename.toLowerCase() /*: filename.toLowerCase()*/;
                 if (filenameText.includes(searchQuery)) {
                     logger('verbose', `Znaleziono dopasowanie w nazwie pliku!`, 'searchInArchive');
                     matchedByFilename = true;
