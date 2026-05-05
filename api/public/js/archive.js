@@ -24,6 +24,32 @@ function hasCJKCharacters(text) {
     return cjkRegex.test(text);
 }
 
+function normalizeSlashes(value) {
+    return value ? value.replace(/\\/g, '/') : '';
+}
+
+function getSongFilePath(song) {
+    return song.relativePath || song.filePath || song.path || song.filename || '';
+}
+
+function getSongBasename(song) {
+    const normalized = normalizeSlashes(getSongFilePath(song));
+    return normalized.split('/').pop();
+}
+
+function getArchiveRelativePath(song) {
+    if (song.relativePath) return normalizeSlashes(song.relativePath);
+    const normalized = normalizeSlashes(getSongFilePath(song));
+    const lower = normalized.toLowerCase();
+    const archiveToken = '/archive/';
+    const elpArchiveToken = '/elp-archive/';
+    let index = lower.lastIndexOf(archiveToken);
+    if (index !== -1) return normalized.slice(index + archiveToken.length);
+    index = lower.lastIndexOf(elpArchiveToken);
+    if (index !== -1) return normalized.slice(index + elpArchiveToken.length);
+    return normalized.replace(/^\.?\//, '');
+}
+
 function filterNoMetadata() {
     const filtered = allSongs.filter(song => {
         const titleIsFilename = !song.title || song.title === song.filename?.replace('.mp3', '') || 
@@ -211,14 +237,16 @@ function displayPage() {
         }
         const row = document.createElement('tr');
         const globalIndex = startIndex + index + 1;
-        const fileName = song.filePath ? song.filePath.split('/').pop() : song.filename;
+        const fileName = getSongBasename(song);
+        const archiveRelativePath = getArchiveRelativePath(song) || fileName;
+        const encodedArchivePath = encodeURIComponent(archiveRelativePath);
         row.innerHTML = `
             <td>${globalIndex}</td>
             <td><strong>${song.title || 'Nieznany tytuł'}</strong></td>
             <td>${song.artist || 'Nieznany wykonawca'}</td>
             <td>${formatDuration(song.duration)}</td>
             <td style="font-size: 0.85em; color: #ccc;">${fileName}</td>
-            <td><button onclick="deleteArchiveFile('${fileName}')">Usuń</button></td>
+            <td><button onclick="deleteArchiveFile('${encodedArchivePath}')">Usuń</button></td>
         `;
         tableBody.appendChild(row);
     });
@@ -226,31 +254,36 @@ function displayPage() {
     updatePaginationControls();
 }
 
-async function deleteArchiveFile(filename) {
-    if (!confirm(`Czy na pewno chcesz usunąć plik "${filename}" z archiwum?`)) {
+async function deleteArchiveFile(encodedArchivePath) {
+    const archivePath = decodeURIComponent(encodedArchivePath || '');
+    if (!archivePath) {
+        showInIframe('Nieprawidlowa sciezka pliku do usuniecia!', true);
+        return;
+    }
+    if (!confirm(`Czy na pewno chcesz usunąć plik "${archivePath}" z archiwum?`)) {
         return;
     }
     try {
-        const response = await fetch(`/archive/deleteArchive?filename=${encodeURIComponent(filename)}`, {
+        const response = await fetch(`/archive/deleteArchive?filename=${encodeURIComponent(archivePath)}`, {
             method: 'DELETE'
         });
         const result = await response.json();
         
         if (response.ok) {
-            showInIframe(`Pomyślnie usunięto plik: <strong>${filename}</strong>`);
+            showInIframe(`Pomyślnie usunięto plik: <strong>${archivePath}</strong>`);
             allSongs = allSongs.filter(song => {
-                const songFilename = song.filePath ? song.filePath.split('/').pop() : song.filename;
-                return songFilename !== filename;
+                const songArchivePath = getArchiveRelativePath(song) || getSongBasename(song);
+                return songArchivePath !== archivePath;
             });
             if (isSearchActive || isFilterActive) {
                 filteredSongs = filteredSongs.filter(song => {
-                    const songFilename = song.filePath ? song.filePath.split('/').pop() : song.filename;
-                    return songFilename !== filename;
+                    const songArchivePath = getArchiveRelativePath(song) || getSongBasename(song);
+                    return songArchivePath !== archivePath;
                 });
                 if (isSearchActive) {
                     searchResults = searchResults.filter(song => {
-                        const songFilename = song.filePath ? song.filePath.split('/').pop() : song.filename;
-                        return songFilename !== filename;
+                        const songArchivePath = getArchiveRelativePath(song) || getSongBasename(song);
+                        return songArchivePath !== archivePath;
                     });
                 }
             }

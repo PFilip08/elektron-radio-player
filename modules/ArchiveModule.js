@@ -8,6 +8,16 @@ import { DebugSaveToFile } from './DebugMode.js';
 
 const archdir = process.env.ARCHIVE_DIR || './mp3/Archive';
 
+function getArchiveRelativePath(filePath) {
+    try {
+        const archiveRoot = path.resolve(archdir);
+        const fullPath = path.resolve(filePath);
+        return path.relative(archiveRoot, fullPath).replace(/\\/g, '/');
+    } catch (err) {
+        return filePath;
+    }
+}
+
 function initArchive() {
     logger('verbose', `Sprawdzanie czy katalog archiwum istnieje: ${archdir}`, 'initArchive');
     if(!fs.existsSync(archdir)) {
@@ -95,14 +105,14 @@ async function archiveSongsQuery() {
             const artist = metadata.common.artist || 'Nieznany Artysta';
             const duration = metadata.format.duration || 0;
             logger('verbose', `Pobrano metadane: ${title} - ${artist}`, 'archiveSongsQuery');
-            return { title, artist, duration, filePath };
+            return { title, artist, duration, filePath, relativePath: getArchiveRelativePath(filePath) };
         } catch (error) {
             logger('error', `Wystąpił błąd podczas próby odczytania metadanych z pliku ${filePath}`, 'archiveSongsQuery');
             if (global.debugmode === true) {
                 DebugSaveToFile('ArchiveModule', 'archiveSongsQuery', 'catched_error', error);
                 logger('verbose',`Stacktrace został zrzucony do /debug`,'archiveSongsQuery');    
             }
-            return { title: path.basename(filePath, path.extname(filePath)), artist: 'Nieznany Artysta', duration: 0, filePath};
+            return { title: path.basename(filePath, path.extname(filePath)), artist: 'Nieznany Artysta', duration: 0, filePath, relativePath: getArchiveRelativePath(filePath)};
         }
     };
     logger('verbose', 'Pobieranie wszystkich plików MP3 z archiwum', 'archiveSongsQuery');
@@ -192,6 +202,7 @@ async function searchInArchive(query/*, options = {}*/) {
                 const resultObject = {
                     filename: filePath.split('/').pop(),
                     path: filePath,
+                    relativePath: getArchiveRelativePath(filePath),
                     title: title || path.basename(filePath, path.extname(filePath)),
                     artist: artist || 'Nieznany Artysta',
                     album: album,
