@@ -67,6 +67,9 @@ export async function deleteArchiveFile(req, res) {
             return res.status(403).send('Niebezpieczna ścieżka!');
         }
         const result = deleteFromArchive(filename);
+        if (result.error) {
+            return res.status(500).send(result);
+        }
         return res.status(200).json(result);
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby usunięcia pliku z archiwum', 'LocalAPI - deleteArchiveFile');
