@@ -53,7 +53,7 @@ async function getPlayingSong() {
         })();
         return await Promise.race([vlcOperation, timeout]);
     } catch (e) {
-        if (!e.message.includes("ECONNREFUSED")) {
+        if (!e?.message?.includes("ECONNREFUSED")) {
             logger('error', `Wystąpił błąd podczas próby pobrania aktualnie granej piosenki!`, 'getPlayingSong');
         }
         if (global.debugmode === true) {
