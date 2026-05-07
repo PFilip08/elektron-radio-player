@@ -80,16 +80,10 @@ function filterNoDuration() {
 function filterRootFiles() {
     const baseList = isSearchActive ? searchResults : allSongs;
     const filtered = baseList.filter(song => {
-        const filePath = song.filePath || song.path || '';
-        if (!filePath) return false;
-        const normalizedPath = filePath.replace(/\/+/g, '/');
-        const pathParts = normalizedPath.split('/').filter(part => part.length > 0);
-        const archiveIndex = pathParts.findIndex(part => 
-            part.toLowerCase().includes('archive') || part === 'elp-archive'
-        );
-        if (archiveIndex === -1) return false;
-        const segmentsAfterArchive = pathParts.length - archiveIndex - 1;
-        return segmentsAfterArchive === 1;
+        const relativePath = normalizeSlashes(song.relativePath || '');
+        if (!relativePath) return false;
+        const pathParts = relativePath.split('/').filter(part => part.length > 0);
+        return pathParts.length === 1;
     });
     
     const baseCount = isSearchActive ? searchResults.length : allSongs.length;
@@ -99,16 +93,10 @@ function filterRootFiles() {
 function filterSubfolderFiles() {
     const baseList = isSearchActive ? searchResults : allSongs;
     const filtered = baseList.filter(song => {
-        const filePath = song.filePath || song.path || '';
-        if (!filePath) return false;
-        const normalizedPath = filePath.replace(/\/+/g, '/');
-        const pathParts = normalizedPath.split('/').filter(part => part.length > 0);
-        const archiveIndex = pathParts.findIndex(part => 
-            part.toLowerCase().includes('archive') || part === 'elp-archive'
-        );
-        if (archiveIndex === -1) return false;
-        const segmentsAfterArchive = pathParts.length - archiveIndex - 1;
-        return segmentsAfterArchive > 1;
+        const relativePath = normalizeSlashes(song.relativePath || '');
+        if (!relativePath) return false;
+        const pathParts = relativePath.split('/').filter(part => part.length > 0);
+        return pathParts.length > 1;
     });
     const baseCount = isSearchActive ? searchResults.length : allSongs.length;
     applyFilterWithSearch(filtered, 'subfolderFiles', `Pliki w podfolderach: ${filtered.length}`, 'locationInfo');
