@@ -1,8 +1,8 @@
 <!-- archivepanel.ejs -->
 <%- include('./partials/recoveryStatus.ejs') %>
 <script src="../js/archive.js" async></script>
-<h1>Archiwum</h1>
-<br/>
+<h1 id="archiveTitle">Archiwum</h1>
+<br>
 <div style="display: flex; justify-content: center; flex-wrap: wrap; margin-bottom: 20px;">
     <div id="transferPanel">
         <table style="background: darkred;">
@@ -145,10 +145,6 @@
         </table>
         <div id="searchInfo" style="text-align: center; margin-top: 10px; font-size: 1.1em; color: #0f0;"></div>
     </div>
-    <div style="margin-bottom: 10px; text-align: center;">
-        <span>Strona: <span id="pageInfo">1 / 1</span></span>
-        <span style="margin-left: 20px;">Łącznie utworów: <span id="totalSongs">0</span></span>
-    </div>
     <table id="archiveTable" style="background: blue;">
         <thead>
             <tr>
@@ -164,12 +160,18 @@
         </tbody>
             <tr>
                 <td colspan="6" class="center">
+                    <button onclick="location.href='#archiveTitle'">^</button>
                     <button onclick="prevPage()" id="prevBtn">Poprzednia</button>
                     <button onclick="fetchArchive()">Odśwież</button>
                     <button onclick="nextPage()" id="nextBtn">Następna</button>
+                    <button onclick="lastPage()">Ostatnia</button>
                 </td>
             </tr>
     </table>
+        <div style="margin-bottom: 10px; text-align: center;">
+        <span>Strona: <span id="pageInfo">1 / 1</span></span>
+        <span style="margin-left: 20px;">Łącznie utworów: <span id="totalSongs">0</span></span>
+    </div>
 </div>
 <br/>
 <iframe name="res" class="res" id="res"></iframe>

@@ -320,6 +320,15 @@ async function fetchArchive() {
     }
 }
 
+function lastPage() {
+    const displaySongs = (isSearchActive || isFilterActive) ? filteredSongs : allSongs;
+    const totalPages = Math.ceil(displaySongs.length / songsPerPage);
+    if (currentPage < totalPages) {
+        currentPage = totalPages;
+        displayPage();
+    }
+}
+
 function nextPage() {
     const displaySongs = (isSearchActive || isFilterActive) ? filteredSongs : allSongs;
     const totalPages = Math.ceil(displaySongs.length / songsPerPage);
