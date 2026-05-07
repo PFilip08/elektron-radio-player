@@ -125,6 +125,7 @@ export async function movePlaylist(req, res) {
     try {
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - movePlaylist');
         const playlistId = parseInt(req.body.playlistId);
+        const userNotice = req.body.userNotice?.toString() || null;
         const secuCheck = pathSecurityChecker(playlistId.toString(), archdir);
         if (secuCheck.includes('_ATTEMPT')) {
             logger('warn', `Próba przenoszenia playlisty do archiwum z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - movePlaylist');
@@ -135,7 +136,7 @@ export async function movePlaylist(req, res) {
             return res.status(400).send('Nieprawidłowy ID playlisty!');
         }
         
-        const result = await movePlaylistToArchive(playlistId);
+        const result = await movePlaylistToArchive(playlistId, userNotice);
         if (typeof result === 'string') {
             return res.status(400).send(result);
         }
