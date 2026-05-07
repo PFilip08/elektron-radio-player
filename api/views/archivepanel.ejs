@@ -2,7 +2,6 @@
 <%- include('./partials/recoveryStatus.ejs') %>
 <script src="../js/archive.js" async></script>
 <h1 id="archiveTitle">Archiwum</h1>
-<br>
 <div style="display: flex; justify-content: center; flex-wrap: wrap; margin-bottom: 20px;">
     <div id="transferPanel">
         <table style="background: darkred;">
@@ -41,7 +40,7 @@
                 <tr>
                     <td class="center" colspan="3">
                         <label for="movePlaylistNotice">Adnotacja (opcjonalnie):</label>
-                        <input type="text" id="movePlaylistNotice" placeholder="np. Święto upadku Xeoniarni" style="min-width: 260px; padding: 4px;" />
+                        <input type="text" id="movePlaylistNotice" placeholder="np. Święto upadku Xeoniarni" style="min-width: 260px;" />
                     </td>
                 </tr>
                 <tr>
@@ -166,11 +165,11 @@
         </tbody>
             <tr>
                 <td colspan="6" class="center">
-                    <button onclick="location.href='#archiveTitle'">^</button>
-                    <button onclick="prevPage()" id="prevBtn">⏪︎</button>
-                    <button onclick="fetchArchive()">🗘</button>
-                    <button onclick="nextPage()" id="nextBtn">⏩︎</button>
-                    <button onclick="lastPage()">Ostatnia</button>
+                    <button onclick="location.href='#archiveTitle'">^</button> <!-- TODO: ma odnosić na pierwszą stronę, a nie do góry-->
+                    <button onclick="prevPage()" id="prevBtn" title="Poprzednia">⏪︎</button>
+                    <button onclick="fetchArchive()" title="jakieś badziewie">🗘</button>
+                    <button onclick="nextPage()" id="nextBtn" title="Następna">⏩︎</button>
+                    <button onclick="lastPage()" >Ostatnia</button>
                 </td>
             </tr>
     </table>
@@ -179,5 +178,4 @@
         <span style="margin-left: 20px;">Łącznie utworów: <span id="totalSongs">0</span></span>
     </div>
 </div>
-<br/>
-<iframe name="res" class="res" id="res"></iframe>
+<%- include('./partials/res.ejs') %> <!-- TODO: to gunfo przenieść wyżej -->
