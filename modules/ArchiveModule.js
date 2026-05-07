@@ -269,7 +269,7 @@ function deleteFromArchive(filename) {
         logger('verbose', `Plik istnieje, przystąpienie do usuwania`, 'deleteFromArchive');
         //fs.unlinkSync(filePath);
         logger('log', `Usunięto plik ${filename} z archiwum.`, 'deleteFromArchive');
-        return { error: `Usunięto plik ${filename} z archiwum.` };
+        return { message: `Usunięto plik ${filename} z archiwum.` };
     } catch (err) {
         logger('error', `Błąd podczas usuwania pliku ${filename}: ${err.message}`, 'deleteFromArchive');
         if (global.debugmode === true) {
