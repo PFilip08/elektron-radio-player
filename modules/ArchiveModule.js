@@ -355,7 +355,7 @@ function copyFromArchiveToSix(subfolderName, clearFolder = false) {
     };
 }
 
-async function movePlaylistToArchive(playlistId) {
+async function movePlaylistToArchive(playlistId, userNotice = null) {
     logger('verbose', `Przenoszenie playlisty ${playlistId} do archiwum`, 'movePlaylistToArchive');
     const sourceDir = `./mp3/${playlistId}`;
     if (!fs.existsSync(sourceDir)) {
@@ -377,7 +377,13 @@ async function movePlaylistToArchive(playlistId) {
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
     const dateTimeStr = `${year}-${month}-${day}-${hours}-${minutes}`;
-    const folderName = `${dateTimeStr}-${playlistId}-${playlistName}`;
+    //const folderName = `${dateTimeStr}-${playlistId}-${playlistName}`;
+    let folderName;
+    if (userNotice) {
+        folderName = `${playlistId}-${playlistName}-${userNotice}`;
+    } else {
+        folderName = `${playlistId}-${playlistName}-${dateTimeStr}`;
+    }
     const targetDir = path.join(archdir, folderName);
     logger('verbose', `Tworzenie folderu: ${targetDir}`, 'movePlaylistToArchive');
     fs.mkdirSync(targetDir, { recursive: true });
