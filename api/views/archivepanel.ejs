@@ -19,8 +19,8 @@
                         </select>
                     </td>
                     <td class="center">
-                        <button onclick="loadArchiveFolders()" style="background: #A52A2A; margin-right: 5px;">Odśwież listę</button>
-                        <button onclick="initiateCopyFromArchive()" style="background: #8B0000; font-weight: bold;">
+                        <button onclick="loadArchiveFolders()" style="margin-right: 5px;">Odśwież listę</button>
+                        <button onclick="initiateCopyFromArchive()" style="font-weight: bold;">
                             Kopiuj do playlisty 6
                         </button>
                     </td>
@@ -39,25 +39,31 @@
             </thead>
             <tbody>
                 <tr>
-                    <td class="center">
-                        <button onclick="movePlaylistToArchive(1)" style="background: #006400;">Klasyczna (1)</button>
-                    </td>
-                    <td class="center">
-                        <button onclick="movePlaylistToArchive(2)" style="background: #228B22;">POP (2)</button>
-                    </td>
-                    <td class="center">
-                        <button onclick="movePlaylistToArchive(3)" style="background: #32CD32;">RAP (3)</button>
+                    <td class="center" colspan="3">
+                        <label for="movePlaylistNotice">Adnotacja (opcjonalnie):</label>
+                        <input type="text" id="movePlaylistNotice" placeholder="np. Święto upadku Xeoniarni" style="min-width: 260px; padding: 4px;" />
                     </td>
                 </tr>
                 <tr>
                     <td class="center">
-                        <button onclick="movePlaylistToArchive(4)" style="background: #006400;">ROCK (4)</button>
+                        <button onclick="movePlaylistToArchive(1)">Klasyczna (1)</button>
                     </td>
                     <td class="center">
-                        <button onclick="movePlaylistToArchive(5)" style="background: #228B22;">Soundtracki (5)</button>
+                        <button onclick="movePlaylistToArchive(2)">POP (2)</button>
                     </td>
                     <td class="center">
-                        <button onclick="movePlaylistToArchive(6)" style="background: #32CD32;">Specjalna (6)</button>
+                        <button onclick="movePlaylistToArchive(3)">RAP (3)</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="center">
+                        <button onclick="movePlaylistToArchive(4)">ROCK (4)</button>
+                    </td>
+                    <td class="center">
+                        <button onclick="movePlaylistToArchive(5)">Soundtracki (5)</button>
+                    </td>
+                    <td class="center">
+                        <button onclick="movePlaylistToArchive(6)">Specjalna (6)</button>
                     </td>
                 </tr>
             </tbody>
@@ -75,18 +81,18 @@
             <tbody>
                 <tr>
                     <td class="center">
-                        <button onclick="filterNoMetadata()" style="background: #8b008b;">Pokaż piosenki bez metadanych</button>
+                        <button onclick="filterNoMetadata()">Pokaż piosenki bez metadanych</button>
                     </td>
                     <td class="center">
-                        <button onclick="filterCJKCharacters()" style="background: #9932cc;">Pokaż piosenki z chińskimi/japońskimi znakami</button>
+                        <button onclick="filterCJKCharacters()">Pokaż piosenki z chińskimi/japońskimi znakami</button>
                     </td>
                 </tr>
                 <tr>
                     <td class="center">
-                        <button onclick="filterNoDuration()" style="background: #8b008b;">Pokaż piosenki bez czasu</button>
+                        <button onclick="filterNoDuration()">Pokaż piosenki bez czasu</button>
                     </td>
                     <td class="center">
-                        <button onclick="resetFilters()" style="background: #666;">Resetuj filtry</button>
+                        <button onclick="resetFilters()">Resetuj filtry</button>
                     </td>
                 </tr>
             </tbody>
@@ -103,15 +109,15 @@
             <tbody>
             <tr>
                 <td class="center">
-                    <button onclick="filterRootFiles()" style="background: #1e90ff;">Pokaż pliki z katalogu głównego</button>
+                    <button onclick="filterRootFiles()">Pokaż pliki z katalogu głównego</button>
                 </td>
                 <td class="center">
-                    <button onclick="filterSubfolderFiles()" style="background: #4169e1;">Pokaż pliki z podfolderów</button>
+                    <button onclick="filterSubfolderFiles()">Pokaż pliki z podfolderów</button>
                 </td>
             </tr>
             <tr>
                 <td class="center" colspan="2">
-                    <button onclick="resetFilters()" style="background: #666;">Resetuj filtry</button>
+                    <button onclick="resetFilters()">Resetuj filtry</button>
                 </td>
             </tr>
             </tbody>
@@ -138,7 +144,7 @@
                         <button onclick="searchFile()">Szukaj</button>
                     </td>
                     <td class="center">
-                        <button onclick="resetSearch()" style="background: #666;">Wyczyść</button>
+                        <button onclick="resetSearch()">Wyczyść</button>
                     </td>
                 </tr>
             </tbody>
@@ -161,9 +167,9 @@
             <tr>
                 <td colspan="6" class="center">
                     <button onclick="location.href='#archiveTitle'">^</button>
-                    <button onclick="prevPage()" id="prevBtn">Poprzednia</button>
-                    <button onclick="fetchArchive()">Odśwież</button>
-                    <button onclick="nextPage()" id="nextBtn">Następna</button>
+                    <button onclick="prevPage()" id="prevBtn">⏪︎</button>
+                    <button onclick="fetchArchive()">🗘</button>
+                    <button onclick="nextPage()" id="nextBtn">⏩︎</button>
                     <button onclick="lastPage()">Ostatnia</button>
                 </td>
             </tr>

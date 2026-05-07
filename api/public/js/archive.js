@@ -474,12 +474,23 @@ async function movePlaylistToArchive(playlistId) {
         5: 'Soundtracki',
         6: 'Specjalna'
     };
+    const noticeInput = document.getElementById('movePlaylistNotice');
+    let userNotice;
+    if (noticeInput) {
+        userNotice = noticeInput.value.trim();
+    } else {
+        userNotice = '';
+    }
+    const payload = { playlistId: playlistId };
+    if (userNotice) {
+        payload.userNotice = userNotice;
+    }
     showInIframe(`Przenoszenie playlisty ${playlistNames[playlistId]}...`, false);
     try {
         const response = await fetch('/archive/movePlaylist', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ playlistId: playlistId })
+            body: JSON.stringify(payload)
         });
         if (!response.ok) {
             const errorText = await response.text();
