@@ -65,7 +65,7 @@ function pathSecurityChecker(filepath, defendingFolder = 'mp3') {
     logger('verbose', 'Sprawdzanie typu wejścia', 'pathSecurityChecker');
     if (typeof filepath !== 'string') {
         logger('warn', yellow('Nieprawidłowy typ ścieżki!'), 'pathSecurityChecker');
-        return 'INVALID_PATH_TYPE';
+        return 'INVALID_PATH_ATTEMPT';
     }
     if (filepath.length === 0) {
         logger('warn', yellow('Pusta ścieżka!'), 'pathSecurityChecker');
