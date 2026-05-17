@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --ignore debug/ --ignore mp3/ --ignore data/ --ignore index.js --ignore api/public/"
+    "start": "nodemon --ignore debug/ --ignore mp3/ --ignore data/ --ignore api/public/ index.js"
   },
   "author": "PFilip",
   "license": "ISC",
