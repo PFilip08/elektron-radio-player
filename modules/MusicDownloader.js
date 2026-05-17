@@ -94,8 +94,9 @@ async function downloadPlaylist(url, path2) {
 
     try {
         const path = path2 || `./mp3/onDemand/`;
+        let data;
         try {
-            const data = await spotify.getPlaylist(url);
+            data = await spotify.getPlaylist(url);
         } catch (e) {
             if (e.message.includes('owned by the current user')) {
                 logger('error', 'Spotify sie zesrało i nie pobierzesz playlisty której nie jesteś autorem ani nie jesteś współwłaścicielem :<', 'downloadPlaylist');
