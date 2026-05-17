@@ -127,15 +127,16 @@ export async function movePlaylist(req, res) {
         const playlistId = parseInt(req.body.playlistId);
         const userNotice = req.body.userNotice?.toString() || null;
         const secuCheck = pathSecurityChecker(playlistId.toString(), archdir);
-        if (secuCheck.includes('_ATTEMPT')) {
-            logger('warn', `Próba przenoszenia playlisty do archiwum z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - movePlaylist');
-            return res.status(403).send('Niebezpieczna ścieżka!');
+        if (Number.isNaN(playlistId)) {
+             return res.status(400).send('Nieprawidłowy ID playlisty!');
         }
-        
         if (getPlaylistName(playlistId) === playlistId) {
             return res.status(400).send('Nieprawidłowy ID playlisty!');
         }
-        
+        if (secuCheck.includes('_ATTEMPT')) {
+            logger('warn', `Próba przenoszenia playlisty do archiwum z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - movePlaylist');
+            return res.status(403).send('Niebezpieczna ścieżka!');
+        }     
         const result = await movePlaylistToArchive(playlistId, userNotice);
         if (typeof result === 'string') {
             return res.status(400).send(result);
