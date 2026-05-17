@@ -296,7 +296,6 @@ function getArchiveSubfolders() {
             const mp3Count = files.filter(f => path.extname(f).toLowerCase() === '.mp3').length;
             subfolders.push({
                 name: item,
-                path: itemPath,
                 mp3Count: mp3Count
             });
         }
