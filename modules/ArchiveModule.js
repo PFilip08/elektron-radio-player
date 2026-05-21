@@ -267,7 +267,7 @@ function deleteFromArchive(filename) {
     }
     try {
         logger('verbose', `Plik istnieje, przystąpienie do usuwania`, 'deleteFromArchive');
-        //fs.unlinkSync(filePath);
+        fs.unlinkSync(filePath);
         logger('log', `Usunięto plik ${filename} z archiwum.`, 'deleteFromArchive');
         return { message: `Usunięto plik ${filename} z archiwum.` };
     } catch (err) {
