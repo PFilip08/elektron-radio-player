@@ -1,9 +1,8 @@
 <!-- archivepanel.ejs -->
 <%- include('./partials/recoveryStatus.ejs') %>
-<script src="../js/archive.js" async></script>
 <h1 id="archiveTitle">Archiwum</h1>
-<div style="display: flex; justify-content: center; flex-wrap: wrap; margin-bottom: 20px;">
-    <div id="transferPanel">
+<section style="margin-bottom: 20px;">
+    <div id="transferPanel" style="margin-bottom: 20px;">
         <table style="background: darkred;">
             <thead>
                 <tr>
@@ -12,12 +11,12 @@
             </thead>
             <tbody>
                 <tr>
-                    <td class="center">
+                    <td>
                         <select id="archiveFolderSelect" style="min-width: 250px; padding: 5px;">
                             <option value="">-- Wybierz podkatalog archiwum --</option>
                         </select>
                     </td>
-                    <td class="center">
+                    <td>
                         <button onclick="loadArchiveFolders()" style="margin-right: 5px;">Odśwież listę</button>
                         <button onclick="initiateCopyFromArchive()" style="font-weight: bold;">
                             Kopiuj do playlisty 6
@@ -27,8 +26,6 @@
             </tbody>
         </table>
     </div>
-</div>
-<div style="display: flex; justify-content: center; flex-wrap: wrap; margin-bottom: 20px;">
     <div id="copyPlaylistPanel">
         <table style="background: darkgreen;">
             <thead>
@@ -38,38 +35,38 @@
             </thead>
             <tbody>
                 <tr>
-                    <td class="center" colspan="3">
+                    <td colspan="3">
                         <label for="movePlaylistNotice">Adnotacja (opcjonalnie):</label>
                         <input type="text" id="movePlaylistNotice" placeholder="np. Święto upadku Xeoniarni" style="min-width: 260px;" />
                     </td>
                 </tr>
                 <tr>
-                    <td class="center">
+                    <td>
                         <button onclick="movePlaylistToArchive(1)">Klasyczna (1)</button>
                     </td>
-                    <td class="center">
+                    <td>
                         <button onclick="movePlaylistToArchive(2)">POP (2)</button>
                     </td>
-                    <td class="center">
+                    <td>
                         <button onclick="movePlaylistToArchive(3)">RAP (3)</button>
                     </td>
                 </tr>
                 <tr>
-                    <td class="center">
+                    <td>
                         <button onclick="movePlaylistToArchive(4)">ROCK (4)</button>
                     </td>
-                    <td class="center">
+                    <td>
                         <button onclick="movePlaylistToArchive(5)">Soundtracki (5)</button>
                     </td>
-                    <td class="center">
+                    <td>
                         <button onclick="movePlaylistToArchive(6)">Specjalna (6)</button>
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
-</div>
-<div style="display: flex; justify-content: center; flex-wrap: wrap;">
+</section>
+<section style="display: flex; justify-content: center; flex-wrap: wrap;">
     <div id="anomaliesPanel">
         <table style="background: purple;">
             <thead>
@@ -98,7 +95,7 @@
         </table>
         <div id="filterInfo" style="text-align: center; margin-top: 10px; font-size: 1em; color: #ff69b4;"></div>
     </div>
-        <div id="locationPanel">
+    <div id="locationPanel">
         <table style="background: darkblue;">
             <thead>
             <tr>
@@ -107,25 +104,25 @@
             </thead>
             <tbody>
             <tr>
-                <td class="center">
+                <td>
                     <button onclick="filterRootFiles()">Pokaż pliki z katalogu głównego</button>
                 </td>
-                <td class="center">
+                <td>
                     <button onclick="filterSubfolderFiles()">Pokaż pliki z podfolderów</button>
                 </td>
             </tr>
             <tr>
-                <td class="center" colspan="2">
+                <td colspan="2">
                     <button onclick="resetFilters()">Resetuj filtry</button>
                 </td>
             </tr>
             </tbody>
         </table>
-        <div id="locationInfo" style="text-align: center; margin-top: 10px; font-size: 1em; color: #87ceeb;"></div>
+        <div id="locationInfo" style="margin-top: 10px; font-size: 1em; color: #87ceeb;"></div>
     </div>
-</div>
+</section>
 <br/>
-<div>
+<section>
     <div>
         <table style="background: green;">
             <thead>
@@ -135,21 +132,22 @@
             </thead>
             <tbody>
                 <tr>
-                    <td class="center">
+                    <td>
                         <span>Tytuł lub wykonawca:</span>
                     </td>
-                    <td class="center">
+                    <td>
                         <input type="search" id="searchFile" placeholder="np. Taboret, Akcent..." required/>
                         <button onclick="searchFile()">Szukaj</button>
                     </td>
-                    <td class="center">
+                    <td>
                         <button onclick="resetSearch()">Wyczyść</button>
                     </td>
                 </tr>
             </tbody>
         </table>
-        <div id="searchInfo" style="text-align: center; margin-top: 10px; font-size: 1.1em; color: #0f0;"></div>
+        <div id="searchInfo" style="margin-top: 10px; font-size: 1.1em; color: #0f0;"></div>
     </div>
+    <div style="margin-bottom: 15px;"><%- include('./partials/res.ejs') %></div>
     <table id="archiveTable" style="background: blue;">
         <thead>
             <tr>
@@ -164,7 +162,7 @@
         <tbody>
         </tbody>
             <tr>
-                <td colspan="6" class="center">
+                <td colspan="6">
                     <button onclick="location.href='#archiveTitle'">^</button> <!-- TODO: ma odnosić na pierwszą stronę, a nie do góry-->
                     <button onclick="prevPage()" id="prevBtn" title="Poprzednia">⏪︎</button>
                     <button onclick="fetchArchive()" title="jakieś badziewie">🗘</button>
@@ -173,9 +171,9 @@
                 </td>
             </tr>
     </table>
-        <div style="margin-bottom: 10px; text-align: center;">
+    <div style="margin-bottom: 10px;">
         <span>Strona: <span id="pageInfo">1 / 1</span></span>
         <span style="margin-left: 20px;">Łącznie utworów: <span id="totalSongs">0</span></span>
     </div>
-</div>
-<%- include('./partials/res.ejs') %> <!-- TODO: to gunfo przenieść wyżej -->
+</section>
+<script src="../js/archive.js" async></script>
