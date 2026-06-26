@@ -154,7 +154,6 @@ function blockGetApiData() {
 }
 
 async function monitorRecoveryMode() {
-    if (recoveryModeWindowStart === null) recoveryModeWindowStart = Date.now();
     if (recoveryModeCounter > recoveryModeLimit) {
         logger('warn',yellow(`Przekroczono limit uruchomień trybu recovery: ${recoveryModeCounter}/${recoveryModeLimit} w oknie ${recoveryModeWindow / 1000} sekund`),'monitorRecoveryMode');
         logger('warn',yellow('Zatrzymywanie funkcji checkUpdate i odraczanie funkcji ApiConnector...'),'monitorRecoveryMode');
@@ -169,6 +168,7 @@ async function monitorRecoveryMode() {
         logger('debug','W oknie 60 sekund nie przekroczono limitu, licznik wyzerowany','monitorRecoveryMode');
         recoveryModeCounter = 0;
         recoveryModeWindowStart = null;
+        stopRecoveryModeInterval();
     }
 }
 
