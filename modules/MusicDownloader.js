@@ -94,7 +94,16 @@ async function downloadPlaylist(url, path2) {
 
     try {
         const path = path2 || `./mp3/onDemand/`;
-        const data = await spotify.getPlaylist(url);
+        let data;
+        try {
+            data = await spotify.getPlaylist(url);
+        } catch (e) {
+            if (e.message.includes('owned by the current user')) {
+                logger('error', 'Spotify sie zesrało i nie pobierzesz playlisty której nie jesteś autorem ani nie jesteś współwłaścicielem :<', 'downloadPlaylist');
+                return 'Spotify sie zesrało i nie pobierzesz playlisty której nie jesteś autorem ani nie jesteś współwłaścicielem :<';
+            }
+            throw e;
+        }
         for (let i in data.tracks) {
             let song = await getTrackInfo(data.tracks[i]);
             logger('log', `Pobieranie: ${song.name + ' by: ' + song.artists.join(', ')}`, 'downloadPlaylist');
@@ -199,15 +208,16 @@ async function getTrackInfo(url) {
         };
         return trackInfo;
     }
-    if (urlParts[3] === 'album') {
-        logger('log', 'Wykryto album', 'getTrackInfo');
-        return await spotify.getAlbum(url);
-    } else if (urlParts[3] === 'playlist') {
-        logger('log', 'Wykryto playlistę', 'getTrackInfo');
-        return await spotify.getPlaylist(url);
-    } else {
-        logger('log', 'Wykryto piosenkę', 'getTrackInfo');
-        return await spotify.getTrack(url);
+    switch (urlParts[3]) {
+        case 'album':
+            logger('log', 'Wykryto album', 'getTrackInfo');
+            return await spotify.getAlbum(url);
+        case 'playlist':
+            logger('log', 'Wykryto playlistę', 'getTrackInfo');
+            return await spotify.getPlaylist(url);
+        default:
+            logger('log', 'Wykryto piosenkę', 'getTrackInfo');
+            return await spotify.getTrack(url);
     }
     } catch (e) {
         logger('error', "Błąd w trakcie wykonywania funkcji getTrackInfo", 'getTrackInfo');
@@ -238,16 +248,20 @@ async function downloadYT(url, votes, path2, override) {
         const song = info.song;
         const description = info.description;
         const title = info.title;
-        const musicKeywords = ['official music video', 'lyrics', 'audio', 'album', 'song', 'spotify', 'tidal', 'muzyka', 'muzy', 'muza', 'płytę', 'feat', 'remastered', 'vevo', 'mix', 'nightcore', 'hardstyle', 'sony music entertainment', 'bmg rights management', 'warner music group company'];
+        const musicKeywords = ['official music video', 'lyrics', 'audio', 'album', 'song', 'spotify', 'tidal', 'muzyka', 'muzy', 'muza', 'płytę', 'feat', 'remastered', 'vevo', 'mix', 'nightcore', 'hardstyle', 'sony music entertainment', 'bmg rights management', 'warner music group company', 'piosenka', 'piosenek'];
         if (!override) {
             if (song.videoDetails.category[0] !== 'Music') {
                 if (song.videoDetails.category[0] === 'Entertainment') {
                     logger('log', `KATEGORIA ENTERTAINMENT!`, 'downloadYT');
+                } else if (song.videoDetails.category[0] === 'Gaming') {
+                    logger('log', `KATEGORIA GEJMING!`, 'downloadYT');
                 } else if (song.videoDetails.category[0] === undefined) {
                     logger('warn', `KATEGORIA CHUJ WIE CO (undefined)`, 'downloadYT');
+                } else {
+                    logger('warn', `KOTLET! ${song.videoDetails.category[0]}`, 'downloadYT');
                 }
-                if (song.videoDetails.category[0] !== 'Entertainment') {
-                    logger('warn', `Nie jest to kategoria Music ani Entertainment! Wykryto: ${song.videoDetails.category[0]}`, 'downloadYT');
+                if (song.videoDetails.category[0] !== 'Entertainment' && song.videoDetails.category[0] !== 'Gaming') {
+                    logger('warn', `Nie jest to kategoria Music ani Entertainment ani Gejming! Wykryto: ${song.videoDetails.category[0]}`, 'downloadYT');
                     return `Nie można pobrać bo nie jest to kategoria Music/Entertainment! Tylko: ${song.videoDetails.category[0]} jedyne co możesz zrobić to poprosić szanownego Pana admina aby dodał do tego wyjątek.`;
                 }
                 if (musicKeywords.some(keyword => title.includes(keyword) || description.includes(keyword))) {
@@ -272,8 +286,8 @@ async function downloadYT(url, votes, path2, override) {
             logger('log', 'Pobieranie z archiwum :>', 'downloadYT');
             return copyFromArchive(`${file}.mp3`, filePath);
         }
-        
-        let stream = ytdlpDown.execStream([url, '-f', 'ba', '-x']);
+        //No playlist po to bo jak ktoś wrzuci link do filmu z yt z dodatkiem query list to ytdlp domyślnym zachowaniem pobierze całą playlistę... Jaki idiota to programował?
+        let stream = ytdlpDown.execStream([url, '-f', 'ba', '-x', '--no-playlist']);
 
         const tempFilePath = path.resolve(`${os.tmpdir()}/${file}.webm`);
         const outputFilePath = path.resolve(`${Path}${file}.mp3`);
@@ -380,29 +394,29 @@ async function downloadYT(url, votes, path2, override) {
 }
 async function autoRemoveFiles() {
     fs.readdir('./mp3/onDemand', (err, files) => {
-        if (err) return logger('error '+err,'autoRemoveFiles');
-        if (files.length === 0) return logger('task','Brak plików do usunięcia.','autoRemoveFiles');
+        if (err) return logger('error '+err,'autoRemoveFiles - onDemand');
+        if (files.length === 0) return logger('task','Brak plików do usunięcia.','autoRemoveFiles - onDemand');
         for (let i in files) {
             if (fs.lstatSync('./mp3/onDemand/'+files[i]).isDirectory()) {
-                logger('task', `Usunięto folder "${files[i]}" wraz z zawartością`, 'autoRemoveFiles');
+                logger('task', `Usunięto folder "${files[i]}" wraz z zawartością`, 'autoRemoveFiles - onDemand');
                 fs.rmSync('./mp3/onDemand/'+files[i], { recursive: true, force: true })
                 continue;
             }
             fs.unlinkSync(path.join('./mp3/onDemand', files[i]));
-            logger('task', `Usunięto ${files[i]}`, 'autoRemoveFiles')
+            logger('task', `Usunięto ${files[i]}`, 'autoRemoveFiles - onDemand')
         }
     });
     fs.readdir('./mp3/7', (err, files) => {
-        if (err) return logger('error '+err,'autoRemoveFiles');
-        if (files.length === 0) return logger('task','Brak plików do usunięcia.','autoRemoveFiles');
+        if (err) return logger('error '+err,'autoRemoveFiles - 7');
+        if (files.length === 0) return logger('task','Brak plików do usunięcia.','autoRemoveFiles - 7');
         for (let i in files) {
             if (fs.lstatSync('./mp3/7/'+files[i]).isDirectory()) {
-                logger('task', `Usunięto folder "${files[i]}" wraz z zawartością`, 'autoRemoveFiles');
+                logger('task', `Usunięto folder "${files[i]}" wraz z zawartością`, 'autoRemoveFiles - 7');
                 fs.rmSync('./mp3/7/'+files[i], { recursive: true, force: true });
                 continue;
             }
             fs.unlinkSync(path.join('./mp3/7', files[i]));
-            logger('task', `Usunięto ${files[i]}`, 'autoRemoveFiles');
+            logger('task', `Usunięto ${files[i]}`, 'autoRemoveFiles - 7');
         }
     });
 }

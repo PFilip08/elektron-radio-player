@@ -6,6 +6,29 @@ let curIndex = -1;
 let state = 1;
 let lastword = '';
 
+function performAction(url, params = {}) {
+    let metoda = 'POST';
+    const queryString = new URLSearchParams(params).toString();
+    const iframe = document.getElementById('res');
+    if (url.startsWith('/dev/api')) {
+        metoda = 'GET';
+    } else if (url.startsWith('/dev/schedules/removeTask') || url.startsWith('/votes/delmp3')) {
+        metoda = 'DELETE';
+    }
+    fetch(`${url}?${queryString}`, { method: metoda })
+        .then(response => response.text())
+        .then(data => {
+            console.log('Akcja wykonana:', data);
+            iframe.contentWindow.document.open();
+            iframe.contentWindow.document.write(data);
+            iframe.contentWindow.document.close();
+        })
+        .catch(error => {
+            console.error('Błąd:', error);
+            alert('Wystąpił błąd podczas wykonywania akcji.\nSkontaktuj się z Działem Taboretów.');
+        });
+}
+
 function nextLetter() {
     if (curNode == null) return null;
     if (curIndex >= curNode.data.length) {

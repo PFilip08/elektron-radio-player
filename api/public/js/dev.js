@@ -1,8 +1,14 @@
 let overrideTarget = null;
 function performAction(url, params = {}) {
+    let metoda = 'POST';
     const queryString = new URLSearchParams(params).toString();
     const iframe = document.getElementById('res');
-    fetch(`${url}?${queryString}`, { method: 'GET' })
+    if (url.startsWith('/dev/api')) {
+        metoda = 'GET';
+    } else if (url.startsWith('/dev/schedules/removeTask')) {
+        metoda = 'DELETE';
+    }
+    fetch(`${url}?${queryString}`, { method: metoda })
         .then(response => response.text())
         .then(data => {
             console.log('Akcja wykonana:', data);
@@ -191,7 +197,7 @@ function addTimeRule() {
     entry.innerHTML = `
         <input type="time" class="rule-start" placeholder="Start">
         <input type="time" class="rule-end" placeholder="End">
-        <button onclick="removeTimeRule(this)">Remove</button>
+        <button onclick="removeTimeRule(this)">Usuń</button>
     `;
     container.appendChild(entry);
 }
@@ -211,7 +217,7 @@ function addVoteEntry() {
         <input type="text" class="song-url" placeholder="Plik/URL">
         <input type="number" value="0" class="song-votes" placeholder="Votes" min="0">
         <input type="date" value="${new Date().toLocaleDateString('en-CA')}" class="song-date">
-        <button onclick="removeVoteEntry(this)">Remove</button>
+        <button onclick="removeVoteEntry(this)">Usuń</button>
     `;
     container.appendChild(entry);
 }
@@ -269,6 +275,34 @@ function loadTimeTablesPreset(preset) {
             document.getElementById('timeRulesContainer').innerHTML = '';
             showMessage(`Załadowano preset: ${preset} - Weekend z standardowymi playlistami`);
             break;
+        case 'fromPreviousData':
+            fetch('/stats/data')
+                .then(response => response.json())
+                .then(data => {
+                    document.querySelector('input[name="isOn"][value="true"]').checked = true;
+                    document.getElementById('currentPlaylistId').value = data.currentPlaylistId || '1';
+
+                    ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].forEach(day => {
+                        document.querySelector(`input[name="day"][value="${day}"]`).checked = data.timeRules.applyRule[day] === 1;
+                    });
+
+                    document.getElementById('timeRulesContainer').innerHTML = '';
+                    if (data.timeRules.rules && data.timeRules.rules["1"]) {
+                        data.timeRules.rules["1"].forEach(rule => {
+                            addTimeRule();
+                            const entries = document.querySelectorAll('.time-rule-entry');
+                            const lastEntry = entries[entries.length - 1];
+                            lastEntry.querySelector('.rule-start').value = rule.start;
+                            lastEntry.querySelector('.rule-end').value = rule.end;
+                        });
+                    }
+                    showMessage(`Załadowano preset: ${preset} - Dane z poprzedniej konfiguracji DevAPI`);
+                })
+                .catch(error => {
+                    console.error('Error loading previous data:', error);
+                    showMessage('Error loading previous data: ' + error.message);
+                });
+            break;
         case 'off':
             document.querySelector('input[name="isOn"][value="false"]').checked = true;
             document.querySelectorAll('input[name="day"]').forEach(cb => cb.checked = false);
@@ -285,11 +319,11 @@ function loadVotesPreset(preset) {
     switch(preset) {
         case 'popular':
             const popularSongs = [
-                {id: 1, title: 'Popular Hit Song 1', url: '7Popular_Hit_1.mp3', votes: 450},
-                {id: 2, title: 'Popular Hit Song 2', url: '7Popular_Hit_2.mp3', votes: 350},
-                {id: 3, title: 'Popular Hit Song 3', url: '7Popular_Hit_3.mp3', votes: 300},
-                {id: 4, title: 'Popular Hit Song 4', url: '7Popular_Hit_4.mp3', votes: 250},
-                {id: 5, title: 'Popular Hit Song 5', url: '7Popular_Hit_5.mp3', votes: 150}
+                {id: 1, title: 'Popular Hit Song 1', url: '7/Popular_Hit_1.mp3', votes: 450},
+                {id: 2, title: 'Popular Hit Song 2', url: '7/Popular_Hit_2.mp3', votes: 350},
+                {id: 3, title: 'Popular Hit Song 3', url: '7/Popular_Hit_3.mp3', votes: 300},
+                {id: 4, title: 'Popular Hit Song 4', url: '7/Popular_Hit_4.mp3', votes: 250},
+                {id: 5, title: 'Popular Hit Song 5', url: '7/Popular_Hit_5.mp3', votes: 150}
             ];
 
             popularSongs.forEach(song => {
@@ -321,7 +355,27 @@ function loadVotesPreset(preset) {
             });
             showMessage(`Załadowano preset: ${preset} - Testowe songi z ytmusic`);
             break;
-
+        case 'fromFile':
+            fetch('/votes/get')
+                .then(response => response.json())
+                .then(votes => {
+                    votes.forEach(vote => {
+                        addVoteEntry();
+                        const entries = document.querySelectorAll('.vote-entry');
+                        const lastEntry = entries[entries.length - 1];
+                        lastEntry.querySelector('.song-id').value = vote.id;
+                        lastEntry.querySelector('.song-name').value = vote.uSongs.title || '';
+                        lastEntry.querySelector('.song-url').value = vote.uSongs.url || '';
+                        lastEntry.querySelector('.song-votes').value = vote.votes || 0;
+                        lastEntry.querySelector('.song-date').value = vote.created_at ? new Date(vote.created_at).toLocaleDateString('en-CA') : new Date().toLocaleDateString('en-CA');
+                    });
+                    showMessage(`Załadowano preset: ${preset} - Dane z aktualnego pliku votes.json`);
+                })
+                .catch(error => {
+                    console.error('Error loading votes from file:', error);
+                    showMessage('Error loading votes from file: ' + error.message);
+                });
+            break;
         case 'empty':
             showMessage(`Załadowano preset: ${preset} - Reset wszystkich songów`);
             break;

@@ -7,12 +7,14 @@ import powerRouter from "./routes/power.router.js";
 import votesRouter from "./routes/votes.router.js";
 import devRouter from "./routes/dev.router.js";
 import secRouter from "./routes/security.router.js";
+import archiveRouter from './routes/archive.router.js';
 import * as path from "node:path";
 import {fileURLToPath} from 'url';
 import * as os from "node:os";
 import {DebugSaveToFile} from '../modules/DebugMode.js';
 import {previousData} from "../modules/ApiConnector.js";
 import expressLayouts from 'express-ejs-layouts';
+
 const app = express();
 const port = process.env.PORT || 8080;
 
@@ -34,6 +36,7 @@ app.use((req, res, next) => {
 app.get('/', (req, res) => {
   res.status(200).send('Ok');
 })
+
 
 app.get('/admin', function(req, res){
   res.render('adminpanel', {
@@ -92,6 +95,7 @@ app.use('/status', statusRouter);
 app.use('/power', powerRouter);
 app.use('/votes', votesRouter);
 app.use('/dev', devRouter);
+app.use('/archive', archiveRouter);
 
 export default function () {
   app.listen(port, () => {

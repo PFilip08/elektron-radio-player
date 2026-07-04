@@ -2,7 +2,7 @@ import {downloader, getTrackInfo} from "../../modules/MusicDownloader.js";
 import {logger} from "../../modules/Logger.js";
 import schedule from "node-schedule";
 import {playOnDemand} from "../../modules/MusicPlayer.js";
-import {sterylizator} from "../../modules/Other.js";
+import {pathSecurityChecker, sterylizator} from "../../modules/Other.js";
 import {scheduleKillTask} from "../../modules/TaskScheduler.js";
 import {DebugSaveToFile} from "../../modules/DebugMode.js";
 import {sterylizatorIP} from "../../modules/Other.js";
@@ -11,9 +11,16 @@ import {sterylizatorIP} from "../../modules/Other.js";
 export async function downloadSong(req, res) {
     try {
         const uri = req.query.uri;
-        const downloadStatus = await downloader(uri);
         let path = undefined;
-        if (req.query.path) path = `./mp3/${req.query.path}/`;
+        if (req.query.path) {
+            path = `./mp3/${req.query.path}/`;
+            const secuCheck = pathSecurityChecker(req.query.path);
+            if (secuCheck.includes('_ATTEMPT')) {
+                logger('warn', `Próba pobrania pliku z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - downloadSong');
+                return res.status(403).send('Niebezpieczna ścieżka!');
+            }
+        }
+        const downloadStatus = await downloader(uri, false, path);
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - downloadSong');
         if (!uri) return res.status(400).send('Nie podano linku!');
         if (!downloadStatus.includes('Pobrano')) return res.status(500).send(downloadStatus);
@@ -33,10 +40,7 @@ export async function downloadAndPlay(req, res) {
     try {
         const uri = req.query.uri;
         const downloadStatus = await downloader(uri);
-        // const time = req.query.time;
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - downloadAndPlay');
-        //ogarnięte
-        // console.log(downloadStatus);
         if (!uri) return res.status(400).send('Nie podano linku!');
         if (!downloadStatus.includes('Pobrano')) return res.status(500).send(downloadStatus);
         const trackInfo = await getTrackInfo(uri);

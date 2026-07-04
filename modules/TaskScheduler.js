@@ -7,6 +7,7 @@ import {checkIfVLCisRunning, checkIfVLConVotes, sterylizator} from "./Other.js";
 import {getVotesData} from "./VotesConnector.js";
 import { Mutex } from 'async-mutex';
 import {yellow} from 'colorette';
+import { playlistCache } from "../api/controllers/status.controller.js";
 
 function taskNumber() {
     let n = 0;
@@ -72,6 +73,7 @@ function scheduleVotes(timeStart, timeEnd, id, i) {
 async function downloadVotes() {
     logger('verbose', 'Pobieranie danych z getVotesData', 'massSchedule - downloadVotes');
     const data = await getVotesData();
+    playlistCache.delete("7"); // usuwanie cache dla playlisty 7, bo głosy się zmieniły
     if (data === 'brak') {emptyVotes = true; return logger('log', 'Brak danych!!!', 'massSchedule - downloadVotes')}
     for (let i in data) {
         await downloader(data[i].uSongs.url, true);
@@ -91,18 +93,18 @@ async function checkScheduleTime(timeEnd, timeStart, rule, breakNumber) {
     let breakNumberInt = parseInt(breakNumber, 10) + 1;
     logger('verbose', `Sprawdzanie zasady ${rule} i przerwy ${breakNumberInt}`, 'checkScheduleTime');
     breakNumber = (breakNumber + 1);
-    if (timeEndArray[0] < timeStartArray[0]) {
+    if (parseInt(timeEndArray[0]) < parseInt(timeStartArray[0])) {
         logger('verbose', yellow('WYKRYTO RÓŻNICĘ W GODZINIE!!!'), 'checkScheduleTime');
         logger('error', `Dla zasady ${rule} i przerwy ${breakNumberInt}, czas zakończenia (${timeEnd} aka "end" w JSONie) jest wcześniejszy niż czas rozpoczęcia (${timeStart}), różnica wynosi ${(timeStartArray[0] - timeEndArray[0])} godziny.`, 'checkScheduleTime');
         return false;
     }
-    if (timeEndArray[0] === timeStartArray[0]) {
-        if (timeEndArray[1] < timeStartArray[1]) {
+    if (parseInt(timeEndArray[0]) === parseInt(timeStartArray[0])) {
+        if (parseInt(timeEndArray[1]) < parseInt(timeStartArray[1])) {
             logger('verbose', yellow('WYKRYTO RÓŻNICĘ W MINUTACH!!!'), 'checkScheduleTime');
             logger('error', `Dla zasady ${rule} i przerwy ${breakNumberInt}, czas zakończenia (${timeEnd} aka "end" w JSONie) jest wcześniejszy niż czas rozpoczęcia (${timeStart} aka "start" w JSONie), różnica wynosi ${(timeStartArray[1] - timeEndArray[1])} minut.`, 'checkScheduleTime');
             return false;
         }
-        else if (timeEndArray[1] === timeStartArray[1]) {
+        else if (parseInt(timeEndArray[1]) === parseInt(timeStartArray[1])) {
             logger('verbose', yellow('WYKRYTO BEZ SENSU ZAPIS!!!'), 'checkScheduleTime');
             logger('error', `Dla zasady ${rule} i przerwy ${breakNumberInt}, czas zakończenia (${timeEnd} aka "end" w JSONie) jest taki sam jak czas rozpoczęcia (${timeStart} aka "start" w JSONie).`, 'checkScheduleTime');
             return false;
@@ -184,6 +186,7 @@ async function massSchedule() {
                     logger('verbose', `Znaleziono playlistę!`, 'massSchedule');
                     id = time[mappedDays[l]][i].playlist;
                 }
+                logger('verbose', 'Planowanie zadań...', 'massSchedule');
                 if (time[mappedDays[l]][i].playlist === 0) {
                     logger('verbose', 'Znaleziono playlistę 0, planowanie tylko ubijania plejera. Kontynuowanie wykonywania pętli...', 'massSchedule');
                     scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, [l, i]);
@@ -198,7 +201,7 @@ async function massSchedule() {
                         continue;
                     }
                 }
-                if ((messageCounter && time[mappedDays[l]][i].playlist === undefined && currentPlaylist === 7) || emptyVotes) { // gdy nie ma neta i gdy puste głosy
+                if ((!global.devAPIEnabled && messageCounter && time[mappedDays[l]][i].playlist === undefined && currentPlaylist === 7) || emptyVotes) { // gdy nie ma neta i gdy puste głosy
                     logger('verbose', yellow('Wykryto brak internetu lub pusty response z funkcji getVotesData! Losowanie playlist statycznych...'), 'massSchedule');
                     const id = Math.floor(Math.random() * 5) + 1; // rosyjska ruletka od 1 do 5
                     scheduleMusicTask(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, {id}, [l, i]);
@@ -209,9 +212,11 @@ async function massSchedule() {
                 if (currentPlaylist !== 7 && !messageCounter && time[mappedDays[l]][i].playlist === 7 && !downloaded) {
                     logger('verbose', 'Znaleziono playlistę 7! Uruchamianie pobierania piosenek z głosowania', 'massSchedule');
                     downloaded = true;
+                    // console.log('głosy pozdrawiam');
                     await downloadVotes();
                 }
                 if (currentPlaylist === 7) { // gdy główna na 7
+                    logger('verbose', 'Główna playlista na 7! Planowanie dla głosów...')
                     scheduleVotes(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, `${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, id, [l, i]);
                     continue;
                 }
@@ -227,8 +232,6 @@ async function massSchedule() {
                     scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, [l, i]);
                     continue;
                 }
-
-                logger('verbose', 'Planowanie zadań...', 'massSchedule');
                 if (id === 7) { // gdy pojedyncza na 7
                     logger('verbose', 'Znaleziono playlistę 7! Uruchamianie planowania dla niej zadania...', 'massSchedule');
                     scheduleVotes(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, `${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, id, [l, i]);
@@ -288,4 +291,4 @@ function getScheduledTasks() {
     });
 }
 
-export { scheduleMusicTask, scheduleKillTask, massSchedule, getScheduledTasks, taskNumber, scheduleMinorTasks, emptyVotes, downloaded };
+export { scheduleMusicTask, scheduleKillTask, massSchedule, getScheduledTasks, taskNumber, scheduleMinorTasks, emptyVotes, downloaded, downloadVotes };

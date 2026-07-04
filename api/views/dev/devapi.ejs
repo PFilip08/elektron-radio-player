@@ -1,4 +1,5 @@
 <!-- dev/devapi.ejs -->
+<%- include('../partials/recoveryStatus.ejs') %>
 <div class="center counter" id="devapi-status">
     <strong>DevAPI Status: <span id="status-indicator"></span></strong>
 </div>
@@ -91,6 +92,7 @@
                 <th>Akcje</th>
                 <td>
                     <button onclick="updateTimeTables()">Zaktualizuj TimeTables</button>
+                    <button onclick="loadTimeTablesPreset('fromPreviousData')">Załaduj z previousData</button>
                     <button onclick="loadTimeTablesPreset('school')">Plan Lekcji</button>
                     <button onclick="loadTimeTablesPreset('weekend')">Tryb Weekendowy</button>
                     <button onclick="loadTimeTablesPreset('off')">System Wyłączony</button>
@@ -130,6 +132,7 @@
                 <td>
                     <button onclick="updateVotes()">Zaktualizuj Głosy</button>
                     <button onclick="loadVotesPreset('popular')">Popularne Utwory</button>
+                    <button onclick="loadVotesPreset('fromFile')">Załaduj z Pliku Votes.json</button>
                     <button onclick="loadVotesPreset('test')">Dane Testowe</button>
                     <button onclick="loadVotesPreset('empty')">Wyczyść Wszystko</button>
                 </td>

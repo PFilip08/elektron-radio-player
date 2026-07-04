@@ -3,7 +3,7 @@ import fs from "fs";
 import {yellow, red} from 'colorette';
 
 async function DebugStarter() {
-    if (process.env.VERBOSE === "true") {
+    if (process.env.VERBOSE === "true" || process.env.VERBOSE_SILENT === "true") {
         logger('verbose', 'WŁĄCZONO TRYB DEBUGOWANIA!!!', 'DebugStarter');
         global.debugmode = true;
         try {
@@ -21,22 +21,37 @@ async function DebugStarter() {
             fs.rmSync('./debug', { recursive: true });
         }
     }
-    logger('verbose', 'Następujące ustawienia są załadowane:', 'DebugStarter');
-    logger('verbose', `  - VERBOSE: ${process.env.VERBOSE}`, 'DebugStarter');
-    logger('verbose', `  - WWW: ${process.env.WWW}`, 'DebugStarter');
-    logger('verbose', `  - KILL_AT_STARTUP: ${process.env.KILL_AT_STARTUP}`, 'DebugStarter');
-    if (process.env.URI === undefined) {
-        logger('verbose', red('Nie znaleziono zmiennej środowiskowej o nazwie URI! Player nie będzie bez tego funkcjonował!'), 'DebugStarter');
-    }
-    logger('verbose', `  - URI: ${process.env.URI}`, 'DebugStarter');
-    if (process.env.SPOTIFY_CLIENT_ID === undefined) {
-        logger('verbose', red('Nie znaleziono zmiennej środowiskowej o nazwie SPOTIFY_CLIENT_ID'), 'DebugStarter');
-    }
-    if (process.env.SPOTIFY_CLIENT_SECRET === undefined) {
-        logger('verbose', red('Nie znaleziono zmiennej środowiskowej o nazwie SPOTIFY_CLIENT_SECRET'), 'DebugStarter');
-    }
-    if (process.env.VLC_PASSWORD === undefined) {
-        logger('verbose', red('Nie znaleziono zmiennej środowiskowej o nazwie VLC_PASSWORD'), 'DebugStarter');
+    try {
+        logger('verbose', 'Następujące ustawienia są załadowane:', 'DebugStarter');
+        logger('verbose', `  - VERBOSE: ${process.env.VERBOSE || 'Jak Ty tu wogóle doszedłeś?'}`, 'DebugStarter');
+        logger('verbose', `  - VERBOSE_SILENT: ${process.env.VERBOSE_SILENT || 'nie ustawiono'}`, 'DebugStarter');
+        logger('verbose', `  - WWW: ${process.env.WWW || 'nie ustawiono'}`, 'DebugStarter');
+        logger('verbose', `  - KILL_AT_STARTUP: ${process.env.KILL_AT_STARTUP || 'nie ustawiono'}`, 'DebugStarter');
+        logger('verbose', `  - PORT (Local API): ${process.env.PORT || 'nie ustawiono'}`, 'DebugStarter');
+        logger('verbose', `  - VLC_PORT: ${process.env.VLC_PORT || 'nie ustawiono'}`, 'DebugStarter');
+        logger('verbose', `  - ARCHIVE_DIR: ${process.env.ARCHIVE_DIR || 'nie ustawiono'}`, 'DebugStarter');
+        if (process.env.URI === undefined) {
+            logger('verbose', red('Nie znaleziono zmiennej środowiskowej o nazwie URI! Player nie będzie bez tego funkcjonował!'), 'DebugStarter');
+            throw new Error('Nie można znaleźć zmiennej środowiskowej URI');
+        }
+        logger('verbose', `  - URI: ${process.env.URI}`, 'DebugStarter');
+        if (process.env.SPOTIFY_CLIENT_ID === undefined) {
+            logger('verbose', red('Nie znaleziono zmiennej środowiskowej o nazwie SPOTIFY_CLIENT_ID. Bez tego MusicDownloader nie będzie działał poprawnie!'), 'DebugStarter');
+            throw new Error('Nie można znaleźć zmiennej środowiskowej SPOTIFY_CLIENT_ID');
+        }
+        if (process.env.SPOTIFY_CLIENT_SECRET === undefined) {
+            logger('verbose', red('Nie znaleziono zmiennej środowiskowej o nazwie SPOTIFY_CLIENT_SECRET. Bez tego MusicDownloader nie będzie działał poprawnie!'), 'DebugStarter');
+            throw new Error('Nie można znaleźć zmiennej środowiskowej SPOTIFY_CLIENT_SECRET');
+        }
+        if (process.env.VLC_PASSWORD === undefined) {
+            logger('verbose', red('Nie znaleziono zmiennej środowiskowej o nazwie VLC_PASSWORD! Bez tego VLC nie będzie działał!'), 'DebugStarter');
+            throw new Error('Nie można znaleźć zmiennej środowiskowej VLC_PASSWORD');
+        }
+    } catch (e) {
+        logger('error', red('Użyszkodniku nie zapomniałeś przypadkiem przeczytać README.md i ogarnąć plik .env?'), 'DebugStarter');
+        console.log(e);
+        logger('verbose', red('Wywalanie procesu z kodem 2'), 'DebugStarter');
+        process.exit(2);
     }
 }
 

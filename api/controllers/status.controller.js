@@ -4,7 +4,7 @@ import {getPlaylistName, playlistSongQuery, playlistListQuery, getPlayingSong} f
 import { messageCounter, previousData } from "../../modules/ApiConnector.js";
 import { pathSecurityChecker, sterylizatorIP } from "../../modules/Other.js";
 
-const playlistCache = new Map();
+export const playlistCache = new Map();
 export async function queryPlaylist(req, res) {
     let timestamp= new Date(Date.now()).toLocaleString('pl', {
         year: 'numeric',
@@ -19,8 +19,7 @@ export async function queryPlaylist(req, res) {
         const force = req.query.nocache;
         const forceall = req.query.cacheclean;
         let playlistName = getPlaylistName(id);
-
-        if (forceall === 'true') {
+        if (req.method === 'POST' && forceall === 'true') {
             if (!playlistCache.size) {
                 logger('verbose', `Cache playlist jest pusty!`, 'LocalAPI - queryPlaylist');
                 return res.status(400).send('Cache playlist jest pusty!');
@@ -32,7 +31,7 @@ export async function queryPlaylist(req, res) {
         if (!id) {
             return res.status(400).send('Nie podano nazwy lub ID playlisty!');
         }
-        let secuCheck = pathSecurityChecker(id);
+        const secuCheck = pathSecurityChecker(id);
         if (secuCheck.includes('_ATTEMPT')) {
             logger('warn', `Próba odtworzenia pliku z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - queryPlaylist');
             return res.status(403).send('Niebezpieczna ścieżka!');

@@ -55,29 +55,39 @@ function sterylizator(input) {
     return sterilised;
 }
 
-function pathSecurityChecker(filepath) {
+function pathSecurityChecker(filepath, defendingFolder = 'mp3') {
     // Sprawdza czy ścieżka nie może wykonać Path Travels
     logger('verbose', `Sprawdzanie bezpieczeństwa ścieżki: ${filepath}`, 'pathSecurityChecker');
     if (global.debugmode === true) {
         DebugSaveToFile('Other', 'pathSecurityChecker', 'source', filepath);
         logger('verbose', 'Ścieżka źródłowa zapisana do debug/', 'pathSecurityChecker');
     }
+    logger('verbose', 'Sprawdzanie typu wejścia', 'pathSecurityChecker');
+    if (typeof filepath !== 'string') {
+        logger('warn', yellow('Nieprawidłowy typ ścieżki!'), 'pathSecurityChecker');
+        return 'INVALID_PATH_ATTEMPT';
+    }
+    if (filepath.length === 0) {
+        logger('warn', yellow('Pusta ścieżka!'), 'pathSecurityChecker');
+        return 'EMPTY_PATH_ATTEMPT';
+    }
     logger('verbose', 'Sprawdzanie czy ścieżka nie zawiera NULL_BYTE', 'pathSecurityChecker');
-    if (filepath.indexOf('\0') !== -1) {
+    if (filepath.includes('\0')) {
         logger('warn', yellow(`Próba użycia NULL_BYTE w ścieżce!!!`), 'pathSecurityChecker');
         return 'NULL_BYTE_ATTEMPT';
     }
-    logger('verbose', 'Sprawdzanie czy ścieżka nie wiedzie do ucieczki z głównego folderu', 'pathSecurityChecker');
-    const rootDirectory = path.resolve(process.cwd(), 'mp3');
-    const filename = path.join(rootDirectory, filepath);
-    if (filename.indexOf(rootDirectory) !== 0) {
-        logger('warn', yellow(`Próba wyjścia poza katalog główny mp3!!!`), 'pathSecurityChecker');
-        return 'ROOT_EXIT_ATTEMPT';
+    logger('verbose', 'Sprawdzanie czy ścieżka nie jest absolutna', 'pathSecurityChecker');
+    if (path.isAbsolute(filepath) || /^[A-Za-z]:[\\/]/.test(filepath) || filepath.startsWith('\\\\')) {
+        logger('warn', yellow(`Próba użycia ścieżki absolutnej poza ${defendingFolder}!!!`), 'pathSecurityChecker');
+        return 'ABSOLUTE_PATH_ATTEMPT';
     }
-    logger('verbose', 'Sprawdzanie czy ścieżka nie zawiera dwukropków', 'pathSecurityChecker');
-    if (!/^[a-zA-Z0-9/._-]+$/.test(filepath)) {
-        logger('warn', yellow(`Próba wyjścia poza katalog główny przy użyciu dwukropków!!!`), 'pathSecurityChecker');
-        return 'ESCAPE_PATH_ATTEMPT';
+    logger('verbose', 'Sprawdzanie czy ścieżka nie wychodzi poza katalog bazowy', 'pathSecurityChecker');
+    const rootDirectory = path.resolve(process.cwd(), defendingFolder);
+    const resolvedPath = path.resolve(rootDirectory, filepath);
+    const relativePath = path.relative(rootDirectory, resolvedPath);
+    if (relativePath === '..' || relativePath.startsWith(`..${path.sep}`)) {
+        logger('warn', yellow(`Próba wyjścia poza katalog ${defendingFolder}!!!`), 'pathSecurityChecker');
+        return 'ROOT_EXIT_ATTEMPT';
     }
     return 'NONE'
 }

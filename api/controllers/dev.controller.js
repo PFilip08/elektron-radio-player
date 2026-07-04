@@ -1,10 +1,11 @@
 import {logger} from "../../modules/Logger.js";
 import {DebugSaveToFile} from "../../modules/DebugMode.js";
-import {massSchedule, scheduleKillTask, taskNumber} from "../../modules/TaskScheduler.js";
+import {downloadVotes, massSchedule, scheduleKillTask, taskNumber, scheduleMinorTasks} from "../../modules/TaskScheduler.js";
 import schedule from "node-schedule";
 import {killPlayer, playMusic, playOnDemand, playPlaylist} from "../../modules/MusicPlayer.js";
-import {downloadYT, getYTInfo} from "../../modules/MusicDownloader.js";
+import {autoRemoveFiles, downloadYT, getYTInfo} from "../../modules/MusicDownloader.js";
 import {sterylizatorIP} from "../../modules/Other.js";
+import {clearGetApiDataBlock} from "../../modules/ApiConnector.js";
 import * as fs from "fs";
 
 export async function resetTasks(req, res) {
@@ -90,17 +91,31 @@ export async function addTask(req, res) {
                 });
                 break;
             case 'inne':
-                return res.status(400).send('Nie zaimplementowano tego typu w tej wersji API!!1!11!!!');
-                // const jobInne = schedule.scheduleJob(taskName, taskDate, function () {
-                //     logger('log', 'Wykonywanie innego zadania', 'LocalAPI-dev - addTask');
-                //     // tutaj coś kiedyś będzie
-                // });
+                //return res.status(400).send('Nie zaimplementowano tego typu w tej wersji API!!1!11!!!');
+                const jobInne = schedule.scheduleJob(taskName, taskDate, function () {
+                    logger('log', `Wykonywanie innego zadania ${taskData.action}`, 'LocalAPI-dev - addTask');
+                    switch (taskData.action) {
+                        case 'autoRemoveFiles':
+                            autoRemoveFiles();
+                            break;
+                        case 'downloadVotes':
+                            downloadVotes();
+                            break;
+                        case 'miscTask':
+                            scheduleMinorTasks();
+                            break;
+                        default:
+                            logger('warn', `Nieznana akcja dla typu "inne": ${taskData.action}`, 'LocalAPI-dev - addTask');
+                            break;
+                    }
+                    // tutaj coś kiedyś będzie (EDIT: Czyli po Filipowsku nigdy)
+                });
+                break;
             default:
                 logger('warn', `Nieznany typ zadania: ${taskType}`, 'LocalAPI-dev - addTask');
                 return res.status(400).send('Nieznany typ zadania!');
         }
         taskNumber();
-        // return res.status(201).send('cleaned');
         return res.redirect('/dev/schedules/addTask?status=added');
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby dodania taskadania', 'LocalAPI-dev - addTask');
@@ -327,12 +342,7 @@ export async function devAPITimeTables(req, res) {
 
         if (req.method === 'POST') {
             if (!global.devAPIMockData) global.devAPIMockData = {};
-            // Zamiana currentPlaylistId na obiekt {id: ...} jeśli jest liczbą
-            // if (typeof req.body.currentPlaylistId === 'number') {
-            //     req.body.currentPlaylistId = { id: req.body.currentPlaylistId };
-            // }
             global.devAPIMockData.timeTables = req.body;
-            // console.log(global.devAPIMockData.timeTables)
             logger('log', 'Zaktualizowano dane DevAPI TimeTables', 'LocalAPI-dev - devAPITimeTables');
 
             if (global.devAPIEnabled) {
@@ -372,5 +382,25 @@ export async function devAPIVotes(req, res) {
             logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI-dev - devAPIVotes');
         }
         return res.status(500).json({ error: 'Taboretowy error serwera', message: e.message });
+    }
+}
+
+export async function devOverrideRecoveryLock(req, res) {
+    try {
+        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI-dev - devOverrideRecoveryLock');
+        let result = clearGetApiDataBlock();
+        if (result) {
+            logger('log', 'Blokada getApiData została zdjęta przez devApi', 'LocalAPI-dev - devOverrideRecoveryLock');
+            return res.status(201).send('Zresetowano blokadę trybu recovery dla getApiData');
+        } else {
+            return res.status(201).send('Funkcja getApiData nie była zablokowana, więc nie można było zdjąć blokady');
+        }
+    } catch (e) {
+        logger('verbose', 'Błąd w devOverrideRecoveryLock', 'LocalAPI-dev - devOverrideRecoveryLock');
+        if (global.debugmode === true) {
+            DebugSaveToFile('LocalAPI-dev', 'devOverrideRecoveryLock', 'catched_error', e);
+            logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI-dev - devOverrideRecoveryLock');
+        }
+        return res.status(500).send('Błąd; Skontaktuj się z działem taboretów; '+e);
     }
 }

@@ -6,31 +6,31 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --ignore debug/ --ignore mp3/ index.js"
+    "start": "nodemon --ignore debug/ --ignore mp3/ --ignore data/ --ignore api/public/ index.js"
   },
   "author": "PFilip",
   "license": "ISC",
   "dependencies": {
-    "@zaptyp/spotifydl-core": "^0.4.1",
-    "async-mutex": "^0.5.0",
-    "axios": "^1.13.2",
-    "colorette": "^2.0.20",
-    "dotenv": "^17.2.3",
-    "ejs": "^4.0.1",
-    "express": "^5.2.1",
-    "express-ejs-layouts": "^2.5.1",
-    "music-metadata": "^11.10.6",
-    "node-schedule": "^2.1.1",
-    "nodemon": "^3.1.11",
-    "ps-node": "^0.1.6",
-    "vlc-client": "^1.1.1"
+    "@zaptyp/spotifydl-core": "0.4.4",
+    "async-mutex": "0.5.0",
+    "axios": "1.18.1",
+    "colorette": "2.0.20",
+    "dotenv": "17.4.2",
+    "ejs": "6.0.1",
+    "express": "5.2.1",
+    "express-ejs-layouts": "2.5.1",
+    "music-metadata": "11.13.0",
+    "node-schedule": "2.1.1",
+    "nodemon": "3.1.14",
+    "ps-node": "0.1.6",
+    "vlc-client": "1.1.1"
   },
   "overrides": {
     "tough-cookie": {
-      "psl": "https://github.com/lupomontero/psl"
+      "psl": "https://github.com/lupomontero/psl#2a3d53f3ba63c6e503da54b835a8dcac681668cd"
     },
     "yt-search": {
-      "jsonpath-plus": "^10.3.0"
+      "jsonpath-plus": "10.4.0"
     }
   }
 }

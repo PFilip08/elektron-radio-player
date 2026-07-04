@@ -20,7 +20,7 @@ No i why not?
 
 ## Instalacja
 Debianopodobne linuchy:
-1. `sudo apt update && sudo apt install git ffmpeg vlc mp3gain`
+1. `sudo apt update && sudo apt install git ffmpeg vlc mp3gain yt-dlp`
 2. `git clone https://github.com/PFilip08/elektron-radio-player`
 3. `cd elektron-radio-player`
 4. `cp .env.example .env` i skonfigurować enva

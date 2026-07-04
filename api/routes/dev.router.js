@@ -1,6 +1,6 @@
 import {Router} from 'express';
 import {getScheduledTasks} from "../../modules/TaskScheduler.js";
-import {addTask, cleanTasks, downloadYToverride, resetTasks, restartEverything, removeTask, devAPI, devAPITimeTables, devAPIVotes} from "../controllers/dev.controller.js";
+import {addTask, cleanTasks, downloadYToverride, resetTasks, restartEverything, removeTask, devAPI, devAPITimeTables, devAPIVotes, devOverrideRecoveryLock} from "../controllers/dev.controller.js";
 import * as bodyParser from "express";
 
 const devRouter = Router();
@@ -11,6 +11,7 @@ devRouter.get('/', (req, res) => {
         layout: 'layouts/dev_layout',
     });
 });
+
 devRouter.get('/schedules', (req, res) => {
     const tasks = getScheduledTasks();
     res.render('dev/schedulepanel', {
@@ -20,6 +21,7 @@ devRouter.get('/schedules', (req, res) => {
         tasks: tasks,
     });
 });
+
 devRouter.get('/schedules/addTask', (req, res) => {
     res.render('dev/addTask', {
         title: 'addTask Panel',
@@ -29,6 +31,7 @@ devRouter.get('/schedules/addTask', (req, res) => {
         status: req.query.status,
     });
 });
+
 devRouter.get('/override', (req, res) => {
     res.render('dev/overridepanel', {
         title: 'Override Panel',
@@ -37,13 +40,13 @@ devRouter.get('/override', (req, res) => {
     });
 });
 
-devRouter.get('/schedules/resetTasks', resetTasks);
-devRouter.get('/schedules/cleanTasks', cleanTasks);
-devRouter.get('/schedules/removeTask', removeTask);
+devRouter.post('/schedules/resetTasks', resetTasks);
+devRouter.post('/schedules/cleanTasks', cleanTasks);
+devRouter.delete('/schedules/removeTask', removeTask);
 devRouter.use(bodyParser.urlencoded({ extended: true })).post('/schedules/addTask', addTask);
-devRouter.get('/action/restart', restartEverything);
-devRouter.get('/action/downloadYToverride', downloadYToverride);
-
+devRouter.post('/action/restart', restartEverything);
+devRouter.post('/action/downloadYToverride', downloadYToverride);
+devRouter.post('/action/resetRecoveryLock', devOverrideRecoveryLock);
 devRouter.get('/api', devAPI);
 devRouter.get('/api/timeTables', devAPITimeTables);
 devRouter.post('/api/timeTables', bodyParser.json(), devAPITimeTables);

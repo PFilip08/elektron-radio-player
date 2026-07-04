@@ -38,7 +38,7 @@ export async function pMusic(req, res) {
         if (!file) {
             return res.status(400).send('Nie podano nazwy pliku!');
         }
-        let secuCheck = pathSecurityChecker(file);
+        const secuCheck = pathSecurityChecker(file);
         if (secuCheck.includes('_ATTEMPT')) {
             logger('warn', `Próba odtworzenia pliku z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - pMusic');
             return res.status(403).send('Niebezpieczna ścieżka!');
@@ -63,7 +63,7 @@ export async function pPlaylist(req, res) {
         if (!id) {
             return res.status(400).send('Nie podano numeru playlisty!');
         }
-        let secuCheck = pathSecurityChecker(id);
+        const secuCheck = pathSecurityChecker(id);
         if (secuCheck.includes('_ATTEMPT')) {
             logger('warn', `Próba odtworzenia playlisty z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - pPlaylist');
             return res.status(403).send('Niebezpieczna ścieżka!');
@@ -144,7 +144,11 @@ export async function vlcSzuffle(req, res) {
     try {
         const state = req.query.state;
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - vlcSzuffle');
-        if (state === 'check') return res.status(200).send(szuffle);
+        if (req.method === 'GET') {
+            if (state === 'check') return res.status(200).send(szuffle);
+        } else if (req.method !== 'POST') {
+            return res.status(405).send('Nie ta metoda!');
+        }
         if (!state) return res.status(400).send('Nie podano stanu!');
         szuffle=state;
         return res.status(201).send(`Szuffle ${state}`);
@@ -182,13 +186,9 @@ export async function normalize(req, res) {
         const playlist = req.query.playlist;
         const pathDir = './mp3/';
         const fullPath = pathDir+playlist;
-        console.log(fullPath);
         if (fullPath.includes('../')) return res.status(511).send('a dzie masło roota?!?!1');
-        // console.log(fs.existsSync(fullPath), fs.lstatSync(fullPath).isDirectory());
         if (!fs.existsSync(fullPath) || !fs.lstatSync(fullPath).isDirectory()) return res.status(406).send('playlista nie istnieje lub to nie playlista!!');
-        // console.log('dupa2');
         const dupa = await new Promise((resolve, reject) => {
-            // console.log('dupa3');
             exec(`mp3gain -r -c ${fullPath}/*`, (error, stdout, stderr) => {
                 logger('verbose', "\n"+ stdout, 'LocalAPI - normalize');
                 if (global.debugmode === true) {
