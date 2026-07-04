@@ -116,7 +116,6 @@ export async function addTask(req, res) {
                 return res.status(400).send('Nieznany typ zadania!');
         }
         taskNumber();
-        // return res.status(201).send('cleaned');
         return res.redirect('/dev/schedules/addTask?status=added');
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby dodania taskadania', 'LocalAPI-dev - addTask');
@@ -343,12 +342,7 @@ export async function devAPITimeTables(req, res) {
 
         if (req.method === 'POST') {
             if (!global.devAPIMockData) global.devAPIMockData = {};
-            // Zamiana currentPlaylistId na obiekt {id: ...} jeśli jest liczbą
-            // if (typeof req.body.currentPlaylistId === 'number') {
-            //     req.body.currentPlaylistId = { id: req.body.currentPlaylistId };
-            // }
             global.devAPIMockData.timeTables = req.body;
-            // console.log(global.devAPIMockData.timeTables)
             logger('log', 'Zaktualizowano dane DevAPI TimeTables', 'LocalAPI-dev - devAPITimeTables');
 
             if (global.devAPIEnabled) {

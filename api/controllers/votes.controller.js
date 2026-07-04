@@ -64,7 +64,6 @@ export async function resetVotes(req, res) {
 export async function saveVotes(req, res) {
     try {
         if (await checkIfVLConVotes()) killPlayerForce();
-        // console.log(await checkIfVLConVotes());
         fs.readdir('./mp3/7', (err, files) => {
             if (err) {
                 res.status(500).send('dział taboretów trza zagonić do roboty');
@@ -156,8 +155,6 @@ export async function addVotes(req, res) {
         const newId = data.length > 0 ? Math.max(...data.map(vote => vote.id)) + 1 : 1;
         let { uri } = req.query;
         if (uri.length === 0) uri = 'https://open.spotify.com/track/4uLU6hMCjMI75M1A2tKUQC';
-
-        // console.log(await getTrackInfo(uri));
         const songData = await getTrackInfo(uri);
 
         const newVoteEntry = {

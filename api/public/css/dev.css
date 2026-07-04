@@ -24,7 +24,6 @@ div button {
     min-width: 75px;
     min-height: 23px;
     padding: 0 12px;
-    /*font-family: "Pixelated MS Sans Serif",Arial;*/
     -webkit-font-smoothing: antialiased;
     font-size: 11px;
     box-sizing: border-box;
@@ -99,38 +98,6 @@ div button:hover {
     background: #fff;
     box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #bdbdbd;
 }
-
-/*.addTask input:focus,*/
-/*.addTask select:focus {*/
-/*    border: 1.5px solid #209323;*/
-/*    outline: none;*/
-/*    background: #f5faff;*/
-/*}*/
-
-/*.addTask button {*/
-/*    margin-top: 8px;*/
-/*    min-width: 75px;*/
-/*    min-height: 23px;*/
-/*    padding: 0 12px;*/
-/*    font-size: 11px;*/
-/*    border-radius: 2px;*/
-/*    border: 1px solid #003c74;*/
-/*    background: linear-gradient(180deg,#fff,#ecebe5 86%,#d8d0c4);*/
-/*    color: #222;*/
-/*    font-weight: bold;*/
-/*    box-shadow: none;*/
-/*    cursor: pointer;*/
-/*    transition: background 0.2s, color 0.2s;*/
-/*}*/
-
-/*.addTask button:hover {*/
-/*    background: #003c74;*/
-/*    color: #fff;*/
-/*}*/
-
-/*.addTask button:active {*/
-/*    background: linear-gradient(180deg,#cdcac3,#e3e3db 8%,#f2f2f1);*/
-/*}*/
 
 .info-message {
     max-width: 640px;

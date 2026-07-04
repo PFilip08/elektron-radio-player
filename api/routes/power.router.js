@@ -10,6 +10,7 @@ powerRouter.get('/stats', (req, res) => {
         navbar: false,
     });
 });
+
 powerRouter.get('/wzmak', wzmakPower);
 powerRouter.post('/wzmak', wzmakPower);
 powerRouter.get('/mixer', mixerPower);

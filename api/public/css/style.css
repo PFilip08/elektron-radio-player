@@ -106,12 +106,6 @@ table {
 /* ----------  XP  ---------- */
 /* https://botoxparty.github.io/XP.css + jakieś inne randomowe */
 
-/*.button {*/
-/*    width: 88px;*/
-/*    height: 31px;*/
-/*    border: 5px solid white;*/
-/*}*/
-
 input[type="submit"], td button {
     min-width: 75px;
     min-height: 23px;
@@ -327,8 +321,8 @@ button:disabled {
     animation: blinker 1.5s step-start infinite;
   }
   
-  @keyframes blinker {
+@keyframes blinker {
     50% {
       opacity: 0;
     }
-  }
+}

@@ -14,6 +14,7 @@ import * as os from "node:os";
 import {DebugSaveToFile} from '../modules/DebugMode.js';
 import {previousData} from "../modules/ApiConnector.js";
 import expressLayouts from 'express-ejs-layouts';
+
 const app = express();
 const port = process.env.PORT || 8080;
 

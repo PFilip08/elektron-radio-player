@@ -74,10 +74,7 @@ async function todayData() {
     const getTimeToNextRule = (currentDate, rule) => {
         const startTime = parseTime(rule.start);
         const endTime = parseTime(rule.end);
-        const remainingMs = (currentDate >= startTime && currentDate <= endTime)
-            ? endTime - currentDate
-            : startTime - currentDate;
-
+        const remainingMs = (currentDate >= startTime && currentDate <= endTime) ? endTime - currentDate : startTime - currentDate;
         const remainingMinutes = Math.floor(remainingMs / 60000);
         const remainingSeconds = Math.floor((remainingMs % 60000) / 1000);
 
