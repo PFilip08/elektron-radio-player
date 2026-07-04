@@ -93,18 +93,18 @@ async function checkScheduleTime(timeEnd, timeStart, rule, breakNumber) {
     let breakNumberInt = parseInt(breakNumber, 10) + 1;
     logger('verbose', `Sprawdzanie zasady ${rule} i przerwy ${breakNumberInt}`, 'checkScheduleTime');
     breakNumber = (breakNumber + 1);
-    if (timeEndArray[0] < timeStartArray[0]) {
+    if (parseInt(timeEndArray[0]) < parseInt(timeStartArray[0])) {
         logger('verbose', yellow('WYKRYTO RÓŻNICĘ W GODZINIE!!!'), 'checkScheduleTime');
         logger('error', `Dla zasady ${rule} i przerwy ${breakNumberInt}, czas zakończenia (${timeEnd} aka "end" w JSONie) jest wcześniejszy niż czas rozpoczęcia (${timeStart}), różnica wynosi ${(timeStartArray[0] - timeEndArray[0])} godziny.`, 'checkScheduleTime');
         return false;
     }
-    if (timeEndArray[0] === timeStartArray[0]) {
-        if (timeEndArray[1] < timeStartArray[1]) {
+    if (parseInt(timeEndArray[0]) === parseInt(timeStartArray[0])) {
+        if (parseInt(timeEndArray[1]) < parseInt(timeStartArray[1])) {
             logger('verbose', yellow('WYKRYTO RÓŻNICĘ W MINUTACH!!!'), 'checkScheduleTime');
             logger('error', `Dla zasady ${rule} i przerwy ${breakNumberInt}, czas zakończenia (${timeEnd} aka "end" w JSONie) jest wcześniejszy niż czas rozpoczęcia (${timeStart} aka "start" w JSONie), różnica wynosi ${(timeStartArray[1] - timeEndArray[1])} minut.`, 'checkScheduleTime');
             return false;
         }
-        else if (timeEndArray[1] === timeStartArray[1]) {
+        else if (parseInt(timeEndArray[1]) === parseInt(timeStartArray[1])) {
             logger('verbose', yellow('WYKRYTO BEZ SENSU ZAPIS!!!'), 'checkScheduleTime');
             logger('error', `Dla zasady ${rule} i przerwy ${breakNumberInt}, czas zakończenia (${timeEnd} aka "end" w JSONie) jest taki sam jak czas rozpoczęcia (${timeStart} aka "start" w JSONie).`, 'checkScheduleTime');
             return false;
