@@ -8,6 +8,15 @@ let isFilterActive = false;
 let currentFilterType = null;
 let currentPage = 1;
 const songsPerPage = 15;
+const playlistNames = {
+    1: 'Klasyczna',
+    2: 'POP',
+    3: 'RAP',
+    4: 'ROCK',
+    5: 'Soundtracki',
+    6: 'Specjalna',
+    7: 'Playlista do krojenia kotleta'
+};
 
 function showInIframe(message, isError = false) {
     const iframe = document.getElementById('res');
@@ -228,14 +237,29 @@ function displayPage() {
         const fileName = getSongBasename(song);
         const archiveRelativePath = getArchiveRelativePath(song) || fileName;
         const encodedArchivePath = encodeURIComponent(archiveRelativePath);
+        const selectedPlaylist = document.getElementById('playlistFolderSelect') ? document.getElementById('playlistFolderSelect').value : '';
+
         row.innerHTML = `
             <td>${globalIndex}</td>
             <td><strong>${song.title || 'Nieznany tytuł'}</strong></td>
             <td>${song.artist || 'Nieznany wykonawca'}</td>
             <td>${formatDuration(song.duration)}</td>
             <td style="font-size: 0.85em; color: #ccc;">${fileName}</td>
-            <td><button onclick="deleteArchiveFile('${encodedArchivePath}')">Usuń</button></td>
         `;
+
+        const actionTd = document.createElement('td');
+        const delBtn = document.createElement('button');
+        delBtn.textContent = 'Usuń';
+        delBtn.addEventListener('click', () => deleteArchiveFile(encodedArchivePath));
+        actionTd.appendChild(delBtn);
+        if (selectedPlaylist) {
+            const copyBtn = document.createElement('button');
+            copyBtn.textContent = 'Kopiuj';
+            copyBtn.addEventListener('click', () => copySongToPlaylist(encodedArchivePath));
+            actionTd.appendChild(copyBtn);
+        }
+
+        row.appendChild(actionTd);
         tableBody.appendChild(row);
     });
 
@@ -475,14 +499,6 @@ async function initiateCopyFromArchive() {
 }
 
 async function movePlaylistToArchive(playlistId) {
-    const playlistNames = {
-        1: 'Klasyczna',
-        2: 'POP',
-        3: 'RAP',
-        4: 'ROCK',
-        5: 'Soundtracki',
-        6: 'Specjalna'
-    };
     const noticeInput = document.getElementById('movePlaylistNotice');
     let userNotice;
     if (noticeInput) {
@@ -518,7 +534,72 @@ async function movePlaylistToArchive(playlistId) {
     }
 }
 
+async function loadPlaylistFolders() {
+    const select = document.getElementById('playlistFolderSelect');
+    try {
+        const response = await fetch('/status/query/playlist/list');
+        const list = await response.json();
+        const playlistList = Array.isArray(list.playlistList) ? list.playlistList : [];
+        const playlistNames = list.playlistNames && typeof list.playlistNames === 'object' ? list.playlistNames : {};
+        if (!select) return;
+        select.innerHTML = '<option value="">-- Wybierz katalog playlisty --</option>';
+        if (playlistList.length === 0 || playlistNames.length === 0) {
+            showInIframe('Brak katalogów/nazw playlist!', true);
+            return;
+        }
+        playlistList.forEach((playlistId, index) => {
+            if (playlistId === null || playlistId === undefined || playlistId === '') return;
+            const option = document.createElement('option');
+            const playlistLabel = playlistNames[index + 1] || playlistNames[playlistId] || playlistId;
+            option.value = String(playlistId);
+            option.textContent = `${playlistId} — ${playlistLabel}`;
+            select.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Błąd podczas ładowania katalogów playlist:', error);
+        showInIframe('Błąd podczas ładowania katalogów playlist!', true);
+    }
+}
+
+async function copySongToPlaylist(encodedArchivePath) {
+    const archivePath = decodeURIComponent(encodedArchivePath || '');
+    const select = document.getElementById('playlistFolderSelect');
+    if (!select) {
+        showInIframe('Brak elementu wyboru playlisty na stronie!', true);
+        return;
+    }
+    const playlistId = select.value;
+    if (!playlistId) {
+        showInIframe('Wybierz playlistę, do której chcesz skopiować utwór!', true);
+        return;
+    }
+    if (!archivePath) {
+        showInIframe('Nieprawidłowa ścieżka pliku do skopiowania!', true);
+        return;
+    }
+
+    try {
+        const response = await fetch('/archive/copyFileToPlaylist', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ file: archivePath, playlistId: playlistId })
+        });
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(text || `HTTP ${response.status}`);
+        }
+        const result = await response.json();
+        showInIframe(`${result.message || 'dupa'}`);
+    } catch (error) {
+        console.error('Błąd podczas kopiowania pliku do playlisty:', error);
+        showInIframe(`Błąd podczas kopiowania pliku: ${error.message || error}`, true);
+    }
+}
+
 window.onload = () => {
     fetchArchive();
     loadArchiveFolders();
+    loadPlaylistFolders();
+    const sel = document.getElementById('playlistFolderSelect');
+    if (sel) sel.addEventListener('change', displayPage);
 };
