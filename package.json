@@ -11,7 +11,7 @@
   "author": "PFilip",
   "license": "ISC",
   "dependencies": {
-    "@zaptyp/spotifydl-core": "0.4.3",
+    "@zaptyp/spotifydl-core": "0.4.4",
     "async-mutex": "0.5.0",
     "axios": "1.18.1",
     "colorette": "2.0.20",
