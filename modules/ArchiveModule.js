@@ -1,10 +1,11 @@
 import * as fs from "fs";
 import {logger} from "./Logger.js";
-import { parseFile } from "music-metadata";
+import {parseFile} from "music-metadata";
 import * as path from "node:path";
-import { yellow } from "colorette";
-import { getPlaylistName } from "./MusicPlayer.js";
-import { DebugSaveToFile } from './DebugMode.js';
+import {yellow} from "colorette";
+import {getPlaylistName} from "./MusicPlayer.js";
+import {DebugSaveToFile} from './DebugMode.js';
+import {pathSecurityChecker} from "./Other.js";
 
 const archdir = process.env.ARCHIVE_DIR || './mp3/Archive';
 
@@ -411,4 +412,29 @@ async function movePlaylistToArchive(playlistId, userNotice = null) {
     };
 }
 
-export { initArchive, copyToArchive, copyFromArchive, checkIfFileExistsInArchive, searchInArchive, getAllMp3FilesInArchive, archiveSongsQuery, deleteFromArchive, getArchiveSubfolders, copyFromArchiveToSix, movePlaylistToArchive, archdir };
+function copyFileToPlaylist(file, playlistId) {
+    logger('verbose', `Kopiowanie pliku ${file} do playlisty ${playlistId}`, 'copyFileToPlaylist');
+    if (!file) return 'Nie podano nazwy pliku!';
+    if (!playlistId) return 'Nie podano ID playlisty!';
+
+    const secuCheck = pathSecurityChecker(file, archdir);
+    if (secuCheck.includes('_ATTEMPT')) {
+        logger('warn', `Próba kopiowania z archiwum z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck}`, 'copyFileToPlaylist');
+        throw new Error('Niebezpieczna ścieżka!');
+    }
+
+    const playlistPath = playlistId.toString().replace(/^\/+|\/+$/g, '');
+    const targetDir = path.join('./mp3', playlistPath);
+    if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true });
+
+    const basename = path.basename(file);
+    const destPath = path.join(targetDir, basename);
+
+    if (fs.existsSync(destPath)) {
+        return `Plik już istnieje: ${basename}`;
+    }
+
+    return copyFromArchive(file, destPath);
+}
+
+export { initArchive, copyToArchive, copyFromArchive, copyFileToPlaylist, checkIfFileExistsInArchive, searchInArchive, getAllMp3FilesInArchive, archiveSongsQuery, deleteFromArchive, getArchiveSubfolders, copyFromArchiveToSix, movePlaylistToArchive, archdir };

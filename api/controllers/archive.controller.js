@@ -1,11 +1,9 @@
 import {logger} from "../../modules/Logger.js";
 import {sterylizatorIP} from "../../modules/Other.js";
 import {pathSecurityChecker} from "../../modules/Other.js";
-import fs from 'fs';
-import path from 'path';
 import {DebugSaveToFile} from "../../modules/DebugMode.js";
 import {getPlaylistName} from "../../modules/MusicPlayer.js";
-import {searchInArchive, getAllMp3FilesInArchive, archiveSongsQuery, deleteFromArchive, getArchiveSubfolders, copyFromArchive, copyFromArchiveToSix, movePlaylistToArchive, archdir} from "../../modules/ArchiveModule.js";
+import {searchInArchive, getAllMp3FilesInArchive, archiveSongsQuery, deleteFromArchive, getArchiveSubfolders, copyFileToPlaylist, copyFromArchiveToSix, movePlaylistToArchive, archdir} from "../../modules/ArchiveModule.js";
 
 export async function searchArchive(req, res) {
     try {
@@ -102,28 +100,10 @@ export async function copyFileToPlaylist(req, res) {
     try {
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - copyFileToPlaylist');
         const { file, playlistId } = req.body;
-        if (!file) return res.status(400).send('Nie podano nazwy pliku!');
-        if (!playlistId) return res.status(400).send('Nie podano ID playlisty!');
-
-        // zabezpieczenie ścieżki względem katalogu archiwum
-        const secuCheck = pathSecurityChecker(file, archdir);
-        if (secuCheck.includes('_ATTEMPT')) {
-            logger('warn', `Próba kopiowania z archiwum z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - copyFileToPlaylist');
-            return res.status(403).send('Niebezpieczna ścieżka!');
+        const result = copyFileToPlaylist(file, playlistId);
+        if (typeof result === 'string' && (result.includes('Nie podano') || result.includes('Niebezpieczna ścieżka'))) {
+            return res.status(400).send(result);
         }
-
-        const playlistPath = playlistId.toString().replace(/^\/+|\/+$/g, '');
-
-        const targetDir = path.join('./mp3', playlistPath);
-        if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true });
-        const basename = path.basename(file);
-        const destPath = path.join(targetDir, basename);
-
-        if (fs.existsSync(destPath)) {
-            return res.status(200).json({ message: `Plik już istnieje: ${basename}` });
-        }
-
-        const result = copyFromArchive(file, destPath);
         return res.status(200).json({ message: result });
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas kopiowania pliku z archiwum do playlisty', 'LocalAPI - copyFileToPlaylist');
