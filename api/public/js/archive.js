@@ -244,7 +244,7 @@ function displayPage() {
             <td><strong>${song.title || 'Nieznany tytuł'}</strong></td>
             <td>${song.artist || 'Nieznany wykonawca'}</td>
             <td>${formatDuration(song.duration)}</td>
-            <td style="font-size: 0.85em; color: #ccc;">${fileName}</td>
+            <td style="font-size: 0.85em; color: #ccc;">${archiveRelativePath}</td>
         `;
 
         const actionTd = document.createElement('td');
