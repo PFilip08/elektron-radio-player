@@ -552,7 +552,7 @@ async function loadPlaylistFolders() {
             const option = document.createElement('option');
             const playlistLabel = playlistNames[index + 1] || playlistNames[playlistId] || playlistId;
             option.value = String(playlistId);
-            option.textContent = `${playlistId} — ${playlistLabel}`;
+            option.textContent = `${playlistId} - ${playlistLabel}`;
             select.appendChild(option);
         });
     } catch (error) {
