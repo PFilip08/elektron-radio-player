@@ -413,8 +413,6 @@ async function movePlaylistToArchive(playlistId, userNotice = null) {
 
 function copyFileFromArchiveToPlaylist(file, playlistId) {
     logger('verbose', `Kopiowanie pliku ${file} do playlisty ${playlistId}`, 'copyFileToPlaylist');
-    if (!file) return 'Nie podano nazwy pliku!';
-    if (!playlistId) return 'Nie podano ID playlisty!';
 
     const playlistPath = playlistId.toString().replace(/^\/+|\/+$/g, '');
     const targetDir = path.join('./mp3', playlistPath);
