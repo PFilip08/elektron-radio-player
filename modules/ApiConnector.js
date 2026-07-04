@@ -90,7 +90,7 @@ if (!recoveryBlocked) {
             if (recoveryModeWindowStart === null) {
                 startRecoveryModeInterval();
             }
-            if (!(error.code === 'ETIMEDOUT' || error.code === 'ENOTFOUND' || error.code === 'EAI_AGAIN' || error.code === 'ECONNREFUSED') && error.code !== undefined) {
+            if (!(error.code === 'ETIMEDOUT' || error.code === 'ENOTFOUND' || error.code === 'EAI_AGAIN' || error.code === 'ECONNREFUSED') && error.code === 'ENETUNREACH' && error.code !== undefined) {
                 logger('verbose',yellow(`Wystąpił błąd który nie jest związany z brakiem połączenia z internetem: ${error.code}`),'getApiData');
                 if (global.debugmode === true) {
                     DebugSaveToFile('ApiConnector','getApiData','recovery_counter_reason', error);
@@ -163,17 +163,16 @@ async function monitorRecoveryMode() {
         logger('warn',yellow(`Przekroczono limit uruchomień trybu recovery: ${recoveryModeCounter}/${recoveryModeLimit} w oknie ${recoveryModeWindow / 1000} sekund`),'monitorRecoveryMode');
         logger('warn',yellow('Zatrzymywanie funkcji checkUpdate i odraczanie funkcji ApiConnector...'),'monitorRecoveryMode');
         blockGetApiData();
-        console.log("O jezus maria zdarzyła się awaria!")
+        logger('warn',yellow('O jezus maria zdarzyła się awaria!'),'monitorRecoveryMode');
         recoveryModeCounter = 0;
         recoveryModeWindowStart = null;
         return;
     }
     const now = Date.now();
     if (now - recoveryModeWindowStart >= recoveryModeWindow) {
-        logger('debug','W oknie 60 sekund nie przekroczono limitu, licznik wyzerowany','monitorRecoveryMode');
+        logger('verbose',`W oknie ${recoveryModeWindow / 1000} sekund nie przekroczono limitu, licznik wyzerowany`,`monitorRecoveryMode`);
         recoveryModeCounter = 0;
-        recoveryModeWindowStart = null;
-        stopRecoveryModeInterval();
+        recoveryModeWindowStart = now;
     }
 }
 
