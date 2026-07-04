@@ -257,11 +257,13 @@ async function downloadYT(url, votes, path2, override) {
                     logger('log', `KATEGORIA GEJMING!`, 'downloadYT');
                 } else if (song.videoDetails.category[0] === undefined) {
                     logger('warn', `KATEGORIA CHUJ WIE CO (undefined)`, 'downloadYT');
+                } else {
+                    logger('warn', `KOTLET! ${song.videoDetails.category[0]}`, 'downloadYT');
                 }
-                // if (song.videoDetails.category[0] !== 'Entertainment') {
-                //     logger('warn', `Nie jest to kategoria Music ani Entertainment! Wykryto: ${song.videoDetails.category[0]}`, 'downloadYT');
-                //     //return `Nie można pobrać bo nie jest to kategoria Music/Entertainment! Tylko: ${song.videoDetails.category[0]} jedyne co możesz zrobić to poprosić szanownego Pana admina aby dodał do tego wyjątek.`;
-                // }
+                if (song.videoDetails.category[0] !== 'Entertainment' && song.videoDetails.category[0] !== 'Gaming') {
+                    logger('warn', `Nie jest to kategoria Music ani Entertainment ani Gejming! Wykryto: ${song.videoDetails.category[0]}`, 'downloadYT');
+                    return `Nie można pobrać bo nie jest to kategoria Music/Entertainment! Tylko: ${song.videoDetails.category[0]} jedyne co możesz zrobić to poprosić szanownego Pana admina aby dodał do tego wyjątek.`;
+                }
                 if (musicKeywords.some(keyword => title.includes(keyword) || description.includes(keyword))) {
                     if (song.videoDetails.lengthSeconds > 600) {
                         logger('warn', `To jest film, nie piosenka, bo jest zbyt długa!`, 'downloadYT');
