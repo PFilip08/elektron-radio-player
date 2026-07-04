@@ -412,7 +412,7 @@ async function movePlaylistToArchive(playlistId, userNotice = null) {
     };
 }
 
-function copyFileToPlaylist(file, playlistId) {
+function copyFileFromArchiveToPlaylist(file, playlistId) {
     logger('verbose', `Kopiowanie pliku ${file} do playlisty ${playlistId}`, 'copyFileToPlaylist');
     if (!file) return 'Nie podano nazwy pliku!';
     if (!playlistId) return 'Nie podano ID playlisty!';
@@ -431,10 +431,11 @@ function copyFileToPlaylist(file, playlistId) {
     const destPath = path.join(targetDir, basename);
 
     if (fs.existsSync(destPath)) {
+        logger('warn', `Plik ${basename} już istnieje w ${targetDir}`, 'copyFileToPlaylist');
         return `Plik już istnieje: ${basename}`;
     }
 
     return copyFromArchive(file, destPath);
 }
 
-export { initArchive, copyToArchive, copyFromArchive, copyFileToPlaylist, checkIfFileExistsInArchive, searchInArchive, getAllMp3FilesInArchive, archiveSongsQuery, deleteFromArchive, getArchiveSubfolders, copyFromArchiveToSix, movePlaylistToArchive, archdir };
+export { initArchive, copyToArchive, copyFromArchive, copyFileFromArchiveToPlaylist, checkIfFileExistsInArchive, searchInArchive, getAllMp3FilesInArchive, archiveSongsQuery, deleteFromArchive, getArchiveSubfolders, copyFromArchiveToSix, movePlaylistToArchive, archdir };

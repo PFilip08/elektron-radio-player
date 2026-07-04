@@ -3,7 +3,7 @@ import {sterylizatorIP} from "../../modules/Other.js";
 import {pathSecurityChecker} from "../../modules/Other.js";
 import {DebugSaveToFile} from "../../modules/DebugMode.js";
 import {getPlaylistName} from "../../modules/MusicPlayer.js";
-import {searchInArchive, getAllMp3FilesInArchive, archiveSongsQuery, deleteFromArchive, getArchiveSubfolders, copyFileToPlaylist, copyFromArchiveToSix, movePlaylistToArchive, archdir} from "../../modules/ArchiveModule.js";
+import {searchInArchive, getAllMp3FilesInArchive, archiveSongsQuery, deleteFromArchive, getArchiveSubfolders, copyFromArchiveToSix, movePlaylistToArchive, archdir, copyFileFromArchiveToPlaylist} from "../../modules/ArchiveModule.js";
 
 export async function searchArchive(req, res) {
     try {
@@ -100,7 +100,7 @@ export async function copyFileToPlaylist(req, res) {
     try {
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - copyFileToPlaylist');
         const { file, playlistId } = req.body;
-        const result = copyFileToPlaylist(file, playlistId);
+        const result = copyFileFromArchiveToPlaylist(file, playlistId);
         if (typeof result === 'string' && (result.includes('Nie podano') || result.includes('Niebezpieczna ścieżka'))) {
             return res.status(400).send(result);
         }
