@@ -85,6 +85,7 @@ function filterRootFiles() {
         const pathParts = relativePath.split('/').filter(part => part.length > 0);
         return pathParts.length === 1;
     });
+    
     const baseCount = isSearchActive ? searchResults.length : allSongs.length;
     applyFilterWithSearch(filtered, 'rootFiles', `Pliki w katalogu głównym: ${filtered.length}`, 'locationInfo');
 }
@@ -237,6 +238,7 @@ function displayPage() {
         `;
         tableBody.appendChild(row);
     });
+
     updatePaginationControls();
 }
 

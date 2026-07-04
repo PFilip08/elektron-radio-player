@@ -16,6 +16,7 @@ import {previousData} from "../modules/ApiConnector.js";
 import expressLayouts from 'express-ejs-layouts';
 const app = express();
 const port = process.env.PORT || 8080;
+
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = path.dirname(__filename);
 

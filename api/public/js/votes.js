@@ -1,4 +1,5 @@
 console.log('Inicjowanie tworzenia trzyfazowego połączenie multibinarnego do cewki komutatora pokrywy bulbulatora');
+
 const spotifyRegex = /^(?:https?:\/\/)?(?:www\.)?(?:open\.spotify\.com|spotify\.com)\/.+$/;
 const youtubeRegex = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|music\.youtube\.com|youtu\.be)\/.+$/;
 
@@ -16,12 +17,15 @@ async function fetchVotes() {
     try {
         const response = await fetch('/votes/get');
         const votes = await response.json();
+
         const tableBody = document.querySelector('#votesTable tbody');
         tableBody.innerHTML = '';
+
         const dateVotes = document.getElementById('date');
         let date = '1970-01-01';
         if (votes[0]) date = votes[0].created_at;
         dateVotes.innerHTML = date;
+
         votes.forEach(vote => {
             const row = document.createElement('tr');
             let explicit = String();
@@ -37,6 +41,7 @@ async function fetchVotes() {
                     service = `<a href="${vote.uSongs.url}" target="_blank"><img src="../images/yt.png" alt="youtube" width="26px" style="position: absolute; transform: translate(-50%, -50%);"/></a>`;
                 }
             }
+
             row.innerHTML = `
         <td>${vote.id}</td>
         <td style="position: relative;">${vote.uSongs.title+explicit || 'Przekorny Los'}</td>
@@ -47,6 +52,7 @@ async function fetchVotes() {
           <button onclick="delVote(${vote.id})">Usuń</button>
         </td>
       `;
+
             tableBody.appendChild(row);
         });
     } catch (error) {
@@ -59,6 +65,7 @@ async function delVote(voteId) {
         const response = await fetch(`/votes/del/${voteId}`, {
             method: 'DELETE'
         });
+
         if (response.ok) await fetchVotes();
     } catch (error) {
         console.error('Błąd podczas usuwania głosu:', error);

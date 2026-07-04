@@ -28,6 +28,7 @@ async function getVotesData(force, data) {
             // Fall back to real API if DevAPI fails
         }
     }
+    
     logger('verbose', 'Sprawdzanie czy jest internet...', 'getVotesData');
     if (messageCounter) return logger('warn', 'Brak neta, pomijanie…', 'getVotesData');
     let date = new Date(); // dzisiaj
@@ -41,6 +42,7 @@ async function getVotesData(force, data) {
         DebugSaveToFile('VotesConnector', 'getVotesData', 'response', res.data);
         logger('verbose', `Response z serwera został zrzucony!`, 'getVotesData');
     }
+
     async function download() {
         logger('verbose', `Zapisywanie pliku ${votesPath}...`, 'getVotesData - download');
         await fs.writeFileSync(votesPath, JSON.stringify(res.data.playlist, null, 4));
@@ -65,6 +67,7 @@ async function getVotesData(force, data) {
     if (JSON.parse(fs.readFileSync(votesPath)).length === 0) await download();
     logger('verbose', `Sprawdzanie czy data zapisu pliku ${votesPath} jest inna niż data z API...`, 'getVotesData');
     if (JSON.parse(fs.readFileSync(votesPath))[0].created_at !== date) await download();  // tu osobno plik, bo inaczej stary był dalej w zmiennej
+
     return JSON.parse(fs.readFileSync(votesPath));
 }
 

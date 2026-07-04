@@ -11,7 +11,6 @@ devRouter.get('/', (req, res) => {
         layout: 'layouts/dev_layout',
     });
 });
-
 devRouter.get('/schedules', (req, res) => {
     const tasks = getScheduledTasks();
     res.render('dev/schedulepanel', {
@@ -21,7 +20,6 @@ devRouter.get('/schedules', (req, res) => {
         tasks: tasks,
     });
 });
-
 devRouter.get('/schedules/addTask', (req, res) => {
     res.render('dev/addTask', {
         title: 'addTask Panel',
@@ -31,7 +29,6 @@ devRouter.get('/schedules/addTask', (req, res) => {
         status: req.query.status,
     });
 });
-
 devRouter.get('/override', (req, res) => {
     res.render('dev/overridepanel', {
         title: 'Override Panel',
@@ -47,6 +44,7 @@ devRouter.use(bodyParser.urlencoded({ extended: true })).post('/schedules/addTas
 devRouter.post('/action/restart', restartEverything);
 devRouter.post('/action/downloadYToverride', downloadYToverride);
 devRouter.post('/action/resetRecoveryLock', devOverrideRecoveryLock);
+
 devRouter.get('/api', devAPI);
 devRouter.get('/api/timeTables', devAPITimeTables);
 devRouter.post('/api/timeTables', bodyParser.json(), devAPITimeTables);

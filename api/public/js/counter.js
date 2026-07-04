@@ -19,6 +19,7 @@ async function sortData() {
     if (!data.isOn) {
         return 'taboret';
     }
+    // const time = data.timeRules.rules;
     const day = data.timeRules.applyRule;
     const currentPlaylist = data.currentPlaylistId;
     const dayMapping = {
@@ -30,6 +31,7 @@ async function sortData() {
         Sat: 6,
         Sun: 7
     };
+
     const mappedDays = {};
     for (const i in day) {
         if (day.hasOwnProperty(i)) {
@@ -38,6 +40,7 @@ async function sortData() {
         }
     }
     const today = new Date().toLocaleString('en-US', { weekday: 'short' });
+    // const today = 'Fri';
     const ruleNumber = data.timeRules.applyRule[today] || 0;
     if (ruleNumber === 0) {
         // console.log(`Dziś (${today}) nie obowiązuje żadna reguła.`);
@@ -63,15 +66,21 @@ async function todayData() {
         Sat: 'Sobota',
         Sun: 'Niedziela'
     };
+
     const today = days[data.today];
     const timeRules = data.timeRules;
     const currentDate = new Date();
+
     const getTimeToNextRule = (currentDate, rule) => {
         const startTime = parseTime(rule.start);
         const endTime = parseTime(rule.end);
-        const remainingMs = (currentDate >= startTime && currentDate <= endTime) ? endTime - currentDate : startTime - currentDate;
+        const remainingMs = (currentDate >= startTime && currentDate <= endTime)
+            ? endTime - currentDate
+            : startTime - currentDate;
+
         const remainingMinutes = Math.floor(remainingMs / 60000);
         const remainingSeconds = Math.floor((remainingMs % 60000) / 1000);
+
         return {
             time: `${remainingMinutes} min ${remainingSeconds} sek`,
             isInRule: currentDate >= startTime && currentDate <= endTime,
@@ -85,6 +94,7 @@ async function todayData() {
     if (timeRules) {
         for (const rule of timeRules) {
             const { time, isInRule, whole } = getTimeToNextRule(currentDate, rule);
+
             if (isInRule) {
                 currentRule = rule;
                 timeToNextRule = `Lekcja za: ${time}`;
@@ -95,12 +105,14 @@ async function todayData() {
                 timeToNextRule = `Przerwa za: ${time}`;
                 break;
             } else if (whole < 0) timeToNextRule = 'taboret';
+
             // console.log(`Reguła: ${rule.start} - ${rule.end}, czas do reguły: ${time}`);
             // console.log(`Czy jesteśmy w regule: ${isInRule}`);
             // console.log(currentRule);
             // console.log(rule);
         }
     } else timeToNextRule = 'taboret';
+
     if (currentRule) {
         // const ruleStart = currentRule.start;
         // const ruleEnd = currentRule.end;
@@ -127,6 +139,7 @@ async function replaceCounterData() {
         timeToNextRule = 'Brak danych';
         data.currentRule = null;
     }
+    // console.log(data);
     if(data.data === 'taboret') return counterDiv.innerHTML = '<span class="off">Radio off</span>';
     counterDiv.innerHTML = `
     <span class="playlist">Główna playlista: ${data.data.currentPlaylist}</span>

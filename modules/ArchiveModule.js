@@ -376,6 +376,7 @@ async function movePlaylistToArchive(playlistId, userNotice = null) {
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
     const dateTimeStr = `${year}-${month}-${day}-${hours}-${minutes}`;
+    //const folderName = `${dateTimeStr}-${playlistId}-${playlistName}`;
     let folderName;
     if (userNotice) {
         folderName = `${playlistId}-${playlistName}-${userNotice}`;
@@ -392,6 +393,7 @@ async function movePlaylistToArchive(playlistId, userNotice = null) {
         try {
             const sourcePath = path.join(sourceDir, file);
             const targetPath = path.join(targetDir, file);
+            //fs.renameSync(sourcePath, targetPath);
             fs.copyFileSync(sourcePath, targetPath);
             fs.unlinkSync(sourcePath);
             copiedCount++;

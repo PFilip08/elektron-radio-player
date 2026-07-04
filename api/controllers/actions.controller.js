@@ -186,9 +186,13 @@ export async function normalize(req, res) {
         const playlist = req.query.playlist;
         const pathDir = './mp3/';
         const fullPath = pathDir+playlist;
+        console.log(fullPath);
         if (fullPath.includes('../')) return res.status(511).send('a dzie masło roota?!?!1');
+        // console.log(fs.existsSync(fullPath), fs.lstatSync(fullPath).isDirectory());
         if (!fs.existsSync(fullPath) || !fs.lstatSync(fullPath).isDirectory()) return res.status(406).send('playlista nie istnieje lub to nie playlista!!');
+        // console.log('dupa2');
         const dupa = await new Promise((resolve, reject) => {
+            // console.log('dupa3');
             exec(`mp3gain -r -c ${fullPath}/*`, (error, stdout, stderr) => {
                 logger('verbose', "\n"+ stdout, 'LocalAPI - normalize');
                 if (global.debugmode === true) {

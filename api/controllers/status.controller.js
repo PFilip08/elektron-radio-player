@@ -129,6 +129,8 @@ export async function queryRecoveryModeStatus(req, res) {
             res.setHeader("Content-Type", "text/event-stream");
             res.setHeader("Cache-Control", "no-cache");
             res.setHeader("Connection", "keep-alive");
+
+
             const interval = setInterval(() => {
                 const payload = {
                     status: messageCounter,

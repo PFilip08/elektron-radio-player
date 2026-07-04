@@ -125,6 +125,7 @@ function killVLCatStartup() {
 
 async function checkIfVLCisRunning() {
     logger('verbose', 'Sprawdzanie czy VLC jest uruchomione...', 'checkIfVLCisRunning');
+
     try {
         const resultList = await new Promise((resolve, reject) => {
             ps.lookup({ command: 'vlc', psargs: 'ux' }, (err, resultList) => {
@@ -132,17 +133,20 @@ async function checkIfVLCisRunning() {
                 resolve(resultList);
             });
         });
+
         if (resultList.length === 0) {
             logger('verbose', 'Nie znaleziono procesów VLC.', 'checkIfVLCisRunning');
             logger('task', 'VLC nie jest uruchomiony.', 'checkIfVLCisRunning');
             return false;
         }
+
         logger('verbose', 'Znaleziono następujące procesy VLC:', 'checkIfVLCisRunning');
         resultList.forEach(process => {
             logger('verbose', `PID: ${process.pid}, COMMAND: ${process.command}, ARGUMENTS: ${process.arguments}`, 'checkIfVLCisRunning');
         });
         logger('task', 'VLC istnieje.', 'checkIfVLCisRunning');
         return true;
+
     } catch (err) {
         logger('verbose', `Złapano błąd przy szukaniu procesu VLC: ${err}`, 'checkIfVLCisRunning');
         if (global.debugmode === true) {

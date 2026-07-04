@@ -291,6 +291,7 @@ async function downloadYT(url, votes, path2, override) {
 
         const tempFilePath = path.resolve(`${os.tmpdir()}/${file}.webm`);
         const outputFilePath = path.resolve(`${Path}${file}.mp3`);
+        // console.log(votes, outputFilePath, filePath);
 
         const tempFileStream = fs.createWriteStream(tempFilePath);
         stream.pipe(tempFileStream);

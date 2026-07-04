@@ -64,6 +64,7 @@ export async function resetVotes(req, res) {
 export async function saveVotes(req, res) {
     try {
         if (await checkIfVLConVotes()) killPlayerForce();
+        // console.log(await checkIfVLConVotes());
         fs.readdir('./mp3/7', (err, files) => {
             if (err) {
                 res.status(500).send('dział taboretów trza zagonić do roboty');
@@ -150,11 +151,15 @@ export async function addVotes(req, res) {
         if (!fs.existsSync(votesPath)) {
             fs.writeFileSync(votesPath, JSON.stringify([]));
         }
+
         let data = JSON.parse(fs.readFileSync(votesPath));
         const newId = data.length > 0 ? Math.max(...data.map(vote => vote.id)) + 1 : 1;
         let { uri } = req.query;
         if (uri.length === 0) uri = 'https://open.spotify.com/track/4uLU6hMCjMI75M1A2tKUQC';
+
+        // console.log(await getTrackInfo(uri));
         const songData = await getTrackInfo(uri);
+
         const newVoteEntry = {
             id: newId,
             created_at: new Date().toISOString().split('T')[0],
@@ -171,8 +176,10 @@ export async function addVotes(req, res) {
                 status: 'active',
             },
         };
+
         data.push(newVoteEntry);
         fs.writeFileSync(votesPath, JSON.stringify(data, null, 2));
+
         return res.status(201).send(newVoteEntry);
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas dodawania głosów', 'LocalAPI - addVotes');

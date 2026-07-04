@@ -58,6 +58,7 @@ function scheduleVotes(timeStart, timeEnd, id, i) {
         } else playPlaylist(id);
     });
     jobPlay.jobData = { id };
+    
     const jobPause = schedule.scheduleJob(`pausePlayer - ${new Date().toLocaleString()}, ${i[0]}/${i[1]}`, timeEnd, async function () {
         try {
             await pausePlayer();
@@ -144,6 +145,7 @@ async function massSchedule() {
         const time = data.timeRules.rules;
         const day = data.timeRules.applyRule;
         const currentPlaylist = data.currentPlaylistId;
+
         // pobieranie
         downloaded = false;
         emptyVotes = false;
@@ -154,6 +156,7 @@ async function massSchedule() {
             logger('verbose', 'Dzwonienie do funkcji downloadVotes...', 'massSchedule');
             await downloadVotes();
         }
+
         const dayMapping = {
             Mon: 1,
             Tue: 2,
@@ -163,6 +166,7 @@ async function massSchedule() {
             Sat: 6,
             Sun: 7
         };
+
         const mappedDays = {};
         logger('verbose', 'Mapowanie dni...', 'massSchedule');
         for (const i in day) {
@@ -202,11 +206,13 @@ async function massSchedule() {
                     const id = Math.floor(Math.random() * 5) + 1; // rosyjska ruletka od 1 do 5
                     scheduleMusicTask(`${time[mappedDays[l]][i].start.split(':').reverse().join(' ')} * * ${l}`, {id}, [l, i]);
                     scheduleKillTask(`${time[mappedDays[l]][i].end.split(':').reverse().join(' ')} * * ${l}`, [l, i]);
+                    // console.log("Taboret losował: ", id);
                     continue;
                 }
                 if (currentPlaylist !== 7 && !messageCounter && time[mappedDays[l]][i].playlist === 7 && !downloaded) {
                     logger('verbose', 'Znaleziono playlistę 7! Uruchamianie pobierania piosenek z głosowania', 'massSchedule');
                     downloaded = true;
+                    // console.log('głosy pozdrawiam');
                     await downloadVotes();
                 }
                 if (currentPlaylist === 7) { // gdy główna na 7
@@ -247,6 +253,7 @@ async function delayMassScheduleVLC() {
         logger('verbose', yellow(console.trace()), 'delayMassScheduleVLC');
         return;
     }; // już działa
+
     const tick = async () => {
         const [isPlaying] = await getPlayingSong();
         if (!isPlaying) {

@@ -85,11 +85,13 @@ function rescheduleTasksNow() {
 function updateStatusIndicator(enabled, errorMsg = null, overrideTarget = null) {
     const indicator = document.getElementById('status-indicator');
     const container = document.getElementById('devapi-status');
+
     if (errorMsg) {
         indicator.textContent = errorMsg;
         container.className = 'devapi-status';
         return;
     }
+
     if (enabled) {
         indicator.textContent = `WŁĄCZONE - Overriding ${ overrideTarget }`;
         container.className = 'devapi-status enabled';
@@ -104,9 +106,11 @@ function updateTimeTables() {
         rules: { "1": [] },
         applyRule: {}
     };
+
     document.querySelectorAll('input[name="day"]').forEach(checkbox => {
         timeRules.applyRule[checkbox.value] = checkbox.checked ? 1 : 0;
     });
+
     document.querySelectorAll('.time-rule-entry').forEach(entry => {
         const start = entry.querySelector('.rule-start').value;
         const end = entry.querySelector('.rule-end').value;
@@ -114,11 +118,13 @@ function updateTimeTables() {
             timeRules.rules["1"].push({ start, end });
         }
     });
+
     const data = {
         isOn: document.querySelector('input[name="isOn"]:checked').value === 'true',
         currentPlaylistId: parseInt(document.getElementById('currentPlaylistId').value),
         timeRules: timeRules
     };
+
     fetch('/dev/api/timeTables', {
         method: 'POST',
         headers: {
@@ -138,18 +144,22 @@ function updateTimeTables() {
 
 function updateVotes() {
     const votes = [];
+
     document.querySelectorAll('.vote-entry').forEach(entry => {
         const idInput = entry.querySelector('.song-id');
         const nameInput = entry.querySelector('.song-name');
         const urlInput = entry.querySelector('.song-url');
         const votesInput = entry.querySelector('.song-votes');
         const dateInput = entry.querySelector('.song-date');
+
         if (!idInput || !nameInput || !urlInput || !votesInput || !dateInput) return;
+
         const id = parseInt(idInput.value) || 1;
         const title = nameInput.value;
         const url = urlInput.value;
         const voteCount = parseInt(votesInput.value) || 0;
         const date = dateInput.value;
+
         if (title && url) {
             votes.push({
                 id: id,
@@ -162,6 +172,7 @@ function updateVotes() {
             });
         }
     });
+
     fetch('/dev/api/votes', {
         method: 'POST',
         headers: {
@@ -220,12 +231,14 @@ function loadTimeTablesPreset(preset) {
         case 'school':
             document.querySelector('input[name="isOn"][value="true"]').checked = true;
             document.getElementById('currentPlaylistId').value = '7';
+
             ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].forEach(day => {
                 document.querySelector(`input[name="day"][value="${day}"]`).checked = true;
             });
             ['Sat', 'Sun'].forEach(day => {
                 document.querySelector(`input[name="day"][value="${day}"]`).checked = false;
             });
+
             document.getElementById('timeRulesContainer').innerHTML = '';
             const schoolTimes = [
                 {start: '07:07', end: '07:10'},
@@ -252,6 +265,7 @@ function loadTimeTablesPreset(preset) {
         case 'weekend':
             document.querySelector('input[name="isOn"][value="true"]').checked = true;
             document.getElementById('currentPlaylistId').value = '1';
+
             ['Sat', 'Sun'].forEach(day => {
                 document.querySelector(`input[name="day"][value="${day}"]`).checked = true;
             });
@@ -267,9 +281,11 @@ function loadTimeTablesPreset(preset) {
                 .then(data => {
                     document.querySelector('input[name="isOn"][value="true"]').checked = true;
                     document.getElementById('currentPlaylistId').value = data.currentPlaylistId || '1';
+
                     ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].forEach(day => {
                         document.querySelector(`input[name="day"][value="${day}"]`).checked = data.timeRules.applyRule[day] === 1;
                     });
+
                     document.getElementById('timeRulesContainer').innerHTML = '';
                     if (data.timeRules.rules && data.timeRules.rules["1"]) {
                         data.timeRules.rules["1"].forEach(rule => {
@@ -299,6 +315,7 @@ function loadTimeTablesPreset(preset) {
 function loadVotesPreset(preset) {
     const container = document.getElementById('votesContainer');
     container.innerHTML = '';
+
     switch(preset) {
         case 'popular':
             const popularSongs = [
@@ -308,6 +325,7 @@ function loadVotesPreset(preset) {
                 {id: 4, title: 'Popular Hit Song 4', url: '7/Popular_Hit_4.mp3', votes: 250},
                 {id: 5, title: 'Popular Hit Song 5', url: '7/Popular_Hit_5.mp3', votes: 150}
             ];
+
             popularSongs.forEach(song => {
                 addVoteEntry();
                 const entries = document.querySelectorAll('.vote-entry');
@@ -325,6 +343,7 @@ function loadVotesPreset(preset) {
                 {id: 1, title: "DevAPI - L'amour Toujours", url: 'https://music.youtube.com/watch?v=c3Pd7nH7Y40', votes: 8},
                 {id: 2, title: 'DevAPI - Rickus Astleyus', url: 'https://music.youtube.com/watch?v=dQw4w9WgXcQ', votes: 16}
             ];
+
             testSongs.forEach(song => {
                 addVoteEntry();
                 const entries = document.querySelectorAll('.vote-entry');
@@ -363,6 +382,7 @@ function loadVotesPreset(preset) {
     }
 }
 
+// Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     // Sprawdzamy, czy jesteśmy na stronie devapi.ejs
     if (document.getElementById('devapi-status')) {

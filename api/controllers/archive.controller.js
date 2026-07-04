@@ -100,6 +100,7 @@ export async function checkCopyFromArchive(req, res) {
     try {
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - checkCopyFromArchive');
         const { subfolderName, clearFolder } = req.body;
+        
         if (!subfolderName) {
             return res.status(400).send('Nie podano nazwy podkatalogu!');
         }

@@ -4,8 +4,10 @@
         <div>
             <label for="searchInput">Wyszukaj zadanie:</label>
             <input type="text" id="searchInput" onkeyup="filterTasks()" placeholder="Wpisz nazwę zadania...">
+
             <label for="commandFilter">Wyszukaj po komendzie:</label>
             <input type="text" id="commandFilter" onkeyup="filterTasks()" placeholder="Wpisz komendę...">
+
             <div style="display: flex; align-items: center; gap: 10px;">
                 <label for="dateFilter">Filtruj według daty:</label>
                 <input type="date" id="dateFilter" onchange="filterTasks()">

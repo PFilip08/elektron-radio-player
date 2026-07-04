@@ -10,13 +10,16 @@ let cachedPlaylists = null;
 const urlPlaying = '/status/query/playing';
 const urlPlaylists = '/status/query/playlist/list';
 async function getData() {
+
     const playing = await fetch(urlPlaying);
     let playlists;
+
     if (!cachedPlaylists) {
         const playlists = await fetch(urlPlaylists);
         cachedPlaylists = await playlists.json();
     }
     playlists = cachedPlaylists;
+
     /*
     data:
     0 - Current playing song
@@ -48,6 +51,7 @@ async function replacePlaylists(data) {
     if (JSON.stringify(data[1]) === JSON.stringify(previousPlaylists)) return;
     const playlistsTable = document.getElementById('playlists');
     clearTable(playlistsTable);
+
     // Tworzenie nowych wpisów
     for (let i = 0; i < data[1].playlistList.length; i++) {
         const row = playlistsTable.insertRow(-1);
@@ -70,6 +74,7 @@ let isProcessing = false;
 async function replaceData() {
     if (isProcessing) {console.log('slowdown'); return;}
     isProcessing = true;
+
     try {
         const data = await getData();
         /*
@@ -85,7 +90,9 @@ async function replaceData() {
         const playlistsTable = document.getElementById('playlists');
         const songsTable = document.getElementById('songlist');
         const coverCover = document.getElementById('cover');
+
         await replacePlaylists(data);
+
         if (!data[0].isPlaying) {
             //songName.innerText = '--------------';
             updateSongName('--------------');
@@ -105,6 +112,7 @@ async function replaceData() {
             currentSongData = null;
             return;
         }
+
         if (previousSong !== data[0].playingSongName) {
             // console.log("Zmiana piosenki")
             krzeslo:
@@ -191,7 +199,9 @@ async function replaceData() {
             noDataCounter = true;
         } else if (id) playlista = await getSongs(data[1].playlistList[id - 1]);
         noDataCounter = true;
+
         coverCover.src = cover;
+
         if (!playlista) {
             if (!noDataCounter) {
                 clearTable(songsTable);
@@ -206,6 +216,7 @@ async function replaceData() {
                 playlistsTable.rows[oldRowId].style.removeProperty('background-color');
             }
         }
+
         if (JSON.stringify(playlista) !== JSON.stringify(previousSongs)) {
             clearTable(songsTable);
             if (oldRowId) {
@@ -224,11 +235,14 @@ async function replaceData() {
             }
             previousSongs = playlista;
         }
+
         if (intervalReset) {
             startProgressBar(duration);
         }
+
         duration.value = data[0].time.played;
         duration.max = data[0].time.toPlay;
+
         if (!currentSongData || currentSongData.playingSongName !== data[0].playingSongName) {
             if (data[0].playingSongName && !id) {
                 updateSongName(data[0].playingSongName);
@@ -278,9 +292,12 @@ async function replaceData() {
                     songArtist.innerText = 'brak danych';
                 }
             }
+
             const playedFormatted = formatTime(data[0].time.played);
             const toPlayFormatted = formatTime(data[0].time.toPlay);
             durationText.innerText = `${playedFormatted} / ${toPlayFormatted}`;
+
+
             currentSongData = data[0];
             startProgressBar(duration);
         }
@@ -295,6 +312,7 @@ function startProgressBar(duration) {
     if (progressInterval) {
         clearInterval(progressInterval);
     }
+
     progressInterval = setInterval(() => {
         if (duration.value < duration.max) {
             duration.value = parseFloat(duration.value) + 1;
@@ -311,7 +329,9 @@ function startProgressBar(duration) {
 function updateSongName(text) {
     const songNameElement = document.getElementById('songName');
     const marqueeContent = songNameElement.parentElement;
+
     songName.innerText = text;
+
     const songNameWidth = songNameElement.scrollWidth;
     const marqueeContainerWidth = marqueeContent.parentElement.offsetWidth;
     if (songNameWidth > marqueeContainerWidth) {
