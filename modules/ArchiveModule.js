@@ -5,7 +5,6 @@ import * as path from "node:path";
 import {yellow} from "colorette";
 import {getPlaylistName} from "./MusicPlayer.js";
 import {DebugSaveToFile} from './DebugMode.js';
-import {pathSecurityChecker} from "./Other.js";
 
 const archdir = process.env.ARCHIVE_DIR || './mp3/Archive';
 
@@ -416,12 +415,6 @@ function copyFileFromArchiveToPlaylist(file, playlistId) {
     logger('verbose', `Kopiowanie pliku ${file} do playlisty ${playlistId}`, 'copyFileToPlaylist');
     if (!file) return 'Nie podano nazwy pliku!';
     if (!playlistId) return 'Nie podano ID playlisty!';
-
-    const secuCheck = pathSecurityChecker(file, archdir);
-    if (secuCheck.includes('_ATTEMPT')) {
-        logger('warn', `Próba kopiowania z archiwum z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck}`, 'copyFileToPlaylist');
-        throw new Error('Niebezpieczna ścieżka!');
-    }
 
     const playlistPath = playlistId.toString().replace(/^\/+|\/+$/g, '');
     const targetDir = path.join('./mp3', playlistPath);

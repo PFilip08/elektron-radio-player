@@ -100,8 +100,13 @@ export async function copyFileToPlaylist(req, res) {
     try {
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - copyFileToPlaylist');
         const { file, playlistId } = req.body;
+        const secuCheck = pathSecurityChecker(file, archdir);
+        if (secuCheck.includes('_ATTEMPT')) {
+            logger('warn', `Próba kopiowania z archiwum z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck}`, 'copyFileToPlaylist');
+            return res.status(403).send('Niebezpieczna ścieżka!');
+        }
         const result = copyFileFromArchiveToPlaylist(file, playlistId);
-        if (typeof result === 'string' && (result.includes('Nie podano') || result.includes('Niebezpieczna ścieżka'))) {
+        if (typeof result === 'string' && (result.includes('Nie podano') || result.includes('nie istnieje'))) {
             return res.status(400).send(result);
         }
         return res.status(200).json({ message: result });
