@@ -9,6 +9,7 @@ archiveRouter.get('/', function(req, res){
     welcome: 'Panel archiwum muzyki',
   });
 });
+
 archiveRouter.post('/searchArchive', searchArchive);
 archiveRouter.get('/listArchive', listArchive);
 archiveRouter.get('/archiveSongsQuery', queryArchive);

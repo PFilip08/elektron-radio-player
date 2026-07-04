@@ -40,10 +40,7 @@ export async function downloadAndPlay(req, res) {
     try {
         const uri = req.query.uri;
         const downloadStatus = await downloader(uri);
-        // const time = req.query.time;
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - downloadAndPlay');
-        //ogarnięte
-        // console.log(downloadStatus);
         if (!uri) return res.status(400).send('Nie podano linku!');
         if (!downloadStatus.includes('Pobrano')) return res.status(500).send(downloadStatus);
         const trackInfo = await getTrackInfo(uri);

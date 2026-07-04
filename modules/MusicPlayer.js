@@ -117,7 +117,6 @@ function playMusic(filename) {
     if(!fs.existsSync(`./mp3/${filename}.mp3`)) return logger('error','Brak pliku!', 'playMusic');
     logger('verbose', `Plik istnieje! Granie pliku muzycznego...`, 'playMusic');
     const buffer = path.resolve(`./mp3/${filename}.mp3`);
-
     exec(`${vlc} --play-and-exit ${buffer}`);
     logger('task','--------Play Music--------', 'playMusic');
     logger('task','Muzyka gra...', 'playMusic');

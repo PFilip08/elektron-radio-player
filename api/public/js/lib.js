@@ -82,61 +82,45 @@ function replaceLast(text) {
     const s2 = curNode.data.substr(curIndex);
     curIndex -= lastword.length;
     const s1 = curNode.data.substr(0, curIndex);
-
     curIndex += text.length;
-
     curNode.data = s1 + text + s2;
-
-
 }
 
 
 function przelec(node) {
     if (typeof node != "object" || typeof node.childNodes != "object") return;
     const children = node.childNodes;
-
     for (let i = 0; i < children.length; i++) {
         const child = children[i];
         if (child.nodeType === 1 && child.tagName !== "SCRIPT" && child.tagName !== "IFRAME" /*&& child.tagName!="PRE"*/) {
             przelec(child);
         }
-
         if (child.nodeType === 3) {
             stack.push(child);
         }
-
     }
-
 }
 
 function kurwa() {
-
     przelec(document.body);
     curNode = stack[0];
     let i = Math.floor(Math.random() * 9);
-
     while (nextAfterWord()) {
         if (i-- <= 0) {
             if (lastword === 'na') continue;
             if (lastword === 'do') continue;
             if (lastword === 'jak') continue;
-
             if (lastword === 'nie') continue;
             if (lastword === 'kurwa') continue;
             putHere('kurwa');
-
             i = 2 + Math.floor(Math.random() * 8);
         }
-
     }
 }
 
 let LAST_KEY = null;
-
 document.addEventListener("keydown", (ev) => {
-    // if (window.env.IS_BETA) return;
     if (['TEXTAREA', 'INPUT', 'textarea', 'input'].includes(ev.target.tagName)) return;
-
     if (ev.key === "k") LAST_KEY = "k"; else if (ev.key === "u" && LAST_KEY === "k") LAST_KEY = "u"; else if (ev.key === "r" && LAST_KEY === "u") LAST_KEY = "r"; else if (ev.key === "w" && LAST_KEY === "r") LAST_KEY = "w"; else if (ev.key === "a" && LAST_KEY === "w") {
         kurwa()
         LAST_KEY = null;

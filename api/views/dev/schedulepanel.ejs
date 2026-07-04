@@ -47,7 +47,6 @@
     <%- include('../partials/dev/proceduranr6.ejs') -%>
     <%- include('../partials/dev/schedulePanelContent.ejs') -%>
 </div>
-
 <script>
   function togglePanel() {
     const panel = document.getElementById('schedulePanelContent');
@@ -89,16 +88,13 @@
       const dateFilter = document.getElementById("dateFilter").value;
       const table = document.getElementById("tasksTable");
       const rows = Array.from(table.rows).slice(1);
-
       rows.forEach(row => {
           const taskName = row.cells[0].innerText.toLowerCase();
           const taskCommand = row.cells[3].innerText.toLowerCase();
           const taskDate = row.cells[1].innerText;
-
           const matchesSearch = taskName.includes(searchInput);
           const matchesCommand = taskCommand.includes(commandFilter);
           const matchesDate = !dateFilter || taskDate === dateFilter;
-
           if (matchesSearch && matchesCommand && matchesDate) {
               row.style.display = "";
           } else {

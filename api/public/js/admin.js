@@ -133,19 +133,14 @@ document.addEventListener("DOMContentLoaded", function () {
 async function showCustomAlert(message, btn1Text, btn2Text, btn1Callback, btn2Callback, timeout = 5) {
     let overlay = document.createElement("div");
     overlay.classList.add("overlay");
-
     let alertBox = document.createElement("div");
     alertBox.classList.add("alert-box");
-
     let msg = document.createElement("p");
     msg.innerHTML = message.replace(/\n/g, "<br>")
-
     let buttonsDiv = document.createElement("div");
     buttonsDiv.classList.add("buttons");
-
     let btn1 = null;
     let btn2 = null;
-
     btn1 = document.createElement("button");
     if (btn2Text) {
         btn2 = document.createElement("button");
@@ -158,10 +153,8 @@ async function showCustomAlert(message, btn1Text, btn2Text, btn1Callback, btn2Ca
             btn2.disabled = true;
         }
     }
-
     btn1.textContent = `${btn1Text} (${timeout})`;
     btn1.disabled = true;
-
     buttonsDiv.appendChild(btn1);
     if (btn2Text) {
         buttonsDiv.appendChild(btn2);
@@ -192,7 +185,6 @@ async function showCustomAlert(message, btn1Text, btn2Text, btn1Callback, btn2Ca
         if (btn1Callback) btn1Callback();
         document.body.removeChild(overlay);
     });
-
     if (btn2Text) {
         btn2.addEventListener("click", () => {
             if (btn2Callback) btn2Callback();

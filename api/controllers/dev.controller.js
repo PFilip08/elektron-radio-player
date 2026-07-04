@@ -45,7 +45,6 @@ export async function addTask(req, res) {
         const taskType = req.body.taskType;
         let taskDate = req.body.taskDate;
         taskDate = new Date(taskDate);
-
         let taskData = {};
         try {
             taskData = req.body.taskData ? JSON.parse(req.body.taskData) : {};
@@ -53,14 +52,11 @@ export async function addTask(req, res) {
             logger('warn', 'Nieprawidłowy JSON w polu taskData!', 'LocalAPI-dev - addTask');
             return res.status(400).send('Nieprawidłowy JSON w polu taskData!');
         }
-
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI-dev - addTask');
-
         if (!taskName || !taskType || !taskDate) {
             logger('warn', 'Nie podano wszystkich wymaganych pól!', 'LocalAPI-dev - addTask');
             return res.status(400).send('Nie podano wszystkich wymaganych pól!');
         }
-
         switch (taskType) {
             case 'playMusic':
                 if (!taskData.filename) {
@@ -116,7 +112,6 @@ export async function addTask(req, res) {
                 return res.status(400).send('Nieznany typ zadania!');
         }
         taskNumber();
-        // return res.status(201).send('cleaned');
         return res.redirect('/dev/schedules/addTask?status=added');
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby dodania taskadania', 'LocalAPI-dev - addTask');
@@ -185,11 +180,9 @@ export async function removeTask(req, res) {
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')} - usuwanie zadania: ${taskName}`, 'LocalAPI-dev - removeTask');
         const job = schedule.scheduledJobs[taskName];
         if (!job) return res.status(404).send('Nie znaleziono zadania o nazwie: ' + taskName);
-
         job.cancel();
         delete schedule.scheduledJobs[taskName];
         taskNumber();
-
         logger('log', 'Zadanie "' + taskName + '" zostało usunięte!', 'LocalAPI-dev - removeTask')
         return res.status(200).send('Zadanie "' + taskName + '" zostało usunięte!');
     } catch (e) {
@@ -205,11 +198,9 @@ export async function removeTask(req, res) {
 export async function devAPI(req, res) {
     try {
         const action = req.query.action;
-
         if (action != 'status') {
             logger('log', `DevAPI request: ${action} od ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI-dev - devAPI');
         }
-
         if (!action) {
             const currentMockData = global.devAPIMockData || {
                 timeTables: {
@@ -257,7 +248,6 @@ export async function devAPI(req, res) {
                     }
                 ]
             };
-
             return res.render('dev/devapi', {
                 title: 'DevAPI Panel',
                 welcome: 'DevAPI Configuration',
@@ -267,7 +257,6 @@ export async function devAPI(req, res) {
                 overrideTarget: process.env.URI || 'partyvote.ciac.me'
             });
         }
-
         switch (action) {
             case 'on':
                 global.devAPIEnabled = true;
@@ -278,7 +267,6 @@ export async function devAPI(req, res) {
                     message: 'DevAPI włączone - używanie mock danych i zreschedulowanie tasków',
                     devAPIEnabled: true
                 });
-
             case 'off':
                 global.devAPIEnabled = false;
                 await massSchedule();
@@ -288,7 +276,6 @@ export async function devAPI(req, res) {
                     message: 'DevAPI wyłączone - używanie main API i zreschedulowanie tasków',
                     devAPIEnabled: false
                 });
-
             case 'status':
                 return res.json({
                     success: true,
@@ -296,7 +283,6 @@ export async function devAPI(req, res) {
                     overrideTarget: process.env.URI || 'partyvote.ciac.me',
                     mockData: global.devAPIMockData || {}
                 });
-
             case 'reschedule':
                 if (global.devAPIEnabled) {
                     await massSchedule();
@@ -305,7 +291,6 @@ export async function devAPI(req, res) {
                 } else {
                     return res.json({ success: false, message: 'zaś DevAPI wyłączone' });
                 }
-
             default:
                 return res.status(400).json({
                     error: 'Niestety to nie koncert życzeń',
@@ -334,23 +319,15 @@ export async function devAPITimeTables(req, res) {
                     applyRule: { "Fri": 1, "Mon": 1, "Sat": 0, "Sun": 0, "Thu": 1, "Tue": 1, "Wed": 1 }
                 }
             };
-
             return res.json({
                 timeTable: [mockTimeTables],
                 lastUpdated: new Date().toISOString()
             });
         }
-
         if (req.method === 'POST') {
             if (!global.devAPIMockData) global.devAPIMockData = {};
-            // Zamiana currentPlaylistId na obiekt {id: ...} jeśli jest liczbą
-            // if (typeof req.body.currentPlaylistId === 'number') {
-            //     req.body.currentPlaylistId = { id: req.body.currentPlaylistId };
-            // }
             global.devAPIMockData.timeTables = req.body;
-            // console.log(global.devAPIMockData.timeTables)
             logger('log', 'Zaktualizowano dane DevAPI TimeTables', 'LocalAPI-dev - devAPITimeTables');
-
             if (global.devAPIEnabled) {
                 await massSchedule();
                 logger('log', 'Zaktualizowano dane TimeTables i zreschedulowano taski', 'LocalAPI-dev - devAPITimeTables');
@@ -374,7 +351,6 @@ export async function devAPIVotes(req, res) {
             const mockVotes = global.devAPIMockData?.votes || [];
             return res.json({ playlist: mockVotes });
         }
-
         if (req.method === 'POST') {
             if (!global.devAPIMockData) global.devAPIMockData = {};
             global.devAPIMockData.votes = req.body;
