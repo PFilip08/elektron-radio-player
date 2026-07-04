@@ -392,29 +392,29 @@ async function downloadYT(url, votes, path2, override) {
 }
 async function autoRemoveFiles() {
     fs.readdir('./mp3/onDemand', (err, files) => {
-        if (err) return logger('error '+err,'autoRemoveFiles');
-        if (files.length === 0) return logger('task','Brak plików do usunięcia.','autoRemoveFiles');
+        if (err) return logger('error '+err,'autoRemoveFiles - onDemand');
+        if (files.length === 0) return logger('task','Brak plików do usunięcia.','autoRemoveFiles - onDemand');
         for (let i in files) {
             if (fs.lstatSync('./mp3/onDemand/'+files[i]).isDirectory()) {
-                logger('task', `Usunięto folder "${files[i]}" wraz z zawartością`, 'autoRemoveFiles');
+                logger('task', `Usunięto folder "${files[i]}" wraz z zawartością`, 'autoRemoveFiles - onDemand');
                 fs.rmSync('./mp3/onDemand/'+files[i], { recursive: true, force: true })
                 continue;
             }
             fs.unlinkSync(path.join('./mp3/onDemand', files[i]));
-            logger('task', `Usunięto ${files[i]}`, 'autoRemoveFiles')
+            logger('task', `Usunięto ${files[i]}`, 'autoRemoveFiles - onDemand')
         }
     });
     fs.readdir('./mp3/7', (err, files) => {
-        if (err) return logger('error '+err,'autoRemoveFiles');
-        if (files.length === 0) return logger('task','Brak plików do usunięcia.','autoRemoveFiles');
+        if (err) return logger('error '+err,'autoRemoveFiles - 7');
+        if (files.length === 0) return logger('task','Brak plików do usunięcia.','autoRemoveFiles - 7');
         for (let i in files) {
             if (fs.lstatSync('./mp3/7/'+files[i]).isDirectory()) {
-                logger('task', `Usunięto folder "${files[i]}" wraz z zawartością`, 'autoRemoveFiles');
+                logger('task', `Usunięto folder "${files[i]}" wraz z zawartością`, 'autoRemoveFiles - 7');
                 fs.rmSync('./mp3/7/'+files[i], { recursive: true, force: true });
                 continue;
             }
             fs.unlinkSync(path.join('./mp3/7', files[i]));
-            logger('task', `Usunięto ${files[i]}`, 'autoRemoveFiles');
+            logger('task', `Usunięto ${files[i]}`, 'autoRemoveFiles - 7');
         }
     });
 }
