@@ -106,6 +106,7 @@ export async function addTask(req, res) {
                             break;
                         default:
                             logger('warn', `Nieznana akcja dla typu "inne": ${taskData.action}`, 'LocalAPI-dev - addTask');
+                            return res.status(400).send('Nieznana akcja dla zadania "inne" w polu taskData!');
                             break;
                     }
                     // tutaj coś kiedyś będzie (EDIT: Czyli po Filipowsku nigdy)
