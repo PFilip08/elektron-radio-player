@@ -346,12 +346,14 @@ export async function devAPITimeTables(req, res) {
             global.devAPIMockData.timeTables = req.body;
             logger('log', 'Zaktualizowano dane DevAPI TimeTables', 'LocalAPI-dev - devAPITimeTables');
 
+
             if (global.devAPIEnabled) {
                 await massSchedule();
                 logger('log', 'Zaktualizowano dane TimeTables i zreschedulowano taski', 'LocalAPI-dev - devAPITimeTables');
+                return res.json({ success: true, message: 'Zaktualizowano dane TimeTables i zreschedulowano taski' });
+            } else {
+                return res.json({ success: true, message: 'Zaktualizowano dane TimeTables (DevAPI wyłączone, więc nie zreschedulowano tasków)' });
             }
-
-            return res.json({ success: true, message: 'Zaktualizowano dane TimeTables i zreschedulowano taski' });
         }
     } catch (e) {
         logger('verbose', 'Błąd w devAPITimeTables', 'LocalAPI-dev - devAPITimeTables');
