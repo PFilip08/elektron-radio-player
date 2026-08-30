@@ -118,7 +118,7 @@ function playMusic(filename) {
     logger('verbose', `Plik istnieje! Granie pliku muzycznego...`, 'playMusic');
     const buffer = path.resolve(`./mp3/${filename}.mp3`);
 
-    exec(`${vlc} --play-and-exit ${buffer}`);
+    exec(`${vlc} --play-and-exit "${buffer}"`);
     logger('task','--------Play Music--------', 'playMusic');
     logger('task','Muzyka gra...', 'playMusic');
     logger('task',`Gra aktualnie: ${buffer}`, 'playMusic');
@@ -142,7 +142,7 @@ function playOnDemand(filename, file) {
             logger('verbose',`Stacktrace został zrzucony do /debug`,'playOnDemand');
         }
     }
-    exec(`${vlc} --loop ${buffer}`);
+    exec(`${vlc} --loop "${buffer}"`);
     logger('task','--------Play Music (On Demand Mode)--------', 'playOnDemand');
     logger('task','Muzyka gra...', 'playOnDemand');
     logger('task',`Gra aktualnie: ${buffer}`, 'playOnDemand');
@@ -158,7 +158,7 @@ function playPlaylist(playlistID) {
     if(!fs.existsSync(`./mp3/${playlistID}/`)) return logger('error','Brak playlisty o podanym numerze!!', 'playPlaylist');
     logger('verbose', `Folder istnieje! Granie playlisty...`, 'playPlaylist');
     const buffer = path.normalize(`./mp3/${playlistID}/`);
-    exec(`${vlc} ${z} --play-and-exit ${buffer}`);
+    exec(`${vlc} ${z} --play-and-exit "${buffer}"`);
     logger('task',`--------Play Playlist${random}--------`, 'playPlaylist');
     logger('task','Playlista gra...', 'playPlaylist');
     logger('task',`Gra aktualnie playlista: ${getPlaylistName(playlistID)}`, 'playPlaylist');
