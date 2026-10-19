@@ -84,7 +84,13 @@ async function scheduleMinorTasks() {
     logger('verbose', 'Planowanie zadania automatycznego usuwania plików...', 'scheduleMinorTasks');
     schedule.scheduleJob(`autoRemoveFiles - ${new Date().toLocaleString()}`, '0 5 * * 1-5', autoRemoveFiles);
     logger('verbose', 'Planowanie zadania automatycznej aktualizacji głosów...', 'scheduleMinorTasks');
-    schedule.scheduleJob(`downloadVotes - ${new Date().toLocaleString()}`, '50 6 * * 1-5', downloadVotes);
+    schedule.scheduleJob(`downloadVotes - ${new Date().toLocaleString()}`, '50 6 * * 1-5', async function () {
+        // naprawia, że po weekendzie lub gdziekolwiek czasami losuje, a nie przechodzi na głosy, mimo że są głosy (mam nadzieję)
+        logger('task', 'Planowanie głosów w głowie...', 'downloadVotesTASKEDITION');
+        await downloadVotes();
+        logger('task', 'Reschedulowanie tasków massSchedule...', 'downloadVotesTASKEDITION');
+        massSchedule();
+    });
 }
 
 async function checkScheduleTime(timeEnd, timeStart, rule, breakNumber) {
