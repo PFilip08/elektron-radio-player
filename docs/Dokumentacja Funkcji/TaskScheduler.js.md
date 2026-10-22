@@ -96,3 +96,41 @@ Po tym funkcja sprawdza, czy czas jest prawidłowy przy użyciu funkcji [`checkS
 !["Jak wygląda log z funkcji massSchedule, gdy czas jest nieprawidłowy"](https://i.imgur.com/C741mZA.png)
 
 Jeżeli żaden z powyższych sprawdzeń nie wyłapał nic, to funkcja tworzy zadania a tworzy je przez funkcję [`scheduleMusicTask()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#schedulemusictask) i jako argument podaje czas we, zmiennej `time` a id playlisty we, zmiennej `id`a tworzy zadanie przy pomocy funkcji [`scheduleKillTask()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#schedulekilltask), do której podaje czas w tej samej zmiennej `time`.
+
+# scheduleVotes()
+
+Funkcja planuje zadania odtwarzania oraz pauzowania playlisty z głosowania uczniów (playlista nr 7).
+
+Funkcja przyjmuje cztery argumenty:
+
+- `timeStart` - czas rozpoczęcia odtwarzania w formacie cron,
+- `timeEnd` - czas zakończenia odtwarzania (pauzowania/ubicia) w formacie cron,
+- `id` - identyfikator playlisty (musi być równy `7`),
+- `i` - tablica identyfikująca dzień i indeks przerwy `[dzień, indeks]`.
+
+Gdy nadejdzie czas `timeStart`, jeśli VLC już działa i jest ustawione na głosy, funkcja wznawia odtwarzanie za pomocą [`playPlayer()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#playplayer), w przeciwnym razie odpala [`playPlaylist()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#playplaylist). O czasie `timeEnd` funkcja pauzuje odtwarzacz za pomocą [`pausePlayer()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#pauseplayer) (lub ubija siłowo w razie błędu).
+
+# downloadVotes()
+
+Funkcja pobiera piosenki wyłonione w głosowaniu.
+
+Wywołuje [`getVotesData()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/VotesConnector.js.md#getvotesdata), czyści cache playlisty 7 w `playlistCache`, a następnie w pętli pobiera każdy utwór za pomocą [`downloader()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicDownloader.js.md#downloader) z flagą `votes = true`.
+
+# scheduleMinorTasks()
+
+Funkcja planuje codzienne zadania pomocnicze (od poniedziałku do piątku):
+- automatyczne czyszczenie plików [`autoRemoveFiles()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicDownloader.js.md#autoremovefiles) o 5:00 (`0 5 * * 1-5`),
+- pobieranie głosów [`downloadVotes()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#downloadvotes) o 6:50 (`50 6 * * 1-5`).
+
+# delayMassScheduleVLC()
+
+Funkcja sprawdza, czy VLC aktualnie odtwarza muzykę. Jeśli tak, wstrzymuje wykonanie harmonogramu `massSchedule()` i ponawia sprawdzanie co 1 sekundę. Gdy VLC skończy grać, uruchamia `massSchedule()`.
+
+# getScheduledTasks()
+
+Funkcja zwraca listę wszystkich aktualnie zaplanowanych zadań `node-schedule` wraz z ich nazwą, przeliczoną datą i godziną kolejnego wykonania (uwzględniając offset strefy czasowej), komendą oraz przypisanymi zmiennymi.
+
+# Zmienne modułu
+
+- `emptyVotes` - flaga informująca, czy lista głosów jest pusta (`brak`).
+- `downloaded` - flaga stanu pobierania głosów.
