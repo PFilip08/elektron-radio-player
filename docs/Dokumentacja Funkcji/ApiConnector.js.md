@@ -189,3 +189,27 @@ I wyczyści interwał i uruchomi nowy interwał przy użyciu funkcji [`startInte
 
 Po uruchomieniu funkcji log pokaże jakie ustawienia czasu są ustawione:
 !["Jak wygląda log z funkcji scheduleUpdate, który pokazuje ustawienia czasu w trybie debugowania"](https://i.imgur.com/vvIn0A4.png)
+
+# clearGetApiDataBlock()
+
+Funkcja zdejmuje blokadę awaryjną nałożoną na funkcję [`getApiData()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#getapidata).
+
+Zwraca:
+- `true` - jeśli blokada była aktywna i została pomyślnie zdjęta,
+- `false` - jeśli blokada nie była aktywna.
+
+# blockGetApiData()
+
+Funkcja wewnętrzna nakładająca blokadę na [`getApiData()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#getapidata) na czas 5 minut (`recoveryBlockDelay`). Wywoływana automatycznie w sytuacji awaryjnej, gdy tryb recovery jest wywoływany w pętli.
+
+# Monitorowanie pętli Recovery
+
+Moduł posiada wbudowany mechanizm chroniący przed zapętleniem awarii:
+- `startRecoveryModeInterval()` - rozpoczyna monitorowanie liczby wejść w tryb recovery,
+- `monitorRecoveryMode()` - jeśli w oknie 40 sekund liczba wejść w tryb recovery przekroczy limit (4 razy), nakłada blokadę przez `blockGetApiData()`,
+- `stopRecoveryModeInterval()` - zatrzymuje interwał monitorowania po przywróceniu normalnego działania lub nałożeniu blokady.
+
+# Zmienne modułu
+
+- `messageCounter` - flaga stanu błędu połączenia z API (przyjmuje `true` w trybie recovery i `false` podczas normalnego działania),
+- `previousData` - obiekt przechowujący ostatnie poprawnie pobrane dane z API harmonogramu.
