@@ -173,9 +173,19 @@ Ten endpoint zwraca listę piosenek z playlisty o podanym id.
 - **Endpoint:** `/status/query/playlist/songs`
 - **Parametry:**
   - **id** - id playlisty
+  - **nocache** - parametr opcjonalny, jeżeli podany to odpowiedź nie będzie korzystać z cache i ten cache zostanie odświeżony, jeżeli nie to odpowiedź będzie korzystać z cache.
+
+- **Metoda:** POST
+- **Endpoint:** `/status/query/playlist/songs`
+- **Parametry:**
+    - **forceall** - parametr wymagany, jeżeli podany to cache playlist zostanie wyczyszczony i będzie pusty
 
 ### Response
-
+#### W przypadku GET
+W przypadku powodzenia i gdy playlista została zwrócona z cache zwracany jest:
+- **Kod statusu:** 200 (kod zwracany tylko w przypadku gdy playlista została zwrócona z cache reszta przypadków zwraca 201)
+- **Typ:** text/html
+- **Treść:** Taka sama w zależności od przypadków poniżej dla metody GET
 W przypadku powodzenia i gdy wszystkie piosenki posiadają metadane zwracany jest:
 
 - **Kod statusu:** 201
@@ -289,15 +299,75 @@ W przypadku powodzenia, ale gdy jedna z piosenek nie posiada tytułu w metadanyc
     ]
 }
 ```
-
+W przypadku gdy parametr `id` próbował podać ścieżkę, która by uciekła poza folder mp3:
+- **Kod statusu:** 403
+- **Typ:** text/html
+- **Treść:** `Niebezpieczna ścieżka!`
+W przypadku gdy parametr `id` nie został podany bądź będzie pusty:
+- **Kod statusu:** 400
+- **Typ:** text/html
+- **Treść:** `Nie podano nazwy lub ID playlisty!`
 W przypadku gdy playlista nie istnieje zwracany jest:
 
 - **Kod statusu:** 500
 - **Typ:** text/html
 - **Treść:** `Nie znaleziono playlisty o podanym ID!`
+#### W przypadku POST
+w przypadku powodzenia i podania parametru `forceall` zwracany jest:
+- **Kod statusu:** 200
+- **Typ:** text/html
+- **Treść:** `Wyczyszczono cache playlist!`
+w przypadku powodzenia i podania parametru `forceall` ale cache jest pusty zwracany jest:
+- **Kod statusu:** 400
+- **Typ:** text/html
+- **Treść:** `Cache playlist jest pusty!`
 
-Przykład:
+### Przykład:
 
 ```bash
-curl -X GET http://localhost:8080/status/query/playlist/songs?id=1
+curl -X GET http://localhost:8080/status/query/playlist/songs?id=1&nocache=true
+```
+
+# Endpoint query/recoveryMode
+
+### Opis
+Ten endpoint zwraca informacje o tym czy tryb recovery jest włączony oraz w jakim trybie działa.
+
+### Request
+
+- **Metoda:** GET
+- **Endpoint:** `/status/query/recoveryMode`
+- **Parametry:**
+    - **normal** - Parametr opcjonalny, jeżeli podany to zwracany response jest w formacie JSON, jeżeli nie to zwracany jest w formacie text/event-stream.
+
+### Response
+
+W przypadku gdy nie podano parametru `normal` zwracany jest:
+- **Kod statusu:** 200
+- **Typ:** text/event-stream
+- **Treść:**
+```json
+{
+    "status":true, //boolean <true,false> oznacza że tryb recovery jest włączone
+    "staticPlaylist":true, //boolean <true,false> (pole opcjonalne nie zawsze jest) oznacza że tryb recovery pobiera schedule zapisany w skrypcie a nie ze zmiennej previousData 
+    "previousDataPlaylistUse":true //boolean <true,false> oznacza że tryb recovery pobiera schedule zapisany w zmiennej previousData a nie ze skryptu
+}
+```
+
+W przypadku gdy podano parametr `normal` zwracany jest:
+- **Kod statusu:** 200
+- **Typ:** application/json
+- **Treść:**
+```json
+{
+    "status":true, //boolean <true,false> oznacza że tryb recovery jest włączone
+    "staticPlaylist":true, //boolean <true,false> (pole opcjonalne nie zawsze jest) oznacza że tryb recovery pobiera schedule zapisany w skrypcie a nie ze zmiennej previousData
+    "previousDataPlaylistUse":true //boolean <true,false> oznacza że tryb recovery pobiera schedule zapisany w zmiennej previousData a nie ze skryptu
+}
+```
+
+### Przykład:
+
+```bash
+curl -X GET http://localhost:8080/status/query/recoveryMode?normal=true
 ```
