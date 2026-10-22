@@ -231,6 +231,24 @@ Wykonanie tej funkcji jest logowane w konsoli takim oto logiem:
 !["Jak wygląda log z funkcji killPlayerForce"](https://i.imgur.com/6VT4FHm.png)
 
 ## Tryb Debugowania
-
+ 
 Przed zatrzymaniem odtwarzacza funkcja zwraca log z informacją o tym, że rozpoczyna ubijanie plejera:
 !["Jak wygląda log z funkcji killPlayerForce w trybie debugowania"](https://i.imgur.com/lnouCDo.png)
+
+# pausePlayer()
+
+Funkcja pauzuje odtwarzanie muzyki w odtwarzaczu VLC.
+
+Przed wykonaniem pauzy funkcja sprawdza za pomocą [`checkIfVLConVotes()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Other.js.md#checkifvlconvotes), czy VLC odtwarza playlistę z głosów (`./mp3/7/`). Jeśli nie, funkcja pomija pauzowanie i rzuca błąd.
+
+## Tryb Debugowania
+
+W przypadku wystąpienia błędu podczas pauzowania, stack trace błędu jest zapisywany przez [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji `debug/MusicPlayer/pausePlayer/catched_error`.
+
+# playPlayer()
+
+Funkcja wznawia lub rozpoczyna odtwarzanie w VLC za pomocą metody `play()`.
+
+## Tryb Debugowania
+
+W przypadku wystąpienia błędu podczas wznawiania odtwarzania, stack trace błędu jest zapisywany przez [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji `debug/MusicPlayer/playPlayer/catched_error`.
