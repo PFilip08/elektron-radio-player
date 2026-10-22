@@ -64,7 +64,7 @@ W przypadku, gdy sprawdzenie wyszło, że czas w godzinie jest na minusie (czas 
 
 `massSchedule` jest funkcją, która planuje zadania związane z odtwarzaniem muzyki na podstawie harmonogramu pobranego z API.
 
-Na początku funkcja anuluje zaplanowane w poprzedniej sesji zadania i planuje zadanie uruchamiające funkcję automatycznego usuwania plików [`autoRemoveFiles()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicDownloader.js.md#autoremovefiles) codziennie o godzinie 5:00 od poniedziałku do piątku.
+Na początku funkcja zatrzymuje zadania zaplanowane w poprzedniej sesji oraz wywołuje [`scheduleMinorTasks()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#scheduleminortasks), planując codzienne zadania pomocnicze (automatyczne czyszczenie plików [`autoRemoveFiles()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicDownloader.js.md#autoremovefiles) o 5:00 oraz poranne pobieranie głosów i reschedulowanie zadań o 6:50).
 
 Następnie wysyła zapytanie do funkcji [`getApiData()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#getapidata), która zwróci dane, z API po tym sprawdza, czy zmienna w jsonie `isOn` jest ustawiona na `true` jeżeli zmienna jest przełączona na `false` to funkcja zwróci błąd, który wygłąda tak:
 
@@ -120,7 +120,9 @@ Wywołuje [`getVotesData()`](https://github.com/PFilip08/elektron-radio-player/b
 
 Funkcja planuje codzienne zadania pomocnicze (od poniedziałku do piątku):
 - automatyczne czyszczenie plików [`autoRemoveFiles()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicDownloader.js.md#autoremovefiles) o 5:00 (`0 5 * * 1-5`),
-- pobieranie głosów [`downloadVotes()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#downloadvotes) o 6:50 (`50 6 * * 1-5`).
+- zadanie aktualizacji głosów o 6:50 (`50 6 * * 1-5`) – uruchamia asynchroniczną funkcję, która:
+  1. Pobiera głosy wywołując [`downloadVotes()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#downloadvotes).
+  2. Ponownie planuje zadania za pomocą [`massSchedule()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#massschedule) – zapobiega to sytuacji, w której po weekendzie odtwarzacz losowałby zwykłą playlistę zamiast przejść na pobrane głosy.
 
 # delayMassScheduleVLC()
 
