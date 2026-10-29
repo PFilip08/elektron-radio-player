@@ -128,7 +128,9 @@ async function massSchedule() {
         logger('warn', 'massSchedule jest już odroczone, pomijanie ponownego uruchamiania...', 'massSchedule');
         return;
     }
-    if ((await getPlayingSong())[0] == true && !massScheduleDelayed) {
+    // console.log(Object.keys(schedule.scheduledJobs).length, global.devAPIEnabled);
+    // jeżeli devapi off, więcej niż 4 taski, odtwarzrane VLC i jeżeli nie ma już delay;
+    if (!global.devAPIEnabled && Object.keys(schedule.scheduledJobs).length >= 5 && (await getPlayingSong())[0] == true && !massScheduleDelayed) {
         logger('verbose', yellow('WYKRYTO, ŻE VLC JEST URUCHOMIONE PODCZAS WYKONYWANIA MASSSCHEDULE!!!'), 'massSchedule');
         logger('warn', 'VLC jest uruchomione podczas wykonywania massSchedule, co może powodować rzadki błąd typu Race Condition i nie ubicie muzyki!!! Odraczanie wykonania massschedule gdy VLC skończy puszczać muzykę', 'massSchedule');
         massScheduleDelayed = true;
