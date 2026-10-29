@@ -7,6 +7,8 @@ import {DebugSaveToFile} from "./DebugMode.js";
 const url = process.env.URI+'/api/timeTables';
 let previousData = null;
 let messageCounter = false;
+let lastDevAPIMessageAt = null;
+const devAPIMessageInterval = 5 * 60 * 1000; // raz na 5 min
 let messageStartupBlocker = false;
 let debugIntervalBlock = true;
 let updateInterval, oldInterval;
@@ -32,13 +34,19 @@ const api = axios.create({
 async function getApiData() {
     // redirect na devapi
     if (global.devAPIEnabled) {
-        logger('log', 'DevAPI włączone - używanie local DevAPI', 'getApiData');
+        const now = Date.now();
+        if (lastDevAPIMessageAt === null || now - lastDevAPIMessageAt >= devAPIMessageInterval) {
+            logger('log', 'DevAPI włączone - używanie local DevAPI', 'getApiData');
+            lastDevAPIMessageAt = now;
+        }
         try {
             const mockResponse = await api.get(`http://localhost:${process.env.PORT || 8080}/dev/api/timeTables`);
             return mockResponse.data.timeTable[0];
         } catch (e) {
             logger('error', 'DevAPI włączone, ale nie działa. Spadanie spowrotem na API filsza', 'getApiData');
         }
+    } else {
+        lastDevAPIMessageAt = null;
     }
 if (!recoveryBlocked) {
     return await api.get(url)
