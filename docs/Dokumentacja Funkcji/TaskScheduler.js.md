@@ -118,9 +118,13 @@ Wywołuje [`getVotesData()`](https://github.com/PFilip08/elektron-radio-player/b
 
 # scheduleMinorTasks()
 
-Funkcja planuje codzienne zadania pomocnicze (od poniedziałku do piątku):
-- automatyczne czyszczenie plików [`autoRemoveFiles()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicDownloader.js.md#autoremovefiles) o 5:00 (`0 5 * * 1-5`),
-- zadanie aktualizacji głosów o 6:50 (`50 6 * * 1-5`) – uruchamia asynchroniczną funkcję, która:
+Funkcja planuje codzienne zadania pomocnicze:
+- automatyczną aktualizację konfiguracji z API [`scheduleUpdate()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#scheduleupdate):
+  - o 7:00 od poniedziałku do piątku (`0 7 * * 1-5`) – rozpoczęcie trybu pracy radiowęzła (on-air),
+  - o 16:00 od poniedziałku do piątku (`0 16 * * 1-5`) – przejście w tryb po pracy radiowęzła (off-air),
+  - o północy codziennie (`0 0 * * *`) – zmiana dnia (uwzględnienie weekendów lub wakacji).
+- automatyczne czyszczenie plików [`autoRemoveFiles()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicDownloader.js.md#autoremovefiles) o 5:00 od poniedziałku do piątku (`0 5 * * 1-5`),
+- zadanie aktualizacji głosów o 6:50 od poniedziałku do piątku (`50 6 * * 1-5`) – uruchamia asynchroniczną funkcję, która:
   1. Pobiera głosy wywołując [`downloadVotes()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#downloadvotes).
   2. Ponownie planuje zadania za pomocą [`massSchedule()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#massschedule) – zapobiega to sytuacji, w której po weekendzie odtwarzacz losowałby zwykłą playlistę zamiast przejść na pobrane głosy.
 
