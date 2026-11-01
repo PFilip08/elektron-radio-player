@@ -72,7 +72,7 @@ async function downloadSong(url, votes, path2) {
         fs.writeFileSync(`${path}${file}.mp3`, song);
         logger('verbose', 'Normalizacja dźwięku przy użyciu mp3gain...', 'downloadSong');
         await new Promise((resolve, reject) => {
-            execFile(`mp3gain`, ['-r', '-c', `${path}${dir}/${file}.mp3`], (error, stdout, stderr) => {
+            execFile(`mp3gain`, ['-r', '-c', `${path}${file}.mp3`], (error, stdout, stderr) => {
                 logger('verbose', "\n"+ stdout, 'downloadSong')
                 if (global.debugmode === true) {
                     DebugSaveToFile('MusicDownloader', 'downloadSong', 'mp3gain_output', stdout);
