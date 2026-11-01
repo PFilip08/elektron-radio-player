@@ -181,7 +181,14 @@ export async function normalize(req, res) {
         const playlist = req.query.playlist;
         const pathDir = './mp3/';
         const fullPath = pathDir+playlist;
-        if (fullPath.includes('../')) return res.status(511).send('a dzie masło roota?!?!1');
+        const secuCheck = pathSecurityChecker(fullPath);
+        if (!playlist) {
+            return res.status(400).send('Nie podano ścieżki do playlisty!');
+        }
+        if (secuCheck.includes('_ATTEMPT')) {
+            logger('warn', `Próba normalizacji plików z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - normalize');
+            return res.status(511).send('a dzie masło roota?!?!1')
+        }
         if (!fs.existsSync(fullPath) || !fs.lstatSync(fullPath).isDirectory()) return res.status(406).send('playlista nie istnieje lub to nie playlista!!');
         const dupa = await new Promise((resolve, reject) => {
             execFile(`mp3gain`, ['-r', '-c', `${fullPath}/*`], (error, stdout, stderr) => {
