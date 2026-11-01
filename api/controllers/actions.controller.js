@@ -8,6 +8,11 @@ import {execFile} from "child_process";
 import * as fs from "fs";
 
 export let szuffle = 'true';
+const vlc = new VLC.Client({
+    ip: '127.0.0.1',
+    port: Number(process.env.VLC_PORT) || 4212,
+    password: process.env.VLC_PASSWORD
+});
 
 // killPlayer
 export async function kill(req, res) {
@@ -82,11 +87,6 @@ export async function pPlaylist(req, res) {
 
 export async function vlcPlay(req, res) {
     try {
-        const vlc = new VLC.Client({
-            ip: '127.0.0.1',
-            port: Number(process.env.VLC_PORT) || 4212,
-            password: process.env.VLC_PASSWORD
-        });
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - vlcPlay');
         await vlc.togglePlay();
         return res.status(201).send('gut');
@@ -102,11 +102,6 @@ export async function vlcPlay(req, res) {
 
 export async function vlcNext(req, res) {
     try {
-        const vlc = new VLC.Client({
-            ip: '127.0.0.1',
-            port: Number(process.env.VLC_PORT) || 4212,
-            password: process.env.VLC_PASSWORD
-        });
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - vlcNext');
         await vlc.next();
         return res.status(201).send('gut');
@@ -122,11 +117,6 @@ export async function vlcNext(req, res) {
 
 export async function vlcPrevious(req, res) {
     try {
-        const vlc = new VLC.Client({
-            ip: '127.0.0.1',
-            port: Number(process.env.VLC_PORT) || 4212,
-            password: process.env.VLC_PASSWORD
-        });
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - vlcPrevious');
         await vlc.previous();
         return res.status(201).send('gut');
