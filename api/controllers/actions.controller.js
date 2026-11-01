@@ -189,11 +189,22 @@ export async function normalize(req, res) {
         }
         if (secuCheck.includes('_ATTEMPT')) {
             logger('warn', `Próba normalizacji plików z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - normalize');
+            return res.status(511).send('a dzie masło roota?!?!1');
+        }
+        const base = path.resolve(pathDir);
+        const dir = path.resolve(base, String(playlist));
+        if (!dir.startsWith(base + path.sep)) {
+            logger('warn', `Próba wyjścia poza katalog mp3 (path traversal) od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - normalize');
             return res.status(511).send('a dzie masło roota?!?!1')
         }
-        if (!fs.existsSync(fullPath) || !fs.lstatSync(fullPath).isDirectory()) return res.status(406).send('playlista nie istnieje lub to nie playlista!!');
+        if (!fs.existsSync(dir) || !fs.lstatSync(dir).isDirectory()) return res.status(406).send('playlista nie istnieje lub to nie playlista!!');
+        const files = fs.readdirSync(dir).filter(f => f.toLowerCase().endsWith('.mp3')).map(f => path.join(dir, f));
+        if (files.length === 0) {
+            logger('warn', `Playlista ${playlist} nie zawiera plików mp3!`, 'LocalAPI - normalize');
+            return res.status(406).send('Brak plików mp3 w playliście!');
+        }
         const dupa = await new Promise((resolve, reject) => {
-            execFile(`mp3gain`, ['-r', '-c', `${fullPath}/*`], (error, stdout, stderr) => {
+            execFile(`mp3gain`, ['-r', '-c', ...files], (error, stdout, stderr) => {
                 logger('verbose', "\n"+ stdout, 'LocalAPI - normalize');
                 if (global.debugmode === true) {
                     DebugSaveToFile('LocalAPI', 'normalize', 'mp3gain_output', stdout);
