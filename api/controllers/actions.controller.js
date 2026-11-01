@@ -181,12 +181,12 @@ export async function normalize(req, res) {
     try {
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - normalize');
         const playlist = req.query.playlist;
-        const pathDir = './mp3/';
-        const fullPath = pathDir+playlist;
-        const secuCheck = pathSecurityChecker(fullPath);
         if (!playlist) {
             return res.status(400).send('Nie podano ścieżki do playlisty!');
         }
+        const pathDir = './mp3/';
+        const fullPath = pathDir + String(playlist);
+        const secuCheck = pathSecurityChecker(fullPath);
         if (secuCheck.includes('_ATTEMPT')) {
             logger('warn', `Próba normalizacji plików z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - normalize');
             return res.status(511).send('a dzie masło roota?!?!1');
