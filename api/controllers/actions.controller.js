@@ -216,10 +216,9 @@ export async function normalize(req, res) {
                         DebugSaveToFile('LocalAPI', 'normalize', 'mp3gain_error', error);
                         logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - normalize');
                     }
-                    reject(error);
-                    return res.status(400).send('error/brakplikuf!!');
+                    return reject(error);
                 }
-                resolve(stdout);
+                return resolve(stdout || stderr);
             });
         });
         return res.status(200).send(dupa);
