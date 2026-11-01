@@ -5,6 +5,7 @@ import {pathSecurityChecker, sterylizatorIP} from "../../modules/Other.js";
 import {removeFiles} from "../../modules/MusicDownloader.js";
 import VLC from "vlc-client";
 import {execFile} from "child_process";
+import path from "path";
 import * as fs from "fs";
 
 export let szuffle = 'true';
