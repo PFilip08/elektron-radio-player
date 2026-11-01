@@ -53,17 +53,17 @@ function logChanges(changes) {
     let counter = 0;
     logger('verbose', `Rozpoczęto logowanie zmian`, 'logChanges');
     try {
-      changes.forEach(change => {
+      for (const change of changes) {
         counter++;
         const { key, oldValue, newValue } = change;
         let message = `Zmiana w ${key}: `;
         if (key.includes('static')) {
-          logger('verbose',yellow('Wykryto przejście z trybu recovery który używał danych statycznych do trybu normalnego. Nie ma potrzeby aby porównywać tych danych!'), 'logChanges');
-          throw new Error('Wykryto przejście z trybu recovery który używał danych statycznych do trybu normalnego. Nie ma potrzeby aby porównywać tych danych!');
+          logger('verbose', yellow('Wykryto przejście z trybu recovery który używał danych statycznych do trybu normalnego. Nie ma potrzeby aby porównywać tych danych!'), 'logChanges');
+          break;
         }
         if (key.includes('isOn')) {
-          logger('verbose',yellow('Wykryto zmianę klucza "isOn". Nie ma potrzeby aby porównywać tych danych!'), 'logChanges');
-          throw new Error('Wykryto zmianę klucza "isOn". Nie ma potrzeby aby porównywać tych danych!');
+          logger('verbose', yellow('Wykryto zmianę klucza "isOn". Nie ma potrzeby aby porównywać tych danych!'), 'logChanges');
+          break;
         }
         if (key.includes('start') || key.includes('end')) {
           message += `Godzina została zmieniona z ${oldValue} na ${newValue}`;
