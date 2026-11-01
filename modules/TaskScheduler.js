@@ -128,7 +128,7 @@ let downloaded = false, emptyVotes = false, massScheduleDelayed = false;
 let blockmassSchedule = new Mutex();
 async function massSchedule() {
     if (massScheduleDelayed) {
-        logger('verbose', yellow(console.trace()), 'massSchedule');
+        console.trace();
         logger('warn', 'massSchedule jest już odroczone, pomijanie ponownego uruchamiania...', 'massSchedule');
         return;
     }
@@ -260,7 +260,7 @@ let delayTimer = null;
 async function delayMassScheduleVLC() {
     if (delayTimer) {
         logger('warn', 'Funkcja delayMassScheduleVLC już działa, pomijanie ponownego uruchamiania...', 'delayMassScheduleVLC');
-        logger('verbose', yellow(console.trace()), 'delayMassScheduleVLC');
+        console.trace();
         return;
     }; // już działa
 
