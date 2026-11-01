@@ -155,7 +155,7 @@ async function replaceData() {
                             // console.log(data[1].playlistNames[i]);
                             // console.log(i)
                             id = i;
-                            if (playlist.playlistSongsName[j].coverData !== 'taboret' || playlist.playlistSongsName[j].coverData !== undefined) {
+                            if (playlist.playlistSongsName[j].coverData !== 'taboret' && playlist.playlistSongsName[j].coverData !== undefined) {
                                 cover = `data:${playlist.playlistSongsName[j].coverData.format};base64,${playlist.playlistSongsName[j].coverData.data}`;
                             } else {
                                 cover = "../images/taboret.png";
