@@ -31,23 +31,22 @@ function findChanges(obj1, obj2, path = '') {
     const keys = new Set([...Object.keys(obj1), ...Object.keys(obj2)]);
     logger('verbose', `Znaleziono klucze: ${Array.from(keys).join(', ')}`, 'findChanges');
     keys.forEach(key => {
-      const fullPath = path ? `${path}.${key}` : key;
-      logger('verbose', `Sprawdzanie klucza: ${fullPath}`, 'findChanges');
-      if (JSON.stringify(obj1[key]) !== JSON.stringify(obj2[key])) {
-        logger('verbose', `Znaleziono różnicę w kluczu: ${fullPath}`, 'findChanges');
-        if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object' && obj1[key] && obj2[key]) {
-          logger('verbose', `W ${fullPath} wykryto jakąś zmianę. Dokonywanie dokładnego sprawdzenia...`, 'findChanges');
-          changes.push(...findChanges(obj1[key], obj2[key], fullPath));
-        } else {
-          logger('verbose', `W ${fullPath} wykryto zmianę. Zapisywanie...`, 'findChanges');
-          changes.push({ key: fullPath, oldValue: obj1[key], newValue: obj2[key] });
+        const fullPath = path ? `${path}.${key}` : key;
+        const oldValue = obj1[key];
+        const newValue = obj2[key];
+        logger('verbose', `Sprawdzanie klucza: ${fullPath}`, 'findChanges');
+        if (oldValue && newValue && typeof oldValue === 'object' && typeof newValue === 'object') {
+            logger('verbose', `W ${fullPath} wykryto jakąś zmianę. Dokonywanie dokładnego sprawdzenia...`, 'findChanges');
+            changes.push(...findChanges(oldValue, newValue, fullPath));
+        } else if (oldValue !== newValue) {
+            logger('verbose', `W ${fullPath} wykryto zmianę. Zapisywanie...`, 'findChanges');
+            changes.push({ key: fullPath, oldValue, newValue });
         }
-      }
     });
     logger('verbose', `Obiekty które są różne zostały zrzucone do debug/`, 'logChanges');
-    logger('verbose', `Zakończono porównywanie obiektów ${JSON.stringify(changes)}`, 'findChanges');
+    logger('verbose', `Zakończono porównywanie obiektów ${path}, liczba zmian: ${changes.length}`, 'findChanges');
     return changes;
-  }
+}
   
 function logChanges(changes) {
     let counter = 0;
