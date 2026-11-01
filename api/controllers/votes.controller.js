@@ -191,7 +191,7 @@ export async function addVotes(req, res) {
 export async function download(req, res) {
     try {
         let data = JSON.parse(fs.readFileSync(votesPath));
-        if (data === '[]') {
+        if (data.length === 0) {
             logger('log', 'Brak danych!!!', 'download');
             return res.status(410).send('brak danych');
         }
