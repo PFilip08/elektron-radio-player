@@ -190,7 +190,7 @@ async function downloadAlbum(url, path2) {
                 logger('warn', `${file}.mp3 - Plik istnieje!`, 'downloadAlbum');
                 continue;
             }
-            if(checkIfFileExistsInArchive(`${file}.mp3`)) {
+            if (checkIfFileExistsInArchive(`${file}.mp3`)) {
                 logger('warn', `Plik istnieje w archiwum!`, 'downloadAlbum');
                 logger('log', 'Pobieranie z archiwum :>', 'downloadAlbum');
                 copyFromArchive(`${file}.mp3`, `${path}${dir}/${file}.mp3`);
@@ -231,30 +231,30 @@ async function downloadAlbum(url, path2) {
 
 async function getTrackInfo(url) {
     try {
-    const urlParts = url.split("/");
-    logger('verbose', `Wynik splita: ${urlParts}`, 'getTrackInfo');
-    logger('verbose', `Wykryto: ${urlParts[3]}`, 'getTrackInfo');
-    if (url.includes("youtube.com/watch?v=")) {
-        logger('log', 'Wykryto link YT', 'getTrackInfo');
-        const ytdlp = new YTDlpWrap();
-        const taboret = await ytdlp.getBasicInfo(url);
-        const trackInfo = {
-            name: taboret.videoDetails.title,
-            artists: [taboret.videoDetails.author.name + "_-" || "Unknown Artist"],
-        };
-        return trackInfo;
-    }
-    switch (urlParts[3]) {
-        case 'album':
-            logger('log', 'Wykryto album', 'getTrackInfo');
-            return await spotify.getAlbum(url);
-        case 'playlist':
-            logger('log', 'Wykryto playlistę', 'getTrackInfo');
-            return await spotify.getPlaylist(url);
-        default:
-            logger('log', 'Wykryto piosenkę', 'getTrackInfo');
-            return await spotify.getTrack(url);
-    }
+        const urlParts = url.split("/");
+        logger('verbose', `Wynik splita: ${urlParts}`, 'getTrackInfo');
+        logger('verbose', `Wykryto: ${urlParts[3]}`, 'getTrackInfo');
+        if (url.includes("youtube.com/watch?v=")) {
+            logger('log', 'Wykryto link YT', 'getTrackInfo');
+            const ytdlp = new YTDlpWrap();
+            const taboret = await ytdlp.getBasicInfo(url);
+            const trackInfo = {
+                name: taboret.videoDetails.title,
+                artists: [taboret.videoDetails.author.name + "_-" || "Unknown Artist"],
+            };
+            return trackInfo;
+        }
+        switch (urlParts[3]) {
+            case 'album':
+                logger('log', 'Wykryto album', 'getTrackInfo');
+                return await spotify.getAlbum(url);
+            case 'playlist':
+                logger('log', 'Wykryto playlistę', 'getTrackInfo');
+                return await spotify.getPlaylist(url);
+            default:
+                logger('log', 'Wykryto piosenkę', 'getTrackInfo');
+                return await spotify.getTrack(url);
+        }
     } catch (e) {
         logger('error', "Błąd w trakcie wykonywania funkcji getTrackInfo", 'getTrackInfo');
         logger('error', e, 'getTrackInfo');
