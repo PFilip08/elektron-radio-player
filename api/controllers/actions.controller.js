@@ -17,8 +17,8 @@ const vlc = new VLC.Client({
 // killPlayer
 export async function kill(req, res) {
     try {
-        const force = req.query.force;
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - killPlayer');
+        const force = req.query.force;
         if (force !== undefined) {
             killPlayerForce();
             return res.status(201).send('force gut');
@@ -38,8 +38,8 @@ export async function kill(req, res) {
 // playMusic
 export async function pMusic(req, res) {
     try {
-        const file = req.query.file;
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - pMusic');
+        const file = req.query.file;
         if (!file) {
             return res.status(400).send('Nie podano nazwy pliku!');
         }
@@ -63,8 +63,8 @@ export async function pMusic(req, res) {
 // playMusic
 export async function pPlaylist(req, res) {
     try {
-        const id = req.query.id;
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - pPlaylist');
+        const id = req.query.id;
         if (!id) {
             return res.status(400).send('Nie podano numeru playlisty!');
         }
@@ -132,8 +132,8 @@ export async function vlcPrevious(req, res) {
 
 export async function vlcSzuffle(req, res) {
     try {
-        const state = req.query.state;
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - vlcSzuffle');
+        const state = req.query.state;
         if (req.method === 'GET') {
             if (state === 'check') return res.status(200).send(szuffle);
         } else if (req.method !== 'POST') {
@@ -179,6 +179,7 @@ export async function delFiles(req, res) {
 
 export async function normalize(req, res) {
     try {
+        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - normalize');
         const playlist = req.query.playlist;
         const pathDir = './mp3/';
         const fullPath = pathDir+playlist;

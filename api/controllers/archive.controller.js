@@ -7,8 +7,8 @@ import {searchInArchive, getAllMp3FilesInArchive, archiveSongsQuery, deleteFromA
 
 export async function searchArchive(req, res) {
     try {
-        const file = req.query.file;
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - searchArchive');
+        const file = req.query.file;
         if (!file) {
             return res.status(400).send('Nie podano nazwy pliku!');
         }
@@ -56,8 +56,8 @@ export async function queryArchive(req, res) {
 
 export async function deleteArchiveFile(req, res) {
     try {
-        const filename = req.query.filename;
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - deleteArchiveFile');
+        const filename = req.query.filename;
         if (!filename) {
             return res.status(400).send('Nie podano nazwy pliku!');
         }
@@ -155,11 +155,11 @@ export async function movePlaylist(req, res) {
     try {
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - movePlaylist');
         const playlistId = parseInt(req.body.playlistId);
-        const userNotice = req.body.userNotice?.toString() || null;
-        const secuCheck = pathSecurityChecker(playlistId.toString(), archdir);
         if (Number.isNaN(playlistId)) {
              return res.status(400).send('Nieprawidłowy ID playlisty!');
         }
+        const userNotice = req.body.userNotice?.toString() || null;
+        const secuCheck = pathSecurityChecker(playlistId.toString(), archdir);
         if (getPlaylistName(playlistId) === playlistId) {
             return res.status(400).send('Nieprawidłowy ID playlisty!');
         }
