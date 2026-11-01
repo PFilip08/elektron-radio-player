@@ -1,4 +1,4 @@
-import {exec} from 'child_process';
+import {exec, execFile} from 'child_process';
 import * as path from "path";
 import fs from "fs";
 import {logger} from "./Logger.js";
@@ -118,7 +118,15 @@ function playMusic(filename) {
     logger('verbose', `Plik istnieje! Granie pliku muzycznego...`, 'playMusic');
     const buffer = path.resolve(`./mp3/${filename}.mp3`);
 
-    exec(`${vlc} --play-and-exit "${buffer}"`);
+    execFile(`${vlc}`, ['--play-and-exit', buffer], (error, stdout, stderr) => {
+        if (error) {
+            logger('error', `Błąd podczas odtwarzania muzyki: ${error}`, 'playMusic');
+            if (global.debugmode === true) {
+                DebugSaveToFile('MusicPlayer', 'playMusic', 'catched_error', error);
+                logger('verbose',`Stacktrace został zrzucony do /debug`,'playMusic');
+            }
+        }
+    });
     logger('task','--------Play Music--------', 'playMusic');
     logger('task','Muzyka gra...', 'playMusic');
     logger('task',`Gra aktualnie: ${buffer}`, 'playMusic');
@@ -142,7 +150,15 @@ function playOnDemand(filename, file) {
             logger('verbose',`Stacktrace został zrzucony do /debug`,'playOnDemand');
         }
     }
-    exec(`${vlc} --loop "${buffer}"`);
+    execFile(`${vlc}`, ['--loop', buffer], (error, stdout, stderr) => {
+        if (error) {
+            logger('error', `Błąd podczas odtwarzania muzyki: ${error}`, 'playOnDemand');
+            if (global.debugmode === true) {
+                DebugSaveToFile('MusicPlayer', 'playOnDemand', 'catched_error', error);
+                logger('verbose',`Stacktrace został zrzucony do /debug`,'playOnDemand');
+            }
+        }
+    });
     logger('task','--------Play Music (On Demand Mode)--------', 'playOnDemand');
     logger('task','Muzyka gra...', 'playOnDemand');
     logger('task',`Gra aktualnie: ${buffer}`, 'playOnDemand');
@@ -158,7 +174,15 @@ function playPlaylist(playlistID) {
     if(!fs.existsSync(`./mp3/${playlistID}/`)) return logger('error','Brak playlisty o podanym numerze!!', 'playPlaylist');
     logger('verbose', `Folder istnieje! Granie playlisty...`, 'playPlaylist');
     const buffer = path.normalize(`./mp3/${playlistID}/`);
-    exec(`${vlc} ${z} --play-and-exit "${buffer}"`);
+    execFile(`${vlc}`, [`${z}`, '--play-and-exit', buffer], (error, stdout, stderr) => {
+        if (error) {
+            logger('error', `Błąd podczas odtwarzania playlisty: ${error}`, 'playPlaylist');
+            if (global.debugmode === true) {
+                DebugSaveToFile('MusicPlayer', 'playPlaylist', 'catched_error', error);
+                logger('verbose',`Stacktrace został zrzucony do /debug`,'playPlaylist');
+            }
+        }
+    });
     logger('task',`--------Play Playlist${random}--------`, 'playPlaylist');
     logger('task','Playlista gra...', 'playPlaylist');
     logger('task',`Gra aktualnie playlista: ${getPlaylistName(playlistID)}`, 'playPlaylist');

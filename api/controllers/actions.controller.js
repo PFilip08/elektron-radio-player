@@ -4,7 +4,7 @@ import {killPlayer, killPlayerForce, playMusic, playPlaylist} from "../../module
 import {pathSecurityChecker, sterylizatorIP} from "../../modules/Other.js";
 import {removeFiles} from "../../modules/MusicDownloader.js";
 import VLC from "vlc-client";
-import {exec} from "child_process";
+import {execFile} from "child_process";
 import * as fs from "fs";
 
 export let szuffle = 'true';
@@ -189,7 +189,7 @@ export async function normalize(req, res) {
         if (fullPath.includes('../')) return res.status(511).send('a dzie masło roota?!?!1');
         if (!fs.existsSync(fullPath) || !fs.lstatSync(fullPath).isDirectory()) return res.status(406).send('playlista nie istnieje lub to nie playlista!!');
         const dupa = await new Promise((resolve, reject) => {
-            exec(`mp3gain -r -c ${fullPath}/*`, (error, stdout, stderr) => {
+            execFile(`mp3gain`, ['-r', '-c', `${fullPath}/*`], (error, stdout, stderr) => {
                 logger('verbose', "\n"+ stdout, 'LocalAPI - normalize');
                 if (global.debugmode === true) {
                     DebugSaveToFile('LocalAPI', 'normalize', 'mp3gain_output', stdout);
