@@ -61,6 +61,7 @@ Funkcja zwraca wartości diagnostyczne opisujące wynik kontroli:
 - `EMPTY_PATH_ATTEMPT` - jeśli ścieżka jest pusta.
 - `NULL_BYTE_ATTEMPT` - jeśli ścieżka zawiera znak `\0`.
 - `ABSOLUTE_PATH_ATTEMPT` - jeśli ścieżka jest absolutna albo wygląda jak ścieżka absolutna z Windows lub UNC.
+- `TRAVERSAL_SEGMENT_ATTEMPT` - jeśli ścieżka zawiera segment `..` próbujący nawigacji w górę katalogu.
 - `ROOT_EXIT_ATTEMPT` - jeśli po normalizacji ścieżka wychodzi poza katalog bazowy.
 - `NONE` - jeśli ścieżka jest bezpieczna.
 
@@ -93,6 +94,7 @@ Podczas sprawdzania funkcja loguje kolejne etapy kontroli:
 - sprawdzenie pustej ścieżki,
 - sprawdzenie obecności `NULL_BYTE`,
 - sprawdzenie ścieżki absolutnej,
+- sprawdzenie czy ścieżka nie zawiera segmentów `..`,
 - sprawdzenie wyjścia poza katalog bazowy.
 
 Przed sprawdzeniem, czy ścieżka nie zawiera np. `NULL_BYTE` zwraca komunikat:
