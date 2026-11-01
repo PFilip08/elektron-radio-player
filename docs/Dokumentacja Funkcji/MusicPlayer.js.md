@@ -142,6 +142,8 @@ Jeżeli plik istnieje, to funkcja wywołuje `cvlc` z odpowiednimi argumentami i 
 
 !["Jak wygląda log z funkcji playMusic"](https://i.imgur.com/KQI9WqM.png)
 
+W przypadku błędu podczas uruchamiania procesu odtwarzacza, błąd jest logowany, a w trybie debugowania stack trace trafia do `debug/MusicPlayer/playMusic/catched_error`.
+
 ## Tryb Debugowania
 
 Przed odtworzeniem pliku funkcja zwraca log z informacją o tym, co ma odtworzyć i informuje, że będzie sprawdzać, czy plik istnieje:
@@ -162,6 +164,8 @@ Funkcja sprawdza jeszcze, czy podana nazwa pliku nie jest katalogiem, aby można
 
 I jeżeli plik lub playlista istnieje, to funkcja wywołuje `cvlc` z odpowiednimi argumentami i odtwarza plik, lub playlistę. Funkcja zwraca log o wykonaniu tego zadania, który wygląda tak:
 !["Jak wygląda log z funkcji playOnDemand"](https://i.imgur.com/Vq8T9pg.png)
+
+W przypadku błędu podczas uruchamiania odtwarzacza, błąd jest logowany, a w trybie debugowania stack trace trafia do `debug/MusicPlayer/playOnDemand/catched_error`.
 
 ## Tryb Debugowania
 
@@ -197,6 +201,8 @@ Funkcja przyjmuje jeden argument, którym jest `playlistID` jak sama nazwa wskaz
 Jeżeli playlista będzie istnieć, to funkcja wywołuje `cvlc` z odpowiednimi argumentami i odtwarza playlistę. Funkcja zwraca log o wykonaniu tego zadania, który wygląda tak:
 
 !["Jak wygląda log z funkcji playPlaylist dla playlisty ROCK"](https://i.imgur.com/LEMe2Xk.png)
+
+W przypadku błędu podczas uruchamiania odtwarzacza playlisty, błąd jest logowany, a w trybie debugowania stack trace trafia do `debug/MusicPlayer/playPlaylist/catched_error`.
 
 ## Tryb Debugowania
 
