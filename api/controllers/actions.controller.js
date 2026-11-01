@@ -154,10 +154,15 @@ export async function vlcSzuffle(req, res) {
 
 export async function delFiles(req, res) {
     try {
-        const path = `./mp3/${req.query.path}/`;
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - delFiles');
-        if (!path) {
+        if (!req.query.path) {
             return res.status(400).send('Nie podano ścieżki do pliku!');
+        }
+        const path = `./mp3/${req.query.path}/`;
+        const secuCheck = pathSecurityChecker(path);
+        if (secuCheck.includes('_ATTEMPT')) {
+            logger('warn', `Próba usunięcia pliku z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - delFiles');
+            return res.status(403).send('Niebezpieczna ścieżka!');
         }
         await removeFiles(path);
         return res.status(200).send('usunło chyba');
