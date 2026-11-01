@@ -115,7 +115,7 @@ function logChanges(changes) {
         else if (key.includes('currentPlaylistId')) {
           if (oldValue === undefined || newValue === undefined) {
               message += ``;
-          } else if (oldValue !== newValue || newValue !== oldValue) {
+          } else if (oldValue !== newValue) {
               message += `Playlista główna została zmieniona z ${oldValue} na ${newValue}`;
           }
         }
@@ -144,12 +144,12 @@ function logChanges(changes) {
             message += `Wartość nieznanego dla funkcji klucza ${key} została zmieniona z ${oldValue} na ${newValue}`;
           }
         }
-        if (!key.includes('id') && !key.includes('created_at') === true) {
+        if (!key.includes('id') && !key.includes('created_at')) {
           if (oldValue !== undefined || newValue !== undefined) {
               logger('debug', yellow(message), 'logChanges');
           }
         }
-      });
+      };
     } catch (error) {
       logger('verbose', red(`Wystąpił błąd podczas logowania zmian: ${error}`), 'logChanges');
       if (global.debugmode === true) {
