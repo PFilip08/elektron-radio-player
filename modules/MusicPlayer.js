@@ -120,6 +120,10 @@ function playMusic(filename) {
 
     execFile(`cvlc`, [...vlc, '--play-and-exit', buffer], (error, stdout, stderr) => {
         if (error) {
+            if (error.signal && error.code !== 'ERR_CHILD_PROCESS_STDIO_MAXBUFFER') {
+                logger('verbose', `Odtwarzanie zatrzymane sygnałem ${error.signal}`, 'playPlaylist');
+                return;
+            }
             logger('error', `Błąd podczas odtwarzania muzyki: ${error}`, 'playMusic');
             if (global.debugmode === true) {
                 DebugSaveToFile('MusicPlayer', 'playMusic', 'catched_error', error);
@@ -152,6 +156,10 @@ function playOnDemand(filename, file) {
     }
     execFile(`cvlc`, [...vlc, '--loop', buffer], (error, stdout, stderr) => {
         if (error) {
+            if (error.signal && error.code !== 'ERR_CHILD_PROCESS_STDIO_MAXBUFFER') {
+                logger('verbose', `Odtwarzanie zatrzymane sygnałem ${error.signal}`, 'playPlaylist');
+                return;
+            }
             logger('error', `Błąd podczas odtwarzania muzyki: ${error}`, 'playOnDemand');
             if (global.debugmode === true) {
                 DebugSaveToFile('MusicPlayer', 'playOnDemand', 'catched_error', error);
@@ -177,6 +185,10 @@ function playPlaylist(playlistID) {
     const buffer = path.normalize(`./mp3/${playlistID}/`);
     execFile(`cvlc`, [...args, '--play-and-exit', buffer], (error, stdout, stderr) => {
         if (error) {
+            if (error.signal && error.code !== 'ERR_CHILD_PROCESS_STDIO_MAXBUFFER') {
+                logger('verbose', `Odtwarzanie zatrzymane sygnałem ${error.signal}`, 'playPlaylist');
+                return;
+            }
             logger('error', `Błąd podczas odtwarzania playlisty: ${error}`, 'playPlaylist');
             if (global.debugmode === true) {
                 DebugSaveToFile('MusicPlayer', 'playPlaylist', 'catched_error', error);
