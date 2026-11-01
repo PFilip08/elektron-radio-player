@@ -430,7 +430,7 @@ async function downloadYT(url, votes, path2, override) {
 }
 async function autoRemoveFiles() {
     fs.readdir('./mp3/onDemand', (err, files) => {
-        if (err) return logger('error '+err,'autoRemoveFiles - onDemand');
+        if (err) return logger('error', err,'autoRemoveFiles - onDemand');
         if (files.length === 0) return logger('task','Brak plików do usunięcia.','autoRemoveFiles - onDemand');
         for (let i in files) {
             if (fs.lstatSync('./mp3/onDemand/'+files[i]).isDirectory()) {
@@ -443,7 +443,7 @@ async function autoRemoveFiles() {
         }
     });
     fs.readdir('./mp3/7', (err, files) => {
-        if (err) return logger('error '+err,'autoRemoveFiles - 7');
+        if (err) return logger('error', err,'autoRemoveFiles - 7');
         if (files.length === 0) return logger('task','Brak plików do usunięcia.','autoRemoveFiles - 7');
         for (let i in files) {
             if (fs.lstatSync('./mp3/7/'+files[i]).isDirectory()) {
@@ -460,7 +460,7 @@ async function autoRemoveFiles() {
 async function removeFiles(pathDir) {
     if (pathDir.length < 6 && /\/[1-7](\/|$)/.test(pathDir)) return 'dupa';
     fs.readdir(pathDir, (err, files) => {
-        if (err) return logger('error '+err,'removeFiles');
+        if (err) return logger('error', err,'removeFiles');
         if (files.length === 0) return logger('task','Brak plików do usunięcia.','removeFiles');
         for (let i in files) {
             if (fs.lstatSync(pathDir+files[i]).isDirectory()) {

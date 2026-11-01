@@ -71,7 +71,7 @@ export async function saveVotes(req, res) {
                     DebugSaveToFile('LocalAPI', 'saveVotes', 'catched_error', err);
                     logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - saveVotes');
                 }
-                return logger('error ' + err, 'saveVotes');
+                return logger('error', err, 'saveVotes');
             }
             if (files.length === 0) return logger('task','Brak plików do usunięcia.','saveVotes');
             for (let i in files) {
@@ -112,7 +112,7 @@ export async function downloadVotes(req, res) {
         fs.readdir('./mp3/7', (err, files) => {
             if (err) {
                 res.status(500).send('dział taboretów trza zagonić do roboty');
-                return logger('error ' + err, 'downloadVotes');
+                return logger('error', err, 'downloadVotes');
             }
             if (files.length === 0) return logger('task','Brak plików do usunięcia.','downloadVotes');
             for (let i in files) {
@@ -216,7 +216,7 @@ export async function delmp3(req, res) {
         fs.readdir('./mp3/7', (err, files) => {
             if (err) {
                 res.status(500).send('dział taboretów trza zagonić do roboty');
-                return logger('error ' + err, 'delmp3');
+                return logger('error', err, 'delmp3');
             }
             if (files.length === 0) return logger('task','Brak plików do usunięcia.','delmp3');
             for (let i in files) {
