@@ -10,6 +10,10 @@ import axios from "axios";
 import {execFile} from "child_process";
 import YTDlpWrap from 'yt-dlp-core';
 import {checkIfFileExistsInArchive, copyFromArchive, copyToArchive} from "./ArchiveModule.js";
+const spotify = new Spotify({
+    clientId: process.env.SPOTIFY_CLIENT_ID,
+    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+});
 
 async function downloader(url, votes, path) {
     const urlParts = url.split('?')[0].split("/");
@@ -51,11 +55,6 @@ function handleDefaultCase(url, votes) {
 }
 
 async function downloadSong(url, votes, path2) {
-    const spotify = new Spotify({
-        clientId: process.env.SPOTIFY_CLIENT_ID,
-        clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-    });
-
     try {
         let path = path2 || `./mp3/onDemand/`;
         const data = await spotify.getTrack(url);
@@ -104,11 +103,6 @@ async function downloadSong(url, votes, path2) {
 }
 
 async function downloadPlaylist(url, path2) {
-    const spotify = new Spotify({
-        clientId: process.env.SPOTIFY_CLIENT_ID,
-        clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-    });
-
     try {
         const path = path2 || `./mp3/onDemand/`;
         let data;
@@ -177,11 +171,6 @@ async function downloadPlaylist(url, path2) {
 }
 
 async function downloadAlbum(url, path2) {
-    const spotify = new Spotify({
-        clientId: process.env.SPOTIFY_CLIENT_ID,
-        clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-    });
-
     try {
         const path = path2 || `./mp3/onDemand/`;
         const data = await spotify.getAlbum(url);
@@ -241,10 +230,6 @@ async function downloadAlbum(url, path2) {
 }
 
 async function getTrackInfo(url) {
-    const spotify = new Spotify({
-        clientId: process.env.SPOTIFY_CLIENT_ID,
-        clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-    });
     try {
     const urlParts = url.split("/");
     logger('verbose', `Wynik splita: ${urlParts}`, 'getTrackInfo');
