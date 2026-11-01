@@ -75,12 +75,12 @@ export async function saveVotes(req, res) {
             }
             if (files.length === 0) return logger('task','Brak plików do usunięcia.','saveVotes');
             for (let i in files) {
-                if (fs.lstatSync('./mp3/7/'+files[i]).isDirectory()) {
+                if (fs.lstat('./mp3/7/'+files[i]).isDirectory()) {
                     logger('task', `Usunięto folder "${files[i]}" wraz z zawartością`, 'saveVotes');
-                    fs.rmSync('./mp3/7/'+files[i], { recursive: true, force: true });
+                    fs.rm('./mp3/7/'+files[i], { recursive: true, force: true });
                     continue;
                 }
-                fs.unlinkSync(path.join('./mp3/7', files[i]));
+                fs.unlink(path.join('./mp3/7', files[i]));
                 logger('task', `Usunięto ${files[i]}`, 'saveVotes');
             }
         });
@@ -116,12 +116,12 @@ export async function downloadVotes(req, res) {
             }
             if (files.length === 0) return logger('task','Brak plików do usunięcia.','downloadVotes');
             for (let i in files) {
-                if (fs.lstatSync('./mp3/7/'+files[i]).isDirectory()) {
+                if (fs.lstat('./mp3/7/'+files[i]).isDirectory()) {
                     logger('task', `Usunięto folder "${files[i]}" wraz z zawartością`, 'downloadVotes');
-                    fs.rmSync('./mp3/7/'+files[i], { recursive: true, force: true })
+                    fs.rmdir('./mp3/7/'+files[i], { recursive: true, force: true })
                     continue;
                 }
-                fs.unlinkSync(path.join('./mp3/7', files[i]));
+                fs.unlink(path.join('./mp3/7', files[i]));
                 logger('task', `Usunięto ${files[i]}`, 'downloadVotes')
             }
         });
@@ -220,12 +220,12 @@ export async function delmp3(req, res) {
             }
             if (files.length === 0) return logger('task','Brak plików do usunięcia.','delmp3');
             for (let i in files) {
-                if (fs.lstatSync('./mp3/7/'+files[i]).isDirectory()) {
+                if (fs.lstat('./mp3/7/'+files[i]).isDirectory()) {
                     logger('task', `Usunięto folder "${files[i]}" wraz z zawartością`, 'delmp3');
-                    fs.rmSync('./mp3/7/'+files[i], { recursive: true, force: true })
+                    fs.rm('./mp3/7/'+files[i], { recursive: true, force: true })
                     continue;
                 }
-                fs.unlinkSync(path.join('./mp3/7', files[i]));
+                fs.unlink(path.join('./mp3/7', files[i]));
                 logger('task', `Usunięto ${files[i]}`, 'delmp3');
             }
         });
