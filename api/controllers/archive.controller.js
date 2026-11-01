@@ -27,7 +27,7 @@ export async function searchArchive(req, res) {
 export async function listArchive(req, res) {
     try {
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - listArchive');
-        const files = getAllMp3FilesInArchive()
+        const files = await getAllMp3FilesInArchive();
         return res.status(200).send(files);
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby wypisania plików w archiwum', 'LocalAPI - listArchive');
@@ -139,7 +139,7 @@ export async function checkCopyFromArchive(req, res) {
             logger('warn', `Próba kopiowania z archiwum z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - checkCopyFromArchive');
             return res.status(403).send('Niebezpieczna ścieżka!');
         }
-        const result = copyFromArchiveToSix(subfolderName, clearFolder || false);
+        const result = await copyFromArchiveToSix(subfolderName, clearFolder || false);
         return res.status(200).json(result);
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas kopiowania z archiwum', 'LocalAPI - checkCopyFromArchive');
