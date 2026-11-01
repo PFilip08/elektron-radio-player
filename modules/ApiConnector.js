@@ -90,7 +90,7 @@ if (!recoveryBlocked) {
             if (recoveryModeWindowStart === null) {
                 startRecoveryModeInterval();
             }
-            if (!(error.code === 'ETIMEDOUT' || error.code === 'ENOTFOUND' || error.code === 'EAI_AGAIN' || error.code === 'ECONNREFUSED') && error.code === 'ENETUNREACH' && error.code !== undefined) {
+            if (!(error.code === 'ETIMEDOUT' || error.code === 'ENOTFOUND' || error.code === 'EAI_AGAIN' || error.code === 'ECONNREFUSED') || error.code === 'ENETUNREACH' && error.code !== undefined) {
                 logger('verbose',yellow(`Wystąpił błąd który nie jest związany z brakiem połączenia z internetem: ${error.code}`),'getApiData');
                 if (global.debugmode === true) {
                     DebugSaveToFile('ApiConnector','getApiData','recovery_counter_reason', error);
