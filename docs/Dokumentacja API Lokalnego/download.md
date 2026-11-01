@@ -1,5 +1,3 @@
-> [!CAUTION]
-> Dokumentacja od API NIEAKTUALNA!!! Może kiedyś ktoś ją zaaktualizuje
 # Endpoint /(root)
 
 ### Opis
