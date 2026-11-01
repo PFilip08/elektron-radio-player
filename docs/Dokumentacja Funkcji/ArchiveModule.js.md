@@ -6,11 +6,11 @@ Sprawdza, czy katalog archiwum określony w zmiennej `archdir` istnieje na dysku
 
 # copyToArchive()
 
-Funkcja `copyToArchive()` kopiuje wskazany plik lub zawartość wskazanego katalogu do archiwum.
+Asynchroniczna funkcja `copyToArchive()` kopiuje wskazany plik lub zawartość wskazanego katalogu do archiwum.
 
 Funkcja przyjmuje jeden argument:
 
-- `path` - ścieżka do pojedynczego pliku lub katalogu z plikami MP3.
+- `path_to_copy` - ścieżka do pojedynczego pliku lub katalogu z plikami MP3.
 
 Przed skopiowaniem funkcja sprawdza, czy dany plik już istnieje w archiwum – jeśli istnieje, operacja jest pomijana.
 
@@ -50,9 +50,9 @@ Zwraca:
 
 # getAllMp3FilesInArchive()
 
-Funkcja `getAllMp3FilesInArchive()` przeszukuje rekurencyjnie katalog archiwum i zbiera ścieżki do wszystkich plików z rozszerzeniem `.mp3`.
+Asynchroniczna funkcja `getAllMp3FilesInArchive()` przeszukuje rekurencyjnie katalog archiwum i zbiera ścieżki do wszystkich plików z rozszerzeniem `.mp3`.
 
-Zwraca tablicę (array) zawierającą pełne ścieżki do wszystkich plików MP3 w archiwum.
+Zwraca Promise z tablicą (array) zawierającą pełne ścieżki do wszystkich plików MP3 w archiwum.
 
 ## Tryb Debugowania
 
@@ -135,7 +135,7 @@ Zwraca tablicę obiektów:
 
 # copyFromArchiveToSix()
 
-Funkcja `copyFromArchiveToSix()` kopiuje utwory z wybranego podfolderu archiwum do folderu playlisty specjalnej 6 (`./mp3/6`).
+Asynchroniczna funkcja `copyFromArchiveToSix()` kopiuje utwory z wybranego podfolderu archiwum do folderu playlisty specjalnej 6 (`./mp3/6`).
 
 Funkcja przyjmuje dwa argumenty:
 
