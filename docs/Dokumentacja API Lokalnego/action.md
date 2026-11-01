@@ -254,6 +254,12 @@ W przypadku gdy parametr `path` nie został podany bądź będzie pusty:
 - **Typ:** text/html
 - **Treść:** `Nie podano ścieżki do pliku!`
 
+W przypadku próby użycia niebezpiecznej ścieżki (wykrycie `_ATTEMPT` przez `pathSecurityChecker`):
+
+- **Kod statusu:** 403
+- **Typ:** text/html
+- **Treść:** `Niebezpieczna ścieżka!`
+
 ### Przykład
 
 ```bash
@@ -281,19 +287,25 @@ W przypadku powodzenia zwracany jest:
 - **Typ:** text/html
 - **Treść:** Zwracany jest output bezpośrednio z mp3gain np. `./mp3/4/Chivas_Zabij_Dla_Mnie.mp3 No changes to ./mp3/4/Chivas_Zabij_Dla_Mnie.mp3 are necessary`
 
-W przypadku gdy podano parametr `playlist` a w folderze z playlistą nie ma plików mp3:
+W przypadku gdy parametr `playlist` nie został podany:
 
 - **Kod statusu:** 400
 - **Typ:** text/html
-- **Treść:** `error/brakplikuf!!`
+- **Treść:** `Nie podano ścieżki do playlisty!`
 
-W przypadku gdy parametr `playlist` posiada dwukropki w nazwie:
+W przypadku próby użycia niebezpiecznej ścieżki (wykrycie `_ATTEMPT` przez `pathSecurityChecker`):
 
 - **Kod statusu:** 511
 - **Typ:** text/html
 - **Treść:** `a dzie masło roota?!?!1`
 
 W przypadku gdy podano parametr `playlist` a w folder z playlistą nie istnieje:
+
+- **Kod statusu:** 400
+- **Typ:** text/html
+- **Treść:** `error/brakplikuf!!`
+
+W przypadku gdy podano parametr `playlist` a folder z playlistą nie istnieje lub nie jest katalogiem:
 
 - **Kod statusu:** 406
 - **Typ:** text/html
