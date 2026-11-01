@@ -22,7 +22,8 @@ Funkcja ta przyjmuje dwa argumenty:
 
 W trybie debugowania funkcja zapisuje dane przy użyciu [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile):
 - surową odpowiedź z serwera do lokalizacji `debug/VotesConnector/getVotesData/response.json`,
-- zapisaną do pliku listę utworów do lokalizacji `debug/VotesConnector/getVotesData - download/saved_to_file.json`.
+- zapisaną do pliku listę utworów do lokalizacji `debug/VotesConnector/getVotesData - download/saved_to_file.json`,
+- w przypadku błędu pobierania głosów stack trace zapisywany jest do `debug/VotesConnector/getVotesData/error`.
 
 # Zmienne modułu
 
