@@ -81,6 +81,11 @@ function pathSecurityChecker(filepath, defendingFolder = 'mp3') {
         logger('warn', yellow(`Próba użycia ścieżki absolutnej poza ${defendingFolder}!!!`), 'pathSecurityChecker');
         return 'ABSOLUTE_PATH_ATTEMPT';
     }
+    logger('verbose', 'Sprawdzanie czy ścieżka nie zawiera segmentów ".."', 'pathSecurityChecker');
+    if (filepath.split(/[\\/]+/).includes('..')) {
+        logger('warn', yellow(`Próba użycia segmentu ".." w ścieżce: ${filepath}`), 'pathSecurityChecker');
+        return 'TRAVERSAL_SEGMENT_ATTEMPT';
+    }
     logger('verbose', 'Sprawdzanie czy ścieżka nie wychodzi poza katalog bazowy', 'pathSecurityChecker');
     const rootDirectory = path.resolve(process.cwd(), defendingFolder);
     const resolvedPath = path.resolve(rootDirectory, filepath);
