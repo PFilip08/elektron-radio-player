@@ -22,7 +22,8 @@ export async function downloadSong(req, res) {
             }
         }
         if (!uri) return res.status(400).send('Nie podano linku!');
-        if (!downloadStatus.includes('Pobrano')) return res.status(500).send(downloadStatus);
+        const downloadStatus = await downloader(uri, false, path);
+        if (!downloadStatus.includes('Pobrano') || downloadStatus === undefined) return res.status(500).send(downloadStatus);
         return res.status(201).send('gut; '+downloadStatus);
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby pobrania pliku', 'LocalAPI - downloadSong');
