@@ -167,10 +167,10 @@ async function checkIfVLConVotes() {
     logger('verbose', 'Sprawdzanie czy VLC jest uruchomione na odtwarzanie muzyki z głosów...', 'checkIfVLConVotes');
     try {
         const timeout = new Promise((_, reject) =>
-            setTimeout(() => reject(
-                logger('verbose', 'Czas wykonania funkcji przekroczony!', 'getPlayingSong'),
-                new Error('Czas wykonania funkcji przekroczony'
-                )), 3000)
+            setTimeout(() => {
+                logger('verbose', 'Czas wykonania funkcji przekroczony!', 'getPlayingSong');
+                reject(new Error('Czas wykonania funkcji przekroczony'));
+            }, 3000)
         );
         const vlcOperation = (async () => {
             const vlc = new VLC.Client({
