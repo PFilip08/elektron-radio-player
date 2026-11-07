@@ -2,14 +2,14 @@
 
 ### Opis
 
-Ten endpoint wyszukuje plik w archiwum po nazwie.
+Ten endpoint wyszukuje plik w archiwum po podanej frazie (w metadanych lub nazwie pliku).
 
 ### Request
 
 - **Metoda:** POST
 - **Endpoint:** `/archive/searchArchive`
 - **Parametry zapytania:**
-	- `file` - Parametr wymagany, nazwa pliku do wyszukania.
+  - `file` - Parametr wymagany, nazwa pliku lub fraza do wyszukania.
 
 ### Response
 
@@ -17,9 +17,41 @@ W przypadku powodzenia zwracany jest:
 
 - **Kod statusu:** 200
 - **Typ:** application/json
-- **Treść:** wynik wyszukiwania w archiwum
+- **Treść:**
 
-W przypadku braku parametru `file` zwracany jest:
+```json
+{
+    "metadataMatches": [ //array <Dopasowania w metadanych>
+        { //object
+            "filename": "Rick_Astley_Never_Gonna_Give_You_Up.mp3", //string <Nazwa pliku>
+            "path": "./mp3/Archive/Rick_Astley_Never_Gonna_Give_You_Up.mp3", //string <Ścieżka do pliku>
+            "relativePath": "Rick_Astley_Never_Gonna_Give_You_Up.mp3", //string <Ścieżka względna w archiwum>
+            "title": "Never Gonna Give You Up", //string <Tytuł piosenki>
+            "artist": "Rick Astley", //string <Nazwa artysty>
+            "album": "Whenever You Need Somebody", //string <Nazwa albumu>
+            "duration": 213, //number <Czas trwania w sekundach>
+            "format": "MPEG", //string <Format pliku>
+            "matchType": "metadata" //string <Typ dopasowania>
+        }
+    ],
+    "filenameMatches": [], //array <Dopasowania w nazwie pliku>
+    "all": [ //array <Wszystkie znalezione wyniki>
+        { //object
+            "filename": "Rick_Astley_Never_Gonna_Give_You_Up.mp3", //string <Nazwa pliku>
+            "path": "./mp3/Archive/Rick_Astley_Never_Gonna_Give_You_Up.mp3", //string <Ścieżka do pliku>
+            "relativePath": "Rick_Astley_Never_Gonna_Give_You_Up.mp3", //string <Ścieżka względna w archiwum>
+            "title": "Never Gonna Give You Up", //string <Tytuł piosenki>
+            "artist": "Rick Astley", //string <Nazwa artysty>
+            "album": "Whenever You Need Somebody", //string <Nazwa albumu>
+            "duration": 213, //number <Czas trwania w sekundach>
+            "format": "MPEG", //string <Format pliku>
+            "matchType": "metadata" //string <Typ dopasowania>
+        }
+    ]
+}
+```
+
+W przypadku gdy parametr `file` nie został podany bądź będzie pusty:
 
 - **Kod statusu:** 400
 - **Typ:** text/html
@@ -34,14 +66,14 @@ W przypadku błędu podczas wyszukiwania pliku w archiwum zwracany jest:
 ### Przykład
 
 ```bash
-curl -X POST "http://localhost:8080/archive/searchArchive?file=test.mp3"
+curl -X POST "http://localhost:8080/archive/searchArchive?file=Never"
 ```
 
 # Endpoint listArchive
 
 ### Opis
 
-Ten endpoint zwraca listę wszystkich plików mp3 znajdujących się w archiwum.
+Ten endpoint zwraca listę ścieżek do wszystkich plików mp3 znajdujących się w archiwum.
 
 ### Request
 
@@ -54,7 +86,14 @@ W przypadku powodzenia zwracany jest:
 
 - **Kod statusu:** 200
 - **Typ:** application/json
-- **Treść:** lista plików mp3 z archiwum
+- **Treść:**
+
+```json
+[ //array <Ścieżki do plików mp3 w archiwum>
+    "./mp3/Archive/Rick_Astley_Never_Gonna_Give_You_Up.mp3", //string <Ścieżka do pliku>
+    "./mp3/Archive/1-Klasyczna-2024-05-10/C418_Sweden.mp3" //string <Ścieżka do pliku>
+]
+```
 
 W przypadku błędu podczas wypisywania plików w archiwum zwracany jest:
 
@@ -65,14 +104,14 @@ W przypadku błędu podczas wypisywania plików w archiwum zwracany jest:
 ### Przykład
 
 ```bash
-curl "http://localhost:8080/archive/listArchive"
+curl -X GET http://localhost:8080/archive/listArchive
 ```
 
 # Endpoint archiveSongsQuery
 
 ### Opis
 
-Ten endpoint zwraca wynik zapytania dotyczącego plików w archiwum.
+Ten endpoint zwraca listę wszystkich piosenek z archiwum wraz z ich metadanymi.
 
 ### Request
 
@@ -85,7 +124,19 @@ W przypadku powodzenia zwracany jest:
 
 - **Kod statusu:** 200
 - **Typ:** application/json
-- **Treść:** wynik zapytania dla plików archiwum
+- **Treść:**
+
+```json
+[ //array <Lista piosenek w archiwum>
+    { //object
+        "title": "Sweden", //string <Nazwa piosenki>
+        "artist": "C418", //string <Nazwa artysty>
+        "duration": 215, //number <Czas trwania w sekundach>
+        "filePath": "./mp3/Archive/C418_Sweden.mp3", //string <Ścieżka do pliku>
+        "relativePath": "C418_Sweden.mp3" //string <Ścieżka względna w archiwum>
+    }
+]
+```
 
 W przypadku błędu podczas zapytania archiwum zwracany jest:
 
@@ -96,7 +147,7 @@ W przypadku błędu podczas zapytania archiwum zwracany jest:
 ### Przykład
 
 ```bash
-curl "http://localhost:8080/archive/archiveSongsQuery"
+curl -X GET http://localhost:8080/archive/archiveSongsQuery
 ```
 
 # Endpoint deleteArchive
@@ -110,7 +161,7 @@ Ten endpoint usuwa wskazany plik z archiwum.
 - **Metoda:** DELETE
 - **Endpoint:** `/archive/deleteArchive`
 - **Parametry zapytania:**
-	- `filename` - Parametr wymagany, nazwa pliku do usunięcia.
+  - `filename` - Parametr wymagany, nazwa pliku do usunięcia.
 
 ### Response
 
@@ -118,19 +169,37 @@ W przypadku powodzenia zwracany jest:
 
 - **Kod statusu:** 200
 - **Typ:** application/json
-- **Treść:** wynik operacji usunięcia pliku
+- **Treść:**
 
-W przypadku braku parametru `filename` zwracany jest:
+```json
+{
+    "message": "Usunięto plik test.mp3 z archiwum." //string <Komunikat o usunięciu pliku>
+}
+```
+
+W przypadku gdy parametr `filename` nie został podany bądź będzie pusty:
 
 - **Kod statusu:** 400
 - **Typ:** text/html
 - **Treść:** `Nie podano nazwy pliku!`
 
-W przypadku próby użycia niebezpiecznej ścieżki zwracany jest:
+W przypadku gdy użytkownik próbował podać ścieżkę, która by uciekła poza folder archiwum:
 
 - **Kod statusu:** 403
 - **Typ:** text/html
 - **Treść:** `Niebezpieczna ścieżka!`
+
+W przypadku gdy plik nie istnieje w archiwum zwracany jest:
+
+- **Kod statusu:** 500
+- **Typ:** application/json
+- **Treść:**
+
+```json
+{
+    "error": "Plik test.mp3 nie istnieje w archiwum." //string <Komunikat o błędzie>
+}
+```
 
 W przypadku błędu podczas usuwania pliku z archiwum zwracany jest:
 
@@ -148,7 +217,7 @@ curl -X DELETE "http://localhost:8080/archive/deleteArchive?filename=test.mp3"
 
 ### Opis
 
-Ten endpoint zwraca listę podkatalogów znajdujących się w archiwum.
+Ten endpoint zwraca listę podkatalogów znajdujących się w archiwum wraz z liczbą plików mp3 w każdym z nich.
 
 ### Request
 
@@ -161,7 +230,16 @@ W przypadku powodzenia zwracany jest:
 
 - **Kod statusu:** 200
 - **Typ:** application/json
-- **Treść:** lista podkatalogów archiwum
+- **Treść:**
+
+```json
+[ //array <Lista podkatalogów w archiwum>
+    { //object
+        "name": "1-Klasyczna-2024-05-10-12-00", //string <Nazwa podkatalogu>
+        "mp3Count": 14 //number <Liczba plików mp3 w podkatalogu>
+    }
+]
+```
 
 W przypadku błędu podczas pobierania podkatalogów archiwum zwracany jest:
 
@@ -172,38 +250,60 @@ W przypadku błędu podczas pobierania podkatalogów archiwum zwracany jest:
 ### Przykład
 
 ```bash
-curl "http://localhost:8080/archive/getArchiveFolders"
+curl -X GET http://localhost:8080/archive/getArchiveFolders
 ```
 
 # Endpoint copyFromArchive
 
 ### Opis
 
-Ten endpoint kopiuje pliki z wybranego podkatalogu archiwum do folderu docelowego.
+Ten endpoint kopiuje pliki z wybranego podkatalogu archiwum do folderu playlisty 6 (`./mp3/6`).
 
 ### Request
 
 - **Metoda:** POST
 - **Endpoint:** `/archive/copyFromArchive`
 - **Parametry body:**
-	- `subfolderName` - Parametr wymagany, nazwa podkatalogu źródłowego.
-	- `clearFolder` - Parametr opcjonalny, jeśli ustawiony, folder docelowy może zostać wyczyszczony przed kopiowaniem.
+  - `subfolderName` - Parametr wymagany, nazwa podkatalogu w archiwum.
+  - `clearFolder` - Parametr opcjonalny (boolean), jeśli zostanie ustawiony na `true`, to folder playlisty 6 zostanie wyczyszczony przed skopiowaniem plików.
 
 ### Response
 
-W przypadku powodzenia zwracany jest:
+W przypadku powodzenia i gdy pliki zostały skopiowane zwracany jest:
 
 - **Kod statusu:** 200
 - **Typ:** application/json
-- **Treść:** wynik kopiowania z archiwum
+- **Treść:**
 
-W przypadku braku parametru `subfolderName` zwracany jest:
+```json
+{
+    "needsConfirmation": false, //boolean <Czy wymagane jest potwierdzenie nadpisania>
+    "totalFiles": 14, //number <Łączna liczba plików mp3 w podkatalogu>
+    "copiedFiles": 14, //number <Liczba skopiowanych plików>
+    "errors": [] //array <Lista błędów przy kopiowaniu>
+}
+```
+
+W przypadku gdy w folderze playlisty 6 znajdują się już pliki, a `clearFolder` nie zostało ustawione na `true`, zwracany jest:
+
+- **Kod statusu:** 200
+- **Typ:** application/json
+- **Treść:**
+
+```json
+{
+    "needsConfirmation": true, //boolean <Wymagane potwierdzenie wyczyszczenia folderu 6>
+    "existingFilesCount": 5 //number <Liczba plików znajdujących się już w playliście 6>
+}
+```
+
+W przypadku gdy parametr `subfolderName` nie został podany bądź będzie pusty:
 
 - **Kod statusu:** 400
 - **Typ:** text/html
 - **Treść:** `Nie podano nazwy podkatalogu!`
 
-W przypadku próby użycia niebezpiecznej ścieżki zwracany jest:
+W przypadku gdy użytkownik próbował podać ścieżkę, która by uciekła poza folder archiwum:
 
 - **Kod statusu:** 403
 - **Typ:** text/html
@@ -219,8 +319,8 @@ W przypadku błędu podczas kopiowania z archiwum zwracany jest:
 
 ```bash
 curl -X POST "http://localhost:8080/archive/copyFromArchive" \
-	-H "Content-Type: application/json" \
-	-d '{"subfolderName":"1","clearFolder":true}'
+  -H "Content-Type: application/json" \
+  -d '{"subfolderName":"1-Klasyczna-2024-05-10-12-00","clearFolder":true}'
 ```
 
 # Endpoint copyFileToPlaylist
@@ -234,8 +334,8 @@ Ten endpoint kopiuje pojedynczy plik z archiwum do wskazanej playlisty.
 - **Metoda:** POST
 - **Endpoint:** `/archive/copyFileToPlaylist`
 - **Parametry body:**
-	- `file` - Parametr wymagany, nazwa pliku do skopiowania.
-	- `playlistId` - Parametr wymagany, identyfikator playlisty docelowej.
+  - `file` - Parametr wymagany, nazwa pliku do skopiowania.
+  - `playlistId` - Parametr wymagany, ID playlisty docelowej.
 
 ### Response
 
@@ -243,31 +343,31 @@ W przypadku powodzenia zwracany jest:
 
 - **Kod statusu:** 200
 - **Typ:** application/json
-- **Treść:** obiekt z polem `message`
+- **Treść:**
 
-W przypadku braku parametru `file` zwracany jest:
+```json
+{
+    "message": "Skopiowano/Pobrano plik test.mp3 z archiwum do mp3/1/test.mp3." //string <Komunikat o skopiowaniu (lub informacja że plik już istnieje)>
+}
+```
+
+W przypadku gdy parametr `file` nie został podany bądź będzie pusty:
 
 - **Kod statusu:** 400
 - **Typ:** text/html
 - **Treść:** `Nie podano nazwy pliku!`
 
-W przypadku braku parametru `playlistId` zwracany jest:
+W przypadku gdy parametr `playlistId` nie został podany bądź będzie pusty:
 
 - **Kod statusu:** 400
 - **Typ:** text/html
 - **Treść:** `Nie podano ID playlisty!`
 
-W przypadku próby użycia niebezpiecznej ścieżki zwracany jest:
+W przypadku gdy użytkownik próbował podać ścieżkę, która by uciekła poza folder archiwum:
 
 - **Kod statusu:** 403
 - **Typ:** text/html
 - **Treść:** `Niebezpieczna ścieżka!`
-
-W przypadku gdy plik lub playlista nie istnieje zwracany jest:
-
-- **Kod statusu:** 400
-- **Typ:** text/html
-- **Treść:** komunikat zwrócony przez funkcję kopiującą
 
 W przypadku błędu podczas kopiowania pliku z archiwum do playlisty zwracany jest:
 
@@ -279,23 +379,23 @@ W przypadku błędu podczas kopiowania pliku z archiwum do playlisty zwracany je
 
 ```bash
 curl -X POST "http://localhost:8080/archive/copyFileToPlaylist" \
-	-H "Content-Type: application/json" \
-	-d '{"file":"test.mp3","playlistId":1}'
+  -H "Content-Type: application/json" \
+  -d '{"file":"test.mp3","playlistId":1}'
 ```
 
 # Endpoint movePlaylist
 
 ### Opis
 
-Ten endpoint przenosi wskazaną playlistę do archiwum.
+Ten endpoint przenosi wskazaną playlistę do nowego podfolderu w archiwum.
 
 ### Request
 
 - **Metoda:** POST
 - **Endpoint:** `/archive/movePlaylist`
 - **Parametry body:**
-	- `playlistId` - Parametr wymagany, identyfikator playlisty do przeniesienia.
-	- `userNotice` - Parametr opcjonalny, dodatkowa notatka użytkownika.
+  - `playlistId` - Parametr wymagany, ID playlisty do przeniesienia.
+  - `userNotice` - Parametr opcjonalny, dopisek użytkownika dodawany do nazwy folderu w archiwum.
 
 ### Response
 
@@ -303,25 +403,34 @@ W przypadku powodzenia zwracany jest:
 
 - **Kod statusu:** 200
 - **Typ:** application/json
-- **Treść:** wynik operacji przeniesienia playlisty
+- **Treść:**
 
-W przypadku nieprawidłowego `playlistId` zwracany jest:
+```json
+{
+    "folderName": "1-Klasyczna-archiwizacja", //string <Nazwa utworzonego folderu w archiwum>
+    "totalFiles": 10, //number <Łączna liczba plików mp3 na playliście>
+    "copiedFiles": 10, //number <Liczba przeniesionych plików>
+    "errors": [] //array <Lista błędów przy przenoszeniu>
+}
+```
+
+W przypadku gdy podano nieprawidłowe `playlistId` (bądź playlista o takim ID nie jest zdefiniowana):
 
 - **Kod statusu:** 400
 - **Typ:** text/html
 - **Treść:** `Nieprawidłowy ID playlisty!`
 
-W przypadku próby użycia niebezpiecznej ścieżki zwracany jest:
+W przypadku gdy użytkownik próbował podać ścieżkę, która by uciekła poza folder archiwum:
 
 - **Kod statusu:** 403
 - **Typ:** text/html
 - **Treść:** `Niebezpieczna ścieżka!`
 
-W przypadku gdy funkcja przenosząca zwróci komunikat tekstowy zwracany jest:
+W przypadku gdy wybrana playlista jest pusta i nie ma na niej żadnych plików do przeniesienia:
 
 - **Kod statusu:** 400
 - **Typ:** text/html
-- **Treść:** komunikat zwrócony przez funkcję kopiującą playlistę do archiwum
+- **Treść:** `Playlista <id> jest pusta, brak plików do przeniesienia`
 
 W przypadku błędu podczas przenoszenia playlisty do archiwum zwracany jest:
 
@@ -333,6 +442,6 @@ W przypadku błędu podczas przenoszenia playlisty do archiwum zwracany jest:
 
 ```bash
 curl -X POST "http://localhost:8080/archive/movePlaylist" \
-	-H "Content-Type: application/json" \
-	-d '{"playlistId":1,"userNotice":"archiwizacja"}'
+  -H "Content-Type: application/json" \
+  -d '{"playlistId":1,"userNotice":"archiwizacja"}'
 ```
