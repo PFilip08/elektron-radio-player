@@ -1,4 +1,3 @@
-#Poprawka
 # Endpoint kill
 
 ### Opis
@@ -254,7 +253,7 @@ W przypadku gdy parametr `path` nie został podany bądź będzie pusty:
 - **Typ:** text/html
 - **Treść:** `Nie podano ścieżki do pliku!`
 
-W przypadku próby użycia niebezpiecznej ścieżki (wykrycie `_ATTEMPT` przez `pathSecurityChecker`):
+W przypadku gdy użytkownik próbował podać ścieżkę, która by uciekła poza folder mp3:
 
 - **Kod statusu:** 403
 - **Typ:** text/html
@@ -293,17 +292,17 @@ W przypadku gdy parametr `playlist` nie został podany:
 - **Typ:** text/html
 - **Treść:** `Nie podano ścieżki do playlisty!`
 
-W przypadku próby użycia niebezpiecznej ścieżki (wykrycie `_ATTEMPT` przez `pathSecurityChecker`):
+W przypadku gdy użytkownik próbował podać ścieżkę, która by uciekła poza folder mp3:
 
 - **Kod statusu:** 511
 - **Typ:** text/html
 - **Treść:** `a dzie masło roota?!?!1`
 
-W przypadku gdy podano parametr `playlist` a w folder z playlistą nie istnieje:
+W przypadku gdy podano parametr `playlist` a w folderze z playlistą nie ma żadnych plików mp3:
 
-- **Kod statusu:** 400
+- **Kod statusu:** 406
 - **Typ:** text/html
-- **Treść:** `error/brakplikuf!!`
+- **Treść:** `Brak plików mp3 w playliście!`
 
 W przypadku gdy podano parametr `playlist` a folder z playlistą nie istnieje lub nie jest katalogiem:
 
