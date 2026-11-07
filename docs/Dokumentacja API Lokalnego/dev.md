@@ -166,7 +166,7 @@ curl -X POST "http://localhost:8080/dev/schedules/addTask" \
 
 ### Opis
 
-Ten endpoint kończy proces aplikacji (i automatycznie uruchamia ponownie jeżeli działa ELP działa z deamonem typu pm2).
+Ten endpoint kończy proces aplikacji (i automatycznie uruchamia ponownie jeżeli ELP działa z daemonem typu pm2).
 
 ### Request
 
@@ -198,9 +198,9 @@ Ten endpoint pobiera materiał z YouTube do wskazanego folderu i opcjonalnie uru
 - **Metoda:** POST
 - **Endpoint:** `/dev/action/downloadYToverride`
 - **Parametry zapytania:**
-	- `url` - Parametr wymagany, adres materiału do pobrania z YT.
-	- `override` - Parametr opcjonalny, jeśli ma wartość `true`, odtwarzanie zostanie uruchomione po pobraniu.
-	- `path` - Parametr opcjonalny, ścieżka docelowa zaczynająca się od `./mp3/`. Domyślnie `./mp3/onDemand/`.
+  - `url` - Parametr wymagany, adres materiału do pobrania z YT.
+  - `override` - Parametr opcjonalny, jeśli ma wartość `true`, odtwarzanie zostanie uruchomione po pobraniu.
+  - `path` - Parametr opcjonalny, ścieżka docelowa zaczynająca się od `./mp3/`. Domyślnie `./mp3/onDemand/`.
 
 ### Response
 
@@ -209,18 +209,18 @@ W przypadku powodzenia zwracany jest:
 - **Kod statusu:** 201
 - **Typ:** text/html
 - **Treść:**
-    - Gdy `override=true`:
-	    - `gut, override, <ścieżka pliku>`
-    - Gdy `override` nie jest ustawione na `true`:
-	    - `gut, <ścieżka pliku>`
+  - Gdy `override=true`:
+    - `gut, override, <ścieżka pliku>`
+  - Gdy `override` nie jest ustawione na `true`:
+    - `gut, <ścieżka pliku>`
 
-W przypadku braku parametru `url` zwracany jest:
+W przypadku gdy parametr `url` nie został podany bądź będzie pusty:
 
 - **Kod statusu:** 400
 - **Typ:** text/html
 - **Treść:** `Nie podano URL!`
 
-W przypadku niepoprawnej ścieżki (gdy jej długość przekracza 6 znaków oraz gdy nie zaczyna się od `./mp3/`) zwracany jest:
+W przypadku niepoprawnej ścieżki (gdy jej długość jest mniejsza niż 6 znaków lub gdy nie zaczyna się od `./mp3/`) zwracany jest:
 
 - **Kod statusu:** 400
 - **Typ:** text/html
@@ -250,10 +250,11 @@ W przypadku powodzenia zwracany jest:
 - **Kod statusu:** 201
 - **Typ:** text/html
 - **Treść:**
-    - Gdy blokada trybu recovery dla `getApiData` została zresetowana:
-	    - `Zresetowano blokadę trybu recovery dla getApiData`
-    - Gdy blokada trybu recovery dla `getApiData` nie była ustawiona:
-	    - `Funkcja getApiData nie była zablokowana, więc nie można było zdjąć blokady`
+  - Gdy blokada trybu recovery dla `getApiData` została zresetowana:
+    - `Zresetowano blokadę trybu recovery dla getApiData`
+  - Gdy blokada trybu recovery dla `getApiData` nie była ustawiona:
+    - `Funkcja getApiData nie była zablokowana, więc nie można było zdjąć blokady`
+
 ### Przykład
 
 ```bash
@@ -264,14 +265,14 @@ curl -X POST "http://localhost:8080/dev/action/resetRecoveryLock"
 
 ### Opis
 
-Ten endpoint zarządza stanem DevAPI i trybem mock danych.
+Ten endpoint zarządza stanem DevAPI oraz trybem mock danych (a w przypadku wywołania GET bez parametru `action` renderuje widok panelu DevAPI).
 
 ### Request
 
 - **Metoda:** GET / POST
 - **Endpoint:** `/dev/api`
 - **Parametry zapytania:**
-	- `action` - Parametr opcjonalny, możliwe wartości to `on`, `off`, `status`, `reschedule`.
+  - `action` - Parametr opcjonalny, możliwe wartości to `on`, `off`, `status` oraz `reschedule`.
 
 ### Response
 
@@ -280,34 +281,83 @@ W przypadku powodzenia zwracany jest:
 - **Kod statusu:** 200
 - **Typ:** application/json
 - **Treść:**
-	- dla `action=on` zwracany jest obiekt z `success: true` i `devAPIEnabled: true`
-	- dla `action=off` zwracany jest obiekt z `success: true` i `devAPIEnabled: false`
-	- dla `action=status` zwracany jest obiekt z aktualnym stanem `devAPIEnabled`, `overrideTarget` i `mockData`
-	- dla `action=reschedule` zwracany jest obiekt z informacją o ponownym schedulowaniu lub komunikatem, że DevAPI jest wyłączone
+  - dla `action=on`:
+    ```json
+    {
+        "success": true, //boolean <true,false>
+        "message": "DevAPI włączone - używanie mock danych i zreschedulowanie tasków", //string <Komunikat>
+        "devAPIEnabled": true //boolean <Stan DevAPI>
+    }
+    ```
+  - dla `action=off`:
+    ```json
+    {
+        "success": true, //boolean <true,false>
+        "message": "DevAPI wyłączone - używanie main API i zreschedulowanie tasków", //string <Komunikat>
+        "devAPIEnabled": false //boolean <Stan DevAPI>
+    }
+    ```
+  - dla `action=status`:
+    ```json
+    {
+        "success": true, //boolean <true,false>
+        "devAPIEnabled": false, //boolean <Stan DevAPI>
+        "overrideTarget": "partyvote.ciac.me", //string <Adres głównego API>
+        "mockData": {} //object <Aktualnie ustawione dane mock>
+    }
+    ```
+  - dla `action=reschedule` (gdy DevAPI jest włączone):
+    ```json
+    {
+        "success": true, //boolean <true,false>
+        "message": "Taski zreschedulowane z DevAPI data" //string <Komunikat>
+    }
+    ```
+  - dla `action=reschedule` (gdy DevAPI jest wyłączone):
+    ```json
+    {
+        "success": false, //boolean <true,false>
+        "message": "zaś DevAPI wyłączone" //string <Komunikat>
+    }
+    ```
 
-W przypadku braku parametru `action` lub nieobsługiwanej wartości zwracany jest:
+W przypadku gdy parametr `action` ma niepoprawną wartość:
 
 - **Kod statusu:** 400
 - **Typ:** application/json
-- **Treść:** obiekt z błędem i listą dostępnych akcji
+- **Treść:**
 
-W przypadku błędu zwracany jest:
+```json
+{
+    "error": "Niestety to nie koncert życzeń", //string <Komunikat o błędzie>
+    "availableActions": ["on", "off", "status", "reschedule"] //array <Dostępne akcje>
+}
+```
+
+W przypadku błędu serwera zwracany jest:
 
 - **Kod statusu:** 500
 - **Typ:** application/json
-- **Treść:** obiekt z błędem serwera
+- **Treść:**
+
+```json
+{
+    "error": "Taboretowy error serwera", //string <Komunikat o błędzie>
+    "message": "..." //string <Treść błędu>
+}
+```
 
 ### Przykład
 
 ```bash
-curl "http://localhost:8080/dev/api?action=status"
+curl -X GET "http://localhost:8080/dev/api?action=status"
 ```
 
 # Endpoint timeTables
 
 ### Opis
 
-Ten endpoint pobiera i aktualizuje dane timetable dla DevAPI.
+Ten endpoint pobiera oraz aktualizuje mockowane dane harmonogramu (`timeTables`) dla DevAPI.
 
 ### Request
 
@@ -316,35 +366,71 @@ Ten endpoint pobiera i aktualizuje dane timetable dla DevAPI.
 
 ### Response
 
-W przypadku metody GET zwracany jest:
+#### W przypadku GET
+W przypadku powodzenia zwracany jest:
 
 - **Kod statusu:** 200
 - **Typ:** application/json
-- **Treść:** obiekt z polem `timeTable` oraz `lastUpdated`
+- **Treść:**
 
-W przypadku metody POST zwracany jest:
+```json
+{
+    "timeTable": [ //array <Tablica z harmonogramem>
+        { //object
+            "isOn": true, //boolean <Czy automat jest włączony>
+            "currentPlaylistId": 1, //number <ID aktualnej playlisty>
+            "timeRules": { //object <Zasady godzinowe>
+                "rules": {
+                    "1": []
+                },
+                "applyRule": {
+                    "Fri": 1, "Mon": 1, "Sat": 0, "Sun": 0, "Thu": 1, "Tue": 1, "Wed": 1
+                }
+            }
+        }
+    ],
+    "lastUpdated": "2026-07-05T12:00:00.000Z" //string <Data ostatniego odczytu>
+}
+```
+
+#### W przypadku POST
+W przypadku powodzenia zwracany jest:
 
 - **Kod statusu:** 200
 - **Typ:** application/json
-- **Treść:** `success: true` oraz komunikat o zaktualizowaniu danych TimeTables
+- **Treść:**
 
-W przypadku błędu zwracany jest:
+```json
+{
+    "success": true, //boolean <true,false>
+    "message": "Zaktualizowano dane TimeTables i zreschedulowano taski" //string <Komunikat (lub informacja że DevAPI jest wyłączone i nie zreschedulowano tasków)>
+}
+```
+
+W przypadku błędu serwera zwracany jest:
 
 - **Kod statusu:** 500
 - **Typ:** application/json
-- **Treść:** obiekt z błędem serwera
+- **Treść:**
+
+```json
+{
+    "error": "Taboretowy error serwera", //string <Komunikat o błędzie>
+    "message": "..." //string <Treść błędu>
+}
+```
 
 ### Przykład
 
 ```bash
-curl "http://localhost:8080/dev/api/timeTables"
+curl -X GET "http://localhost:8080/dev/api/timeTables"
 ```
 
 # Endpoint votes
 
 ### Opis
 
-Ten endpoint pobiera i aktualizuje dane głosów dla DevAPI.
+Ten endpoint pobiera oraz aktualizuje mockowane dane głosów (`votes`) dla DevAPI.
 
 ### Request
 
@@ -353,26 +439,58 @@ Ten endpoint pobiera i aktualizuje dane głosów dla DevAPI.
 
 ### Response
 
-W przypadku metody GET zwracany jest:
+#### W przypadku GET
+W przypadku powodzenia zwracany jest:
 
 - **Kod statusu:** 200
 - **Typ:** application/json
-- **Treść:** obiekt z polem `playlist`
+- **Treść:**
 
-W przypadku metody POST zwracany jest:
+```json
+{
+    "playlist": [ //array <Lista mockowanych głosów>
+        { //object
+            "id": 1, //number <ID głosu>
+            "votes": 25, //number <Liczba głosów>
+            "created_at": "2026-07-05", //string <Data utworzenia>
+            "uSongs": { //object
+                "url": "https://music.youtube.com/watch?v=c3Pd7nH7Y40", //string <Link do piosenki>
+                "title": "DevAPI - L'amour Toujours" //string <Tytuł piosenki>
+            }
+        }
+    ]
+}
+```
+
+#### W przypadku POST
+W przypadku powodzenia zwracany jest:
 
 - **Kod statusu:** 200
 - **Typ:** application/json
-- **Treść:** `success: true` oraz komunikat o zaktualizowaniu danych Votes
+- **Treść:**
 
-W przypadku błędu zwracany jest:
+```json
+{
+    "success": true, //boolean <true,false>
+    "message": "Zaktualizowano dane Votes" //string <Komunikat>
+}
+```
+
+W przypadku błędu serwera zwracany jest:
 
 - **Kod statusu:** 500
 - **Typ:** application/json
-- **Treść:** obiekt z błędem serwera
+- **Treść:**
+
+```json
+{
+    "error": "Taboretowy error serwera", //string <Komunikat o błędzie>
+    "message": "..." //string <Treść błędu>
+}
+```
 
 ### Przykład
 
 ```bash
-curl "http://localhost:8080/dev/api/votes"
+curl -X GET "http://localhost:8080/dev/api/votes"
 ```
