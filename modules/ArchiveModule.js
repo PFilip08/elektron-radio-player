@@ -41,36 +41,39 @@ function initArchive() {
     }
 }
 
-function copyToArchive(path) {
+async function copyToArchive(path_to_copy) {
     logger('verbose', 'Sprawdzanie czy podana ścieżka jest plikiem', 'copyToArchive');
-    if (fs.statSync(path).isFile()) {
+    if ((await fs.promises.stat(path_to_copy)).isFile()) {
         logger('verbose', 'Ścieżka jest plikiem, kopiowanie pojedynczego pliku', 'copyToArchive');
-        const file = path.split('/').pop();
+        const file = path_to_copy.split('/').pop();
         const destPath = `${archdir}/${file}`;
         logger('verbose', `Sprawdzanie czy plik ${file} już istnieje w archiwum`, 'copyToArchive');
-        if(fs.existsSync(destPath)) return logger('log', `Plik ${path} istnieje w archiwum.`, 'copyToArchive');
+        if (fs.existsSync(destPath)) return logger('log', `Plik ${path_to_copy} istnieje w archiwum.`, 'copyToArchive');
         logger('verbose', `Kopiowanie pliku ${file} do archiwum`, 'copyToArchive');
-        fs.copyFileSync(path, destPath);
-        logger('log', `Skopiowano plik ${path} do archiwum.`, 'copyToArchive');
+        await fs.promises.copyFile(path_to_copy, destPath);
+        logger('log', `Skopiowano plik ${path_to_copy} do archiwum.`, 'copyToArchive');
         return;
     }
     logger('verbose', 'Ścieżka jest katalogiem, odczytywanie plików', 'copyToArchive');
-    const files = fs.readdirSync(path);
+    const files = await fs.promises.readdir(path_to_copy);
     logger('verbose', `Znaleziono ${files.length} plików w katalogu`, 'copyToArchive');
-    files.forEach(file => {
-        const filePath = `${path}/${file}`;
+    for (const file of files) {
+        const filePath = `${path_to_copy}/${file}`;
         logger('verbose', `Przetwarzanie pliku: ${file}`, 'copyToArchive');
-        if (fs.statSync(filePath).isFile()) {
+        if ((await fs.promises.stat(filePath)).isFile()) {
             const destPath = `${archdir}/${file}`;
             logger('verbose', `Sprawdzanie czy ${file} już istnieje w archiwum`, 'copyToArchive');
-            if(fs.existsSync(destPath)) return logger('log', `Plik ${file} istnieje w archiwum.`, 'copyToArchive');
+            if (fs.existsSync(destPath)) {
+                logger('log', `Plik ${file} istnieje w archiwum.`, 'copyToArchive');
+                continue;
+            }
             logger('verbose', `Kopiowanie ${file} do archiwum`, 'copyToArchive');
-            fs.copyFileSync(filePath, destPath);
+            await fs.promises.copyFile(filePath, destPath);
             logger('log', `Skopiowano plik ${file} do archiwum.`, 'copyToArchive');
         } else {
             logger('warn', `Nie można skopiować ${file}, ponieważ nie jest to plik.`, 'copyToArchive');
         }
-    });
+    }
 }
 
 function copyFromArchive(file, destPath) {
@@ -116,7 +119,7 @@ async function archiveSongsQuery() {
         }
     };
     logger('verbose', 'Pobieranie wszystkich plików MP3 z archiwum', 'archiveSongsQuery');
-    const allMp3Files = getAllMp3FilesInArchive();
+    const allMp3Files = await getAllMp3FilesInArchive();
     logger('verbose', `Znaleziono ${allMp3Files.length} plików MP3`, 'archiveSongsQuery');
     logger('verbose', 'Tworzenie promises dla metadanych wszystkich plików', 'archiveSongsQuery');
     const metadataPromises = allMp3Files.map(filePath => {
@@ -126,19 +129,19 @@ async function archiveSongsQuery() {
     return Promise.all(metadataPromises);
 }
 
-function getAllMp3FilesInArchive() {
-    let mp3Files = [];
-    function scanDirectory(dir) {
+async function getAllMp3FilesInArchive() {
+    const mp3Files = [];
+    async function scanDirectory(dir) {
         logger('verbose', `Skanowanie katalogu: ${dir}`, 'getAllMp3FilesInArchive');
         try {
-            const items = fs.readdirSync(dir);
+            const items = await fs.promises.readdir(dir);
             logger('verbose', `Znaleziono ${items.length} elementów w katalogu`, 'getAllMp3FilesInArchive');
             for (const item of items) {
                 const fullPath = `${dir}/${item}`;
-                const stat = fs.statSync(fullPath);
+                const stat = await fs.promises.stat(fullPath);
                 if (stat.isDirectory()) {
                     logger('verbose', `${item} jest katalogiem, skanowanie rekurencyjne`, 'getAllMp3FilesInArchive');
-                    scanDirectory(fullPath);
+                    await scanDirectory(fullPath);
                 } else if (stat.isFile() && item.endsWith('.mp3')) {
                     logger('verbose', `Znaleziono plik MP3: ${item}`, 'getAllMp3FilesInArchive');
                     mp3Files.push(fullPath);
@@ -152,7 +155,7 @@ function getAllMp3FilesInArchive() {
             }
         }
     }
-    scanDirectory(archdir);
+    await scanDirectory(archdir);
     return mp3Files;
 }
 
@@ -164,7 +167,7 @@ async function searchInArchive(query/*, options = {}*/) {
         return { metadataMatches: [], filenameMatches: [], all: [] };
     }
     logger('verbose', `Wyszukiwanie w archiwum: "${query}"`, 'searchInArchive');
-    let searchQuery = query.toLowerCase();
+    const searchQuery = query.toLowerCase();
     //Stworzyłem to aby było ale w sumie po co?
     // if (caseSensitive) {
     //     searchQuery = query;
@@ -182,69 +185,73 @@ async function searchInArchive(query/*, options = {}*/) {
             return { metadataMatches: [], filenameMatches: [], all: [] };
         }
         logger('verbose', 'Pobieranie listy wszystkich plików MP3', 'searchInArchive');
-        const files = getAllMp3FilesInArchive();
+        const files = await getAllMp3FilesInArchive();
+        const BATCH_SIZE = 20;
         logger('verbose', `Rozpoczęcie przeszukiwania ${files.length} plików`, 'searchInArchive');
-        for (const filePath of files) {
-            logger('verbose', `Przetwarzanie pliku: ${filePath.split('/').pop()}`, 'searchInArchive');
-            try {
-                logger('verbose', `Parsowanie metadanych pliku`, 'searchInArchive');
-                const metadata = await parseFile(filePath);
-                const title = metadata.common.title || '';
-                const artist = metadata.common.artist || '';
-                const album = metadata.common.album || '';
-                logger('verbose', `Metadane: ${title} - ${artist} (${album})`, 'searchInArchive');
-                let metadataText = `${title} ${artist} ${album}`.toLowerCase();
-                // if (caseSensitive) {
-                //     metadataText = `${title} ${artist} ${album}`;
-                // } else {
-                //     metadataText = `${title} ${artist} ${album}`.toLowerCase();
-                // }
-                const resultObject = {
-                    filename: filePath.split('/').pop(),
-                    path: filePath,
-                    relativePath: getArchiveRelativePath(filePath),
-                    title: title || path.basename(filePath, path.extname(filePath)),
-                    artist: artist || 'Nieznany Artysta',
-                    album: album,
-                    duration: metadata.format.duration || 0,
-                    format: metadata.format.container || 'mp3',
-                };
-                let matchedByMetadata = false;
-                let matchedByFilename = false;
-                logger('verbose', `Sprawdzanie dopasowania w metadanych`, 'searchInArchive');
-                if (metadataText.trim() && metadataText.includes(searchQuery)) {
-                    logger('verbose', `Znaleziono dopasowanie w metadanych!`, 'searchInArchive');
-                    matchedByMetadata = true;
-                    metadataMatches.push({ ...resultObject, matchType: 'metadata' });
-                }
-                logger('verbose', `Sprawdzanie dopasowania w nazwie pliku`, 'searchInArchive');
-                const filename = filePath.split('/').pop().replace(/\.mp3$/i, '');
-                const filenameText = /*caseSensitive ?*/ filename.toLowerCase() /*: filename.toLowerCase()*/;
-                if (filenameText.includes(searchQuery)) {
-                    logger('verbose', `Znaleziono dopasowanie w nazwie pliku!`, 'searchInArchive');
-                    matchedByFilename = true;
-                    if (!matchedByMetadata) {
-                        filenameMatches.push({ ...resultObject, matchType: 'filename' });
+        for (let i = 0; i < files.length; i += BATCH_SIZE) {
+            const batch = files.slice(i, i + BATCH_SIZE);
+            const results = await Promise.allSettled(batch.map(async (filePath) => {
+                try {
+                    logger('verbose', `Parsowanie metadanych pliku`, 'searchInArchive');
+                    const metadata = await parseFile(filePath);
+                    const title = metadata.common.title || '';
+                    const artist = metadata.common.artist || '';
+                    const album = metadata.common.album || '';
+                    logger('verbose', `Metadane: ${title} - ${artist} (${album})`, 'searchInArchive');
+                    const metadataText = `${title} ${artist} ${album}`.toLowerCase();
+                    // if (caseSensitive) {
+                    //     metadataText = `${title} ${artist} ${album}`;
+                    // } else {
+                    //     metadataText = `${title} ${artist} ${album}`.toLowerCase();
+                    // }
+                    const resultObject = {
+                        filename: filePath.split('/').pop(),
+                        path: filePath,
+                        relativePath: getArchiveRelativePath(filePath),
+                        title: title || path.basename(filePath, path.extname(filePath)),
+                        artist: artist || 'Nieznany Artysta',
+                        album: album,
+                        duration: metadata.format.duration || 0,
+                        format: metadata.format.container || 'mp3',
+                    };
+                    let matchedByMetadata = false;
+                    let matchedByFilename = false;
+                    logger('verbose', `Sprawdzanie dopasowania w metadanych`, 'searchInArchive');
+                    if (metadataText.trim() && metadataText.includes(searchQuery)) {
+                        logger('verbose', `Znaleziono dopasowanie w metadanych!`, 'searchInArchive');
+                        matchedByMetadata = true;
+                        metadataMatches.push({ ...resultObject, matchType: 'metadata' });
                     }
+                    logger('verbose', `Sprawdzanie dopasowania w nazwie pliku`, 'searchInArchive');
+
+                    const filename = filePath.split('/').pop().replace(/\.mp3$/i, '');
+                    const filenameText = /*caseSensitive ?*/ filename.toLowerCase() /*: filename.toLowerCase()*/;
+                    if (filenameText.includes(searchQuery) && !matchedByMetadata) {
+                        logger('verbose', `Znaleziono dopasowanie w nazwie pliku!`, 'searchInArchive');
+                        matchedByFilename = true;
+                        if (!matchedByMetadata) {
+                            filenameMatches.push({ ...resultObject, matchType: 'filename' });
+                        }
+                    }
+                    // if (limit && (metadataMatches.length + filenameMatches.length) >= limit) {
+                    //     logger('verbose', `Osiągnięto limit wyników: ${limit}`, 'searchInArchive');
+                    //     break;
+                    // }
+                } catch (err) {
+                    logger('error', `Nie można odczytać metadanych pliku ${filePath}: ${err.message}`, 'searchInArchive');
+                    if (global.debugmode === true) {
+                        DebugSaveToFile('ArchiveModule', 'searchInArchive', 'catched_error', err);
+                        logger('verbose',`Stacktrace został zrzucony do /debug`,'searchInArchive');    
+                    }
+                    logger('verbose', `Pomijanie pliku ${filePath.split('/').pop()} z powodu błędu`, 'searchInArchive');
                 }
-                // if (limit && (metadataMatches.length + filenameMatches.length) >= limit) {
-                //     logger('verbose', `Osiągnięto limit wyników: ${limit}`, 'searchInArchive');
-                //     break;
-                // }
-            } catch (err) {
-                logger('error', `Nie można odczytać metadanych pliku ${filePath}: ${err.message}`, 'searchInArchive');
-                if (global.debugmode === true) {
-                    DebugSaveToFile('ArchiveModule', 'searchInArchive', 'catched_error', err);
-                    logger('verbose',`Stacktrace został zrzucony do /debug`,'searchInArchive');    
-                }
-                logger('verbose', `Pomijanie pliku ${filePath.split('/').pop()} z powodu błędu`, 'searchInArchive');
-            }
+            }));
         }
         logger('verbose', `Przeszukiwanie zakończone`, 'searchInArchive');
         const allResults = [...metadataMatches, ...filenameMatches];
         logger('verbose', `Znaleziono ${allResults.length} wyników dla zapytania: "${query}"`, 'searchInArchive');
         logger('verbose', `Zwracanie wyników wyszukiwania`, 'searchInArchive');
-        return { metadataMatches, filenameMatches, all: allResults};
+        return { metadataMatches, filenameMatches, all: allResults };
     } catch (err) {
         logger('error', `Błąd podczas wyszukiwania w archiwum: ${err.message}`, 'searchInArchive');
         if (global.debugmode === true) {
@@ -304,15 +311,17 @@ function getArchiveSubfolders() {
     return subfolders;
 }
 
-function copyFromArchiveToSix(subfolderName, clearFolder = false) {
+async function copyFromArchiveToSix(subfolderName, clearFolder = false) {
     logger('verbose', `Kopiowanie z archiwum/${subfolderName} do playlisty 6`, 'copyFromArchiveToSix');
     const sourceDir = path.join(archdir, subfolderName);
     const targetDir = './mp3/6';
-    if (!fs.existsSync(sourceDir)) {
+    try {
+        await fs.promises.access(sourceDir);
+    } catch {
         logger('error', `Podkatalog ${subfolderName} nie istnieje w archiwum`, 'copyFromArchiveToSix');
         throw new Error(`Podkatalog ${subfolderName} nie istnieje w archiwum`);
     }
-    const existingFiles = fs.readdirSync(targetDir).filter(f => path.extname(f).toLowerCase() === '.mp3');
+    const existingFiles = (await fs.promises.readdir(targetDir)).filter(f => path.extname(f).toLowerCase() === '.mp3');
     const hasExistingFiles = existingFiles.length > 0;
     if (hasExistingFiles && !clearFolder) {
         logger('verbose', `Folder 6 zawiera ${existingFiles.length} plików`, 'copyFromArchiveToSix');
@@ -323,28 +332,28 @@ function copyFromArchiveToSix(subfolderName, clearFolder = false) {
     }
     if (clearFolder && hasExistingFiles) {
         logger('verbose', `Usuwanie ${existingFiles.length} plików z folderu 6`, 'copyFromArchiveToSix');
-        existingFiles.forEach(file => {
+        for (const file of existingFiles) {
             const filePath = path.join(targetDir, file);
-            fs.unlinkSync(filePath);
-        });
+            await fs.promises.unlink(filePath);
+        }
         logger('log', `Wyczyszczono folder playlisty 6 (${existingFiles.length} plików)`, 'copyFromArchiveToSix');
     }
-    const files = fs.readdirSync(sourceDir);
+    const files = await fs.promises.readdir(sourceDir);
     const mp3Files = files.filter(file => path.extname(file).toLowerCase() === '.mp3');
     logger('verbose', `Kopiowanie ${mp3Files.length} plików MP3`, 'copyFromArchiveToSix');
     let copiedCount = 0;
     let errors = [];
-    mp3Files.forEach(file => {
+    for (const file of mp3Files) {
         try {
             const sourcePath = path.join(sourceDir, file);
             const targetPath = path.join(targetDir, file);
-            fs.copyFileSync(sourcePath, targetPath);
+            await fs.promises.copyFile(sourcePath, targetPath);
             copiedCount++;
         } catch (err) {
             logger('error', `Błąd podczas kopiowania ${file}: ${err.message}`, 'copyFromArchiveToSix');
             errors.push({ file, error: err.message });
         }
-    });
+    }
     logger('log', `Skopiowano z archiwum do playlisty 6: ${copiedCount}/${mp3Files.length} plików`, 'copyFromArchiveToSix');
     return {
         needsConfirmation: false,
@@ -362,7 +371,7 @@ async function movePlaylistToArchive(playlistId, userNotice = null) {
         throw new Error(`Folder playlisty ${playlistId} nie istnieje`);
     }
     let playlistName = getPlaylistName(playlistId);
-    const files = fs.readdirSync(sourceDir);
+    const files = await fs.promises.readdir(sourceDir);
     const mp3Files = files.filter(file => path.extname(file).toLowerCase() === '.mp3');
     if (mp3Files.length === 0) {
         logger('warn', `Playlista ${playlistId} jest pusta, brak plików do przeniesienia`, 'movePlaylistToArchive');
@@ -385,23 +394,23 @@ async function movePlaylistToArchive(playlistId, userNotice = null) {
     }
     const targetDir = path.join(archdir, folderName);
     logger('verbose', `Tworzenie folderu: ${targetDir}`, 'movePlaylistToArchive');
-    fs.mkdirSync(targetDir, { recursive: true });
+    await fs.promises.mkdir(targetDir, { recursive: true });
     logger('verbose', `Przenoszenie ${mp3Files.length} plików MP3`, 'movePlaylistToArchive');
     let copiedCount = 0;
     let errors = [];
-    mp3Files.forEach(file => {
+    for (const file of mp3Files) {
         try {
             const sourcePath = path.join(sourceDir, file);
             const targetPath = path.join(targetDir, file);
             //fs.renameSync(sourcePath, targetPath);
-            fs.copyFileSync(sourcePath, targetPath);
-            fs.unlinkSync(sourcePath);
+            await fs.promises.copyFile(sourcePath, targetPath);
+            await fs.promises.unlink(sourcePath);
             copiedCount++;
         } catch (err) {
             logger('error', `Błąd podczas przenoszenia ${file}: ${err.message}`, 'movePlaylistToArchive');
             errors.push({ file, error: err.message });
         }
-    });
+    }
     logger('log', `Przeniesiono playlistę ${playlistId} do archiwum: ${copiedCount}/${mp3Files.length} plików`, 'movePlaylistToArchive');
     return {
         folderName: folderName,

@@ -31,39 +31,38 @@ function findChanges(obj1, obj2, path = '') {
     const keys = new Set([...Object.keys(obj1), ...Object.keys(obj2)]);
     logger('verbose', `Znaleziono klucze: ${Array.from(keys).join(', ')}`, 'findChanges');
     keys.forEach(key => {
-      const fullPath = path ? `${path}.${key}` : key;
-      logger('verbose', `Sprawdzanie klucza: ${fullPath}`, 'findChanges');
-      if (JSON.stringify(obj1[key]) !== JSON.stringify(obj2[key])) {
-        logger('verbose', `Znaleziono różnicę w kluczu: ${fullPath}`, 'findChanges');
-        if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object' && obj1[key] && obj2[key]) {
-          logger('verbose', `W ${fullPath} wykryto jakąś zmianę. Dokonywanie dokładnego sprawdzenia...`, 'findChanges');
-          changes.push(...findChanges(obj1[key], obj2[key], fullPath));
-        } else {
-          logger('verbose', `W ${fullPath} wykryto zmianę. Zapisywanie...`, 'findChanges');
-          changes.push({ key: fullPath, oldValue: obj1[key], newValue: obj2[key] });
+        const fullPath = path ? `${path}.${key}` : key;
+        const oldValue = obj1[key];
+        const newValue = obj2[key];
+        logger('verbose', `Sprawdzanie klucza: ${fullPath}`, 'findChanges');
+        if (oldValue && newValue && typeof oldValue === 'object' && typeof newValue === 'object') {
+            logger('verbose', `W ${fullPath} wykryto jakąś zmianę. Dokonywanie dokładnego sprawdzenia...`, 'findChanges');
+            changes.push(...findChanges(oldValue, newValue, fullPath));
+        } else if (oldValue !== newValue) {
+            logger('verbose', `W ${fullPath} wykryto zmianę. Zapisywanie...`, 'findChanges');
+            changes.push({ key: fullPath, oldValue, newValue });
         }
-      }
     });
     logger('verbose', `Obiekty które są różne zostały zrzucone do debug/`, 'logChanges');
-    logger('verbose', `Zakończono porównywanie obiektów ${JSON.stringify(changes)}`, 'findChanges');
+    logger('verbose', `Zakończono porównywanie obiektów ${path}, liczba zmian: ${changes.length}`, 'findChanges');
     return changes;
-  }
+}
   
 function logChanges(changes) {
     let counter = 0;
     logger('verbose', `Rozpoczęto logowanie zmian`, 'logChanges');
     try {
-      changes.forEach(change => {
+      for (const change of changes) {
         counter++;
         const { key, oldValue, newValue } = change;
         let message = `Zmiana w ${key}: `;
         if (key.includes('static')) {
-          logger('verbose',yellow('Wykryto przejście z trybu recovery który używał danych statycznych do trybu normalnego. Nie ma potrzeby aby porównywać tych danych!'), 'logChanges');
-          throw new Error('Wykryto przejście z trybu recovery który używał danych statycznych do trybu normalnego. Nie ma potrzeby aby porównywać tych danych!');
+          logger('verbose', yellow('Wykryto przejście z trybu recovery który używał danych statycznych do trybu normalnego. Nie ma potrzeby aby porównywać tych danych!'), 'logChanges');
+          break;
         }
         if (key.includes('isOn')) {
-          logger('verbose',yellow('Wykryto zmianę klucza "isOn". Nie ma potrzeby aby porównywać tych danych!'), 'logChanges');
-          throw new Error('Wykryto zmianę klucza "isOn". Nie ma potrzeby aby porównywać tych danych!');
+          logger('verbose', yellow('Wykryto zmianę klucza "isOn". Nie ma potrzeby aby porównywać tych danych!'), 'logChanges');
+          break;
         }
         if (key.includes('start') || key.includes('end')) {
           message += `Godzina została zmieniona z ${oldValue} na ${newValue}`;
@@ -116,7 +115,7 @@ function logChanges(changes) {
         else if (key.includes('currentPlaylistId')) {
           if (oldValue === undefined || newValue === undefined) {
               message += ``;
-          } else if (oldValue !== newValue || newValue !== oldValue) {
+          } else if (oldValue !== newValue) {
               message += `Playlista główna została zmieniona z ${oldValue} na ${newValue}`;
           }
         }
@@ -145,12 +144,12 @@ function logChanges(changes) {
             message += `Wartość nieznanego dla funkcji klucza ${key} została zmieniona z ${oldValue} na ${newValue}`;
           }
         }
-        if (!key.includes('id') && !key.includes('created_at') === true) {
+        if (!key.includes('id') && !key.includes('created_at')) {
           if (oldValue !== undefined || newValue !== undefined) {
               logger('debug', yellow(message), 'logChanges');
           }
         }
-      });
+      };
     } catch (error) {
       logger('verbose', red(`Wystąpił błąd podczas logowania zmian: ${error}`), 'logChanges');
       if (global.debugmode === true) {

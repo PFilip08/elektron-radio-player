@@ -64,7 +64,7 @@ W przypadku, gdy sprawdzenie wyszło, że czas w godzinie jest na minusie (czas 
 
 `massSchedule` jest funkcją, która planuje zadania związane z odtwarzaniem muzyki na podstawie harmonogramu pobranego z API.
 
-Na początku funkcja anuluje zaplanowane w poprzedniej sesji zadania i planuje zadanie uruchamiające funkcję automatycznego usuwania plików [`autoRemoveFiles()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicDownloader.js.md#autoremovefiles) codziennie o godzinie 5:00 od poniedziałku do piątku.
+Na początku funkcja anuluje zaplanowane w poprzedniej sesji zadania i uruchamia funkcję [`scheduleMinorTasks()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#scheduleminortasks), która planuje poboczne zadania w harmonogramie.
 
 Następnie wysyła zapytanie do funkcji [`getApiData()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#getapidata), która zwróci dane, z API po tym sprawdza, czy zmienna w jsonie `isOn` jest ustawiona na `true` jeżeli zmienna jest przełączona na `false` to funkcja zwróci błąd, który wygłąda tak:
 
@@ -96,3 +96,42 @@ Po tym funkcja sprawdza, czy czas jest prawidłowy przy użyciu funkcji [`checkS
 !["Jak wygląda log z funkcji massSchedule, gdy czas jest nieprawidłowy"](https://i.imgur.com/C741mZA.png)
 
 Jeżeli żaden z powyższych sprawdzeń nie wyłapał nic, to funkcja tworzy zadania a tworzy je przez funkcję [`scheduleMusicTask()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#schedulemusictask) i jako argument podaje czas we, zmiennej `time` a id playlisty we, zmiennej `id`a tworzy zadanie przy pomocy funkcji [`scheduleKillTask()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#schedulekilltask), do której podaje czas w tej samej zmiennej `time`.
+
+# scheduleVotes()
+
+Planuje granie oraz pauzowanie playlisty z głosowania (playlista nr 7) o podanych godzinach.
+Funkcja przyjmuje cztery argumenty:
+
+- `timeStart` - godzina rozpoczęcia odtwarzania
+- `timeEnd` - godzina zapauzowania (lub ubicia) odtwarzacza
+- `id` - id playlisty (musi być równe `7`, inaczej funkcja wywali błąd w konsoli i przerwie działanie)
+- `i` - dzień oraz numer przerwy
+
+Gdy wybije godzina `timeStart`, zadanie sprawdza przy pomocy [`checkIfVLCisRunning()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Other.js.md#checkifvlcisrunning) oraz [`checkIfVLConVotes()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Other.js.md#checkifvlconvotes), czy VLC już działa i ma odpaloną playlistę z głosów. Jeżeli tak, to wznawia granie przez [`playPlayer()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#playplayer), a jeżeli nie, to uruchamia playlistę od nowa przez [`playPlaylist()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#playplaylist).
+Natomiast gdy wybije godzina `timeEnd`, zadanie zatrzymuje muzykę funkcją [`pausePlayer()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#pauseplayer), a w przypadku gdyby pauzowanie wywaliło błąd, ubija odtwarzacz siłowo przez [`killPlayerForce()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#killplayerforce).
+
+# downloadVotes()
+
+Funkcja ta nie przyjmuje żadnych argumentów i służy do pobrania piosenek z głosowania.
+Na początku dzwoni do funkcji [`getVotesData()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/VotesConnector.js.md#getvotesdata) i czyści cache dla playlisty 7.
+Jeżeli funkcja [`getVotesData()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/VotesConnector.js.md#getvotesdata) zwróci stringa `'brak'`, to ustawia zmienną `emptyVotes` na `true`, wyświetla loga o braku danych i kończy działanie. W przeciwnym wypadku w pętli przekazuje link każdej piosenki do funkcji [`downloader()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicDownloader.js.md#downloader) z włączoną flagą głosów.
+
+# scheduleMinorTasks()
+
+Funkcja ta planuje stałe zadania pomocnicze:
+
+- Uruchamianie funkcji [`scheduleUpdate()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#scheduleupdate), która zmienia interwał odpytywania API:
+  - o godzinie 7:00 od poniedziałku do piątku (start pracy radiowęzła)
+  - o godzinie 16:00 od poniedziałku do piątku (koniec pracy radiowęzła)
+  - codziennie o północy (sprawdzenie zmiany dnia na weekend lub wakacje)
+- Uruchamianie funkcji automatycznego usuwania plików [`autoRemoveFiles()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicDownloader.js.md#autoremovefiles) codziennie o godzinie 5:00 od poniedziałku do piątku.
+- Uruchamianie aktualizacji głosów o godzinie 6:50 od poniedziałku do piątku, które najpierw pobiera głosy przez [`downloadVotes()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#downloadvotes), a następnie ponownie planuje zadania funkcją [`massSchedule()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#massschedule).
+
+# delayMassScheduleVLC()
+
+Funkcja ta uruchamia się wtedy, gdy [`massSchedule()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#massschedule) zostanie wywołane w trakcie, gdy VLC aktualnie odtwarza muzykę (aby uniknąć skasowania zadania ubicia odtwarzacza w trakcie grania).
+Funkcja co 1 sekundę sprawdza przy pomocy [`getPlayingSong()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#getplayingsong), czy VLC nadal gra. Kiedy VLC przestanie grać, funkcja zdejmuje blokadę `massScheduleDelayed` i uruchamia [`massSchedule()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#massschedule).
+
+# getScheduledTasks()
+
+Funkcja ta nie przyjmuje żadnych argumentów i zwraca w formacie array listę wszystkich aktualnie zaplanowanych zadań wraz z ich nazwą, datą i godziną następnego uruchomienia (z uwzględnieniem czasu letniego/zimowego), funkcją przypisaną do zadania oraz dodatkowymi danymi `variables`.

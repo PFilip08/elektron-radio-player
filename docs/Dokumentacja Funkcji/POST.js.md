@@ -17,11 +17,11 @@ Funkcja `POST()` służy do uruchomienia całego Automatu skrypt wykonuje instru
     - W przypadku, gdy skrypt jest uruchomiony w trybie debugowania, to wyświetli następujący komunikat dalej postępując zgodnie z pierwszym punktem:
         
         ![Komunikat o błędzie dla systemu okno w trybie debugowania](https://i.imgur.com/2H5Be1q.png)
-- Sprawdza, czy istnieje zmienna środowiskowa o nazwie `WWW`
-  - Jeżeli zmienna istnieje, to skrypt aktywuje lokalne api (funkcja wewnętrzna `www()`) i wyświetli komunikat:
+- Sprawdza zmienną środowiskową o nazwie `WWW`
+  - Jeżeli zmienna `WWW` ma wartość `'true'`, to skrypt aktywuje lokalne api (funkcja wewnętrzna `www()`) i wyświetli komunikat:
 
     ![Komunikat o aktywacji lokalnego api](https://i.imgur.com/7FItcZu.png)
-    - Jeżeli zmienna nie istnieje, to ustawia ``false`` i nic nie pokazuje
+    - W przeciwnym razie lokalne API nie zostaje aktywowane i nic nie jest wyświetlane.
 - Uruchamia funkcję [`massSchedule()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/TaskScheduler.js.md#massschedule), która ustawia zadania w playerze, o której ma grać muzyka w harmonogramie i wyświetla komunikat informujący o ustawieniu funkcji:
 
     ![Komunikat o ustawieniu harmonogramu](https://i.imgur.com/UnezZCp.png)

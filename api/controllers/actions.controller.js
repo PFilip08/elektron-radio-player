@@ -4,16 +4,22 @@ import {killPlayer, killPlayerForce, playMusic, playPlaylist} from "../../module
 import {pathSecurityChecker, sterylizatorIP} from "../../modules/Other.js";
 import {removeFiles} from "../../modules/MusicDownloader.js";
 import VLC from "vlc-client";
-import {exec} from "child_process";
+import {execFile} from "child_process";
+import path from "path";
 import * as fs from "fs";
 
 export let szuffle = 'true';
+const vlc = new VLC.Client({
+    ip: '127.0.0.1',
+    port: Number(process.env.VLC_PORT) || 4212,
+    password: process.env.VLC_PASSWORD
+});
 
 // killPlayer
 export async function kill(req, res) {
     try {
-        const force = req.query.force;
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - killPlayer');
+        const force = req.query.force;
         if (force !== undefined) {
             killPlayerForce();
             return res.status(201).send('force gut');
@@ -33,8 +39,8 @@ export async function kill(req, res) {
 // playMusic
 export async function pMusic(req, res) {
     try {
-        const file = req.query.file;
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - pMusic');
+        const file = req.query.file;
         if (!file) {
             return res.status(400).send('Nie podano nazwy pliku!');
         }
@@ -58,8 +64,8 @@ export async function pMusic(req, res) {
 // playMusic
 export async function pPlaylist(req, res) {
     try {
-        const id = req.query.id;
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - pPlaylist');
+        const id = req.query.id;
         if (!id) {
             return res.status(400).send('Nie podano numeru playlisty!');
         }
@@ -82,11 +88,6 @@ export async function pPlaylist(req, res) {
 
 export async function vlcPlay(req, res) {
     try {
-        const vlc = new VLC.Client({
-            ip: '127.0.0.1',
-            port: Number(process.env.VLC_PORT) || 4212,
-            password: process.env.VLC_PASSWORD
-        });
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - vlcPlay');
         await vlc.togglePlay();
         return res.status(201).send('gut');
@@ -102,11 +103,6 @@ export async function vlcPlay(req, res) {
 
 export async function vlcNext(req, res) {
     try {
-        const vlc = new VLC.Client({
-            ip: '127.0.0.1',
-            port: Number(process.env.VLC_PORT) || 4212,
-            password: process.env.VLC_PASSWORD
-        });
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - vlcNext');
         await vlc.next();
         return res.status(201).send('gut');
@@ -122,11 +118,6 @@ export async function vlcNext(req, res) {
 
 export async function vlcPrevious(req, res) {
     try {
-        const vlc = new VLC.Client({
-            ip: '127.0.0.1',
-            port: Number(process.env.VLC_PORT) || 4212,
-            password: process.env.VLC_PASSWORD
-        });
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - vlcPrevious');
         await vlc.previous();
         return res.status(201).send('gut');
@@ -142,14 +133,15 @@ export async function vlcPrevious(req, res) {
 
 export async function vlcSzuffle(req, res) {
     try {
-        const state = req.query.state;
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - vlcSzuffle');
+        const state = req.query.state;
         if (req.method === 'GET') {
             if (state === 'check') return res.status(200).send(szuffle);
         } else if (req.method !== 'POST') {
             return res.status(405).send('Nie ta metoda!');
         }
         if (!state) return res.status(400).send('Nie podano stanu!');
+        if (!typeof state == "boolean") return res.status(400).send('Nieprawidłowy stan!');
         szuffle=state;
         return res.status(201).send(`Szuffle ${state}`);
     } catch (e) {
@@ -164,10 +156,15 @@ export async function vlcSzuffle(req, res) {
 
 export async function delFiles(req, res) {
     try {
-        const path = `./mp3/${req.query.path}/`;
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - delFiles');
-        if (!path) {
+        if (!req.query.path) {
             return res.status(400).send('Nie podano ścieżki do pliku!');
+        }
+        const path = `./mp3/${req.query.path}/`;
+        const secuCheck = pathSecurityChecker(path);
+        if (secuCheck.includes('_ATTEMPT')) {
+            logger('warn', `Próba usunięcia pliku z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - delFiles');
+            return res.status(403).send('Niebezpieczna ścieżka!');
         }
         await removeFiles(path);
         return res.status(200).send('usunło chyba');
@@ -183,13 +180,32 @@ export async function delFiles(req, res) {
 
 export async function normalize(req, res) {
     try {
+        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - normalize');
         const playlist = req.query.playlist;
+        if (!playlist) {
+            return res.status(400).send('Nie podano ścieżki do playlisty!');
+        }
         const pathDir = './mp3/';
-        const fullPath = pathDir+playlist;
-        if (fullPath.includes('../')) return res.status(511).send('a dzie masło roota?!?!1');
-        if (!fs.existsSync(fullPath) || !fs.lstatSync(fullPath).isDirectory()) return res.status(406).send('playlista nie istnieje lub to nie playlista!!');
+        const fullPath = pathDir + String(playlist);
+        const secuCheck = pathSecurityChecker(fullPath);
+        if (secuCheck.includes('_ATTEMPT')) {
+            logger('warn', `Próba normalizacji plików z niebezpieczną ścieżką! Funkcja wykryła naruszenie: ${secuCheck} od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - normalize');
+            return res.status(511).send('a dzie masło roota?!?!1');
+        }
+        const base = path.resolve(pathDir);
+        const dir = path.resolve(base, String(playlist));
+        if (!dir.startsWith(base + path.sep)) {
+            logger('warn', `Próba wyjścia poza katalog mp3 (path traversal) od IP: ${sterylizatorIP(req.connection.remoteAddress)}`, 'LocalAPI - normalize');
+            return res.status(511).send('a dzie masło roota?!?!1')
+        }
+        if (!fs.existsSync(dir) || !fs.lstatSync(dir).isDirectory()) return res.status(406).send('playlista nie istnieje lub to nie playlista!!');
+        const files = fs.readdirSync(dir).filter(f => f.toLowerCase().endsWith('.mp3')).map(f => path.join(dir, f));
+        if (files.length === 0) {
+            logger('warn', `Playlista ${playlist} nie zawiera plików mp3!`, 'LocalAPI - normalize');
+            return res.status(406).send('Brak plików mp3 w playliście!');
+        }
         const dupa = await new Promise((resolve, reject) => {
-            exec(`mp3gain -r -c ${fullPath}/*`, (error, stdout, stderr) => {
+            execFile(`mp3gain`, ['-r', '-c', ...files], (error, stdout, stderr) => {
                 logger('verbose', "\n"+ stdout, 'LocalAPI - normalize');
                 if (global.debugmode === true) {
                     DebugSaveToFile('LocalAPI', 'normalize', 'mp3gain_output', stdout);
@@ -201,10 +217,9 @@ export async function normalize(req, res) {
                         DebugSaveToFile('LocalAPI', 'normalize', 'mp3gain_error', error);
                         logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - normalize');
                     }
-                    reject(error);
-                    return res.status(400).send('error/brakplikuf!!');
+                    return reject(error);
                 }
-                resolve(stdout);
+                return resolve(stdout || stderr);
             });
         });
         return res.status(200).send(dupa);

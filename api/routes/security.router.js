@@ -35,11 +35,10 @@ secRouter.post('/confident', async function (req, res) {
             logger('error', yellow(`UWAGA! Logika safeguarda się posypała! Request od ${sterylizatorIP(req.connection.remoteAddress)} o useragencie ${req.get('User-Agent')}`), 'LocalAPI - EKonfident');
             break;
         default:
-            res.status(400).send('Nieznany typ logu');
-            break;
+            return res.status(400).send('Nieznany typ logu');
     }
     logger('verbose', 'PS: Aby wyłączyć lub włączyć EKonfidenta, wpisz komendę "toggleSafeguard()" w konsoli przeglądarki', 'LocalAPI - EKonfident');
-    res.status(200).send('gut confident');
+    return res.status(200).send('gut confident');
 });
 
 export default secRouter;

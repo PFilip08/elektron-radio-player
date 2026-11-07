@@ -81,6 +81,11 @@ function pathSecurityChecker(filepath, defendingFolder = 'mp3') {
         logger('warn', yellow(`Próba użycia ścieżki absolutnej poza ${defendingFolder}!!!`), 'pathSecurityChecker');
         return 'ABSOLUTE_PATH_ATTEMPT';
     }
+    logger('verbose', 'Sprawdzanie czy ścieżka nie zawiera segmentów ".."', 'pathSecurityChecker');
+    if (filepath.split(/[\\/]+/).includes('..')) {
+        logger('warn', yellow(`Próba użycia segmentu ".." w ścieżce: ${filepath}`), 'pathSecurityChecker');
+        return 'TRAVERSAL_SEGMENT_ATTEMPT';
+    }
     logger('verbose', 'Sprawdzanie czy ścieżka nie wychodzi poza katalog bazowy', 'pathSecurityChecker');
     const rootDirectory = path.resolve(process.cwd(), defendingFolder);
     const resolvedPath = path.resolve(rootDirectory, filepath);
@@ -162,10 +167,10 @@ async function checkIfVLConVotes() {
     logger('verbose', 'Sprawdzanie czy VLC jest uruchomione na odtwarzanie muzyki z głosów...', 'checkIfVLConVotes');
     try {
         const timeout = new Promise((_, reject) =>
-            setTimeout(() => reject(
-                logger('verbose', 'Czas wykonania funkcji przekroczony!', 'getPlayingSong'),
-                new Error('Czas wykonania funkcji przekroczony'
-                )), 3000)
+            setTimeout(() => {
+                logger('verbose', 'Czas wykonania funkcji przekroczony!', 'getPlayingSong');
+                reject(new Error('Czas wykonania funkcji przekroczony'));
+            }, 3000)
         );
         const vlcOperation = (async () => {
             const vlc = new VLC.Client({
