@@ -1,133 +1,132 @@
 # initArchive()
 
-Funkcja `initArchive()` inicjalizuje katalog archiwum utworów.
+Funkcja ta nie przyjmuje żadnych argumentów i służy do inicjalizacji katalogu archiwum, którego ścieżka jest zapisana w zmiennej `archdir` (domyślnie `./mp3/Archive` lub ścieżka ze zmiennej środowiskowej `ARCHIVE_DIR`).
 
-Sprawdza, czy katalog archiwum określony w zmiennej `archdir` istnieje na dysku. Jeżeli katalog nie istnieje, tworzy go rekurencyjnie. Następnie odczytuje listę plików i informuje logiem w konsoli o liczbie zarchiwizowanych plików.
+Na początku funkcja sprawdza, czy folder archiwum istnieje. Jeżeli nie istnieje, to wyświetla ostrzeżenie w konsoli, tworzy ten katalog i wywołuje samą siebie ponownie.
+Gdy katalog istnieje, funkcja odczytuje listę plików w archiwum. Jeżeli archiwum jest puste, to w konsoli wyświetli ostrzeżenie, że archiwum jest puste, a jeżeli są w nim pliki, to wyświetli log z informacją, ile plików znajduje się w archiwum.
 
 # copyToArchive()
 
-Asynchroniczna funkcja `copyToArchive()` kopiuje wskazany plik lub zawartość wskazanego katalogu do archiwum.
+Funkcja przyjmuje jeden argument, którym jest `path_to_copy`, czyli ścieżka do pojedynczego pliku lub całego folderu z plikami mp3, które mają zostać skopiowane do archiwum.
 
-Funkcja przyjmuje jeden argument:
-
-- `path_to_copy` - ścieżka do pojedynczego pliku lub katalogu z plikami MP3.
-
-Przed skopiowaniem funkcja sprawdza, czy dany plik już istnieje w archiwum – jeśli istnieje, operacja jest pomijana.
+Na początku funkcja sprawdza, czy podana ścieżka prowadzi do pojedynczego pliku:
+- Jeżeli jest to pojedynczy plik, to wyciąga samą nazwę pliku i sprawdza, czy taki plik już istnieje w folderze archiwum. Jeżeli istnieje, to wyświetla loga o tym, że plik jest już w archiwum i kończy działanie. Jeżeli nie istnieje, to kopiuje plik do archiwum i wyświetla loga o skopiowaniu pliku.
+- Jeżeli podana ścieżka jest katalogiem, to funkcja odczytuje wszystkie pliki w tym katalogu i w pętli dla każdego pliku sprawdza, czy jest on plikiem i czy nie ma go już w archiwum, po czym kopiuje brakujące pliki do katalogu archiwum.
 
 # copyFromArchive()
 
-Funkcja `copyFromArchive()` kopiuje pojedynczy plik z katalogu archiwum do wskazanej ścieżki docelowej.
-
 Funkcja przyjmuje dwa argumenty:
 
-- `file` - nazwa pliku w archiwum,
-- `destPath` - pełna ścieżka docelowa wraz z nazwą pliku.
+- `file` - nazwa pliku znajdującego się w archiwum
+- `destPath` - ścieżka docelowa, gdzie plik ma zostać skopiowany
 
-W przypadku braku pliku w archiwum funkcja loguje błąd i przerywa działanie. W przypadku powodzenia zwraca komunikat tekstowy.
+Na początku funkcja sprawdza, czy podany plik w ogóle istnieje w archiwum. Jeżeli nie istnieje, to zwraca w konsoli loga z błędem i kończy działanie.
+Jeżeli plik istnieje, to kopiuje go z archiwum do ścieżki `destPath`, wyświetla o tym loga w konsoli i zwraca stringa z komunikatem o skopiowaniu pliku.
 
 # copyFileFromArchiveToPlaylist()
 
-Funkcja `copyFileFromArchiveToPlaylist()` kopiuje pojedynczy plik z archiwum bezpośrednio do określonej playlisty.
-
 Funkcja przyjmuje dwa argumenty:
 
-- `file` - ścieżka względna lub nazwa pliku w archiwum,
-- `playlistId` - numer/identyfikator playlisty docelowej (np. `1`, `6`).
+- `file` - nazwa pliku (lub ścieżka względna) w archiwum
+- `playlistId` - id playlisty, do której plik ma zostać skopiowany
 
-Tworzy folder playlisty docelowej, jeśli ten nie istnieje, sprawdza czy plik nie istnieje już w playliście i kopiuje go przy użyciu [`copyFromArchive()`](#copyfromarchive).
+Funkcja na początku sprawdza, czy folder docelowej playlisty w `./mp3/` istnieje, a jeżeli nie, to go tworzy. Następnie sprawdza, czy plik o takiej nazwie nie znajduje się już na tej playliście. Jeżeli plik już tam jest, to wyświetla ostrzeżenie w konsoli i zwraca komunikat `Plik już istnieje: <nazwa pliku>`.
+Jeżeli pliku jeszcze nie ma na playliście, to przekazuje zadanie skopiowania do funkcji [`copyFromArchive()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ArchiveModule.js.md#copyfromarchive).
 
 # checkIfFileExistsInArchive()
 
-Funkcja `checkIfFileExistsInArchive()` sprawdza, czy plik o danej nazwie znajduje się w katalogu archiwum.
+Funkcja przyjmuje jeden argument, którym jest `file` i jak sama nazwa wskazuje, jest to nazwa pliku, który chcemy sprawdzić, czy znajduje się w archiwum.
 
-Funkcja przyjmuje jeden argument:
-
-- `file` - nazwa pliku do sprawdzenia.
-
-Zwraca:
-- `true` - jeśli plik istnieje w archiwum,
-- `false` - jeśli plik nie został odnaleziony.
+Jeżeli plik istnieje w katalogu archiwum, to funkcja wyświetla loga w konsoli i zwraca `true`, a jeżeli pliku nie ma, to wyświetla o tym loga i zwraca `false`.
 
 # getAllMp3FilesInArchive()
 
-Asynchroniczna funkcja `getAllMp3FilesInArchive()` przeszukuje rekurencyjnie katalog archiwum i zbiera ścieżki do wszystkich plików z rozszerzeniem `.mp3`.
+Funkcja ta nie przyjmuje żadnych argumentów. Skanuje ona cały katalog archiwum (wraz z podfolderami) w poszukiwaniu wszystkich plików z rozszerzeniem `.mp3` i zwraca je w formacie array:
 
-Zwraca Promise z tablicą (array) zawierającą pełne ścieżki do wszystkich plików MP3 w archiwum.
-
-## Tryb Debugowania
-
-W przypadku błędu podczas skanowania katalogu stack trace jest zapisywany przez [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji `debug/ArchiveModule/getAllMp3FilesInArchive/catched_error`.
-
-# archiveSongsQuery()
-
-Funkcja `archiveSongsQuery()` odczytuje listę wszystkich utworów w archiwum i parsuje ich metadane (tytuł, autor, czas trwania, ścieżka względna).
-
-Zwraca Promise z tablicą obiektów reprezentujących utwory:
-
-```javascript
+```array
 [
-  {
-    title: 'Nazwa utworu',
-    artist: 'Nazwa wykonawcy',
-    duration: 180, // długość w sekundach
-    filePath: './mp3/Archive/utwor.mp3',
-    relativePath: 'utwor.mp3'
-  }
+  './mp3/Archive/utwor1.mp3',
+  './mp3/Archive/1-Klasyczna/utwor2.mp3'
 ]
 ```
 
 ## Tryb Debugowania
 
-W przypadku błędu odczytu metadanych z pliku stack trace zapisywany jest w `debug/ArchiveModule/archiveSongsQuery/catched_error`.
+W przypadku błędu podczas odczytywania katalogu błąd zostaje zapisany przez [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji `debug/ArchiveModule/getAllMp3FilesInArchive/catched_error.txt`.
+
+# archiveSongsQuery()
+
+Funkcja ta działa na bardzo podobnej zasadzie co funkcja [`playlistSongQuery()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#playlistsongquery).
+Na początku pobiera listę wszystkich plików mp3 z archiwum przy użyciu funkcji [`getAllMp3FilesInArchive()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ArchiveModule.js.md#getallmp3filesinarchive), a następnie odczytuje z każdego pliku metadane i zwraca je w formacie object:
+
+```object
+{
+  title: 'Nazwa piosenki',
+  artist: 'Nazwa artysty',
+  duration: 180,
+  filePath: './mp3/Archive/utwor.mp3',
+  relativePath: 'utwor.mp3'
+}
+```
+
+W przypadku, gdy plik nie posiada w metadanych tytułu lub artysty, bądź wywali błąd podczas odczytywania metadanych, to jako tytuł ustawiana jest nazwa pliku, jako artysta `Nieznany Artysta`, a czas trwania na `0`.
+
+## Tryb Debugowania
+
+W przypadku błędu podczas odczytu metadanych błąd zostaje zapisany przez [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji `debug/ArchiveModule/archiveSongsQuery/catched_error.txt`.
 
 # searchInArchive()
 
-Funkcja `searchInArchive()` wyszukuje utwory w archiwum na podstawie przekazanej frazy tekstowej.
+Funkcja przyjmuje jeden argument, którym jest `query`, czyli fraza, której szukamy w archiwum.
 
-Funkcja przyjmuje jeden argument:
+Jeżeli fraza jest pusta albo katalog archiwum nie istnieje, to funkcja od razu zwraca pusty obiekt wyników.
+W normalnym działaniu funkcja pobiera wszystkie pliki mp3 przy pomocy [`getAllMp3FilesInArchive()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ArchiveModule.js.md#getallmp3filesinarchive), po czym przeszukuje je paczkami po 20 plików, sprawdzając, czy szukana fraza znajduje się w metadanych (tytuł, artysta, album) albo w samej nazwie pliku.
+Na koniec zwraca wyniki w formacie object:
 
-- `query` - szukana fraza tekstowa (tytuł, wykonawca, album lub nazwa pliku).
-
-Dopasowuje utwory pod kątem metadanych (tytuł, autor, album) oraz nazwy pliku. Zwraca obiekt z podziałem na typy dopasowań:
-
-```javascript
+```object
 {
-  metadataMatches: [ /* lista dopasowań w metadanych */ ],
-  filenameMatches: [ /* lista dopasowań w nazwie pliku */ ],
-  all: [ /* wszystkie znalezione wyniki */ ]
+  metadataMatches: [ /* dopasowania znalezione w metadanych */ ],
+  filenameMatches: [ /* dopasowania znalezione w nazwie pliku */ ],
+  all: [ /* wszystkie znalezione dopasowania razem */ ]
 }
 ```
 
 ## Tryb Debugowania
 
-W przypadku wystąpienia błędu podczas przeszukiwania błąd trafia do `debug/ArchiveModule/searchInArchive/catched_error`.
+W przypadku błędu podczas parsowania metadanych lub przeszukiwania archiwum błąd zostaje zapisany przez [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji `debug/ArchiveModule/searchInArchive/catched_error.txt`.
 
 # deleteFromArchive()
 
-Funkcja `deleteFromArchive()` trwale usuwa plik z archiwum.
+Funkcja przyjmuje jeden argument, którym jest `filename`, czyli nazwa pliku do usunięcia z archiwum.
 
-Funkcja przyjmuje jeden argument:
+Na początku funkcja sprawdza, czy plik w ogóle istnieje w archiwum. Jeżeli nie istnieje, to wyświetla w konsoli błąd i zwraca object:
 
-- `filename` - nazwa lub ścieżka pliku w archiwum do usunięcia.
+```object
+{
+  error: 'Plik nazwa.mp3 nie istnieje w archiwum.'
+}
+```
 
-Zwraca obiekt:
-- `{ message: 'Usunięto plik ... z archiwum.' }` - w przypadku powodzenia,
-- `{ error: '...' }` - w przypadku, gdy plik nie istnieje lub wystąpi błąd usuwania.
+Jeżeli plik istnieje, to funkcja usuwa go z dysku, wyświetla loga w konsoli i zwraca object:
+
+```object
+{
+  message: 'Usunięto plik nazwa.mp3 z archiwum.'
+}
+```
 
 ## Tryb Debugowania
 
-W przypadku błędu usuwania pliku stack trace zrzucany jest do `debug/ArchiveModule/deleteFromArchive/catched_error`.
+W przypadku błędu podczas usuwania pliku błąd zostaje zapisany przez [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji `debug/ArchiveModule/deleteFromArchive/catched_error.txt`.
 
 # getArchiveSubfolders()
 
-Funkcja `getArchiveSubfolders()` zwraca listę wszystkich podkatalogów znajdujących się w archiwum wraz z liczbą zawartych w nich plików MP3.
+Funkcja ta nie przyjmuje żadnych argumentów. Sprawdza ona wszystkie podkatalogi znajdujące się w folderze archiwum, zlicza ile w każdym z nich znajduje się plików `.mp3` i zwraca listę w formacie array:
 
-Zwraca tablicę obiektów:
-
-```javascript
+```array
 [
   {
-    name: '1-Klasyczna-2024-05-10',
+    name: '1-Klasyczna-2024-05-10-12-00',
     mp3Count: 15
   }
 ]
@@ -135,36 +134,50 @@ Zwraca tablicę obiektów:
 
 # copyFromArchiveToSix()
 
-Asynchroniczna funkcja `copyFromArchiveToSix()` kopiuje utwory z wybranego podfolderu archiwum do folderu playlisty specjalnej 6 (`./mp3/6`).
+Funkcja ta służy do kopiowania utworów z wybranego podfolderu w archiwum do playlisty specjalnej nr 6 (`./mp3/6`).
+Przyjmuje ona dwa argumenty:
 
-Funkcja przyjmuje dwa argumenty:
+- `subfolderName` - nazwa podkatalogu w archiwum
+- `clearFolder` - zmienna typu boolean (domyślnie `false`), która określa, czy wyczyścić folder playlisty 6 przed skopiowaniem plików
 
-- `subfolderName` - nazwa podkatalogu w archiwum,
-- `clearFolder` - parametr opcjonalny (boolean, domyślnie `false`), czy wyczyścić folder playlisty 6 przed skopiowaniem plików.
+Na początku funkcja sprawdza, czy podany podkatalog istnieje w archiwum. Następnie sprawdza, czy w folderze `./mp3/6` znajdują się już jakieś pliki mp3.
+Jeżeli w folderze `./mp3/6` są już pliki, a argument `clearFolder` jest ustawiony na `false`, to funkcja nie kopiuje jeszcze plików, tylko zwraca object z informacją, że wymagane jest potwierdzenie:
 
-Jeśli w playliście 6 znajdują się już pliki, a `clearFolder` ma wartość `false`, funkcja zwraca prośbę o potwierdzenie nadpisania:
-
-```javascript
+```object
 {
   needsConfirmation: true,
   existingFilesCount: 5
 }
 ```
 
-Po wyczyszczeniu i skopiowaniu (lub gdy folder był pusty) funkcja zwraca podsumowanie operacji (`totalFiles`, `copiedFiles`, `errors`).
+Jeżeli `clearFolder` jest ustawione na `true`, to funkcja najpierw usuwa stare pliki mp3 z folderu `./mp3/6`, a następnie kopiuje wszystkie pliki mp3 z podkatalogu archiwum do `./mp3/6` i zwraca object:
+
+```object
+{
+  needsConfirmation: false,
+  totalFiles: 15,
+  copiedFiles: 15,
+  errors: []
+}
+```
 
 # movePlaylistToArchive()
 
-Funkcja `movePlaylistToArchive()` przenosi wskazaną playlistę do nowego podfolderu w archiwum.
+Funkcja ta przenosi całą playlistę z folderu `./mp3/{playlistId}` do osobnego podkatalogu w archiwum.
+Przyjmuje ona dwa argumenty:
 
-Funkcja przyjmuje dwa argumenty:
+- `playlistId` - id playlisty, którą chcemy przenieść do archiwum
+- `userNotice` - opcjonalny dopisek użytkownika do nazwy tworzonego folderu
 
-- `playlistId` - numer/identyfikator playlisty do zarchiwizowania,
-- `userNotice` - opcjonalna notatka użytkownika dodawana do nazwy folderu w archiwum.
+Na początku funkcja sprawdza, czy folder playlisty istnieje oraz czy nie jest pusty. Jeżeli w playliście nie ma żadnych plików mp3, to funkcja wyświetla ostrzeżenie i zwraca stringa z informacją, że playlista jest pusta.
+Jeżeli pliki istnieją, to funkcja pobiera nazwę playlisty przez [`getPlaylistName()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicPlayer.js.md#getplaylistname) i tworzy w archiwum nowy folder o nazwie `{playlistId}-{playlistName}-{userNotice}` (a jeżeli `userNotice` nie zostało podane, to zamiast niego wstawia aktualną datę i godzinę w formacie `YYYY-MM-DD-HH-MM`).
+Następnie w pętli kopiuje każdy plik mp3 do nowo utworzonego folderu w archiwum i usuwa go z folderu źródłowego playlisty, a na koniec zwraca object:
 
-Funkcja tworzy w archiwum podkatalog o formacie nazwy `{playlistId}-{playlistName}-{userNotice}` (lub ze znacznikiem daty, jeśli brak notatki), kopiuje wszystkie pliki MP3, a następnie usuwa je z folderu źródłowego playlisty.
-
-# Zmienne modułu
-
-- `archdir` - ścieżka katalogu głównego archiwum (konfigurowana przez zmienną środowiskową `ARCHIVE_DIR`, domyślnie `./mp3/Archive`).
-
+```object
+{
+  folderName: '1-Klasyczna-2024-05-10-12-00',
+  totalFiles: 10,
+  copiedFiles: 10,
+  errors: []
+}
+```
