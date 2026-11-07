@@ -42,22 +42,11 @@ Funkcja ta pobiera playlistę muzyczną. Działa na takiej samej zasadzie co fun
 
 # downloadAlbum()
 
-Funkcja ta pobiera cały album ze Spotify.
-
-Funkcja ta przyjmuje dwa argumenty:
-
-- `url` - URL albumu Spotify,
-- `path2` - opcjonalna ścieżka zapisu (domyślnie `./mp3/onDemand/`).
-
-Tworzy podfolder o nazwie albumu przesterylizowanej przez [`sterylizator()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Other.js.md#sterylizator), sprawdza, czy pliki nie istnieją już lokalnie lub w archiwum, pobiera brakujące utwory, normalizuje głośność każdego utworu przez `mp3gain` i kopiuje je do archiwum.
-
-## Tryb Debugowania
-
-W przypadku błędu zrzuca dane i błędy do katalogu `debug/MusicDownloader/downloadAlbum/`.
+Funkcja ta pobiera cały album muzyczny ze Spotify. Działa na takiej samej zasadzie co funkcja [`downloadPlaylist()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicDownloader.js.md#downloadplaylist) oraz [`downloadSong()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicDownloader.js.md#downloadsong), tworząc podfolder o wysterylizowanej przez [`sterylizator()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Other.js.md#sterylizator) nazwie albumu, sprawdzając czy utwory nie istnieją już na dysku lub w archiwum, a po pobraniu normalizując każdy utwór przy pomocy `mp3gain` i kopiując go do archiwum.
 
 # getTrackInfo()
 
-Funkcja ta rozpoznaje, jaki rodzaj linku został podany i wywołuje odpowiednią funkcję, która sprawdza informacje o podanym tracku, playliście lub albumie (obsługuje zarówno Spotify, jak i YouTube).
+Funkcja ta rozpoznaje, jaki rodzaj linku został podany i wywołuje odpowiednią funkcję, która sprawdza informacje o podanym tracku, playliście, albumie lub filmie z YouTube.
 
 ## Tryb Debugowania
 
@@ -66,45 +55,44 @@ Przed rozpoznaniem linku funkcja zwraca log z informacją o wyniku splita i co z
 
 # getYTInfo()
 
-Funkcja ta pobiera podstawowe informacje o utworze z YouTube za pomocą narzędzia `yt-dlp`.
+Funkcja przyjmuje jeden argument, którym jest `url` i pobiera podstawowe informacje o filmie z YouTube przy pomocy `yt-dlp`.
+Jeżeli `url` nie zostanie podany, to funkcja zwraca stringa `Brak URL!!11`.
+W normalnym działaniu wyciąga informacje o filmie, zamienia tytuł i opis na małe litery oraz tworzy nazwę pliku przepuszczoną przez funkcje [`sterylizator()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Other.js.md#sterylizator) i [`truncate()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Other.js.md#truncate), po czym zwraca je w formacie object:
 
-Funkcja ta przyjmuje jeden argument:
-
-- `url` - URL filmu YouTube.
-
-Zwraca obiekt zawierający:
-- `song` - pełne metadane pobrane przez `ytdlp.getBasicInfo`,
-- `description` - opis wideo w małych literach,
-- `title` - tytuł filmu w małych literach,
-- `file` - przesterylizowaną i przyciętą przez [`truncate()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Other.js.md#truncate) nazwę pliku (`autor - tytuł`).
+```object
+{
+  song: /* pełne dane z ytdlp.getBasicInfo */,
+  description: 'opis filmu z youtube',
+  title: 'tytuł filmu z youtube',
+  file: 'Autor_-_Tytul_piosenki'
+}
+```
 
 # downloadYT()
 
-Funkcja ta pobiera plik audio z YouTube za pomocą `yt-dlp`.
+Funkcja ta pobiera piosenkę z YouTube przy użyciu `yt-dlp`.
+Przyjmuje ona cztery argumenty:
 
-Funkcja ta przyjmuje cztery argumenty:
+- `url` - link do filmu na YouTube
+- `votes` - jeżeli jest ustawione na `true`, to piosenka zostanie pobrana do folderu z głosami `./mp3/7/`
+- `path2` - ścieżka docelowa zapisu (domyślnie `./mp3/onDemand/`)
+- `override` - jeżeli jest ustawione na `true`, to pomija sprawdzanie kategorii filmu i słów kluczowych
 
-- `url` - URL filmu YouTube,
-- `votes` - parametr opcjonalny (boolean), jeśli ustawiony na `true`, plik zapisywany jest w `./mp3/7/`, w przeciwnym razie w `path2`,
-- `path2` - opcjonalna ścieżka zapisu (domyślnie `./mp3/onDemand/`),
-- `override` - parametr opcjonalny (boolean), jeśli ustawiony na `true`, po pobraniu następuje natychmiastowe odtworzenie utworu z opóźnieniem.
-
-Funkcja sprawdza długość utworu (domyślny limit 420 sekund) oraz czarną listę fraz, sterylizuje nazwę, pobiera strumień audio do formatu MP3, normalizuje głośność przy użyciu `mp3gain` i kopiuje plik do archiwum.
+Na początku funkcja pobiera dane o filmie przez funkcję [`getYTInfo()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/MusicDownloader.js.md#getytinfo).
+Jeżeli nie został włączony `override`, a kategoria filmu na YouTube jest inna niż `Music`, to funkcja sprawdza, czy kategoria to `Entertainment` lub `Gaming`. Jeżeli jest to inna kategoria, to funkcja przerywa pobieranie i zwraca komunikat o złej kategorii. Natomiast dla kategorii `Entertainment` i `Gaming` funkcja sprawdza jeszcze, czy w tytule lub opisie znajdują się słowa kluczowe związane z muzyką oraz czy film nie trwa dłużej niż 600 sekund (10 minut).
+Następnie funkcja sprawdza, czy plik nie istnieje już w folderze docelowym albo w archiwum (jeżeli jest w archiwum, to kopiuje go przez [`copyFromArchive()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ArchiveModule.js.md#copyfromarchive)).
+Gdy pliku nie ma, pobiera strumień audio do pliku tymczasowego, dociąga miniaturkę z YouTube i przy użyciu `Ffmpeg` konwertuje plik do `.mp3` razem z metadanymi i okładką. Po zapisaniu pliku normalizuje głośność przy pomocy `mp3gain` i kopiuje gotowy plik do archiwum funkcją [`copyToArchive()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ArchiveModule.js.md#copytoarchive).
 
 ## Tryb Debugowania
 
-Zapisuje kolejne etapy pobierania, ewentualne błędy i logi `mp3gain` do katalogu `debug/MusicDownloader/downloadYT/`.
+Po normalizacji dźwięku output z `mp3gain` jest zapisywany przez funkcję [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji `debug/MusicDownloader/downloadYT/mp3gain_output.txt`.
+W przypadku błędu na którymś z etapów (zapis pliku tymczasowego, dodawanie metadanych, działanie `mp3gain` lub błąd główny funkcji) błąd zostaje zapisany przez [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w folderze `debug/MusicDownloader/downloadYT/`.
 
 # autoRemoveFiles()
 
-Funkcja ta usuwa pliki tymczasowe z folderów `mp3/onDemand` oraz `mp3/7`.
+Funkcja ta usuwa pliki oraz podfoldery z folderu `mp3/onDemand` oraz `mp3/7`.
 
 # removeFiles()
 
-Funkcja ta usuwa wszystkie pliki i podkatalogi ze wskazanej ścieżki.
-
-Funkcja ta przyjmuje jeden argument:
-
-- `pathDir` - ścieżka do katalogu, którego zawartość ma zostać usunięta.
-
-Posiada zabezpieczenie uniemożliwiające przypadkowe usunięcie głównych folderów playlist `1-7`.
+Funkcja przyjmuje jeden argument, którym jest `pathDir`, czyli ścieżka do folderu, z którego mają zostać usunięte pliki.
+Na początku funkcja sprawdza, czy podana ścieżka nie próbuje usunąć głównych folderów playlist od `1` do `7` (jeżeli tak, to zwraca stringa `dupa`), a w przeciwnym wypadku usuwa wszystkie pliki i podfoldery ze wskazanej ścieżki.
