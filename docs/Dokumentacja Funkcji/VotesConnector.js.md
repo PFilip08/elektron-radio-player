@@ -1,31 +1,24 @@
 # getVotesData()
 
-Funkcja `getVotesData()` odpowiada za pobieranie listy piosenek wyłonionych w głosowaniu uczniów z zewnętrznego API i zapisywanie ich do lokalnego pliku JSON (`mp3/Votes.json`).
+`getVotesData` jest funkcją, która pobiera z API listę piosenek z głosowania i zapisuje ją lokalnie w pliku `mp3/Votes.json` (ścieżka zapisana w zmiennej `votesPath`).
 
-Funkcja ta przyjmuje dwa argumenty:
+Funkcja przyjmuje dwa opcjonalne argumenty:
 
-- `force` - parametr opcjonalny (boolean), jeśli ustawiony na `true`, wymusza pobranie i nadpisanie pliku niezależnie od stanu lokalnego cache,
-- `data` - parametr opcjonalny (string w formacie `YYYY-MM-DD`), data, dla której mają zostać pobrane głosy (domyślnie data wczorajsza).
+- `force` - jeżeli jest ustawione na `true`, to wymusza zapis pobranego jsona do pliku `mp3/Votes.json` i kończy działanie funkcji
+- `data` - data w formacie `YYYY-MM-DD`, dla której mają zostać pobrane głosy (jeżeli nie zostanie podana, to funkcja domyślnie sprawdza datę z wczoraj)
 
-### Działanie funkcji
+Na początku funkcja sprawdza, czy włączone jest DevAPI (`global.devAPIEnabled`). Jeżeli tak, to pobiera dane o głosach z lokalnego endpointu `/dev/api/votes`, a w razie błędu wraca do odpytywania głównego API.
+Następnie sprawdza zmienną `messageCounter` z pliku [`ApiConnector.js`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md). Jeżeli jest ona ustawiona na `true` (czyli automat działa w trybie recovery z powodu braku internetu), to funkcja pomija pobieranie i wyświetla w konsoli ostrzeżenie o braku neta.
 
-1. **Obsługa DevAPI:** Jeśli włączona jest flaga `global.devAPIEnabled`, funkcja próbuje pobrać mockowane dane głosów z lokalnego endpointu `/dev/api/votes`. W razie niepowodzenia wraca do głównego API.
-2. **Sprawdzenie połączenia:** Jeśli aktywny jest licznik braku połączenia (`messageCounter` z [`ApiConnector.js`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md)), funkcja pomija pobieranie i loguje ostrzeżenie o braku internetu.
-3. **Pobranie danych:** Wysyła zapytanie `GET` do endpointu `${URI}/api/playlist?hostId=1&date=${date}` z nagłówkiem `User-Agent: Radio-Elektron_SAW_MONITORING v1.0`.
-4. **Zapis do pliku:** Zapisuje pobraną playlistę do pliku `mp3/Votes.json` (zmienna `votesPath`), jeśli:
-   - podano flagę `force`,
-   - plik lokalny nie istnieje lub jest pusty,
-   - data utworzenia zapisanych głosów różni się od żądanej daty.
-5. Jeśli lista utworów w API jest pusta, funkcja zwraca string `'brak'`. W przeciwnym wypadku zwraca sparsowaną zawartość pliku `mp3/Votes.json`.
+Gdy połączenie z internetem działa, funkcja wysyła zapytanie do serwera podanego w zmiennej `url` z doklejoną datą i oczekuje na odpowiedź w postaci jsona.
+- Jeżeli został podany argument `force`, to funkcja od razu zapisuje pobraną tablicę `playlist` z jsona do pliku `mp3/Votes.json` i kończy działanie.
+- Jeżeli zwrócona tablica `playlist` w jsonie jest pusta, to funkcja wyświetla w konsoli loga o braku danych i zwraca stringa `'brak'`.
+- W normalnym przypadku funkcja sprawdza, czy plik `mp3/Votes.json` nie istnieje, czy jest pusty, albo czy data `created_at` pierwszego głosu w pliku różni się od sprawdzanej daty. Jeżeli którykolwiek z tych warunków jest spełniony, to zapisuje nowe dane do pliku `mp3/Votes.json` i na koniec zwraca zawartość tego pliku.
 
 ## Tryb Debugowania
 
-W trybie debugowania funkcja zapisuje dane przy użyciu [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile):
-- surową odpowiedź z serwera do lokalizacji `debug/VotesConnector/getVotesData/response.json`,
-- zapisaną do pliku listę utworów do lokalizacji `debug/VotesConnector/getVotesData - download/saved_to_file.json`,
-- w przypadku błędu pobierania głosów stack trace zapisywany jest do `debug/VotesConnector/getVotesData/error`.
+Response z serwera jest zapisywany przez funkcję [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji `debug/VotesConnector/getVotesData/response.json`.
 
-# Zmienne modułu
+Gdy funkcja zapisuje pobrane głosy do pliku `mp3/Votes.json`, to zapisywane są one również przez funkcję [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji `debug/VotesConnector/getVotesData - download/saved_to_file.json`.
 
-- `votesPath` - ścieżka do lokalnego pliku z danymi głosów (wartość domyślna: `./mp3/Votes.json`).
-
+W przypadku błędu podczas pobierania głosów z API błąd zostaje zapisany przez funkcję [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji `debug/VotesConnector/getVotesData/error.txt`.
