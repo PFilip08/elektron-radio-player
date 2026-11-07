@@ -192,24 +192,30 @@ Po uruchomieniu funkcji log pokaże jakie ustawienia czasu są ustawione:
 
 # clearGetApiDataBlock()
 
-Funkcja zdejmuje blokadę awaryjną nałożoną na funkcję [`getApiData()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#getapidata).
+Funkcja ta nie przyjmuje żadnych argumentów i służy do zdejmowania blokady nałożonej na funkcję [`getApiData()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#getapidata) przez funkcję [`blockGetApiData()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#blockgetapidata).
 
-Zwraca:
-- `true` - jeśli blokada była aktywna i została pomyślnie zdjęta,
-- `false` - jeśli blokada nie była aktywna.
+Na początku funkcja sprawdza, czy zmienna `recoveryBlocked` jest ustawiona na `false`. Jeżeli tak jest, to funkcja nic nie robi i zwraca `false`.
+Jeżeli blokada była aktywna, to funkcja przestawia zmienną `recoveryBlocked` na `false`, czyści timer blokady `recoveryBlockTimeout`, wyświetla w konsoli loga o zdjęciu blokady i zwraca `true`.
 
 # blockGetApiData()
 
-Funkcja wewnętrzna nakładająca blokadę na [`getApiData()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#getapidata) na czas 5 minut (`recoveryBlockDelay`). Wywoływana automatycznie w sytuacji awaryjnej, gdy tryb recovery jest wywoływany w pętli.
+Jest to funkcja wewnętrzna, która nakłada blokadę na funkcję [`getApiData()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#getapidata) na czas 5 minut (zapisany w zmiennej `recoveryBlockDelay`), gdy tryb recovery zaczyna wywoływać się w pętli.
 
-# Monitorowanie pętli Recovery
+Po uruchomieniu funkcja ustawia zmienną `recoveryBlocked` na `true` oraz zatrzymuje interwał monitorowania przez funkcję [`stopRecoveryModeInterval()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#stoprecoverymodeinterval).
+Jeżeli istniał już wcześniej aktywny timer blokady, to funkcja go czyści i ustawia nowy timer, który po upływie 5 minut wywoła funkcję [`clearGetApiDataBlock()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#cleargetapidatablock) i zdejmie blokadę.
 
-Moduł posiada wbudowany mechanizm chroniący przed zapętleniem awarii:
-- `startRecoveryModeInterval()` - rozpoczyna monitorowanie liczby wejść w tryb recovery,
-- `monitorRecoveryMode()` - jeśli w oknie 40 sekund liczba wejść w tryb recovery przekroczy limit (4 razy), nakłada blokadę przez `blockGetApiData()`,
-- `stopRecoveryModeInterval()` - zatrzymuje interwał monitorowania po przywróceniu normalnego działania lub nałożeniu blokady.
+# monitorRecoveryMode()
 
-# Zmienne modułu
+Funkcja ta pilnuje, aby skrypt nie zapętlił się przy ciągłym wchodzeniu w tryb recovery (np. gdy serwer zwraca błędy inne niż zwykły brak internetu).
 
-- `messageCounter` - flaga stanu błędu połączenia z API (przyjmuje `true` w trybie recovery i `false` podczas normalnego działania),
-- `previousData` - obiekt przechowujący ostatnie poprawnie pobrane dane z API harmonogramu.
+Funkcja sprawdza, czy licznik wejść w tryb recovery `recoveryModeCounter` przekroczył dozwolony limit zapisany w zmiennej `recoveryModeLimit` (domyślnie 3 razy) w oknie czasowym `recoveryModeWindow` (domyślnie 60 sekund).
+- Jeżeli limit zostanie przekroczony, to funkcja wyświetla ostrzeżenia w konsoli, uruchamia funkcję [`blockGetApiData()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#blockgetapidata) odraczającą zapytania do API na 5 minut i zeruje licznik.
+- Jeżeli minęło 60 sekund i limit nie został przekroczony, to funkcja po prostu zeruje licznik `recoveryModeCounter` i ustawia nowe okno czasowe.
+
+# startRecoveryModeInterval()
+
+Jest funkcją, która uruchamia interwał sprawdzający funkcję [`monitorRecoveryMode()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#monitorrecoverymode) co 1 sekundę (czas zapisany w zmiennej `recoveryModeTick`), kiedy [`getApiData()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#getapidata) złapie błąd i wejdzie w tryb recovery.
+
+# stopRecoveryModeInterval()
+
+Jest funkcją, która zatrzymuje interwał uruchomiony przez funkcję [`startRecoveryModeInterval()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#startrecoverymodeinterval) i zeruje licznik `recoveryModeCounter`. Uruchamia się ona wtedy, gdy połączenie z API zostanie przywrócone albo gdy zostanie nałożona blokada przez [`blockGetApiData()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md#blockgetapidata).
