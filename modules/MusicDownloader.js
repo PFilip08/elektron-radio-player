@@ -89,7 +89,7 @@ async function downloadSong(url, votes, path2) {
                 resolve(stdout);
             });
         });
-        copyToArchive(`${path}${file}.mp3`);
+        await copyToArchive(`${path}${file}.mp3`);
         logger('log', 'Pobrano :>', 'downloadSong');
         return "Pobrano! OwO";
     } catch (e) {
@@ -156,7 +156,7 @@ async function downloadPlaylist(url, path2) {
                     resolve(stdout);
                 });
             });
-            copyToArchive(`${path}${dir}/${file}.mp3`);
+            await copyToArchive(`${path}${dir}/${file}.mp3`);
         }
         logger('log', 'Pobrano :>', 'downloadPlaylist');
         return "Pobrano! OwO";
@@ -215,7 +215,7 @@ async function downloadAlbum(url, path2) {
                     resolve(stdout);
                 });
             });
-            copyToArchive(`${path}${dir}/${file}.mp3`);
+            await copyToArchive(`${path}${dir}/${file}.mp3`);
         }
         logger('log', 'Pobrano :>', 'downloadAlbum');
         return "Pobrano! OwO";
@@ -415,7 +415,7 @@ async function downloadYT(url, votes, path2, override) {
                 resolve(stdout);
             });
         });
-        copyToArchive(filePath);
+        await copyToArchive(filePath);
         logger('log', 'Pobrano :>', 'downloadYT');
         return "Pobrano! OwO"
 
