@@ -215,11 +215,17 @@ W przypadku powodzenia i podania w parametrze `state` który będzie miał warto
 - **Typ:** text/html
 - **Treść:** `Szuffle true` lub `Szuffle false` w zależności od ustawionego stanu szuffle.
 
-W przypadku powodzenia i bez podania parametru `state` lub bez wartości `true` lub `false` to zwracany jest:
+W przypadku gdy parametr `state` nie został podany bądź będzie pusty to zwracany jest:
 
 - **Kod statusu:** 400
 - **Typ:** text/html
 - **Treść:** `Nie podano stanu!`
+
+W przypadku gdy parametr `state` ma wartość inną niż `true` lub `false` to zwracany jest:
+
+- **Kod statusu:** 400
+- **Typ:** text/html
+- **Treść:** `Nieprawidłowy stan!`
 
 ### Przykład
 
@@ -258,6 +264,12 @@ W przypadku gdy użytkownik próbował podać ścieżkę, która by uciekła poz
 - **Kod statusu:** 403
 - **Typ:** text/html
 - **Treść:** `Niebezpieczna ścieżka!`
+
+W przypadku błędu podczas próby usuwania plików zwracany jest:
+
+- **Kod statusu:** 500
+- **Typ:** text/html
+- **Treść:** `Błąd; Skontaktuj się z działem taboretów; ...`
 
 ### Przykład
 
