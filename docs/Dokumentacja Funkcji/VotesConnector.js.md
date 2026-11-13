@@ -11,6 +11,7 @@ Na początku funkcja sprawdza, czy włączone jest DevAPI (`global.devAPIEnabled
 Następnie sprawdza zmienną `messageCounter` z pliku [`ApiConnector.js`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/ApiConnector.js.md). Jeżeli jest ona ustawiona na `true` (czyli automat działa w trybie recovery z powodu braku internetu), to funkcja pomija pobieranie i wyświetla w konsoli ostrzeżenie o braku neta.
 
 Gdy połączenie z internetem działa, funkcja wysyła zapytanie do serwera podanego w zmiennej `url` z doklejoną datą i oczekuje na odpowiedź w postaci jsona.
+- Na początku sprawdza, czy w zwróconym jsonie w ogóle istnieje pole `playlist` (jeżeli nie istnieje, to kończy działanie).
 - Jeżeli został podany argument `force`, to funkcja od razu zapisuje pobraną tablicę `playlist` z jsona do pliku `mp3/Votes.json` i kończy działanie.
 - Jeżeli zwrócona tablica `playlist` w jsonie jest pusta, to funkcja wyświetla w konsoli loga o braku danych i zwraca stringa `'brak'`.
 - W normalnym przypadku funkcja sprawdza, czy plik `mp3/Votes.json` nie istnieje, czy jest pusty, albo czy data `created_at` pierwszego głosu w pliku różni się od sprawdzanej daty. Jeżeli którykolwiek z tych warunków jest spełniony, to zapisuje nowe dane do pliku `mp3/Votes.json` i na koniec zwraca zawartość tego pliku.
