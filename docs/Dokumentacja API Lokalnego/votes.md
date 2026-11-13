@@ -228,12 +228,6 @@ W przypadku powodzenia zwracany jest:
 - **Typ:** text/html
 - **Treść:** `ok`
 
-W przypadku błędu podczas odczytywania folderu `./mp3/7` zwracany jest:
-
-- **Kod statusu:** 500
-- **Typ:** text/html
-- **Treść:** `dział taboretów trza zagonić do roboty`
-
 W przypadku błędu podczas zapisywania głosów zwracany jest:
 
 - **Kod statusu:** 500
@@ -272,12 +266,6 @@ W przypadku gdy dla podanej daty nie ma żadnych głosów do pobrania:
 - **Kod statusu:** 410
 - **Typ:** text/html
 - **Treść:** `brak danych`
-
-W przypadku błędu podczas odczytywania folderu `./mp3/7` zwracany jest:
-
-- **Kod statusu:** 500
-- **Typ:** text/html
-- **Treść:** `dział taboretów trza zagonić do roboty`
 
 W przypadku błędu podczas pobierania głosów zwracany jest:
 
@@ -346,12 +334,6 @@ W przypadku powodzenia zwracany jest:
 - **Kod statusu:** 200
 - **Typ:** text/html
 - **Treść:** `ok`
-
-W przypadku błędu podczas odczytywania folderu `./mp3/7` zwracany jest:
-
-- **Kod statusu:** 500
-- **Typ:** text/html
-- **Treść:** `dział taboretów trza zagonić do roboty`
 
 W przypadku błędu podczas usuwania plików mp3 zwracany jest:
 
