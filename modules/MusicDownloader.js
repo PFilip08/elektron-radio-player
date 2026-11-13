@@ -459,19 +459,17 @@ async function autoRemoveFiles() {
 
 async function removeFiles(pathDir) {
     if (pathDir.length < 6 && /\/[1-7](\/|$)/.test(pathDir)) return 'dupa';
-    fs.readdir(pathDir, (err, files) => {
-        if (err) return logger('error', err,'removeFiles');
-        if (files.length === 0) return logger('task','Brak plików do usunięcia.','removeFiles');
-        for (let i in files) {
-            if (fs.lstatSync(pathDir+files[i]).isDirectory()) {
-                logger('task', `Usunięto folder "${files[i]}" wraz z zawartością`, 'removeFiles');
-                fs.rmSync(pathDir+files[i], { recursive: true, force: true })
-                continue;
-            }
-            fs.unlinkSync(path.join(pathDir, files[i]));
-            logger('task', `Usunięto ${files[i]}`, 'removeFiles');
+    const files = await fs.promises.readdir(pathDir);
+    if (files.length === 0) return logger('task','Brak plików do usunięcia.','removeFiles');
+    for (let i in files) {
+        if (fs.lstatSync(pathDir+files[i]).isDirectory()) {
+            logger('task', `Usunięto folder "${files[i]}" wraz z zawartością`, 'removeFiles');
+            fs.rmSync(pathDir+files[i], { recursive: true, force: true });
+            continue;
         }
-    });
+        fs.unlinkSync(path.join(pathDir, files[i]));
+        logger('task', `Usunięto ${files[i]}`, 'removeFiles');
+    }
 }
 
 export { downloader, downloadPlaylist, downloadAlbum, getTrackInfo, autoRemoveFiles, downloadYT, removeFiles, getYTInfo };
