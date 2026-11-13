@@ -52,10 +52,10 @@ async function getVotesData(force, data) {
                 logger('verbose', `Zrzucono do pliku zagłosowane piosenki!`, 'getVotesData - download');
             }
         }
-        logger('verbose', `Sprawdzanie czy nie wymuszono zapisu pliku ${votesPath}...`, 'getVotesData');
-        if (force) return await download();
         logger('verbose', `Sprawdzanie czy JSON z API istnieje...`, 'getVotesData');
         if (!res.data.playlist) return;
+        logger('verbose', `Sprawdzanie czy nie wymuszono zapisu pliku ${votesPath}...`, 'getVotesData');
+        if (force) return await download();
         logger('verbose', `Sprawdzanie czy JSON z API nie jest pusty...`, 'getVotesData');
         if (res.data.playlist.length === 0) {
             logger('verbose', yellow('JSON z API jest pusty!'), 'getVotesData');
