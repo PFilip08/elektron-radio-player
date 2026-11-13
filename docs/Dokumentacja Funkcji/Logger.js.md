@@ -20,10 +20,9 @@ Funkcja findChanges przyjmuje trzy argumenty:
 4. Dla każdego klucza:
 
 - Tworzy pełną ścieżkę do klucza, łącząc bieżącą ścieżkę (`path`) i klucz (`key`).
-- Porównuje wartości `obj1[key]` i `obj2[key]` przy użyciu JSON.stringify:
-- Jeśli wartości są różne, sprawdza, czy obie wartości są obiektami.
-  - Jeśli tak, wywołuje findChanges rekursywnie, przekazując pod-objekty i pełną ścieżkę.
-  - Jeśli nie, dodaje zmianę do tablicy changes, zawierając pełną ścieżkę oraz stare i nowe wartości.
+- Pobiera wartości `oldValue` i `newValue` dla danego klucza.
+- Jeśli obie wartości istnieją i są obiektami, wywołuje findChanges rekursywnie, przekazując pod-obiekty i pełną ścieżkę.
+- W przeciwnym wypadku, jeśli wartości są różne (`oldValue !== newValue`), dodaje zmianę do tablicy changes, zawierając pełną ścieżkę oraz stare i nowe wartości.
 
 5. Funkcja zwraca tablicę `changes`.
 

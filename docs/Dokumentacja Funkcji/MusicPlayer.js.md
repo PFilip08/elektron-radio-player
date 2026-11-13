@@ -152,6 +152,8 @@ Jeżeli plik istnieje, to funkcja zwraca log o wykonaniu tego zadania, który wy
 
 !["Jak wygląda log z funkcji playMusic, który informuje, że plik istnieje w trybie debugowania"](https://i.imgur.com/wBxJaMZ.png)
 
+W przypadku błędu podczas odtwarzania błąd zostaje zapisany przez [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji ``debug/MusicPlayer/playMusic/catched_error.txt``.
+
 # playOnDemand()
 
 Funkcja przyjmuje jeden argument, którym jest `filename` jak sama nazwa wskazuje jest, to nazwa pliku który ma być odtworzony. Funkcja na początku sprawdza, czy plik istnieje, jeżeli nie to zwraca błąd, który wygląda tak:
@@ -185,7 +187,7 @@ Jeżeli podana nazwa pliku nie jest katalogiem, to funkcja zwraca log o wykonani
 
 !["Jak wygląda log z funkcji playOnDemand, który informuje, że podana nazwa pliku nie jest katalogiem w trybie debugowania"](https://i.imgur.com/oOs69dK.png)
 
-Błąd z tego sprawdzenia w razie czegoś zawsze jest zapisywany przez [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji ``debug/MusicPlayer/playOnDemand/catched_error.txt`` i potwierdzone to zostaje następującym logiem:
+Błąd z tego sprawdzenia (lub podczas odtwarzania) w razie czegoś zawsze jest zapisywany przez [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji ``debug/MusicPlayer/playOnDemand/catched_error.txt`` i potwierdzone to zostaje następującym logiem:
 
 !["Jak wygląda log z funkcji playOnDemand mówiący o zapisaniu błędu do pliku w trybie debugowania"](https://i.imgur.com/dpApOGB.png)
 
@@ -207,6 +209,8 @@ Przed odtworzeniem playlisty funkcja zwraca log z informacją o tym, co zostało
 Jeżeli playlista istnieje, to funkcja zwraca log o wykonaniu tego zadania, który wygląda tak:
 
 !["Jak wygląda log z funkcji playPlaylist, który informuje, że playlista istnieje w trybie debugowania"](https://i.imgur.com/zjp9lbx.png)
+
+W przypadku błędu podczas odtwarzania playlisty błąd zostaje zapisany przez [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji ``debug/MusicPlayer/playPlaylist/catched_error.txt``.
 
 # killPlayer()
 
@@ -231,6 +235,26 @@ Wykonanie tej funkcji jest logowane w konsoli takim oto logiem:
 !["Jak wygląda log z funkcji killPlayerForce"](https://i.imgur.com/6VT4FHm.png)
 
 ## Tryb Debugowania
-
+ 
 Przed zatrzymaniem odtwarzacza funkcja zwraca log z informacją o tym, że rozpoczyna ubijanie plejera:
 !["Jak wygląda log z funkcji killPlayerForce w trybie debugowania"](https://i.imgur.com/lnouCDo.png)
+
+# pausePlayer()
+
+Funkcja zatrzymuje (pauzuje) odtwarzanie muzyki w działającym VLC.
+Na początku funkcja sprawdza przy pomocy funkcji [`checkIfVLConVotes()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/Other.js.md#checkifvlconvotes), czy VLC jest aktualnie ustawione na granie playlisty z głosów (`./mp3/7/`). Jeżeli nie, to wyświetla ostrzeżenie o pominięciu pauzowania i wywala błąd.
+Jeżeli VLC gra z głosów, to łączy się z klientem VLC i pauzuje odtwarzacz, wyświetlając w konsoli loga o zapałzowaniu plajera.
+
+## Tryb Debugowania
+
+Przed zapauzowaniem odtwarzacza funkcja zwraca log z informacją o tym, że rozpoczyna pauzowanie plajera.
+W przypadku błędu błąd zostaje zapisany przez [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji ``debug/MusicPlayer/pausePlayer/catched_error.txt``.
+
+# playPlayer()
+
+Funkcja wznawia odtwarzanie muzyki w zapauzowanym wcześniej odtwarzaczu VLC i wyświetla w konsoli loga o zplejowaniu plajera.
+
+## Tryb Debugowania
+
+Przed wznowieniem odtwarzacza funkcja zwraca log z informacją o tym, że rozpoczyna plejowanie plajera.
+W przypadku błędu błąd zostaje zapisany przez [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji ``debug/MusicPlayer/playPlayer/catched_error.txt``.

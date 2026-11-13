@@ -3,7 +3,17 @@ function kastracja(input) {
     return input
         .toLowerCase()
         .split(' ').join('_')
-        .replace(/[^a-z0-9_\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/g, "");
+        .replace(/[^a-z0-9_\u0400-\u04ff\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/g, "");
+}
+
+function czyNiePustePoKastracji(str) {
+    return Boolean(str && str.replace(/_/g, '').length > 0);
+}
+
+function nazwaPlikuZKastracja(filePath) {
+    if (!filePath) return '';
+    const base = filePath.split(/[\\/]/).pop().replace(/\.mp3$/i, '');
+    return kastracja(base);
 }
 
 let cachedPlaylists = null;
@@ -129,7 +139,13 @@ async function replaceData() {
                         console.error(e);
                         break krzeslo;
                     }
+                    const playingClean = kastracja(data[0].playingSongName);
+                    const playingValid = czyNiePustePoKastracji(playingClean);
                     for (let j in playlist.playlistSongsName) {
+                        const fileClean = kastracja(playlist.playlistSongsName[j].filePath);
+                        const fileBaseClean = nazwaPlikuZKastracja(playlist.playlistSongsName[j].filePath);
+                        const titleClean = kastracja(playlist.playlistSongsName[j].title);
+                        const artistClean = kastracja(playlist.playlistSongsName[j].artist);
                         // console.log(kastracja(playlist.playlistSongsName[j].title))
                         // console.log(playlist.playlistSongsName[j])
                         // console.log(kastracja(data[0].playingSongName))
@@ -142,7 +158,7 @@ async function replaceData() {
                         // console.log("Warunek nr 1 (Czy ścieżka pliku z playlisty zawiera nazwę aktualnie granego): %s",kastracja(playlist.playlistSongsName[j].filePath).includes(kastracja(data[0].playingSongName)))
                         // console.log("Warunek nr 2 (Czy nazwa aktualnie odtwarzanego utworu zawiera zarówno tytuł i nazwę artysty z playlisty): %s",kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title)) && kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].artist)))
                         // console.log("--------------------------------")
-                        if (kastracja(playlist.playlistSongsName[j].filePath).includes(kastracja(data[0].playingSongName))) {
+                        if ((playingValid && czyNiePustePoKastracji(fileClean) && fileClean.includes(playingClean)) || (playingClean.length > 0 && fileBaseClean === playingClean)) {
                             id = i;
                             //console.log(playlist.playlistSongsName[j].coverData)
                             if (playlist.playlistSongsName[j].coverData !== 'taboret' && playlist.playlistSongsName[j].coverData !== undefined){
@@ -151,11 +167,11 @@ async function replaceData() {
                                 cover = "../images/taboret.png";
                             }
                             break krzeslo;
-                        } else if ((kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title)) && kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].artist)))) {
+                        } else if (playingValid && czyNiePustePoKastracji(titleClean) && czyNiePustePoKastracji(artistClean) && playingClean.includes(titleClean) && playingClean.includes(artistClean)) {
                             // console.log(data[1].playlistNames[i]);
                             // console.log(i)
                             id = i;
-                            if (playlist.playlistSongsName[j].coverData !== 'taboret' || playlist.playlistSongsName[j].coverData !== undefined) {
+                            if (playlist.playlistSongsName[j].coverData !== 'taboret' && playlist.playlistSongsName[j].coverData !== undefined) {
                                 cover = `data:${playlist.playlistSongsName[j].coverData.format};base64,${playlist.playlistSongsName[j].coverData.data}`;
                             } else {
                                 cover = "../images/taboret.png";
@@ -170,7 +186,13 @@ async function replaceData() {
             if (id === null) {
                 let playlist;
                 playlist = await getSongs('onDemand');
+                const playingClean = kastracja(data[0].playingSongName);
+                const playingValid = czyNiePustePoKastracji(playingClean);
                 for (let j in playlist.playlistSongsName) {
+                    const fileClean = kastracja(playlist.playlistSongsName[j].filePath);
+                    const fileBaseClean = nazwaPlikuZKastracja(playlist.playlistSongsName[j].filePath);
+                    const titleClean = kastracja(playlist.playlistSongsName[j].title);
+                    const artistClean = kastracja(playlist.playlistSongsName[j].artist);
                     // console.log("--------------------------------")
                     // console.log("onDemand")
                     // console.log("Nazwa muzyki: %s", kastracja(data[0].playingSongName))
@@ -178,7 +200,9 @@ async function replaceData() {
                     // console.log("Warunki:")
                     // console.log("Warunek nr 1: %s",kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title))) && kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].artist))
                     // console.log("--------------------------------")
-                    if ((kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].title))) && kastracja(data[0].playingSongName).includes(kastracja(playlist.playlistSongsName[j].artist))) {
+                    if ((playingValid && czyNiePustePoKastracji(fileClean) && fileClean.includes(playingClean)) ||
+                        (playingClean.length > 0 && fileBaseClean === playingClean) ||
+                        (playingValid && czyNiePustePoKastracji(titleClean) && czyNiePustePoKastracji(artistClean) && playingClean.includes(titleClean) && playingClean.includes(artistClean))) {
                         id = 'onDemand';
                         if (playlist.playlistSongsName[j].coverData !== 'taboret' && playlist.playlistSongsName[j].coverData !== undefined) {
                             cover = `data:${playlist.playlistSongsName[j].coverData.format};base64,${playlist.playlistSongsName[j].coverData.data}`;
@@ -269,7 +293,13 @@ async function replaceData() {
             }
             currentPlaylist.innerText = id + ` (${data[1].playlistNames[id]})`;
             if (id === 'onDemand') currentPlaylist.innerText = id;
+            const playingClean = kastracja(data[0].playingSongName);
+            const playingValid = czyNiePustePoKastracji(playingClean);
             for (let i in playlista.playlistSongsName) {
+                const fileClean = kastracja(playlista.playlistSongsName[i].filePath);
+                const fileBaseClean = nazwaPlikuZKastracja(playlista.playlistSongsName[i].filePath);
+                const titleClean = kastracja(playlista.playlistSongsName[i].title);
+                const artistClean = kastracja(playlista.playlistSongsName[i].artist);
                 // console.log("--------------------------------")
                 // console.log("Logika do dodania nazwy na panel:")
                 // console.log(i)
@@ -279,11 +309,11 @@ async function replaceData() {
                 // console.log("Warunek nr 1 (Czy ścieżka utworu z playlisty zawiera nazwę aktualnie odtwarzanego utworu): %s",kastracja(playlista.playlistSongsName[i].filePath).includes(kastracja(data[0].playingSongName)))
                 // console.log("Warunek nr 2 (Czy nazwa aktualnego utworu zawiera zarówno tytuł utworu i nazwę artysty z playlisty): %s",kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].title))) && kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].artist))
                 // console.log("--------------------------------")
-                if (kastracja(playlista.playlistSongsName[i].filePath).includes(kastracja(data[0].playingSongName))) {
+                if ((playingValid && czyNiePustePoKastracji(fileClean) && fileClean.includes(playingClean)) || (playingClean.length > 0 && fileBaseClean === playingClean)) {
                     updateSongName(playlista.playlistSongsName[i].title);
                     songArtist.innerText = playlista.playlistSongsName[i].artist;
                     break;
-                } else if ((kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].title))) && kastracja(data[0].playingSongName).includes(kastracja(playlista.playlistSongsName[i].artist))) {
+                } else if (playingValid && czyNiePustePoKastracji(titleClean) && czyNiePustePoKastracji(artistClean) && playingClean.includes(titleClean) && playingClean.includes(artistClean)) {
                     //songName.innerText = playlista.playlistSongsName[i].title;
                     updateSongName(playlista.playlistSongsName[i].title);
                     songArtist.innerText = playlista.playlistSongsName[i].artist;

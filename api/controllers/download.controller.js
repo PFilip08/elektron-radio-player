@@ -10,6 +10,7 @@ import {sterylizatorIP} from "../../modules/Other.js";
 // download song through api
 export async function downloadSong(req, res) {
     try {
+        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - downloadSong');
         const uri = req.query.uri;
         let path = undefined;
         if (req.query.path) {
@@ -20,10 +21,9 @@ export async function downloadSong(req, res) {
                 return res.status(403).send('Niebezpieczna ścieżka!');
             }
         }
-        const downloadStatus = await downloader(uri, false, path);
-        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - downloadSong');
         if (!uri) return res.status(400).send('Nie podano linku!');
-        if (!downloadStatus.includes('Pobrano')) return res.status(500).send(downloadStatus);
+        const downloadStatus = await downloader(uri, false, path);
+        if (!downloadStatus.includes('Pobrano') || downloadStatus === undefined) return res.status(500).send(downloadStatus);
         return res.status(201).send('gut; '+downloadStatus);
     } catch (e) {
         logger('verbose', 'Wystąpił błąd podczas próby pobrania pliku', 'LocalAPI - downloadSong');
@@ -38,9 +38,9 @@ export async function downloadSong(req, res) {
 // download and play song
 export async function downloadAndPlay(req, res) {
     try {
+        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - downloadAndPlay');
         const uri = req.query.uri;
         const downloadStatus = await downloader(uri);
-        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - downloadAndPlay');
         if (!uri) return res.status(400).send('Nie podano linku!');
         if (!downloadStatus.includes('Pobrano')) return res.status(500).send(downloadStatus);
         const trackInfo = await getTrackInfo(uri);

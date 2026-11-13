@@ -39,7 +39,10 @@ function sterylizator(input) {
         logger('verbose', 'Tekst źródłowy zapisany do debug/', 'sterylizator');
     }
     try {
-        sterilised = input.split(' ').join('_').replace(/[^a-zA-Z_0-9-\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/g, "");
+        sterilised = input.split(' ').join('_').replace(/[^a-zA-Z_0-9-\u0400-\u04ff\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/g, "");
+        if (sterilised.replace(/[_-]/g, "").length === 0 && input.trim().length > 0) {
+            sterilised = Buffer.from(input).toString('hex');
+        }
     } catch (e) {
         logger('error', `Wystąpił błąd podczas sterylizacji tekstu: ${e}`, 'sterylizator');
         if (global.debugmode === true) {
@@ -80,6 +83,11 @@ function pathSecurityChecker(filepath, defendingFolder = 'mp3') {
     if (path.isAbsolute(filepath) || /^[A-Za-z]:[\\/]/.test(filepath) || filepath.startsWith('\\\\')) {
         logger('warn', yellow(`Próba użycia ścieżki absolutnej poza ${defendingFolder}!!!`), 'pathSecurityChecker');
         return 'ABSOLUTE_PATH_ATTEMPT';
+    }
+    logger('verbose', 'Sprawdzanie czy ścieżka nie zawiera segmentów ".."', 'pathSecurityChecker');
+    if (filepath.split(/[\\/]+/).includes('..')) {
+        logger('warn', yellow(`Próba użycia segmentu ".." w ścieżce: ${filepath}`), 'pathSecurityChecker');
+        return 'TRAVERSAL_SEGMENT_ATTEMPT';
     }
     logger('verbose', 'Sprawdzanie czy ścieżka nie wychodzi poza katalog bazowy', 'pathSecurityChecker');
     const rootDirectory = path.resolve(process.cwd(), defendingFolder);
@@ -162,10 +170,10 @@ async function checkIfVLConVotes() {
     logger('verbose', 'Sprawdzanie czy VLC jest uruchomione na odtwarzanie muzyki z głosów...', 'checkIfVLConVotes');
     try {
         const timeout = new Promise((_, reject) =>
-            setTimeout(() => reject(
-                logger('verbose', 'Czas wykonania funkcji przekroczony!', 'getPlayingSong'),
-                new Error('Czas wykonania funkcji przekroczony'
-                )), 3000)
+            setTimeout(() => {
+                logger('verbose', 'Czas wykonania funkcji przekroczony!', 'getPlayingSong');
+                reject(new Error('Czas wykonania funkcji przekroczony'));
+            }, 3000)
         );
         const vlcOperation = (async () => {
             const vlc = new VLC.Client({

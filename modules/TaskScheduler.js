@@ -1,6 +1,6 @@
 import schedule from "node-schedule";
 import {killPlayer, killPlayerForce, pausePlayer, playOnDemand, playPlayer, playPlaylist, getPlayingSong} from "./MusicPlayer.js";
-import {getApiData, messageCounter} from "./ApiConnector.js";
+import {getApiData, scheduleUpdate, messageCounter} from "./ApiConnector.js";
 import {autoRemoveFiles, downloader, getTrackInfo} from "./MusicDownloader.js";
 import {logger} from "./Logger.js";
 import {checkIfVLCisRunning, checkIfVLConVotes, sterylizator} from "./Other.js";
@@ -81,6 +81,10 @@ async function downloadVotes() {
 }
 
 async function scheduleMinorTasks() {
+    logger('verbose', 'Planowanie zadania automatycznej aktualizacji z API...', 'scheduleMinorTasks');
+    schedule.scheduleJob(`scheduleUpdate-siódma - ${new Date().toLocaleString()}`, '0 7 * * 1-5', scheduleUpdate);   // on-air start
+    schedule.scheduleJob(`scheduleUpdate-czwarta - ${new Date().toLocaleString()}`, '0 16 * * 1-5', scheduleUpdate);  // off-air start  
+    schedule.scheduleJob(`scheduleUpdate-północAwoooo - ${new Date().toLocaleString()}`, '0 0 * * *', scheduleUpdate); // zmiana dnia (weekend/wakacje)
     logger('verbose', 'Planowanie zadania automatycznego usuwania plików...', 'scheduleMinorTasks');
     schedule.scheduleJob(`autoRemoveFiles - ${new Date().toLocaleString()}`, '0 5 * * 1-5', autoRemoveFiles);
     logger('verbose', 'Planowanie zadania automatycznej aktualizacji głosów...', 'scheduleMinorTasks');
@@ -124,7 +128,7 @@ let downloaded = false, emptyVotes = false, massScheduleDelayed = false;
 let blockmassSchedule = new Mutex();
 async function massSchedule() {
     if (massScheduleDelayed) {
-        logger('verbose', yellow(console.trace()), 'massSchedule');
+        console.trace();
         logger('warn', 'massSchedule jest już odroczone, pomijanie ponownego uruchamiania...', 'massSchedule');
         return;
     }
@@ -258,7 +262,7 @@ let delayTimer = null;
 async function delayMassScheduleVLC() {
     if (delayTimer) {
         logger('warn', 'Funkcja delayMassScheduleVLC już działa, pomijanie ponownego uruchamiania...', 'delayMassScheduleVLC');
-        logger('verbose', yellow(console.trace()), 'delayMassScheduleVLC');
+        console.trace();
         return;
     }; // już działa
 

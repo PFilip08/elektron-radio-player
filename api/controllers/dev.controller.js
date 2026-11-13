@@ -41,6 +41,7 @@ export async function cleanTasks(req, res) {
 
 export async function addTask(req, res) {
     try {
+        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI-dev - addTask');
         const taskName = req.body.taskName;
         const taskType = req.body.taskType;
         let taskDate = req.body.taskDate;
@@ -54,8 +55,6 @@ export async function addTask(req, res) {
             return res.status(400).send('Nieprawidłowy JSON w polu taskData!');
         }
 
-        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI-dev - addTask');
-
         if (!taskName || !taskType || !taskDate) {
             logger('warn', 'Nie podano wszystkich wymaganych pól!', 'LocalAPI-dev - addTask');
             return res.status(400).send('Nie podano wszystkich wymaganych pól!');
@@ -68,10 +67,10 @@ export async function addTask(req, res) {
                     return res.status(400).send('Nie podano nazwy pliku!');
                 }
                 const jobMusic = schedule.scheduleJob(taskName, taskDate, function () {
-                    logger('log', 'Odtwarzanie pliku: '+taskData.file, 'LocalAPI-dev - addTask');
+                    logger('log', 'Odtwarzanie pliku: '+taskData.filename, 'LocalAPI-dev - addTask');
                     playMusic(taskData.filename)
                 });
-                jobMusic.jobData = { filename: taskData.filename };
+                if (jobMusic) jobMusic.jobData = { filename: taskData.filename };
                 break;
             case 'playPlaylist':
                 if (!taskData.id) {
@@ -82,7 +81,7 @@ export async function addTask(req, res) {
                     logger('log', 'Granie playlisty nr: '+taskData.id, 'LocalAPI-dev - addTask');
                     playPlaylist(taskData.id);
                 });
-                jobPlaylist.jobData = { id: taskData.id };
+                if (jobPlaylist) jobPlaylist.jobData = { id: taskData.id };
                 break;
             case 'killPlayer':
                 const jobKill = schedule.scheduleJob(taskName, taskDate, function () {
@@ -92,6 +91,10 @@ export async function addTask(req, res) {
                 break;
             case 'inne':
                 //return res.status(400).send('Nie zaimplementowano tego typu w tej wersji API!!1!11!!!');
+                if (!['autoRemoveFiles', 'downloadVotes', 'miscTask'].includes(taskData.action)) {
+                    logger('warn', `Nieznana akcja dla typu "inne": ${taskData.action}`, 'LocalAPI-dev - addTask');
+                    return res.status(400).send('Nieznana akcja dla zadania "inne" w polu taskData!');
+                }
                 const jobInne = schedule.scheduleJob(taskName, taskDate, function () {
                     logger('log', `Wykonywanie innego zadania ${taskData.action}`, 'LocalAPI-dev - addTask');
                     switch (taskData.action) {
@@ -103,9 +106,6 @@ export async function addTask(req, res) {
                             break;
                         case 'miscTask':
                             scheduleMinorTasks();
-                            break;
-                        default:
-                            logger('warn', `Nieznana akcja dla typu "inne": ${taskData.action}`, 'LocalAPI-dev - addTask');
                             break;
                     }
                     // tutaj coś kiedyś będzie (EDIT: Czyli po Filipowsku nigdy)
@@ -180,8 +180,8 @@ export async function downloadYToverride(req, res) {
 export async function removeTask(req, res) {
     try {
         const taskName = req.query.name;
-        if (!taskName) return res.status(400).send('Brak nazwy zadania!');
         logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')} - usuwanie zadania: ${taskName}`, 'LocalAPI-dev - removeTask');
+        if (!taskName) return res.status(400).send('Brak nazwy zadania!');
         const job = schedule.scheduledJobs[taskName];
         if (!job) return res.status(404).send('Nie znaleziono zadania o nazwie: ' + taskName);
 
@@ -345,12 +345,14 @@ export async function devAPITimeTables(req, res) {
             global.devAPIMockData.timeTables = req.body;
             logger('log', 'Zaktualizowano dane DevAPI TimeTables', 'LocalAPI-dev - devAPITimeTables');
 
+
             if (global.devAPIEnabled) {
                 await massSchedule();
                 logger('log', 'Zaktualizowano dane TimeTables i zreschedulowano taski', 'LocalAPI-dev - devAPITimeTables');
+                return res.json({ success: true, message: 'Zaktualizowano dane TimeTables i zreschedulowano taski' });
+            } else {
+                return res.json({ success: true, message: 'Zaktualizowano dane TimeTables (DevAPI wyłączone, więc nie zreschedulowano tasków)' });
             }
-
-            return res.json({ success: true, message: 'Zaktualizowano dane TimeTables i zreschedulowano taski' });
         }
     } catch (e) {
         logger('verbose', 'Błąd w devAPITimeTables', 'LocalAPI-dev - devAPITimeTables');

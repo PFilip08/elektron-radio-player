@@ -64,26 +64,20 @@ export async function resetVotes(req, res) {
 export async function saveVotes(req, res) {
     try {
         if (await checkIfVLConVotes()) killPlayerForce();
-        fs.readdir('./mp3/7', (err, files) => {
-            if (err) {
-                res.status(500).send('dział taboretów trza zagonić do roboty');
-                if (global.debugmode === true) {
-                    DebugSaveToFile('LocalAPI', 'saveVotes', 'catched_error', err);
-                    logger('verbose', `Stacktrace został zrzucony do debug/`, 'LocalAPI - saveVotes');
-                }
-                return logger('error ' + err, 'saveVotes');
-            }
-            if (files.length === 0) return logger('task','Brak plików do usunięcia.','saveVotes');
+        const files = await fs.promises.readdir('./mp3/7');
+        if (files.length === 0) {
+            logger('task', 'Brak plików do usunięcia.', 'saveVotes');
+        } else {
             for (let i in files) {
-                if (fs.lstatSync('./mp3/7/'+files[i]).isDirectory()) {
+                if ((await fs.promises.lstat('./mp3/7/' + files[i])).isDirectory()) {
                     logger('task', `Usunięto folder "${files[i]}" wraz z zawartością`, 'saveVotes');
-                    fs.rmSync('./mp3/7/'+files[i], { recursive: true, force: true });
+                    await fs.promises.rm('./mp3/7/' + files[i], { recursive: true, force: true });
                     continue;
                 }
-                fs.unlinkSync(path.join('./mp3/7', files[i]));
+                await fs.promises.unlink(path.join('./mp3/7', files[i]));
                 logger('task', `Usunięto ${files[i]}`, 'saveVotes');
             }
-        });
+        }
         const data = await getVotesData();
         if (data === 'brak') return logger('log', 'Brak danych!!!', 'saveVotes');
         for (let i in data) {
@@ -109,22 +103,20 @@ export async function downloadVotes(req, res) {
     try {
         const { date } = req.query;
         if (await checkIfVLConVotes()) killPlayerForce();
-        fs.readdir('./mp3/7', (err, files) => {
-            if (err) {
-                res.status(500).send('dział taboretów trza zagonić do roboty');
-                return logger('error ' + err, 'downloadVotes');
-            }
-            if (files.length === 0) return logger('task','Brak plików do usunięcia.','downloadVotes');
+        const files = await fs.promises.readdir('./mp3/7');
+        if (files.length === 0) {
+            logger('task', 'Brak plików do usunięcia.', 'downloadVotes');
+        } else {
             for (let i in files) {
-                if (fs.lstatSync('./mp3/7/'+files[i]).isDirectory()) {
+                if ((await fs.promises.lstat('./mp3/7/' + files[i])).isDirectory()) {
                     logger('task', `Usunięto folder "${files[i]}" wraz z zawartością`, 'downloadVotes');
-                    fs.rmSync('./mp3/7/'+files[i], { recursive: true, force: true })
+                    await fs.promises.rm('./mp3/7/' + files[i], { recursive: true, force: true });
                     continue;
                 }
-                fs.unlinkSync(path.join('./mp3/7', files[i]));
-                logger('task', `Usunięto ${files[i]}`, 'downloadVotes')
+                await fs.promises.unlink(path.join('./mp3/7', files[i]));
+                logger('task', `Usunięto ${files[i]}`, 'downloadVotes');
             }
-        });
+        }
         const data = await getVotesData(undefined, date);
         if (data === 'brak') {
             logger('log', 'Brak danych!!!', 'downloadVotes')
@@ -191,7 +183,7 @@ export async function addVotes(req, res) {
 export async function download(req, res) {
     try {
         let data = JSON.parse(fs.readFileSync(votesPath));
-        if (data === '[]') {
+        if (data.length === 0) {
             logger('log', 'Brak danych!!!', 'download');
             return res.status(410).send('brak danych');
         }
@@ -213,22 +205,20 @@ export async function download(req, res) {
 export async function delmp3(req, res) {
     try {
         if (await checkIfVLConVotes()) killPlayerForce();
-        fs.readdir('./mp3/7', (err, files) => {
-            if (err) {
-                res.status(500).send('dział taboretów trza zagonić do roboty');
-                return logger('error ' + err, 'delmp3');
-            }
-            if (files.length === 0) return logger('task','Brak plików do usunięcia.','delmp3');
+        const files = await fs.promises.readdir('./mp3/7');
+        if (files.length === 0) {
+            logger('task', 'Brak plików do usunięcia.', 'delmp3');
+        } else {
             for (let i in files) {
-                if (fs.lstatSync('./mp3/7/'+files[i]).isDirectory()) {
+                if ((await fs.promises.lstat('./mp3/7/' + files[i])).isDirectory()) {
                     logger('task', `Usunięto folder "${files[i]}" wraz z zawartością`, 'delmp3');
-                    fs.rmSync('./mp3/7/'+files[i], { recursive: true, force: true })
+                    await fs.promises.rm('./mp3/7/' + files[i], { recursive: true, force: true });
                     continue;
                 }
-                fs.unlinkSync(path.join('./mp3/7', files[i]));
+                await fs.promises.unlink(path.join('./mp3/7', files[i]));
                 logger('task', `Usunięto ${files[i]}`, 'delmp3');
             }
-        });
+        }
         logger('log', 'Usunięto mp3', 'delmp3');
         return res.status(200).send('ok');
     } catch (e) {

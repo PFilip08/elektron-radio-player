@@ -22,17 +22,17 @@ export async function wzmakPower(req, res) {
         const action = req.query.action;
         if (req.method === 'GET') {
             if (action === 'status') {
-                return res.status(200).send((await (await api.get(wzmakURI + 'status 8')).data.StatusSNS.ENERGY));
+                return res.status(200).send(((await api.get(wzmakURI + 'status 8')).data.StatusSNS.ENERGY));
             } else {
                 return res.status(402).send('nieznanen');
             }
         }
         if (action === 'on') {
             logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - wzmakPower');
-            return res.status(200).send((await (await api.get(wzmakURI + 'POWER ON')).data));
+            return res.status(200).send(((await api.get(wzmakURI + 'POWER ON')).data));
         } else if (action === 'off') {
             logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - wzmakPower');
-            return res.status(200).send((await (await api.get(wzmakURI + 'POWER OFF')).data));
+            return res.status(200).send(((await api.get(wzmakURI + 'POWER OFF')).data));
         }
         return res.status(402).send('nieznanen');
     } catch (e) {
@@ -50,17 +50,17 @@ export async function mixerPower(req, res) {
         const action = req.query.action;
         if (req.method === 'GET') {
             if (action === 'status') {
-                return res.status(200).send((await (await api.get(mixerURI + 'status 8')).data.StatusSNS.ENERGY));
+                return res.status(200).send(((await api.get(mixerURI + 'status 8')).data.StatusSNS.ENERGY));
             } else {
                 return res.status(402).send('nieznanen');
             }
         }
         if (action === 'on') {
             logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - mixerPower');
-            return res.status(200).send((await (await api.get(mixerURI + 'POWER ON')).data));
+            return res.status(200).send(((await api.get(mixerURI + 'POWER ON')).data));
         } else if (action === 'off') {
             logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')}!`, 'LocalAPI - mixerPower');
-            return res.status(200).send((await (await api.get(mixerURI + 'POWER OFF')).data));
+            return res.status(200).send(((await api.get(mixerURI + 'POWER OFF')).data));
         }
         return res.status(402).send('nieznanen');
     } catch (e) {
