@@ -13,6 +13,10 @@ Na początku funkcja sprawdza, czy podana ścieżka prowadzi do pojedynczego pli
 - Jeżeli jest to pojedynczy plik, to wyciąga samą nazwę pliku i sprawdza, czy taki plik już istnieje w folderze archiwum. Jeżeli istnieje, to wyświetla loga o tym, że plik jest już w archiwum i kończy działanie. Jeżeli nie istnieje, to kopiuje plik do archiwum i wyświetla loga o skopiowaniu pliku.
 - Jeżeli podana ścieżka jest katalogiem, to funkcja odczytuje wszystkie pliki w tym katalogu i w pętli dla każdego pliku sprawdza, czy jest on plikiem i czy nie ma go już w archiwum, po czym kopiuje brakujące pliki do katalogu archiwum.
 
+## Tryb Debugowania
+
+W przypadku błędu podczas kopiowania do archiwum błąd zostaje zapisany przez [`DebugSaveToFile()`](https://github.com/PFilip08/elektron-radio-player/blob/master/docs/Dokumentacja%20Funkcji/DebugMode.js.md#debugsavetofile) w lokalizacji `debug/ArchiveModule/copyToArchive/catched_error.txt`.
+
 # copyFromArchive()
 
 Funkcja przyjmuje dwa argumenty:
