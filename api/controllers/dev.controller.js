@@ -179,8 +179,8 @@ export async function downloadYToverride(req, res) {
 
 export async function removeTask(req, res) {
     try {
-        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')} - usuwanie zadania: ${taskName}`, 'LocalAPI-dev - removeTask');
         const taskName = req.query.name;
+        logger('log', `Otrzymano request od ${sterylizatorIP(req.connection.remoteAddress)} ${req.get('User-Agent')} - usuwanie zadania: ${taskName}`, 'LocalAPI-dev - removeTask');
         if (!taskName) return res.status(400).send('Brak nazwy zadania!');
         const job = schedule.scheduledJobs[taskName];
         if (!job) return res.status(404).send('Nie znaleziono zadania o nazwie: ' + taskName);
