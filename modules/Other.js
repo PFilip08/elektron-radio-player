@@ -39,7 +39,10 @@ function sterylizator(input) {
         logger('verbose', 'Tekst źródłowy zapisany do debug/', 'sterylizator');
     }
     try {
-        sterilised = input.split(' ').join('_').replace(/[^a-zA-Z_0-9-\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/g, "");
+        sterilised = input.split(' ').join('_').replace(/[^a-zA-Z_0-9-\u0400-\u04ff\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/g, "");
+        if (sterilised.replace(/[_-]/g, "").length === 0 && input.trim().length > 0) {
+            sterilised = Buffer.from(input).toString('hex');
+        }
     } catch (e) {
         logger('error', `Wystąpił błąd podczas sterylizacji tekstu: ${e}`, 'sterylizator');
         if (global.debugmode === true) {
