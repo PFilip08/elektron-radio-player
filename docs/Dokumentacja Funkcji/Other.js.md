@@ -14,7 +14,8 @@ W przypadku błędu błąd zostaje zapisany przez [`DebugSaveToFile()`](https://
 
 # sterylizator()
 
-Funkcja `sterylizator()` jest używana do przekształcania wejściowego ciągu znaków, zamieniając spacje na podkreślenia oraz usuwając wszystkie znaki niealfabetyczne z wyjątkiem podkreśleń, myślników i niektórych znaków z języka japońskiego oraz chińskiego.
+Funkcja `sterylizator()` jest używana do przekształcania wejściowego ciągu znaków, zamieniając spacje na podkreślenia oraz usuwając wszystkie znaki spoza alfabetu łacińskiego i cyfr, z wyjątkiem podkreśleń, myślników, znaków cyrylicy oraz niektórych znaków z języka japońskiego i chińskiego.
+Jeżeli po wycięciu niedozwolonych znaków w wyniku zostaną wyłącznie same podkreślenia `_` lub myślniki `-` (a wejściowy tekst nie był pusty, np. składał się z samych emotek lub innego alfabetu), to funkcja koduje oryginalny tekst na ciąg znaków szesnastkowych (hex).
 
 W przypadku gdy funkcji nie uda się przeprowadzić sterylizacji zwraca pusty wynik i zostaje zwrócony log z błędem, który wygląda tak:
 !["Jak wygląda log z funkcji sterylizator mówiący o błędzie"](https://i.imgur.com/pMZFqVN.png)
