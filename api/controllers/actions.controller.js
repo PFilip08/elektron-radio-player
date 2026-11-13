@@ -141,7 +141,7 @@ export async function vlcSzuffle(req, res) {
             return res.status(405).send('Nie ta metoda!');
         }
         if (!state) return res.status(400).send('Nie podano stanu!');
-        if (!typeof state == "boolean") return res.status(400).send('Nieprawidłowy stan!');
+        if (state !== 'true' && state !== 'false') return res.status(400).send('Nieprawidłowy stan!');
         szuffle=state;
         return res.status(201).send(`Szuffle ${state}`);
     } catch (e) {
