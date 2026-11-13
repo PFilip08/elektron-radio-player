@@ -67,10 +67,10 @@ export async function addTask(req, res) {
                     return res.status(400).send('Nie podano nazwy pliku!');
                 }
                 const jobMusic = schedule.scheduleJob(taskName, taskDate, function () {
-                    logger('log', 'Odtwarzanie pliku: '+taskData.file, 'LocalAPI-dev - addTask');
+                    logger('log', 'Odtwarzanie pliku: '+taskData.filename, 'LocalAPI-dev - addTask');
                     playMusic(taskData.filename)
                 });
-                jobMusic.jobData = { filename: taskData.filename };
+                if (jobMusic) jobMusic.jobData = { filename: taskData.filename };
                 break;
             case 'playPlaylist':
                 if (!taskData.id) {
@@ -81,7 +81,7 @@ export async function addTask(req, res) {
                     logger('log', 'Granie playlisty nr: '+taskData.id, 'LocalAPI-dev - addTask');
                     playPlaylist(taskData.id);
                 });
-                jobPlaylist.jobData = { id: taskData.id };
+                if (jobPlaylist) jobPlaylist.jobData = { id: taskData.id };
                 break;
             case 'killPlayer':
                 const jobKill = schedule.scheduleJob(taskName, taskDate, function () {
@@ -91,6 +91,10 @@ export async function addTask(req, res) {
                 break;
             case 'inne':
                 //return res.status(400).send('Nie zaimplementowano tego typu w tej wersji API!!1!11!!!');
+                if (!['autoRemoveFiles', 'downloadVotes', 'miscTask'].includes(taskData.action)) {
+                    logger('warn', `Nieznana akcja dla typu "inne": ${taskData.action}`, 'LocalAPI-dev - addTask');
+                    return res.status(400).send('Nieznana akcja dla zadania "inne" w polu taskData!');
+                }
                 const jobInne = schedule.scheduleJob(taskName, taskDate, function () {
                     logger('log', `Wykonywanie innego zadania ${taskData.action}`, 'LocalAPI-dev - addTask');
                     switch (taskData.action) {
@@ -102,10 +106,6 @@ export async function addTask(req, res) {
                             break;
                         case 'miscTask':
                             scheduleMinorTasks();
-                            break;
-                        default:
-                            logger('warn', `Nieznana akcja dla typu "inne": ${taskData.action}`, 'LocalAPI-dev - addTask');
-                            return res.status(400).send('Nieznana akcja dla zadania "inne" w polu taskData!');
                             break;
                     }
                     // tutaj coś kiedyś będzie (EDIT: Czyli po Filipowsku nigdy)
