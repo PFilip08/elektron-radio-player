@@ -42,36 +42,44 @@ function initArchive() {
 }
 
 async function copyToArchive(path_to_copy) {
-    logger('verbose', 'Sprawdzanie czy podana ścieżka jest plikiem', 'copyToArchive');
-    if ((await fs.promises.stat(path_to_copy)).isFile()) {
-        logger('verbose', 'Ścieżka jest plikiem, kopiowanie pojedynczego pliku', 'copyToArchive');
-        const file = path_to_copy.split('/').pop();
-        const destPath = `${archdir}/${file}`;
-        logger('verbose', `Sprawdzanie czy plik ${file} już istnieje w archiwum`, 'copyToArchive');
-        if (fs.existsSync(destPath)) return logger('log', `Plik ${path_to_copy} istnieje w archiwum.`, 'copyToArchive');
-        logger('verbose', `Kopiowanie pliku ${file} do archiwum`, 'copyToArchive');
-        await fs.promises.copyFile(path_to_copy, destPath);
-        logger('log', `Skopiowano plik ${path_to_copy} do archiwum.`, 'copyToArchive');
-        return;
-    }
-    logger('verbose', 'Ścieżka jest katalogiem, odczytywanie plików', 'copyToArchive');
-    const files = await fs.promises.readdir(path_to_copy);
-    logger('verbose', `Znaleziono ${files.length} plików w katalogu`, 'copyToArchive');
-    for (const file of files) {
-        const filePath = `${path_to_copy}/${file}`;
-        logger('verbose', `Przetwarzanie pliku: ${file}`, 'copyToArchive');
-        if ((await fs.promises.stat(filePath)).isFile()) {
+    try {
+        logger('verbose', 'Sprawdzanie czy podana ścieżka jest plikiem', 'copyToArchive');
+        if ((await fs.promises.stat(path_to_copy)).isFile()) {
+            logger('verbose', 'Ścieżka jest plikiem, kopiowanie pojedynczego pliku', 'copyToArchive');
+            const file = path_to_copy.split('/').pop();
             const destPath = `${archdir}/${file}`;
-            logger('verbose', `Sprawdzanie czy ${file} już istnieje w archiwum`, 'copyToArchive');
-            if (fs.existsSync(destPath)) {
-                logger('log', `Plik ${file} istnieje w archiwum.`, 'copyToArchive');
-                continue;
+            logger('verbose', `Sprawdzanie czy plik ${file} już istnieje w archiwum`, 'copyToArchive');
+            if (fs.existsSync(destPath)) return logger('log', `Plik ${path_to_copy} istnieje w archiwum.`, 'copyToArchive');
+            logger('verbose', `Kopiowanie pliku ${file} do archiwum`, 'copyToArchive');
+            await fs.promises.copyFile(path_to_copy, destPath);
+            logger('log', `Skopiowano plik ${path_to_copy} do archiwum.`, 'copyToArchive');
+            return;
+        }
+        logger('verbose', 'Ścieżka jest katalogiem, odczytywanie plików', 'copyToArchive');
+        const files = await fs.promises.readdir(path_to_copy);
+        logger('verbose', `Znaleziono ${files.length} plików w katalogu`, 'copyToArchive');
+        for (const file of files) {
+            const filePath = `${path_to_copy}/${file}`;
+            logger('verbose', `Przetwarzanie pliku: ${file}`, 'copyToArchive');
+            if ((await fs.promises.stat(filePath)).isFile()) {
+                const destPath = `${archdir}/${file}`;
+                logger('verbose', `Sprawdzanie czy ${file} już istnieje w archiwum`, 'copyToArchive');
+                if (fs.existsSync(destPath)) {
+                    logger('log', `Plik ${file} istnieje w archiwum.`, 'copyToArchive');
+                    continue;
+                }
+                logger('verbose', `Kopiowanie ${file} do archiwum`, 'copyToArchive');
+                await fs.promises.copyFile(filePath, destPath);
+                logger('log', `Skopiowano plik ${file} do archiwum.`, 'copyToArchive');
+            } else {
+                logger('warn', `Nie można skopiować ${file}, ponieważ nie jest to plik.`, 'copyToArchive');
             }
-            logger('verbose', `Kopiowanie ${file} do archiwum`, 'copyToArchive');
-            await fs.promises.copyFile(filePath, destPath);
-            logger('log', `Skopiowano plik ${file} do archiwum.`, 'copyToArchive');
-        } else {
-            logger('warn', `Nie można skopiować ${file}, ponieważ nie jest to plik.`, 'copyToArchive');
+        }
+    } catch (err) {
+        logger('error', `Błąd podczas kopiowania do archiwum (${path_to_copy}): ${err.message}`, 'copyToArchive');
+        if (global.debugmode === true) {
+            DebugSaveToFile('ArchiveModule', 'copyToArchive', 'catched_error', err);
+            logger('verbose', `Stacktrace został zrzucony do /debug`, 'copyToArchive');
         }
     }
 }
